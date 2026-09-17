@@ -1,0 +1,216 @@
+[
+  {
+    "id": "ouinet",
+    "name": "Ouinet",
+    "aliases": [],
+    "kind": "library",
+    "summary": "供应用集成的点对点网页共享软件库与相关基础设施，Ceno 使用它接入协作缓存网络。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://ouinet.work/",
+      "https://gitlab.com/equalitie/ouinet"
+    ],
+    "repository": "https://gitlab.com/equalitie/ouinet",
+    "discovery_sources": [
+      "https://raw.githubusercontent.com/ceno-app/ceno-android/HEAD/README.md",
+      "https://ouinet.work/",
+      "https://gitlab.com/equalitie/ouinet"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/ceno-app/ceno-android/HEAD/README.md",
+        "https://ouinet.work/",
+        "https://gitlab.com/equalitie/ouinet"
+      ],
+      "notes": "从 Ceno README 的 Ouinet 链接进入官网，再由官网 Get the SDK 链接进入 eQualitie/ouinet。已核对开发库角色、概要、官方入口与仓库；未核查全部构建目标、网络效果或缓存隐私保证。未将 Ceno 的 Android 平台直接当作该库唯一支持平台。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {}
+  },
+  {
+    "id": "clash-premium",
+    "name": "Clash Premium",
+    "aliases": [],
+    "kind": "historical",
+    "summary": "Clash Nyanpasu 所列的历史 Clash Premium 核心条目；所指 Dreamacro 原始入口本次不可访问。",
+    "platforms": [],
+    "ecosystems": [
+      "Clash"
+    ],
+    "official_urls": [
+      "https://github.com/Dreamacro/clash"
+    ],
+    "repository": "https://github.com/Dreamacro/clash",
+    "discovery_sources": [
+      "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md",
+      "https://github.com/Dreamacro/clash"
+    ],
+    "verification": {
+      "status": "historical_reference",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md"
+      ],
+      "notes": "Nyanpasu README 将 Clash Premium 链接到 Dreamacro/clash；本次该原始 GitHub 入口返回 404，未取得原项目第一方说明。这里只保存历史身份和引用线索，没有把镜像、同名项目或现有 Clash 分支当作 Premium 官方恢复，也没有核验价格、授权、版本或当前可下载性。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "历史线索条目；原始入口不可达，平台和版本兼容性未知。"
+    },
+    "tags": [],
+    "source_claims": {}
+  },
+  {
+    "id": "clash-rs",
+    "name": "ClashRS",
+    "aliases": [
+      "Clash Rust",
+      "clash-rs"
+    ],
+    "kind": "core",
+    "summary": "Rust 网络代理核心，提供规则分流、DNS、多种入站与出站协议，并可配合 Clash Nyanpasu 使用。",
+    "platforms": [
+      "Linux",
+      "macOS",
+      "Windows",
+      "iOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/Watfaq/clash-rs"
+    ],
+    "repository": "https://github.com/Watfaq/clash-rs",
+    "discovery_sources": [
+      "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md",
+      "https://github.com/Watfaq/clash-rs"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "aliases",
+        "kind",
+        "summary",
+        "platforms",
+        "official_urls",
+        "repository"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md",
+        "https://github.com/Watfaq/clash-rs"
+      ],
+      "notes": "Nyanpasu README 的 Clash Rust 链接精确指向 Watfaq/clash-rs；上游 README 自称 ClashRS，并列出 Linux、macOS、Windows 和 iOS 环境。未将项目名相似性推断为 Dreamacro 的继任或完全兼容。未运行二进制或测试全部协议。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "平台列表来自 README Environment Support；iOS 指向 TestFlight，Windows TUN 有额外依赖。具体构建与功能须按发行包核对。"
+    },
+    "tags": [],
+    "source_claims": {}
+  },
+  {
+    "id": "mihomo-smart-vernesong",
+    "name": "Mihomo Smart (vernesong)",
+    "aliases": [
+      "Smart Core",
+      "Mihomo Smart",
+      "mihomo-smart"
+    ],
+    "kind": "core",
+    "summary": "Clash Party 使用的 vernesong/mihomo 分支核心，提供 Smart 组节点选择与可选 LightGBM 模型支持。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/vernesong/mihomo",
+      "https://clashparty.org/docs/guide/smart-core"
+    ],
+    "repository": "https://github.com/vernesong/mihomo",
+    "discovery_sources": [
+      "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/README.md",
+      "https://clashparty.org/docs/guide/smart-core",
+      "https://clashparty.org/docs/guide/smart-core-principles",
+      "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/scripts/prepare.mjs",
+      "https://raw.githubusercontent.com/vernesong/mihomo/HEAD/README.md",
+      "https://api.github.com/repos/vernesong/mihomo",
+      "https://github.com/vernesong/mihomo"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "aliases",
+        "kind",
+        "summary",
+        "platforms",
+        "ecosystems",
+        "official_urls",
+        "repository",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/README.md",
+        "https://clashparty.org/docs/guide/smart-core",
+        "https://clashparty.org/docs/guide/smart-core-principles",
+        "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/scripts/prepare.mjs",
+        "https://raw.githubusercontent.com/vernesong/mihomo/HEAD/README.md",
+        "https://api.github.com/repos/vernesong/mihomo"
+      ],
+      "notes": "从 Clash Party README 进入官方 Smart 文档；另读其 scripts/prepare.mjs，确认 MIHOMO_SMART_URL_PREFIX 指向 vernesong/mihomo 的 Prerelease-Alpha，分支映射覆盖 Windows/macOS/Linux。GitHub 仓库 API 确认 parent 为 MetaCubeX/mihomo，因此明确这一个实现，不泛指所有智能选路功能。未采用文档中的最优节点、稳定性或隐私宣传作为实测结论。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "fork_of",
+        "target_name": "Mihomo",
+        "evidence_url": "https://api.github.com/repos/vernesong/mihomo"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "平台来自 Clash Party 获取 Smart 构建的映射，不保证所有分支版本或设备可用；预训练模型未测试。"
+    },
+    "tags": [],
+    "source_claims": {}
+  }
+]

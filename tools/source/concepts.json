@@ -1,0 +1,1719 @@
+[
+  {
+    "id": "protocol-shadowsocks",
+    "name": "Shadowsocks 协议",
+    "kind": "protocol",
+    "aliases": [
+      "SS"
+    ],
+    "summary": "加密代理协议族；具体加密方法、SIP003 插件与两端实现共同决定兼容性。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/shadowsocks/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/shadowsocks/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/shadowsocks/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/shadowsocks/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/shadowsocks/",
+      "sha256": "4dbd98eb1e6ba30c980334da41f340ebb84fdca09c909bb24268e55ea4e20909",
+      "local_snapshot": "sources\\concepts\\protocol-shadowsocks.html"
+    }
+  },
+  {
+    "id": "protocol-vmess",
+    "name": "VMess 协议",
+    "kind": "protocol",
+    "aliases": [],
+    "summary": "V2Ray 生态代理协议，具有用户标识、加密和传输等配置维度；旧版与 AEAD 形式应区分。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/vmess/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/vmess/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/vmess/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/vmess/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/vmess/",
+      "sha256": "4132f82e08aba0532e28115d70da949cf39287382cec740b552ca88f893485cb",
+      "local_snapshot": "sources\\concepts\\protocol-vmess.html"
+    }
+  },
+  {
+    "id": "protocol-vless",
+    "name": "VLESS 协议",
+    "kind": "protocol",
+    "aliases": [],
+    "summary": "代理协议条目，用户身份、flow、TLS 与传输配置需分别核对；协议名称不能代替完整连接方案。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/vless/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/vless/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/vless/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/vless/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/vless/",
+      "sha256": "b74c92e33c79517842c423e64a76ae35ff7436cfc6efed715b865cad9125cf2c",
+      "local_snapshot": "sources\\concepts\\protocol-vless.html"
+    }
+  },
+  {
+    "id": "protocol-trojan",
+    "name": "Trojan 协议",
+    "kind": "protocol",
+    "aliases": [],
+    "summary": "具有密码认证、TLS 与传输配置的代理协议；同名服务端实现另立工具条目。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/trojan/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/trojan/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/trojan/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/trojan/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/trojan/",
+      "sha256": "d4d1aff14917dc433bd04d4d34088c0c9bfa950a0535458b428276cbd1b19915",
+      "local_snapshot": "sources\\concepts\\protocol-trojan.html"
+    }
+  },
+  {
+    "id": "protocol-hysteria1",
+    "name": "Hysteria 1 协议",
+    "kind": "protocol",
+    "aliases": [
+      "Hysteria v1"
+    ],
+    "summary": "Hysteria 第一代协议配置，认证、混淆和带宽参数需按对应版本核对。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/hysteria/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/hysteria/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/hysteria/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/hysteria/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/hysteria/",
+      "sha256": "823e6fba20b1a81c2227386e784d7676bf976da32e25cef4e744be3d17b9a9ef",
+      "local_snapshot": "sources\\concepts\\protocol-hysteria1.html"
+    }
+  },
+  {
+    "id": "protocol-hysteria2",
+    "name": "Hysteria 2 协议",
+    "kind": "protocol",
+    "aliases": [
+      "HY2",
+      "Hysteria2"
+    ],
+    "summary": "Hysteria 第二代代理协议；与第一代分开记录，配置还涉及认证、TLS、混淆和拥塞控制。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/hysteria2/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/hysteria2/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/hysteria2/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/hysteria2/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/hysteria2/",
+      "sha256": "30ee616af3e6e3067c7b26407399b410270a5dafbf6e714a8f280932e55a1aec",
+      "local_snapshot": "sources\\concepts\\protocol-hysteria2.html"
+    }
+  },
+  {
+    "id": "protocol-tuic",
+    "name": "TUIC 协议",
+    "kind": "protocol",
+    "aliases": [],
+    "summary": "代理协议，配置包含身份凭据、拥塞控制、UDP 转发和 TLS；同名实现与协议分开管理。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/tuic/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/tuic/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/tuic/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/tuic/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/tuic/",
+      "sha256": "db8a30ac48c8cba8ac5229ac387af8182e350c83eca414fc55a18e963531e87a",
+      "local_snapshot": "sources\\concepts\\protocol-tuic.html"
+    }
+  },
+  {
+    "id": "protocol-anytls",
+    "name": "AnyTLS 协议",
+    "kind": "protocol",
+    "aliases": [],
+    "summary": "TLS 代理协议，具有认证和会话复用相关配置；需要核对客户端与服务端实现。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/anytls/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/anytls/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/anytls/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/anytls/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/anytls/",
+      "sha256": "e147cc9c6a6672a45dc109964697b3d0f503ca90fc8926093da047974a440805",
+      "local_snapshot": "sources\\concepts\\protocol-anytls.html"
+    }
+  },
+  {
+    "id": "protocol-snell",
+    "name": "Snell 协议",
+    "kind": "protocol",
+    "aliases": [],
+    "summary": "代理协议条目，协议版本和预共享密钥等参数属于兼容性要点。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/snell/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/snell/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/snell/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/snell/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/snell/",
+      "sha256": "ae7a9c96b11048fac830a30c5bac8ed8e0b95d3aa669cb12201f298cd63ad688",
+      "local_snapshot": "sources\\concepts\\protocol-snell.html"
+    }
+  },
+  {
+    "id": "protocol-socks",
+    "name": "SOCKS 代理协议",
+    "kind": "protocol",
+    "aliases": [
+      "SOCKS4",
+      "SOCKS4a",
+      "SOCKS5"
+    ],
+    "summary": "通用代理协议入口，可出现在本地监听或上游代理位置；版本和认证能力应独立记录。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/socks/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/socks/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/socks/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/socks/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/socks/",
+      "sha256": "70720e1b144b15593cdd285b4831144c312950b95cb3bf69a59eaf81ba990370",
+      "local_snapshot": "sources\\concepts\\protocol-socks.html"
+    }
+  },
+  {
+    "id": "protocol-http-proxy",
+    "name": "HTTP 代理",
+    "kind": "protocol",
+    "aliases": [
+      "HTTP CONNECT"
+    ],
+    "summary": "HTTP 代理类型，可作为应用与上游代理之间的连接入口；是否使用 TLS 取决于配置。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/http/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/http/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/http/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/http/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/http/",
+      "sha256": "15cfe9bd19b4655f9bb23082747befa2e489faba16229924fbe16b32fef13cd4",
+      "local_snapshot": "sources\\concepts\\protocol-http-proxy.html"
+    }
+  },
+  {
+    "id": "transport-shadowtls",
+    "name": "ShadowTLS 外层方案",
+    "kind": "transport",
+    "aliases": [],
+    "summary": "用于代理链路的 TLS 外层方案；需要与承载的代理协议及版本分别核对。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/shadowtls/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/shadowtls/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/shadowtls/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/shadowtls/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/shadowtls/",
+      "sha256": "db4ae89058dd22479aaab238d33177e0e55073c126978cdc1f0298595bde962f",
+      "local_snapshot": "sources\\concepts\\transport-shadowtls.html"
+    }
+  },
+  {
+    "id": "transport-ssh",
+    "name": "SSH 隧道",
+    "kind": "transport",
+    "aliases": [
+      "SSH tunnel"
+    ],
+    "summary": "利用 SSH 连接形成代理出站的一种方式，服务端认证与主机密钥属于独立配置项。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/ssh/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/ssh/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/ssh/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/ssh/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/ssh/",
+      "sha256": "fd8056fc727b37fee7d31337014d1869848a9f525dbafb4cc1576aaec56b8f5a",
+      "local_snapshot": "sources\\concepts\\transport-ssh.html"
+    }
+  },
+  {
+    "id": "transport-reality",
+    "name": "REALITY",
+    "kind": "transport",
+    "aliases": [],
+    "summary": "Xray 的传输安全方案；在知识库中与 VLESS 等代理协议和客户端产品分别建模。",
+    "platforms": [],
+    "ecosystems": [
+      "Xray-core"
+    ],
+    "official_urls": [
+      "https://xtls.github.io/config/transports/reality.html"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://xtls.github.io/config/transports/reality.html"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "Xray-core",
+        "evidence_url": "https://xtls.github.io/config/transports/reality.html"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://xtls.github.io/config/transports/reality.html",
+      "resolved_url": "https://xtls.github.io/config/transports/reality.html",
+      "sha256": "1b5379a6b1ed4a8b62c0a5cc12c1258e6728ea80ae86e0a8de685d98893f512c",
+      "local_snapshot": "sources\\concepts\\transport-reality.html"
+    }
+  },
+  {
+    "id": "transport-xhttp",
+    "name": "XHTTP",
+    "kind": "transport",
+    "aliases": [],
+    "summary": "Xray 文档列出的 HTTP 传输方案，详细机制由其链接的项目讨论说明。",
+    "platforms": [],
+    "ecosystems": [
+      "Xray-core"
+    ],
+    "official_urls": [
+      "https://xtls.github.io/config/transports/xhttp.html"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://xtls.github.io/config/transports/xhttp.html"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "Xray-core",
+        "evidence_url": "https://xtls.github.io/config/transports/xhttp.html"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://xtls.github.io/config/transports/xhttp.html",
+      "resolved_url": "https://xtls.github.io/config/transports/xhttp.html",
+      "sha256": "304ccee6deaf1bdfc143f6eb7e174e9689f1df30308735f781231e27bd173820",
+      "local_snapshot": "sources\\concepts\\transport-xhttp.html"
+    }
+  },
+  {
+    "id": "transport-mkcp",
+    "name": "mKCP",
+    "kind": "transport",
+    "aliases": [],
+    "summary": "以 UDP 承载可靠连接的传输方案，会涉及带宽与延迟的取舍；其历史配置存在版本变化。",
+    "platforms": [],
+    "ecosystems": [
+      "Xray-core"
+    ],
+    "official_urls": [
+      "https://xtls.github.io/config/transports/mkcp.html"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://xtls.github.io/config/transports/mkcp.html"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "Xray-core",
+        "evidence_url": "https://xtls.github.io/config/transports/mkcp.html"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://xtls.github.io/config/transports/mkcp.html",
+      "resolved_url": "https://xtls.github.io/config/transports/mkcp.html",
+      "sha256": "337af498d2df0336bd4b53896f500adb78998087be59897a6b708c996536238e",
+      "local_snapshot": "sources\\concepts\\transport-mkcp.html"
+    }
+  },
+  {
+    "id": "transport-grpc",
+    "name": "gRPC 代理传输",
+    "kind": "transport",
+    "aliases": [],
+    "summary": "Xray 的 gRPC 传输配置，用于承载上层代理协议；服务名等配置需要两端匹配。",
+    "platforms": [],
+    "ecosystems": [
+      "Xray-core"
+    ],
+    "official_urls": [
+      "https://xtls.github.io/config/transports/grpc.html"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://xtls.github.io/config/transports/grpc.html"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "Xray-core",
+        "evidence_url": "https://xtls.github.io/config/transports/grpc.html"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://xtls.github.io/config/transports/grpc.html",
+      "resolved_url": "https://xtls.github.io/config/transports/grpc.html",
+      "sha256": "cdb338a12c99f00c43302ef7da5cfff9373583605405a35d777d9d8f4ff7d605",
+      "local_snapshot": "sources\\concepts\\transport-grpc.html"
+    }
+  },
+  {
+    "id": "transport-websocket",
+    "name": "WebSocket 代理传输",
+    "kind": "transport",
+    "aliases": [
+      "WS"
+    ],
+    "summary": "通过 WebSocket 承载代理连接的传输方式；路径、请求头和外层安全设置共同影响连接。",
+    "platforms": [],
+    "ecosystems": [
+      "Xray-core"
+    ],
+    "official_urls": [
+      "https://xtls.github.io/config/transports/websocket.html"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://xtls.github.io/config/transports/websocket.html"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "Xray-core",
+        "evidence_url": "https://xtls.github.io/config/transports/websocket.html"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://xtls.github.io/config/transports/websocket.html",
+      "resolved_url": "https://xtls.github.io/config/transports/websocket.html",
+      "sha256": "f8ca7a2e5da35acc8924bbba0a5c502123aed12c7d36ecc2a98f64e90b026128",
+      "local_snapshot": "sources\\concepts\\transport-websocket.html"
+    }
+  },
+  {
+    "id": "transport-httpupgrade",
+    "name": "HTTPUpgrade",
+    "kind": "transport",
+    "aliases": [],
+    "summary": "Xray 的 HTTP Upgrade 传输方式；与 WebSocket 分别记录，不能仅按名称相近合并。",
+    "platforms": [],
+    "ecosystems": [
+      "Xray-core"
+    ],
+    "official_urls": [
+      "https://xtls.github.io/config/transports/httpupgrade.html"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://xtls.github.io/config/transports/httpupgrade.html"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "Xray-core",
+        "evidence_url": "https://xtls.github.io/config/transports/httpupgrade.html"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "transport"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://xtls.github.io/config/transports/httpupgrade.html",
+      "resolved_url": "https://xtls.github.io/config/transports/httpupgrade.html",
+      "sha256": "67a679937b2d4bad8032f92820d09d5da7f51e05863a498905d5491f1b1e0abd",
+      "local_snapshot": "sources\\concepts\\transport-httpupgrade.html"
+    }
+  },
+  {
+    "id": "concept-tun",
+    "name": "TUN 虚拟网卡入口",
+    "kind": "concept",
+    "aliases": [
+      "TUN模式"
+    ],
+    "summary": "通过虚拟网络接口接入流量的机制；路由设置、权限和平台支持需要与实际客户端版本一起核对。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/inbound/tun/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/inbound/tun/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/inbound/tun/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "concept"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/inbound/tun/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/inbound/tun/",
+      "sha256": "0f233572c0466c66096c69cbcba96040288f32a8f9a2ae76ab8513f58517a573",
+      "local_snapshot": "sources\\concepts\\concept-tun.html"
+    }
+  },
+  {
+    "id": "concept-tproxy",
+    "name": "TProxy 透明代理入口",
+    "kind": "concept",
+    "aliases": [
+      "透明代理"
+    ],
+    "summary": "透明代理接入方式，属于流量进入代理的机制；不能当作独立代理协议或客户端。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/inbound/tproxy/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/inbound/tproxy/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/inbound/tproxy/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "concept"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/inbound/tproxy/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/inbound/tproxy/",
+      "sha256": "34bfae9c19518754058fcdf86d654f70f4cdbf1c8935d781f82232e5647c5166",
+      "local_snapshot": "sources\\concepts\\concept-tproxy.html"
+    }
+  },
+  {
+    "id": "concept-redirect",
+    "name": "Redirect 重定向入口",
+    "kind": "concept",
+    "aliases": [
+      "REDIRECT"
+    ],
+    "summary": "通过重定向方式接入流量的代理入口；与 TUN 和 TProxy 是不同接入路径。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/inbound/redirect/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/inbound/redirect/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/inbound/redirect/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "concept"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/inbound/redirect/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/inbound/redirect/",
+      "sha256": "67d88ed16fff0e8a8c4215b0b1fd8b34e073fae2e0b98049aa0e7bf5133ac6e9",
+      "local_snapshot": "sources\\concepts\\concept-redirect.html"
+    }
+  },
+  {
+    "id": "concept-fakeip",
+    "name": "FakeIP",
+    "kind": "concept",
+    "aliases": [
+      "Fake-IP",
+      "虚拟IP映射"
+    ],
+    "summary": "DNS 返回虚拟地址并由代理维护映射的机制；记录时需同时关联 DNS 和路由处理。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/dns/server/fakeip/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/dns/server/fakeip/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/dns/server/fakeip/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "concept"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/dns/server/fakeip/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/dns/server/fakeip/",
+      "sha256": "62ea945383253428d092323301e4cd60d76c71cbae6f6ee440609f7cf8f48448",
+      "local_snapshot": "sources\\concepts\\concept-fakeip.html"
+    }
+  },
+  {
+    "id": "protocol-doh",
+    "name": "DNS over HTTPS",
+    "kind": "protocol",
+    "aliases": [
+      "DoH"
+    ],
+    "summary": "通过 HTTPS 查询 DNS 的传输方式；配置中的解析服务器与代理路由需要分别管理。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/dns/server/https/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/dns/server/https/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/dns/server/https/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/dns/server/https/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/dns/server/https/",
+      "sha256": "aa952605166ddeb36f946cf9339b9442e54b7a83776f4948cd5507769d31c7b3",
+      "local_snapshot": "sources\\concepts\\protocol-doh.html"
+    }
+  },
+  {
+    "id": "protocol-dot",
+    "name": "DNS over TLS",
+    "kind": "protocol",
+    "aliases": [
+      "DoT"
+    ],
+    "summary": "使用 TLS 传输 DNS 查询的方式，与 HTTPS 和 QUIC DNS 分开记录。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/dns/server/tls/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/dns/server/tls/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/dns/server/tls/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/dns/server/tls/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/dns/server/tls/",
+      "sha256": "534bba02037e12f5c42bfaa2adebb24a6ecaddb83689cb3dc622302f9380775d",
+      "local_snapshot": "sources\\concepts\\protocol-dot.html"
+    }
+  },
+  {
+    "id": "protocol-doq",
+    "name": "DNS over QUIC",
+    "kind": "protocol",
+    "aliases": [
+      "DoQ"
+    ],
+    "summary": "使用 QUIC 传输 DNS 查询的方式；解析端点和客户端支持情况需要核对。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/dns/server/quic/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/dns/server/quic/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/dns/server/quic/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/dns/server/quic/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/dns/server/quic/",
+      "sha256": "69b1e76a05fb8e7ac1f3359e4ff5af535f3a745b3bbd33e4d7bde54a29718e59",
+      "local_snapshot": "sources\\concepts\\protocol-doq.html"
+    }
+  },
+  {
+    "id": "concept-ruleset",
+    "name": "规则集",
+    "kind": "concept",
+    "aliases": [
+      "Rule Set",
+      "分流规则"
+    ],
+    "summary": "按统一格式组织的匹配规则资源；格式、版本、加载方式和更新来源是知识库需要保存的字段。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/rule-set/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/rule-set/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/rule-set/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "concept"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/rule-set/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/rule-set/",
+      "sha256": "a29f28dee80b0618d06f0d47b4e8e66dc6418652596c3c29295368e1baff3b74",
+      "local_snapshot": "sources\\concepts\\concept-ruleset.html"
+    }
+  },
+  {
+    "id": "concept-urltest",
+    "name": "URLTest 自动选择",
+    "kind": "concept",
+    "aliases": [
+      "自动测速选择"
+    ],
+    "summary": "通过探测候选出站连接表现进行选择的机制；探测结果不能替代真实应用体验评测。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/outbound/urltest/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/outbound/urltest/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/outbound/urltest/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "concept"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/outbound/urltest/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/outbound/urltest/",
+      "sha256": "6be0618fb3a0da4fc1743bf9adf98aa0610e65dc6b3b0c07d0b5de9e534576da",
+      "local_snapshot": "sources\\concepts\\concept-urltest.html"
+    }
+  },
+  {
+    "id": "concept-clash-api",
+    "name": "Clash API 兼容接口",
+    "kind": "concept",
+    "aliases": [],
+    "summary": "供控制面板与内核交互的兼容接口；接口存在不代表该软件使用原版 Clash 内核。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/experimental/clash-api/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/experimental/clash-api/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/experimental/clash-api/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "concept"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/experimental/clash-api/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/experimental/clash-api/",
+      "sha256": "1c0e5fdd9eca73dae0e11e60b89af9b7a473af55b36bc8594943be9e036fc5e0",
+      "local_snapshot": "sources\\concepts\\concept-clash-api.html"
+    }
+  },
+  {
+    "id": "protocol-wireguard",
+    "name": "WireGuard 协议",
+    "kind": "protocol",
+    "aliases": [],
+    "summary": "基于对等端与密钥配置的 VPN 隧道协议；协议、系统实现和图形客户端分别建模。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://sing-box.sagernet.org/configuration/endpoint/wireguard/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://sing-box.sagernet.org/configuration/endpoint/wireguard/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "本次读取所列项目实现方的配置文档并核对名称、角色及概要；不是全协议规范审计、跨客户端兼容测试或网络效果测试。在线文档含版本变化，未把未来/开发版本字段视为所有已发布版本支持。",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "relations"
+      ]
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "documented_implementation",
+        "target_name": "sing-box",
+        "evidence_url": "https://sing-box.sagernet.org/configuration/endpoint/wireguard/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "此为协议/传输/机制条目，不表示任一设备或客户端完整支持。"
+    },
+    "tags": [
+      "基础知识",
+      "protocol"
+    ],
+    "source_claims": {},
+    "source_evidence": {
+      "url": "https://sing-box.sagernet.org/configuration/endpoint/wireguard/",
+      "resolved_url": "https://sing-box.sagernet.org/configuration/endpoint/wireguard/",
+      "sha256": "5fbf2735223ee42a58cb1c76f9bd1b265846d579499c11cdfb3f3d339707b305",
+      "local_snapshot": "sources\\concepts\\protocol-wireguard.html"
+    }
+  }
+]

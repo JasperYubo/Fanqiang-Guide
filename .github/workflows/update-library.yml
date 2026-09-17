@@ -1,0 +1,80 @@
+name: 每日更新工具资料
+
+on:
+  schedule:
+    # 22:17 UTC = 次日北京时间 06:17，避开整点。
+    - cron: '17 22 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/update-library.yml'
+      - 'config/**'
+      - 'scripts/update_upstream.py'
+      - 'scripts/build_catalog.py'
+      - 'scripts/free_proxy_sources.py'
+      - 'scripts/build_free_proxy_pages.py'
+      - 'scripts/run_update_pipeline.py'
+      - 'tools/**'
+      - 'tests/**'
+  pull_request:
+    paths:
+      - '.github/workflows/update-library.yml'
+      - 'config/**'
+      - 'scripts/update_upstream.py'
+      - 'scripts/build_catalog.py'
+      - 'scripts/free_proxy_sources.py'
+      - 'scripts/build_free_proxy_pages.py'
+      - 'scripts/run_update_pipeline.py'
+      - 'tools/**'
+      - 'tests/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: knowledge-library-${{ github.event.pull_request.number || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: 校验更新逻辑
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 读取仓库
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: 准备 Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: 运行离线测试
+        run: python -m unittest discover -s tests -v
+      - name: 校验来源映射并生成目录
+        run: python scripts/build_catalog.py
+
+  update:
+    name: 检查上游并发布目录
+    needs: verify
+    if: github.repository == 'JasperYubo/Fanqiang-Guide' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    permissions:
+      contents: write
+    steps:
+      - name: 读取已校验的提交
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+      - name: 准备 Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: 分别更新两类资料并发布成功结果
+        if: ${{ success() && !cancelled() }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/run_update_pipeline.py

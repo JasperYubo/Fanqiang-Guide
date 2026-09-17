@@ -1,0 +1,348 @@
+[
+  {
+    "id": "bannedbook-fanqiang",
+    "name": "翻墙教程清单（bannedbook）",
+    "aliases": [],
+    "kind": "directory",
+    "summary": "按桌面、移动、Linux、路由器和游戏设备组织的教程与工具入口集合。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/bannedbook/fanqiang"
+    ],
+    "repository": "https://github.com/bannedbook/fanqiang",
+    "discovery_sources": [
+      "https://github.com/bannedbook/fanqiang"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已阅读 README 目录结构并确认包含 router/Merlin.md 梅林教程入口；记录两种 GitHub 搜索 API 排序快照。未把整合包、下载站或服务商推广视为原项目第一方来源。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "资料发现来源"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/bannedbook/fanqiang/HEAD/README.md",
+      "readme_bytes": 9594,
+      "readme_headings": [
+        "翻墙-科学上网、翻墙工具、翻墙教程项目库\r",
+        "[Windows V2ray/SS/SSR 翻墙教程](https://github.com/bannedbook/fanqiang/tree/master/windows)\r",
+        "[iPhone/iPad/iOS V2ray/SS 翻墙APP教程](https://github.com/bannedbook/fanqiang/tree/master/ios)\r",
+        "[Android 安卓翻墙APP教程](https://github.com/bannedbook/fanqiang/tree/master/android)\r",
+        "[Mac翻墙软件教程](https://github.com/bannedbook/fanqiang/tree/master/macos)\r",
+        "[路由器翻墙教程](https://github.com/bannedbook/fanqiang/tree/master/router)\r",
+        "[Linux翻墙教程](https://github.com/bannedbook/fanqiang/tree/master/linux)\r",
+        "[游戏机翻墙教程](https://github.com/bannedbook/fanqiang/tree/master/game)\r",
+        "ChromeGo - Chrome一键翻墙包 \r"
+      ],
+      "github_search_snapshots": [
+        {
+          "query": "翻墙",
+          "sort": "best-match",
+          "checked_at": "2026-09-11T07:46:13.862556+00:00",
+          "api_url": "https://api.github.com/search/repositories?q=%E7%BF%BB%E5%A2%99&per_page=15",
+          "ok": true,
+          "total_count": 1891,
+          "incomplete_results": false,
+          "results": [
+            {
+              "rank": 1,
+              "repository": "bannedbook/fanqiang",
+              "url": "https://github.com/bannedbook/fanqiang",
+              "stars": 53344
+            },
+            {
+              "rank": 2,
+              "repository": "sglfree/freesky",
+              "url": "https://github.com/sglfree/freesky",
+              "stars": 2292
+            },
+            {
+              "rank": 3,
+              "repository": "Alvin9999-newpac/fanqiang",
+              "url": "https://github.com/Alvin9999-newpac/fanqiang",
+              "stars": 2792
+            },
+            {
+              "rank": 4,
+              "repository": "freefq/free",
+              "url": "https://github.com/freefq/free",
+              "stars": 42116
+            },
+            {
+              "rank": 5,
+              "repository": "killgcd/chromego",
+              "url": "https://github.com/killgcd/chromego",
+              "stars": 2155
+            },
+            {
+              "rank": 6,
+              "repository": "justjavac/openai-proxy",
+              "url": "https://github.com/justjavac/openai-proxy",
+              "stars": 950
+            },
+            {
+              "rank": 7,
+              "repository": "osurf/szdy",
+              "url": "https://github.com/osurf/szdy",
+              "stars": 771
+            },
+            {
+              "rank": 8,
+              "repository": "Kejifaxian/welcome",
+              "url": "https://github.com/Kejifaxian/welcome",
+              "stars": 2060
+            },
+            {
+              "rank": 9,
+              "repository": "dowsnature/dowsDNS",
+              "url": "https://github.com/dowsnature/dowsDNS",
+              "stars": 1147
+            },
+            {
+              "rank": 10,
+              "repository": "yukaiji/buildVpn",
+              "url": "https://github.com/yukaiji/buildVpn",
+              "stars": 2576
+            },
+            {
+              "rank": 11,
+              "repository": "godstate/fq",
+              "url": "https://github.com/godstate/fq",
+              "stars": 51
+            },
+            {
+              "rank": 12,
+              "repository": "free-nodes/fanqiang",
+              "url": "https://github.com/free-nodes/fanqiang",
+              "stars": 385
+            },
+            {
+              "rank": 13,
+              "repository": "clown-coding/vpn",
+              "url": "https://github.com/clown-coding/vpn",
+              "stars": 5907
+            },
+            {
+              "rank": 14,
+              "repository": "ai4deep/Miles",
+              "url": "https://github.com/ai4deep/Miles",
+              "stars": 2015
+            },
+            {
+              "rank": 15,
+              "repository": "killgcd/justmysocks",
+              "url": "https://github.com/killgcd/justmysocks",
+              "stars": 523
+            }
+          ]
+        },
+        {
+          "query": "翻墙",
+          "sort": "stars",
+          "checked_at": "2026-09-11T07:46:14.443182+00:00",
+          "api_url": "https://api.github.com/search/repositories?q=%E7%BF%BB%E5%A2%99&per_page=15&sort=stars&order=desc",
+          "ok": true,
+          "total_count": 1891,
+          "incomplete_results": false,
+          "results": [
+            {
+              "rank": 1,
+              "repository": "bannedbook/fanqiang",
+              "url": "https://github.com/bannedbook/fanqiang",
+              "stars": 53344
+            },
+            {
+              "rank": 2,
+              "repository": "freefq/free",
+              "url": "https://github.com/freefq/free",
+              "stars": 42116
+            },
+            {
+              "rank": 3,
+              "repository": "Dujltqzv/Some-Many-Books",
+              "url": "https://github.com/Dujltqzv/Some-Many-Books",
+              "stars": 23411
+            },
+            {
+              "rank": 4,
+              "repository": "Pawdroid/Free-servers",
+              "url": "https://github.com/Pawdroid/Free-servers",
+              "stars": 19039
+            },
+            {
+              "rank": 5,
+              "repository": "getlantern/download",
+              "url": "https://github.com/getlantern/download",
+              "stars": 17800
+            },
+            {
+              "rank": 6,
+              "repository": "h2y/Shadowrocket-ADBlock-Rules",
+              "url": "https://github.com/h2y/Shadowrocket-ADBlock-Rules",
+              "stars": 16702
+            },
+            {
+              "rank": 7,
+              "repository": "free-nodes/clashfree",
+              "url": "https://github.com/free-nodes/clashfree",
+              "stars": 16555
+            },
+            {
+              "rank": 8,
+              "repository": "DiningFactory/panda-vpn-pro",
+              "url": "https://github.com/DiningFactory/panda-vpn-pro",
+              "stars": 14834
+            },
+            {
+              "rank": 9,
+              "repository": "ermaozi/get_subscribe",
+              "url": "https://github.com/ermaozi/get_subscribe",
+              "stars": 9275
+            },
+            {
+              "rank": 10,
+              "repository": "chengaopan/AutoMergePublicNodes",
+              "url": "https://github.com/chengaopan/AutoMergePublicNodes",
+              "stars": 8076
+            },
+            {
+              "rank": 11,
+              "repository": "githubvpn007/v2rayNvpn",
+              "url": "https://github.com/githubvpn007/v2rayNvpn",
+              "stars": 6892
+            },
+            {
+              "rank": 12,
+              "repository": "awesome-vpn/awesome-vpn",
+              "url": "https://github.com/awesome-vpn/awesome-vpn",
+              "stars": 6369
+            },
+            {
+              "rank": 13,
+              "repository": "houbb/sensitive-word",
+              "url": "https://github.com/houbb/sensitive-word",
+              "stars": 6044
+            },
+            {
+              "rank": 14,
+              "repository": "clown-coding/vpn",
+              "url": "https://github.com/clown-coding/vpn",
+              "stars": 5907
+            },
+            {
+              "rank": 15,
+              "repository": "free18/v2ray",
+              "url": "https://github.com/free18/v2ray",
+              "stars": 5405
+            }
+          ]
+        }
+      ],
+      "merlin_tutorial_url": "https://github.com/bannedbook/fanqiang/blob/master/router/Merlin.md"
+    }
+  },
+  {
+    "id": "alvin9999-fanqiang",
+    "name": "fanqiang 资料与工具整合（Alvin9999-newpac）",
+    "aliases": [],
+    "kind": "directory",
+    "summary": "以 Wiki 提供跨平台工具说明、自建教程及第三方浏览器整合包的资料入口。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/Alvin9999-newpac/fanqiang",
+      "https://github.com/Alvin9999-newpac/fanqiang/wiki"
+    ],
+    "repository": "https://github.com/Alvin9999-newpac/fanqiang",
+    "discovery_sources": [
+      "https://github.com/Alvin9999-newpac/fanqiang"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已阅读现有 README 和 Wiki 公开介绍；README 声明旧 Alvin9999 账号不可见。原 Alvin9999/new-pac README 本次返回 404。浏览器整合包属于第三方打包，不等同 Chromium、Firefox 或被整合核心的官方发行。未保存免费节点、共享账号或推广内容。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "资料发现来源"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/Alvin9999-newpac/fanqiang/HEAD/README.md",
+      "readme_bytes": 815,
+      "readme_headings": [
+        "翻墙/科学上网"
+      ],
+      "previous_repository": "https://github.com/Alvin9999/new-pac",
+      "previous_readme_status": "HTTP 404 observed"
+    }
+  },
+  {
+    "id": "awesome-anti-censorship",
+    "name": "Awesome anti-censorship",
+    "aliases": [],
+    "kind": "directory",
+    "summary": "按绕过审查、隐私匿名、网络隧道、去中心化和网络分析分类的项目清单。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "repository": "https://github.com/danoctavian/awesome-anti-censorship",
+    "discovery_sources": [
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已阅读公开 README 的用途说明和目录结构；清单收录不是推荐或安全背书。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "资料发现来源"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/danoctavian/awesome-anti-censorship/HEAD/README.md",
+      "readme_bytes": 14936,
+      "readme_headings": [
+        "Awesome anti-censorship",
+        "Categories",
+        "Censorship bypass tools",
+        "Privacy and anonymity",
+        "Network tunnels",
+        "Decentralized systems",
+        "Firewall analysis",
+        "Steganography",
+        "Misc ",
+        "Related awesome lists",
+        "Articles and research papers"
+      ]
+    }
+  }
+]

@@ -1,0 +1,4576 @@
+[
+  {
+    "id": "v2fly",
+    "name": "V2Fly V2Ray Core",
+    "aliases": [],
+    "kind": "core",
+    "summary": "Project V 的核心程序，为自建网络代理提供基础组件。",
+    "platforms": [],
+    "ecosystems": [
+      "V2Ray"
+    ],
+    "official_urls": [
+      "https://github.com/v2fly/v2ray-core"
+    ],
+    "repository": "https://github.com/v2fly/v2ray-core",
+    "discovery_sources": [
+      "https://github.com/v2fly/v2ray-core"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/v2fly/v2ray-core/HEAD/README.md",
+      "readme_sha256": "19091701c1804b2cd8fd5e798cb085fab492815bab429ece43dd9a84bbf3c9f3",
+      "readme_bytes": 2405,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "xray-core",
+    "name": "Xray-core",
+    "aliases": [],
+    "kind": "core",
+    "summary": "Project X 的网络代理核心，承载 Xray 生态的协议和路由实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/XTLS/Xray-core"
+    ],
+    "repository": "https://github.com/XTLS/Xray-core",
+    "discovery_sources": [
+      "https://github.com/XTLS/Xray-core"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/XTLS/Xray-core/HEAD/README.md",
+      "readme_sha256": "0d098928cf19c756a8c956c0b5ca736b75f9eaff0765fd71c26a3dcb413a3dde",
+      "readme_bytes": 12666,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "mihomo",
+    "name": "Mihomo",
+    "aliases": [],
+    "kind": "core",
+    "summary": "为规则代理客户端提供连接、规则路由与多协议支持的核心。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/MetaCubeX/mihomo",
+      "https://wiki.metacubex.one/"
+    ],
+    "repository": "https://github.com/MetaCubeX/mihomo",
+    "discovery_sources": [
+      "https://github.com/MetaCubeX/mihomo"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 用于概要核验的是仓库 Meta 分支 README；HEAD 返回同名无关内容，未以 HTTP200 自动判定通过。此处未验证默认分支或发行版本的源码一致性。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/MetaCubeX/mihomo/Meta/README.md",
+      "readme_sha256": "cdea6c96d33d0ae80e5f990461efdce0bf3de9a8de3f1fd0b116b024c8b59a7b",
+      "readme_bytes": 3194,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "sing-box-core",
+    "name": "sing-box",
+    "aliases": [],
+    "kind": "core",
+    "summary": "提供核心程序与官方文档的通用网络代理平台。",
+    "platforms": [],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://github.com/SagerNet/sing-box"
+    ],
+    "repository": "https://github.com/SagerNet/sing-box",
+    "discovery_sources": [
+      "https://github.com/SagerNet/sing-box"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/SagerNet/sing-box/HEAD/README.md",
+      "readme_sha256": "6f1cd1e2a47fdb431c0ea18c45b355056530b635112de106f58ed2db477b93ed",
+      "readme_bytes": 1032,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "shadowsocks-rust",
+    "name": "shadowsocks-rust",
+    "aliases": [],
+    "kind": "core",
+    "summary": "使用 Rust 实现的 Shadowsocks 客户端与服务器组件。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/shadowsocks/shadowsocks-rust"
+    ],
+    "repository": "https://github.com/shadowsocks/shadowsocks-rust",
+    "discovery_sources": [
+      "https://github.com/shadowsocks/shadowsocks-rust"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/shadowsocks/shadowsocks-rust/HEAD/README.md",
+      "readme_sha256": "7fcd08a783c7a107b9b9beb2880db4f265ae460da88c193342b5a93840dcc756",
+      "readme_bytes": 51382,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "shadowsocks-libev",
+    "name": "shadowsocks-c（原 shadowsocks-libev）",
+    "aliases": [
+      "shadowsocks-libev",
+      "shadowsocks-c"
+    ],
+    "kind": "core",
+    "summary": "采用 C 实现的轻量 Shadowsocks 代理，当前仓库文档使用 shadowsocks-c 名称。",
+    "platforms": [],
+    "ecosystems": [
+      "Shadowsocks"
+    ],
+    "official_urls": [
+      "https://github.com/shadowsocks/shadowsocks-libev"
+    ],
+    "repository": "https://github.com/shadowsocks/shadowsocks-libev",
+    "discovery_sources": [
+      "https://github.com/shadowsocks/shadowsocks-libev"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 实际读取 HEAD 与 master README 均说明更名为 shadowsocks-c，不能沿用旧介绍中对 libev 的固定依赖描述。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/shadowsocks/shadowsocks-libev/HEAD/README.md",
+      "readme_sha256": "9dd761b80e4a001ef9aa8ca6de8e61418825e90964b6035b7737869f5d2fb1a1",
+      "readme_bytes": 28997,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "trojan",
+    "name": "Trojan",
+    "aliases": [],
+    "kind": "core",
+    "summary": "通过 TLS 承载代理连接的 Trojan 协议实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/trojan-gfw/trojan"
+    ],
+    "repository": "https://github.com/trojan-gfw/trojan",
+    "discovery_sources": [
+      "https://github.com/trojan-gfw/trojan",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/trojan-gfw/trojan/HEAD/README.md",
+      "readme_sha256": "99f58f5fcaadfcb11b0bc1461f6f7694d0a91caa23808f876cac2cf75f4ae2f7",
+      "readme_bytes": 1224,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "trojan-go",
+    "name": "Trojan-Go",
+    "aliases": [],
+    "kind": "core",
+    "summary": "以 Go 实现 Trojan 并扩展传输和路由能力的代理工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/p4gefau1t/trojan-go"
+    ],
+    "repository": "https://github.com/p4gefau1t/trojan-go",
+    "discovery_sources": [
+      "https://github.com/p4gefau1t/trojan-go"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/p4gefau1t/trojan-go/HEAD/README.md",
+      "readme_sha256": "82712ee7226d60aedf44ece660fe8480f7e9c77a6d76fef74983143077fb9996",
+      "readme_bytes": 11259,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "hysteria",
+    "name": "Hysteria",
+    "aliases": [],
+    "kind": "core",
+    "summary": "使用 QUIC 构建的代理工具，提供客户端和服务端实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/apernet/hysteria"
+    ],
+    "repository": "https://github.com/apernet/hysteria",
+    "discovery_sources": [
+      "https://github.com/apernet/hysteria"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/apernet/hysteria/HEAD/README.md",
+      "readme_sha256": "ee78e56176f579ef01f9a5d24474b5070774cbe77d919816c0b7b99c746dd598",
+      "readme_bytes": 3091,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "protocol-tuic",
+    "name": "TUIC 协议",
+    "aliases": [],
+    "kind": "protocol",
+    "summary": "基于 QUIC 定义 TCP 与 UDP 代理行为的协议规范；该仓库不提供官方实现。",
+    "platforms": [],
+    "ecosystems": [
+      "TUIC"
+    ],
+    "official_urls": [
+      "https://github.com/EAimTY/tuic"
+    ],
+    "repository": "https://github.com/EAimTY/tuic",
+    "discovery_sources": [
+      "https://github.com/EAimTY/tuic"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 当前 README 明确说明此仓库无官方实现；不可把规范条目展示成可下载客户端。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "协议规范",
+      "QUIC"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/EAimTY/tuic/HEAD/README.md",
+      "readme_sha256": "a64298ddebe3a565d5cb8d16812ca52ea3280990bd618c549f6162538d777a77",
+      "readme_bytes": 3668,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "anytls",
+    "name": "AnyTLS",
+    "aliases": [],
+    "kind": "core",
+    "summary": "AnyTLS 代理协议的 Go 参考实现，用于演示会话复用、填充与交互流程。",
+    "platforms": [],
+    "ecosystems": [
+      "AnyTLS"
+    ],
+    "official_urls": [
+      "https://github.com/anytls/anytls-go"
+    ],
+    "repository": "https://github.com/anytls/anytls-go",
+    "discovery_sources": [
+      "https://github.com/anytls/anytls-go"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 上游明确定位为协议参考实现，示例程序和默认配置不能等同完整生产客户端。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "协议参考实现"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/anytls/anytls-go/HEAD/readme.md",
+      "readme_sha256": "e5842f6075a65699462d949dd933229517d44bc21dbb1bfe5da1ad7ddf574a07",
+      "readme_bytes": 1853,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "naiveproxy",
+    "name": "NaiveProxy",
+    "aliases": [],
+    "kind": "core",
+    "summary": "采用 Chromium 网络栈的代理客户端，并配套兼容的服务端工作方式。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/klzgrad/naiveproxy"
+    ],
+    "repository": "https://github.com/klzgrad/naiveproxy",
+    "discovery_sources": [
+      "https://github.com/klzgrad/naiveproxy",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/klzgrad/naiveproxy/HEAD/README.md",
+      "readme_sha256": "855044387ea59832044d8ec1683020f45e2656907b7f92ad3d92dcd7dbcc3afd",
+      "readme_bytes": 9197,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "mieru",
+    "name": "Mieru",
+    "aliases": [],
+    "kind": "core",
+    "summary": "提供客户端与服务器的代理工具，包含流量传输与配置管理能力。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/enfein/mieru"
+    ],
+    "repository": "https://github.com/enfein/mieru",
+    "discovery_sources": [
+      "https://github.com/enfein/mieru"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/enfein/mieru/HEAD/README.md",
+      "readme_sha256": "431826abb8d34f312f1d38c1f41053e4585bf8203fe540439093085d69aa810a",
+      "readme_bytes": 3375,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "juicity",
+    "name": "Juicity",
+    "aliases": [],
+    "kind": "core",
+    "summary": "基于 QUIC 的代理协议实现，提供客户端和服务端程序。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/juicity/juicity"
+    ],
+    "repository": "https://github.com/juicity/juicity",
+    "discovery_sources": [
+      "https://github.com/juicity/juicity"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/juicity/juicity/HEAD/README.md",
+      "readme_sha256": "5c5d5c052cf8f30bc99ce257d160a7a9b1b84c180091ee1e686785fc02128c3e",
+      "readme_bytes": 2563,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "cloak",
+    "name": "Cloak",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "为现有代理协议增加流量伪装传输的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/cbeuw/Cloak"
+    ],
+    "repository": "https://github.com/cbeuw/Cloak",
+    "discovery_sources": [
+      "https://github.com/cbeuw/Cloak"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/cbeuw/Cloak/HEAD/README.md",
+      "readme_sha256": "b584fbe609a9a7eac408cd006b0f44c1b278cecf3cc8a2162f61aab69f5f6b48",
+      "readme_bytes": 12881,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "shadow-tls",
+    "name": "ShadowTLS",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "为代理流量提供 TLS 握手伪装与传输包装的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/ihciah/shadow-tls"
+    ],
+    "repository": "https://github.com/ihciah/shadow-tls",
+    "discovery_sources": [
+      "https://github.com/ihciah/shadow-tls"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/ihciah/shadow-tls/HEAD/README.md",
+      "readme_sha256": "0fba3b3a770b67a193ec76f7e22f0fd7166450ecdd3f76177c7981bf3267dcf4",
+      "readme_bytes": 4016,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "obfs4",
+    "name": "obfs4",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "用于可插拔传输的流量混淆实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/Yawning/obfs4"
+    ],
+    "repository": "https://github.com/Yawning/obfs4",
+    "discovery_sources": [
+      "https://github.com/Yawning/obfs4",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/Yawning/obfs4/HEAD/README.md",
+      "readme_sha256": "eb71a482f36969fbecf155931225bfde50a5741fdd6ebd8401c1fcd44d2394fa",
+      "readme_bytes": 3497,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "gost",
+    "name": "GOST",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "支持多种代理协议、转发链与隧道模式的网络工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/go-gost/gost"
+    ],
+    "repository": "https://github.com/go-gost/gost",
+    "discovery_sources": [
+      "https://github.com/go-gost/gost"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/go-gost/gost/HEAD/README.md",
+      "readme_sha256": "b47ee12245062355a1293d16bf7faa1948e63c9f7aaeebd91cafcaa2f9390bfd",
+      "readme_bytes": 3310,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "kcptun",
+    "name": "kcptun",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "以 KCP 传输承载 TCP 连接的隧道工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [],
+    "repository": "https://github.com/xtaci/kcptun",
+    "discovery_sources": [
+      "https://github.com/xtaci/kcptun"
+    ],
+    "verification": {
+      "status": "reference_only",
+      "checked_at": "2026-09-11",
+      "notes": "候选项目：本次 xtaci/kcptun 的 README 与仓库 API 均返回404，未确认当前第一方入口；不推断项目已永久停用。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "候选入口待核验"
+    ],
+    "source_claims": {
+      "readme_url": null,
+      "readme_sha256": null,
+      "readme_bytes": null
+    }
+  },
+  {
+    "id": "udp2raw",
+    "name": "udp2raw",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "将 UDP 封装成其他包形态以穿越受限网络的隧道工具。",
+    "platforms": [
+      "Linux",
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/wangyu-/udp2raw"
+    ],
+    "repository": "https://github.com/wangyu-/udp2raw",
+    "discovery_sources": [
+      "https://github.com/wangyu-/udp2raw"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/wangyu-/udp2raw/HEAD/README.md",
+      "readme_sha256": "1be9bbc87d2bb8139b5b7424f3765dd9659e018576366c5f7b60acad1a01d1f9",
+      "readme_bytes": 13599,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "udpspeeder",
+    "name": "UDPspeeder",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "使用前向纠错等机制改善有丢包网络中的 UDP 传输。",
+    "platforms": [
+      "Linux",
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/wangyu-/UDPspeeder"
+    ],
+    "repository": "https://github.com/wangyu-/UDPspeeder",
+    "discovery_sources": [
+      "https://github.com/wangyu-/UDPspeeder"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/wangyu-/UDPspeeder/HEAD/README.md",
+      "readme_sha256": "4514da0fd212592cf614aed70e5f696110dc33652603660bceec01bfcbc6a3be",
+      "readme_bytes": 8281,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "phantun",
+    "name": "Phantun",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "把 UDP 数据封装为类似 TCP 流量的轻量传输工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/dndx/phantun"
+    ],
+    "repository": "https://github.com/dndx/phantun",
+    "discovery_sources": [
+      "https://github.com/dndx/phantun"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/dndx/phantun/HEAD/README.md",
+      "readme_sha256": "fbd1d8c2869583c587c664114b31a8f1f9d6fd186ca6d4c10a80cc73b25d3b3e",
+      "readme_bytes": 16320,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "wstunnel",
+    "name": "wstunnel",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "通过 WebSocket 或 HTTP 协议建立网络转发隧道。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/erebe/wstunnel"
+    ],
+    "repository": "https://github.com/erebe/wstunnel",
+    "discovery_sources": [
+      "https://github.com/erebe/wstunnel"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/erebe/wstunnel/HEAD/README.md",
+      "readme_sha256": "55e42d0d883a3a3f48273e009f10a4960f8e864e709481d8dc614edbf46f85d7",
+      "readme_bytes": 34844,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "xray-install",
+    "name": "Xray-install",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "用于在 Linux 上安装和管理 Xray 运行文件与服务的官方脚本。",
+    "platforms": [
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/XTLS/Xray-install"
+    ],
+    "repository": "https://github.com/XTLS/Xray-install",
+    "discovery_sources": [
+      "https://github.com/XTLS/Xray-install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/XTLS/Xray-install/HEAD/README.md",
+      "readme_sha256": "43dd0b8528448b00c63bfd3676ea7c414905be336d1a6909d97a1db4bfc757fc",
+      "readme_bytes": 2862,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "v2ray-fhs-install",
+    "name": "V2Ray FHS installer",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "按照 Linux FHS 目录规范安装 V2Ray 的项目脚本。",
+    "platforms": [
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/v2fly/fhs-install-v2ray"
+    ],
+    "repository": "https://github.com/v2fly/fhs-install-v2ray",
+    "discovery_sources": [
+      "https://github.com/v2fly/fhs-install-v2ray"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/HEAD/README.md",
+      "readme_sha256": "047b59df007c05c29f16ae1eb34bbbae4ee6f505fbb5e64eda5d84e9c58ba8f9",
+      "readme_bytes": 3263,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "ipsec-vpn-server",
+    "name": "IPsec VPN Server Auto Setup",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "自动配置 IPsec VPN 服务的服务器部署脚本。",
+    "platforms": [
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/hwdsl2/setup-ipsec-vpn"
+    ],
+    "repository": "https://github.com/hwdsl2/setup-ipsec-vpn",
+    "discovery_sources": [
+      "https://github.com/hwdsl2/setup-ipsec-vpn"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/hwdsl2/setup-ipsec-vpn/HEAD/README.md",
+      "readme_sha256": "1e835a6c0117a179b571040bfc9692f8d0964e0bb746fc69a6c8f3da6649cd8b",
+      "readme_bytes": 23785,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "openvpn-install",
+    "name": "OpenVPN installer",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "为 Linux 服务器部署 OpenVPN 并生成客户端配置的脚本。",
+    "platforms": [
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/angristan/openvpn-install"
+    ],
+    "repository": "https://github.com/angristan/openvpn-install",
+    "discovery_sources": [
+      "https://github.com/angristan/openvpn-install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/angristan/openvpn-install/HEAD/README.md",
+      "readme_sha256": "3b3f29d1b305ade1fab7220a5bdc5bff1270d8d89320737886b88da14345590d",
+      "readme_bytes": 32079,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "wireguard-install",
+    "name": "WireGuard installer",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "用于部署 WireGuard 服务端及管理客户端配置的脚本。",
+    "platforms": [
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/angristan/wireguard-install"
+    ],
+    "repository": "https://github.com/angristan/wireguard-install",
+    "discovery_sources": [
+      "https://github.com/angristan/wireguard-install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/angristan/wireguard-install/HEAD/README.md",
+      "readme_sha256": "c1706d1b2ada202e58c02ad7d3e50a58fd25ff1b76a754a7f579c45419cbfdd3",
+      "readme_bytes": 3128,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "algo",
+    "name": "Algo VPN",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "通过自动化配置在云主机或服务器部署个人 VPN。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/trailofbits/algo"
+    ],
+    "repository": "https://github.com/trailofbits/algo",
+    "discovery_sources": [
+      "https://github.com/trailofbits/algo",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/trailofbits/algo/HEAD/README.md",
+      "readme_sha256": "20be76a0465365e465a119ac4ed6cecba00f56793fc232ffc72424c14b6d4672",
+      "readme_bytes": 18553,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "outline-server",
+    "name": "Outline Server",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "Outline 服务端组件，用于部署和管理访问密钥对应的代理服务。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/OutlineFoundation/outline-server"
+    ],
+    "repository": "https://github.com/OutlineFoundation/outline-server",
+    "discovery_sources": [
+      "https://github.com/OutlineFoundation/outline-server"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Shadowsocks",
+        "evidence_url": "https://raw.githubusercontent.com/OutlineFoundation/outline-server/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/OutlineFoundation/outline-server/HEAD/README.md",
+      "readme_sha256": "9ef7691d4f6212a2aea2b61bdd0caf9b73441775c0a4e73ada97eb2213b5f899",
+      "readme_bytes": 2547,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "shadowsocks-install",
+    "name": "Shadowsocks installation scripts",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "围绕 Shadowsocks 多种实现提供的第三方安装脚本集合。",
+    "platforms": [
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/teddysun/shadowsocks_install"
+    ],
+    "repository": "https://github.com/teddysun/shadowsocks_install",
+    "discovery_sources": [
+      "https://github.com/teddysun/shadowsocks_install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/Readme.md",
+      "readme_sha256": "3c278f4c66a36421520110d46248af1cea541941d6661a9cccd751623619c1e3",
+      "readme_bytes": 1211,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "233boy-v2ray",
+    "name": "233boy V2Ray installer",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "提供 V2Ray 部署与配置管理的第三方脚本。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/233boy/v2ray"
+    ],
+    "repository": "https://github.com/233boy/v2ray",
+    "discovery_sources": [
+      "https://github.com/233boy/v2ray"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/233boy/v2ray/HEAD/README.md",
+      "readme_sha256": "20101ddccf750ebfa4a97d1de95f1d2200e329445a9dd8d786dbe39b112fa6b3",
+      "readme_bytes": 5185,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "233boy-sing-box",
+    "name": "233boy sing-box installer",
+    "aliases": [],
+    "kind": "deployment",
+    "summary": "面向 sing-box 服务部署和配置管理的第三方脚本。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/233boy/sing-box"
+    ],
+    "repository": "https://github.com/233boy/sing-box",
+    "discovery_sources": [
+      "https://github.com/233boy/sing-box"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务器部署"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/233boy/sing-box/HEAD/README.md",
+      "readme_sha256": "6bbc27882fb8e0e9ace0fabd4196bfdbdfd7c8868e8803b7a5418f22773b4f76",
+      "readme_bytes": 4890,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "3x-ui",
+    "name": "3X-UI",
+    "aliases": [],
+    "kind": "panel",
+    "summary": "通过网页管理 Xray 用户、入站和流量限制的服务器面板。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/MHSanaei/3x-ui"
+    ],
+    "repository": "https://github.com/MHSanaei/3x-ui",
+    "discovery_sources": [
+      "https://github.com/MHSanaei/3x-ui"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 当前 README 包含仅限个人使用/学习且不建议生产环境的用途声明；本记录不做生产成熟度背书。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Xray-core",
+        "evidence_url": "https://raw.githubusercontent.com/MHSanaei/3x-ui/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网页管理"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/MHSanaei/3x-ui/HEAD/README.md",
+      "readme_sha256": "e882aeb36640b54c71e99b1569c45c6b94df2eeda7ef5486b41e8be69053236c",
+      "readme_bytes": 12335,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "s-ui",
+    "name": "S-UI",
+    "aliases": [],
+    "kind": "panel",
+    "summary": "为 sing-box 服务提供用户和配置管理界面的面板。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/alireza0/s-ui"
+    ],
+    "repository": "https://github.com/alireza0/s-ui",
+    "discovery_sources": [
+      "https://github.com/alireza0/s-ui"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 当前 README 包含仅限个人使用/学习且不建议生产环境的用途声明；本记录不做生产成熟度背书。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://raw.githubusercontent.com/alireza0/s-ui/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网页管理"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/alireza0/s-ui/HEAD/README.md",
+      "readme_sha256": "d42fc49bb10a5374b9098ca41ac38a9b491274a1343a5a9f2bc297711310ab7f",
+      "readme_bytes": 9864,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "marzban",
+    "name": "Marzban",
+    "aliases": [],
+    "kind": "panel",
+    "summary": "为 Xray 代理服务提供用户、流量与订阅管理的控制面板。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/Gozargah/Marzban"
+    ],
+    "repository": "https://github.com/Gozargah/Marzban",
+    "discovery_sources": [
+      "https://github.com/Gozargah/Marzban"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Xray-core",
+        "evidence_url": "https://raw.githubusercontent.com/Gozargah/Marzban/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网页管理"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/Gozargah/Marzban/HEAD/README.md",
+      "readme_sha256": "66ef1b36193c9106cd49c5e3198f73c79f8c0d4ef374a8a3bc787b6dc9bc6616",
+      "readme_bytes": 22499,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "marzneshin",
+    "name": "Marzneshin",
+    "aliases": [],
+    "kind": "panel",
+    "summary": "面向多节点代理服务的用户和服务器管理平台。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/marzneshin/marzneshin"
+    ],
+    "repository": "https://github.com/marzneshin/marzneshin",
+    "discovery_sources": [
+      "https://github.com/marzneshin/marzneshin"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网页管理"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/marzneshin/marzneshin/HEAD/README.md",
+      "readme_sha256": "b83cc8678bbdf441b6adbe9f6340aeb0e958a6c0ebb2c65d1ae494ffeed6f8cf",
+      "readme_bytes": 4823,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "hiddify-manager",
+    "name": "Hiddify Manager",
+    "aliases": [],
+    "kind": "panel",
+    "summary": "管理自托管代理服务、用户和客户端订阅的服务器应用。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/hiddify/hiddify-manager"
+    ],
+    "repository": "https://github.com/hiddify/hiddify-manager",
+    "discovery_sources": [
+      "https://github.com/hiddify/hiddify-manager"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网页管理"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/hiddify/hiddify-manager/HEAD/README.md",
+      "readme_sha256": "99f595dc7918317a50b3ead62b6139c184ad1d17bb9528cf125fd9b5b8be364c",
+      "readme_bytes": 16782,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "wg-easy",
+    "name": "WG Easy",
+    "aliases": [],
+    "kind": "panel",
+    "summary": "为 WireGuard 提供浏览器管理界面与容器部署方式。",
+    "platforms": [
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/wg-easy/wg-easy"
+    ],
+    "repository": "https://github.com/wg-easy/wg-easy",
+    "discovery_sources": [
+      "https://github.com/wg-easy/wg-easy"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "related_to",
+        "target_name": "WireGuard",
+        "evidence_url": "https://raw.githubusercontent.com/wg-easy/wg-easy/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网页管理"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/wg-easy/wg-easy/HEAD/README.md",
+      "readme_sha256": "21bef06bfd4e0f85563a07fdda89abc1ded74ecd2c76fe6a47f1c00f8c9df99a",
+      "readme_bytes": 4662,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "firezone",
+    "name": "Firezone",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "围绕 WireGuard 构建的远程网络访问平台。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/firezone/firezone"
+    ],
+    "repository": "https://github.com/firezone/firezone",
+    "discovery_sources": [
+      "https://github.com/firezone/firezone"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 README 说明生产自托管不获官方支持，已发布客户端仅保证与托管服务兼容；不能将代码可见等同开箱即用的自托管商业全套。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/firezone/firezone/main/docs/README.md",
+      "readme_sha256": "f7313431d007382aed728b4b21028dc383e231f53fe1b656d71fdb87b4adbd41",
+      "readme_bytes": 9038,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "headscale-ui",
+    "name": "Headscale UI",
+    "aliases": [],
+    "kind": "panel",
+    "summary": "为 Headscale 控制服务器提供第三方网页管理界面。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/gurucomputing/headscale-ui"
+    ],
+    "repository": "https://github.com/gurucomputing/headscale-ui",
+    "discovery_sources": [
+      "https://github.com/gurucomputing/headscale-ui"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "related_to",
+        "target_name": "Headscale",
+        "evidence_url": "https://raw.githubusercontent.com/gurucomputing/headscale-ui/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网页管理"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/gurucomputing/headscale-ui/HEAD/README.md",
+      "readme_sha256": "c2160b2096cbd298cdbba6867630bd427a25607cc8819e45db521f1202d5c252",
+      "readme_bytes": 5232,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "sub-store",
+    "name": "Sub-Store",
+    "aliases": [],
+    "kind": "subscription",
+    "summary": "用于整理、组合和转换用户代理订阅的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/sub-store-org/Sub-Store"
+    ],
+    "repository": "https://github.com/sub-store-org/Sub-Store",
+    "discovery_sources": [
+      "https://github.com/sub-store-org/Sub-Store"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 README 当前给出 sub.store 域名不归项目所有的说明；只记录项目，不把该域名当官方在线订阅处理服务。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "订阅管理工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/sub-store-org/Sub-Store/HEAD/README.md",
+      "readme_sha256": "510628c95ee68c990d850f5f0d2e1d3244af5d1e60eb3ce46bf52f033fdf19d9",
+      "readme_bytes": 8611,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "subconverter",
+    "name": "subconverter",
+    "aliases": [],
+    "kind": "subscription",
+    "summary": "在多种代理客户端配置格式之间转换订阅内容的程序。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/tindy2013/subconverter"
+    ],
+    "repository": "https://github.com/tindy2013/subconverter",
+    "discovery_sources": [
+      "https://github.com/tindy2013/subconverter"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "订阅管理工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/tindy2013/subconverter/HEAD/README.md",
+      "readme_sha256": "f18022e6ed7720b30960686a04084b0825316023f3ba53a9519ab8c3475a327e",
+      "readme_bytes": 5024,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "sub-web",
+    "name": "sub-web",
+    "aliases": [],
+    "kind": "subscription",
+    "summary": "为订阅转换后端提供参数编辑和链接生成的网页前端。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/CareyWang/sub-web"
+    ],
+    "repository": "https://github.com/CareyWang/sub-web",
+    "discovery_sources": [
+      "https://github.com/CareyWang/sub-web"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "related_to",
+        "target_name": "subconverter",
+        "evidence_url": "https://raw.githubusercontent.com/CareyWang/sub-web/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "订阅管理工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/CareyWang/sub-web/HEAD/README.md",
+      "readme_sha256": "369e48a3089a406e35f0aaeceb1528a348e9c5de87487e8d23028b9b9bd37ccf",
+      "readme_bytes": 5279,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "acl4ssr",
+    "name": "ACL4SSR",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "面向代理客户端的域名分流与广告过滤规则集合。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/ACL4SSR/ACL4SSR"
+    ],
+    "repository": "https://github.com/ACL4SSR/ACL4SSR",
+    "discovery_sources": [
+      "https://github.com/ACL4SSR/ACL4SSR"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/ACL4SSR/ACL4SSR/HEAD/README.md",
+      "readme_sha256": "67026f98f57b2f7d332dcfb3cf0fa7bb018f01db6b05ea468411a2a7bec70b7a",
+      "readme_bytes": 9163,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "loyalsoldier-rules",
+    "name": "Loyalsoldier Clash Rules",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "把多种域名和地址数据整理为 Clash 可使用的规则集。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/Loyalsoldier/clash-rules"
+    ],
+    "repository": "https://github.com/Loyalsoldier/clash-rules",
+    "discovery_sources": [
+      "https://github.com/Loyalsoldier/clash-rules"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/HEAD/README.md",
+      "readme_sha256": "f3ac534ffc0c56bdce43b8e9d06dacf774be15c02dfc82dedeb2d9f020b23c48",
+      "readme_bytes": 15074,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "meta-rules-dat",
+    "name": "Meta Rules Dat",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "面向代理核心发布 GeoIP、GeoSite 与 MMDB 等规则数据的项目。",
+    "platforms": [],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/MetaCubeX/meta-rules-dat"
+    ],
+    "repository": "https://github.com/MetaCubeX/meta-rules-dat",
+    "discovery_sources": [
+      "https://github.com/MetaCubeX/meta-rules-dat"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/HEAD/README.md",
+      "readme_sha256": "f8331ea1270bab8df1be58c6bd36064eacb80b4c98d1a243266617d5b544dd4a",
+      "readme_bytes": 11360,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "v2fly-domain-list",
+    "name": "V2Fly Domain List Community",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "由社区维护的域名分类数据，供代理路由规则使用。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/v2fly/domain-list-community"
+    ],
+    "repository": "https://github.com/v2fly/domain-list-community",
+    "discovery_sources": [
+      "https://github.com/v2fly/domain-list-community"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/v2fly/domain-list-community/HEAD/README.md",
+      "readme_sha256": "fa5828bb946f23742bff971ed44057f9556eb0437fd38277e19314ff7d155197",
+      "readme_bytes": 8421,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "v2fly-geoip",
+    "name": "V2Fly GeoIP",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "生成和分发路由所需 IP 分类数据的项目。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/v2fly/geoip"
+    ],
+    "repository": "https://github.com/v2fly/geoip",
+    "discovery_sources": [
+      "https://github.com/v2fly/geoip"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/v2fly/geoip/HEAD/README.md",
+      "readme_sha256": "d0799db0e364386291dcaa6a79f1eeb90895a70cd30f37a4cb5cd5864cb16c52",
+      "readme_bytes": 7636,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "gfwlist",
+    "name": "GFWList",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "供规则代理工具参考的域名列表。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/gfwlist/gfwlist"
+    ],
+    "repository": "https://github.com/gfwlist/gfwlist",
+    "discovery_sources": [
+      "https://github.com/gfwlist/gfwlist",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/gfwlist/gfwlist/HEAD/README.md",
+      "readme_sha256": "90d168f1fe438a4cc8e95957e464aae09897f0bf4c48ba0716d341a9ea205a69",
+      "readme_bytes": 3461,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "chnroutes",
+    "name": "chnroutes",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "收集中国大陆 IP 路由段并生成分流规则的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/fivesheep/chnroutes"
+    ],
+    "repository": "https://github.com/fivesheep/chnroutes",
+    "discovery_sources": [
+      "https://github.com/fivesheep/chnroutes",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/fivesheep/chnroutes/HEAD/README.md",
+      "readme_sha256": "a2d3d3dd37bba7a0a6b8a41f6e91ac5a0d1cb2eae0f763485926912daddcdf1e",
+      "readme_bytes": 6881,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "shadowrocket-adblock",
+    "name": "Shadowrocket AD Rules",
+    "aliases": [],
+    "kind": "rules",
+    "summary": "面向 Shadowrocket 的广告过滤与分流配置资料。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/h2y/Shadowrocket-ADBlock-Rules"
+    ],
+    "repository": "https://github.com/h2y/Shadowrocket-ADBlock-Rules",
+    "discovery_sources": [
+      "https://github.com/h2y/Shadowrocket-ADBlock-Rules"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 按停止更新的历史规则资料收录，不作为当前规则推荐。"
+    },
+    "maintenance": {
+      "status": "archived",
+      "evidence_url": "https://api.github.com/repos/h2y/Shadowrocket-ADBlock-Rules"
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "分流数据"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/h2y/Shadowrocket-ADBlock-Rules/HEAD/readme.md",
+      "readme_sha256": "01f7e060e101f3a0a70d01886ef8ce466083497f3ba5187688d98da53fe36661",
+      "readme_bytes": 10810,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计",
+      "maintenance_notice": "README 明确停止更新；GitHub API archived=true。"
+    }
+  },
+  {
+    "id": "mosdns",
+    "name": "mosdns",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "提供自托管 DNS 转发程序，并以官方 Wiki 维护配置文档的项目。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/IrineSistiana/mosdns",
+      "https://irine-sistiana.gitbook.io/mosdns-wiki"
+    ],
+    "repository": "https://github.com/IrineSistiana/mosdns",
+    "discovery_sources": [
+      "https://github.com/IrineSistiana/mosdns"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 README 链接的实际 Wiki 已迁到 GitBook；本轮仅核对产品定位，没有逐项核验插件能力。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/IrineSistiana/mosdns/HEAD/README.md",
+      "readme_sha256": "7a29a475c50864708b8314b6d6b71b4174dd770d6b7ce961bc100ae741145eb4",
+      "readme_bytes": 299,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "dnscrypt-proxy",
+    "name": "dnscrypt-proxy",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "支持加密 DNS 上游、缓存与过滤能力的本地 DNS 代理。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/DNSCrypt/dnscrypt-proxy"
+    ],
+    "repository": "https://github.com/DNSCrypt/dnscrypt-proxy",
+    "discovery_sources": [
+      "https://github.com/DNSCrypt/dnscrypt-proxy"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/DNSCrypt/dnscrypt-proxy/HEAD/README.md",
+      "readme_sha256": "8a8d525de5374b2d8cdfcd2df1f26ce764e6bc8cb6e3302f2c0e48d45a9bd562",
+      "readme_bytes": 5952,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "adguard-home",
+    "name": "AdGuard Home",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "通过自托管 DNS 服务提供网络范围的过滤与查询管理。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/AdguardTeam/AdGuardHome"
+    ],
+    "repository": "https://github.com/AdguardTeam/AdGuardHome",
+    "discovery_sources": [
+      "https://github.com/AdguardTeam/AdGuardHome"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/AdguardTeam/AdGuardHome/HEAD/README.md",
+      "readme_sha256": "380a60a15069611a45a97f770c1441de8db71446cdb85f17bdd8c56df3dcb10a",
+      "readme_bytes": 22751,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "technitium-dns",
+    "name": "Technitium DNS Server",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "提供网页管理、递归解析和 DNS 服务配置的服务器软件。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/TechnitiumSoftware/DnsServer"
+    ],
+    "repository": "https://github.com/TechnitiumSoftware/DnsServer",
+    "discovery_sources": [
+      "https://github.com/TechnitiumSoftware/DnsServer"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/TechnitiumSoftware/DnsServer/HEAD/README.md",
+      "readme_sha256": "4bcdeab2ef5cfd1533a0d27cb36b1b7f113169694a3021603971ff0242127d2c",
+      "readme_bytes": 17527,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "unbound",
+    "name": "Unbound",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "支持验证与缓存的递归 DNS 解析器。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/NLnetLabs/unbound"
+    ],
+    "repository": "https://github.com/NLnetLabs/unbound",
+    "discovery_sources": [
+      "https://github.com/NLnetLabs/unbound"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/NLnetLabs/unbound/HEAD/README.md",
+      "readme_sha256": "0f4fa968e7cc13171457b3e024ec2c069a3f2131ab9030aac50fbc143c429c7b",
+      "readme_bytes": 2295,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "dnsproxy",
+    "name": "DNSProxy",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "支持多种加密 DNS 协议与上游策略的 DNS 代理库和工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/AdguardTeam/dnsproxy"
+    ],
+    "repository": "https://github.com/AdguardTeam/dnsproxy",
+    "discovery_sources": [
+      "https://github.com/AdguardTeam/dnsproxy"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/AdguardTeam/dnsproxy/HEAD/README.md",
+      "readme_sha256": "12c10f42377d78f4ec809888c96568fff82045d858564c9b8c521342540d40fb",
+      "readme_bytes": 19580,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "chinadns-ng",
+    "name": "ChinaDNS-NG",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "通过国内外上游配合处理 DNS 查询的解析转发工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/zfl9/chinadns-ng"
+    ],
+    "repository": "https://github.com/zfl9/chinadns-ng",
+    "discovery_sources": [
+      "https://github.com/zfl9/chinadns-ng"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/zfl9/chinadns-ng/HEAD/README.md",
+      "readme_sha256": "90d569a20c2d5182f2539e1e244bba95ac87eb47fd14e7200a75972de1629c8f",
+      "readme_bytes": 46596,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "smartdns",
+    "name": "SmartDNS",
+    "aliases": [],
+    "kind": "dns",
+    "summary": "能够聚合多个上游结果并选择响应地址的本地 DNS 服务。",
+    "platforms": [
+      "Linux",
+      "Windows"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/pymumu/smartdns"
+    ],
+    "repository": "https://github.com/pymumu/smartdns",
+    "discovery_sources": [
+      "https://github.com/pymumu/smartdns"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "DNS工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/pymumu/smartdns/master/ReadMe.md",
+      "readme_sha256": "88c6e685d8a3abe6dc8debfbac3d99fa6c7bf076b221d12051887b9ff368fb40",
+      "readme_bytes": 5945,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "openvpn",
+    "name": "OpenVPN",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "提供客户端和服务端的通用加密 VPN 实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/OpenVPN/openvpn"
+    ],
+    "repository": "https://github.com/OpenVPN/openvpn",
+    "discovery_sources": [
+      "https://github.com/OpenVPN/openvpn"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/OpenVPN/openvpn/HEAD/README",
+      "readme_sha256": "9e77f4059d99efade4c1aae0201c5af7727e844a98cf2d210724955ac42a99a3",
+      "readme_bytes": 2202,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "wireguard-tools",
+    "name": "WireGuard tools",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "用于配置和管理 WireGuard 接口的命令行工具。",
+    "platforms": [
+      "Linux",
+      "OpenBSD",
+      "FreeBSD",
+      "macOS",
+      "Windows",
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/WireGuard/wireguard-tools"
+    ],
+    "repository": "https://github.com/WireGuard/wireguard-tools",
+    "discovery_sources": [
+      "https://github.com/WireGuard/wireguard-tools"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/WireGuard/wireguard-tools/HEAD/README.md",
+      "readme_sha256": "73ad6c2eb8fae4980650dfdd97ebfd3af146a3894f7948fa3d8859ec77d65c9c",
+      "readme_bytes": 3422,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "softether-vpn",
+    "name": "SoftEther VPN",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "支持多种 VPN 协议与跨平台连接的软件。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/SoftEtherVPN/SoftEtherVPN",
+      "https://github.com/SoftEtherVPN/SoftEtherVPN_Stable"
+    ],
+    "repository": "https://github.com/SoftEtherVPN/SoftEtherVPN",
+    "discovery_sources": [
+      "https://github.com/SoftEtherVPN/SoftEtherVPN"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 所链接仓库为 Developer Edition，README 另列 Stable Edition；平台相同也不能把开发版与稳定版混用。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/SoftEtherVPN/SoftEtherVPN/HEAD/README.md",
+      "readme_sha256": "68bce2d581d3af9badea659bfef9b9369e04b8478f38694eb8d689e3426f52b1",
+      "readme_bytes": 13236,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "strongswan",
+    "name": "strongSwan",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "用于建立 IPsec VPN 的客户端与服务端实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/strongswan/strongswan"
+    ],
+    "repository": "https://github.com/strongswan/strongswan",
+    "discovery_sources": [
+      "https://github.com/strongswan/strongswan"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/strongswan/strongswan/HEAD/README.md",
+      "readme_sha256": "db17c5534b5ec262982e9f0e8a0c4f91d1125b8199708c0a377f15c3e5ecc646",
+      "readme_bytes": 21598,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "ocserv",
+    "name": "OpenConnect VPN server",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "提供兼容 OpenConnect 客户端的 TLS VPN 服务端。",
+    "platforms": [
+      "Linux",
+      "FreeBSD",
+      "OpenBSD"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/openconnect/ocserv"
+    ],
+    "repository": "https://github.com/openconnect/ocserv",
+    "discovery_sources": [
+      "https://github.com/openconnect/ocserv"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/openconnect/ocserv/HEAD/README.md",
+      "readme_sha256": "a83659a51b7acb2623de1beceaeeedec5eaf38f4db5671e246d39ed5938dee8f",
+      "readme_bytes": 4888,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "openconnect",
+    "name": "OpenConnect",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "兼容多种企业 SSL VPN 协议的客户端。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/openconnect/openconnect"
+    ],
+    "repository": "https://github.com/openconnect/openconnect",
+    "discovery_sources": [
+      "https://github.com/openconnect/openconnect"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/openconnect/openconnect/HEAD/README.md",
+      "readme_sha256": "5bef7b3497d3120bcf948a8d06504dc983d0136dfef4e907235d914b49485963",
+      "readme_bytes": 1697,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "amnezia-client",
+    "name": "Amnezia VPN",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "支持自托管 VPN 服务管理和连接的跨平台应用。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux",
+      "Android",
+      "iOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/amnezia-vpn/amnezia-client"
+    ],
+    "repository": "https://github.com/amnezia-vpn/amnezia-client",
+    "discovery_sources": [
+      "https://github.com/amnezia-vpn/amnezia-client"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/amnezia-vpn/amnezia-client/HEAD/README.md",
+      "readme_sha256": "2962d7a8c6b6251c2b19f59fb83b97b796be218ad050f88bd53d40a36ab3261c",
+      "readme_bytes": 9902,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "tailscale",
+    "name": "Tailscale",
+    "aliases": [],
+    "kind": "mesh",
+    "summary": "利用 WireGuard 构建设备间加密网络的客户端与开源组件。",
+    "platforms": [
+      "Linux",
+      "Windows",
+      "macOS",
+      "FreeBSD",
+      "OpenBSD"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/tailscale/tailscale"
+    ],
+    "repository": "https://github.com/tailscale/tailscale",
+    "discovery_sources": [
+      "https://github.com/tailscale/tailscale"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 此仓库含 daemon 与 CLI，但不包含移动端 GUI；README 还明确指出部分专有平台 GUI 不开源。不能把此仓库等同全部服务端与客户端源码。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "WireGuard",
+        "evidence_url": "https://raw.githubusercontent.com/tailscale/tailscale/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "设备组网"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/tailscale/tailscale/HEAD/README.md",
+      "readme_sha256": "962187747e61973ef5743bfe64831ebf730ab6f79f5b2a9ee5ac1c00a1642a6d",
+      "readme_bytes": 2977,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "headscale",
+    "name": "Headscale",
+    "aliases": [],
+    "kind": "mesh",
+    "summary": "与 Tailscale 客户端配合使用的自托管控制服务器实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/juanfont/headscale"
+    ],
+    "repository": "https://github.com/juanfont/headscale",
+    "discovery_sources": [
+      "https://github.com/juanfont/headscale"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "related_to",
+        "target_name": "Tailscale",
+        "evidence_url": "https://raw.githubusercontent.com/juanfont/headscale/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "设备组网"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/juanfont/headscale/HEAD/README.md",
+      "readme_sha256": "1f8b0b523e685dede505cabc08eeb42b6278e3fd4440e284cc698ef3fc54e299",
+      "readme_bytes": 6520,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "zerotier",
+    "name": "ZeroTier One",
+    "aliases": [],
+    "kind": "mesh",
+    "summary": "为设备建立跨网络虚拟以太网连接的组网软件。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/zerotier/ZeroTierOne"
+    ],
+    "repository": "https://github.com/zerotier/ZeroTierOne",
+    "discovery_sources": [
+      "https://github.com/zerotier/ZeroTierOne"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "设备组网"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/zerotier/ZeroTierOne/HEAD/README.md",
+      "readme_sha256": "311de1a96f88fffaf05ad5b10b89add90b917cf8354d21e13b3a606a5782d608",
+      "readme_bytes": 1931,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "netbird",
+    "name": "NetBird",
+    "aliases": [],
+    "kind": "mesh",
+    "summary": "基于 WireGuard 并提供集中管理的设备组网平台。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/netbirdio/netbird"
+    ],
+    "repository": "https://github.com/netbirdio/netbird",
+    "discovery_sources": [
+      "https://github.com/netbirdio/netbird"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "设备组网"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/netbirdio/netbird/HEAD/README.md",
+      "readme_sha256": "6f87fec43f1ee87925808df79669e0b42453fcf6eef93a8b68d3e04c42cf958b",
+      "readme_bytes": 10924,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "nebula",
+    "name": "Nebula",
+    "aliases": [],
+    "kind": "mesh",
+    "summary": "利用证书和加密隧道连接分布式主机的覆盖网络工具。",
+    "platforms": [
+      "Linux",
+      "Windows",
+      "macOS",
+      "FreeBSD",
+      "Android",
+      "iOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/slackhq/nebula"
+    ],
+    "repository": "https://github.com/slackhq/nebula",
+    "discovery_sources": [
+      "https://github.com/slackhq/nebula"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "设备组网"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/slackhq/nebula/HEAD/README.md",
+      "readme_sha256": "6ca3bbe7f1e0b228fe9df844f25e43ae52277c38c15df51110c8b356137e5b85",
+      "readme_bytes": 8766,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "easytier",
+    "name": "EasyTier",
+    "aliases": [],
+    "kind": "mesh",
+    "summary": "提供点对点连接与分布式路由的自组网工具。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux",
+      "FreeBSD",
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/EasyTier/EasyTier"
+    ],
+    "repository": "https://github.com/EasyTier/EasyTier",
+    "discovery_sources": [
+      "https://github.com/EasyTier/EasyTier"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "设备组网"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/EasyTier/EasyTier/HEAD/README.md",
+      "readme_sha256": "a72bc0b74e59f54955701cf1e518fa46bd930e9bef207514e48a41fca80bc4e2",
+      "readme_bytes": 12184,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "netmaker",
+    "name": "Netmaker",
+    "aliases": [],
+    "kind": "mesh",
+    "summary": "面向 WireGuard 网络部署和节点管理的组网平台。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/gravitl/netmaker"
+    ],
+    "repository": "https://github.com/gravitl/netmaker",
+    "discovery_sources": [
+      "https://github.com/gravitl/netmaker"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "设备组网"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/gravitl/netmaker/HEAD/README.md",
+      "readme_sha256": "53996b28544784a25e3488a9c5e364b6760deaba9b08437679acdb389bed7e5f",
+      "readme_bytes": 6423,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "foxyproxy",
+    "name": "FoxyProxy",
+    "aliases": [],
+    "kind": "browser_extension",
+    "summary": "通过浏览器界面管理代理配置与网站匹配规则的扩展。",
+    "platforms": [
+      "Chrome",
+      "Firefox",
+      "Edge"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/foxyproxy/browser-extension"
+    ],
+    "repository": "https://github.com/foxyproxy/browser-extension",
+    "discovery_sources": [
+      "https://github.com/foxyproxy/browser-extension"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "浏览器代理扩展"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/foxyproxy/browser-extension/HEAD/README.md",
+      "readme_sha256": "ba79f73312a50dda7caf5f825ca24ee7739dae7b74d3f675802c92e079138ec3",
+      "readme_bytes": 10573,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "zeroomega",
+    "name": "ZeroOmega",
+    "aliases": [],
+    "kind": "browser_extension",
+    "summary": "延续 SwitchyOmega 使用方式的浏览器代理配置扩展。",
+    "platforms": [
+      "Chrome",
+      "Firefox",
+      "Edge"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/zero-peak/ZeroOmega"
+    ],
+    "repository": "https://github.com/zero-peak/ZeroOmega",
+    "discovery_sources": [
+      "https://github.com/zero-peak/ZeroOmega"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "fork_of",
+        "target_name": "SwitchyOmega",
+        "evidence_url": "https://raw.githubusercontent.com/zero-peak/ZeroOmega/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "浏览器代理扩展"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/zero-peak/ZeroOmega/HEAD/README.md",
+      "readme_sha256": "6ea5fc984894434fb9014bdfeb4acc7aa2cb3e504d9a5d5ec451fc835d3eb31c",
+      "readme_bytes": 7124,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "switchyomega",
+    "name": "SwitchyOmega",
+    "aliases": [],
+    "kind": "browser_extension",
+    "summary": "为浏览器提供多个代理配置与自动切换规则的扩展项目。",
+    "platforms": [
+      "Chrome",
+      "Firefox"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/FelisCatus/SwitchyOmega"
+    ],
+    "repository": "https://github.com/FelisCatus/SwitchyOmega",
+    "discovery_sources": [
+      "https://github.com/FelisCatus/SwitchyOmega"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 本次 GitHub API archived=false；未据此推断继续维护或兼容当前所有浏览器，README 的 Firefox 说明包含历史版本约束。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "浏览器代理扩展"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/FelisCatus/SwitchyOmega/HEAD/README.md",
+      "readme_sha256": "607ba4b8d4e779fbd1a2f1730fd019de61d9bdfc25f8436729c03db1998a2b1b",
+      "readme_bytes": 7520,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "nexttrace",
+    "name": "NextTrace",
+    "aliases": [],
+    "kind": "diagnostic",
+    "summary": "展示路由路径及网络归属信息的跨平台追踪工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/nxtrace/NTrace-core"
+    ],
+    "repository": "https://github.com/nxtrace/NTrace-core",
+    "discovery_sources": [
+      "https://github.com/nxtrace/NTrace-core"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络诊断"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/nxtrace/NTrace-core/HEAD/README.md",
+      "readme_sha256": "2b23208581b336f41efe15d6b38b7138cf66178cff537f8fd1b1545cde7ce1b4",
+      "readme_bytes": 76826,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "mtr",
+    "name": "MTR",
+    "aliases": [],
+    "kind": "diagnostic",
+    "summary": "结合连续探测和路由追踪来检查链路质量的命令行工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/traviscross/mtr"
+    ],
+    "repository": "https://github.com/traviscross/mtr",
+    "discovery_sources": [
+      "https://github.com/traviscross/mtr"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络诊断"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/traviscross/mtr/HEAD/README.md",
+      "readme_sha256": "16a6ddb5c7c0c209679049fcf8e0f14c65c1b26e27bd3628fa33c7961c4500de",
+      "readme_bytes": 4402,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "iperf3",
+    "name": "iperf3",
+    "aliases": [],
+    "kind": "diagnostic",
+    "summary": "通过主动测试评估网络吞吐等性能指标的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/esnet/iperf"
+    ],
+    "repository": "https://github.com/esnet/iperf",
+    "discovery_sources": [
+      "https://github.com/esnet/iperf"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络诊断"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/esnet/iperf/HEAD/README.md",
+      "readme_sha256": "25b1a16bb218826adc564624141e78b3111823be20afb238bab387f009ae37fa",
+      "readme_bytes": 6269,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "curl",
+    "name": "curl",
+    "aliases": [],
+    "kind": "diagnostic",
+    "summary": "通过多种网络协议传输数据并检查 HTTP 连接的命令行工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/curl/curl"
+    ],
+    "repository": "https://github.com/curl/curl",
+    "discovery_sources": [
+      "https://github.com/curl/curl"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络诊断"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/curl/curl/HEAD/README.md",
+      "readme_sha256": "11d1ca2946f112e83bf72cc611ca01598daa003539988c064256772b23f33cc2",
+      "readme_bytes": 2079,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "gping",
+    "name": "gping",
+    "aliases": [],
+    "kind": "diagnostic",
+    "summary": "以终端图表展示持续 ping 延迟变化的工具。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/orf/gping"
+    ],
+    "repository": "https://github.com/orf/gping",
+    "discovery_sources": [
+      "https://github.com/orf/gping"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络诊断"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/orf/gping/HEAD/readme.md",
+      "readme_sha256": "534892ce0fa24d7587ef552e6e0b53d02f6f34d5dda193148c482ef7da3fa165",
+      "readme_bytes": 4851,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "globalping-cli",
+    "name": "Globalping CLI",
+    "aliases": [],
+    "kind": "diagnostic",
+    "summary": "调用 Globalping 分布式探测网络执行网络诊断的命令行客户端。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/jsdelivr/globalping-cli"
+    ],
+    "repository": "https://github.com/jsdelivr/globalping-cli",
+    "discovery_sources": [
+      "https://github.com/jsdelivr/globalping-cli"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络诊断"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/jsdelivr/globalping-cli/HEAD/README.md",
+      "readme_sha256": "366d87631293f962e8af759602876b1e702a9b177da5aa5738b609aa1718c2c9",
+      "readme_bytes": 17306,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "ooni-probe",
+    "name": "OONI Probe",
+    "aliases": [],
+    "kind": "diagnostic",
+    "summary": "通过网络测量测试观察网站和网络服务访问情况的探测工具。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/ooni/probe-cli"
+    ],
+    "repository": "https://github.com/ooni/probe-cli",
+    "discovery_sources": [
+      "https://github.com/ooni/probe-cli"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络诊断"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/ooni/probe-cli/master/Readme.md",
+      "readme_sha256": "ef1f3ec8d1ac93bb59c893158a8d2ce8feea6fa8cc005062b4280b3aedaa54c9",
+      "readme_bytes": 8025,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "goodbyedpi",
+    "name": "GoodbyeDPI",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "在 Windows 上通过数据包处理应对部分 DPI 限制的工具。",
+    "platforms": [
+      "Windows"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/ValdikSS/GoodbyeDPI"
+    ],
+    "repository": "https://github.com/ValdikSS/GoodbyeDPI",
+    "discovery_sources": [
+      "https://github.com/ValdikSS/GoodbyeDPI",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/ValdikSS/GoodbyeDPI/HEAD/README.md",
+      "readme_sha256": "0edac0b8322b7f1826f54ce945e17a95b77879f598443621570815d5eb869670",
+      "readme_bytes": 13047,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "zapret",
+    "name": "zapret",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "提供数据包处理和流量拆分策略以研究并应对 DPI 限制的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/bol-van/zapret"
+    ],
+    "repository": "https://github.com/bol-van/zapret",
+    "discovery_sources": [
+      "https://github.com/bol-van/zapret"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 本条是旧版 zapret，官方说明已进入 EOL/仅修复阶段；新功能转向 zapret2。"
+    },
+    "maintenance": {
+      "status": "maintenance_only",
+      "evidence_url": "https://github.com/bol-van/zapret/blob/master/docs/readme.md"
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/bol-van/zapret/master/docs/readme.md",
+      "readme_sha256": "a093c21b879ef50ff1f67afdb5ff53f75b5f18c9a7fd8b0ede57dcf35722d037",
+      "readme_bytes": 289540,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计",
+      "maintenance_notice": "文档声明 EOL，仅保留 bugfix，不再接受新功能；指向 zapret2。"
+    }
+  },
+  {
+    "id": "frp",
+    "name": "frp",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "通过公网服务器转发访问内网服务的反向代理工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/fatedier/frp"
+    ],
+    "repository": "https://github.com/fatedier/frp",
+    "discovery_sources": [
+      "https://github.com/fatedier/frp"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/fatedier/frp/HEAD/README.md",
+      "readme_sha256": "2cde03ad6d6cbd40a0dfa44975d4834db13d98ece97e30e1e7077a432320e03a",
+      "readme_bytes": 45016,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "rathole",
+    "name": "rathole",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "以 Rust 实现的反向代理与内网服务转发工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/rapiz1/rathole"
+    ],
+    "repository": "https://github.com/rapiz1/rathole",
+    "discovery_sources": [
+      "https://github.com/rapiz1/rathole"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/rapiz1/rathole/HEAD/README.md",
+      "readme_sha256": "2eda155efc4e105933137ce2a2d61ac6e197e2772b36e5083f77e4c14e4d98fe",
+      "readme_bytes": 11232,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "chisel",
+    "name": "Chisel",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "通过 HTTP 与 SSH 机制转发 TCP 或 UDP 的隧道工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/jpillora/chisel"
+    ],
+    "repository": "https://github.com/jpillora/chisel",
+    "discovery_sources": [
+      "https://github.com/jpillora/chisel"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/jpillora/chisel/HEAD/README.md",
+      "readme_sha256": "0ab3d3a0495ead8ebb9b7eee4fb784a980e0260bfb87f45a52a65282b481df1b",
+      "readme_bytes": 28197,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "sshuttle",
+    "name": "sshuttle",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "借助 SSH 连接为选定网络流量建立代理路径的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/sshuttle/sshuttle"
+    ],
+    "repository": "https://github.com/sshuttle/sshuttle",
+    "discovery_sources": [
+      "https://github.com/sshuttle/sshuttle"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/sshuttle/sshuttle/HEAD/README.rst",
+      "readme_sha256": "d1ad8fd9ea2beeda84bbab978d61def48ea603a38f765c451e0b1560c842821b",
+      "readme_bytes": 1597,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "brook",
+    "name": "Brook",
+    "aliases": [],
+    "kind": "core",
+    "summary": "提供代理连接、服务器与相关网络工具的跨平台项目。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/txthinking/brook"
+    ],
+    "repository": "https://github.com/txthinking/brook",
+    "discovery_sources": [
+      "https://github.com/txthinking/brook"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/txthinking/brook/HEAD/README.md",
+      "readme_sha256": "c53908ba2d4d222db5bf4978c2eadc25af545e682f5958b631a4ba8a4692bf2a",
+      "readme_bytes": 1143,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "mtproxy",
+    "name": "MTProxy",
+    "aliases": [],
+    "kind": "core",
+    "summary": "Telegram 官方提供的 MTProto 代理服务器实现。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/TelegramMessenger/MTProxy"
+    ],
+    "repository": "https://github.com/TelegramMessenger/MTProxy",
+    "discovery_sources": [
+      "https://github.com/TelegramMessenger/MTProxy",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/TelegramMessenger/MTProxy/HEAD/README.md",
+      "readme_sha256": "001042e1bca4c1a941f87f06ff185f9f1f213011e0e737e9caaa325b30e2207f",
+      "readme_bytes": 3465,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "iodine",
+    "name": "iodine",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "使用 DNS 查询和响应承载 IPv4 隧道流量的工具。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/yarrick/iodine"
+    ],
+    "repository": "https://github.com/yarrick/iodine",
+    "discovery_sources": [
+      "https://github.com/yarrick/iodine",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络传输工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/yarrick/iodine/HEAD/README.md",
+      "readme_sha256": "37d638cbd9c381fc792149201191c0c4567f2d930608e4f5f9c86864b1b5a18b",
+      "readme_bytes": 19917,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "psiphon-core",
+    "name": "Psiphon Tunnel Core",
+    "aliases": [],
+    "kind": "core",
+    "summary": "为 Psiphon 应用提供网络隧道与连接策略的核心库。",
+    "platforms": [],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/Psiphon-Labs/psiphon-tunnel-core",
+      "https://psiphon.ca/en/open-source.html"
+    ],
+    "repository": "https://github.com/Psiphon-Labs/psiphon-tunnel-core",
+    "discovery_sources": [
+      "https://github.com/Psiphon-Labs/psiphon-tunnel-core"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 最初 Psiphon-Inc/psiphon-tunnel-core 候选未取得README，已核验实际 Psiphon-Labs/psiphon-tunnel-core；该项目README同时回链 psiphon.ca。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/Psiphon-Labs/psiphon-tunnel-core/HEAD/README.md",
+      "readme_sha256": "f92331150d4e757f64c279e80a3fe7c35a24679ba21eb6f4479e0fa0472cbe53",
+      "readme_bytes": 7783,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "lantern",
+    "name": "Lantern",
+    "aliases": [],
+    "kind": "client",
+    "summary": "由 Lantern 项目提供的联网客户端与相关开源组件入口。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux",
+      "Android",
+      "iOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/getlantern/lantern"
+    ],
+    "repository": "https://github.com/getlantern/lantern",
+    "discovery_sources": [
+      "https://github.com/getlantern/lantern",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 本次读取的是下载与项目入口说明，不代表已确认客户端、服务端与全部运营代码均在此仓库。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络客户端"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/getlantern/lantern/HEAD/README.md",
+      "readme_sha256": "fa7b1ce759aa6046d4c0aee6bbf8d719824560ae13eb3c674868ac516f1f2e21",
+      "readme_bytes": 7422,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "orbot",
+    "name": "Orbot",
+    "aliases": [],
+    "kind": "client",
+    "summary": "让移动设备上的应用通过 Tor 网络连接的客户端。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/guardianproject/orbot",
+      "https://orbot.app/"
+    ],
+    "repository": "https://github.com/guardianproject/orbot",
+    "discovery_sources": [
+      "https://github.com/guardianproject/orbot"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Tor",
+        "evidence_url": "https://raw.githubusercontent.com/guardianproject/orbot/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络客户端"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/guardianproject/orbot/HEAD/README.md",
+      "readme_sha256": "b535b80abe1847ba4329a2a4d921547761d8ddf2fe5c4da34173a4b259e6798d",
+      "readme_bytes": 5156,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "geph",
+    "name": "Geph（迷雾通）",
+    "aliases": [
+      "迷雾通",
+      "迷霧通",
+      "Geph5"
+    ],
+    "kind": "client",
+    "summary": "包含客户端、桥接与出口组件的 Geph 网络工具实现。",
+    "platforms": [],
+    "ecosystems": [
+      "Geph"
+    ],
+    "official_urls": [
+      "https://github.com/geph-official/geph5",
+      "https://geph.io/en"
+    ],
+    "repository": "https://github.com/geph-official/geph5",
+    "discovery_sources": [
+      "https://github.com/geph-official/geph5"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 本次读取 Geph5 工作区的架构与组件说明；未将它混同旧 Geph4 文档，也未测试官方运营网络。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络客户端"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/geph-official/geph5/HEAD/README.md",
+      "readme_sha256": "aaacfab3d9a21d116195811c3a1996f2193e98e803f4305f0d63816d8782c060",
+      "readme_bytes": 2254,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "ceno-android",
+    "name": "Ceno for Android",
+    "aliases": [],
+    "kind": "client",
+    "summary": "利用 Ouinet 点对点网络与分布式缓存访问网页的 Android 浏览器。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/ceno-app/ceno-android",
+      "https://gitlab.com/ceno-app/ceno-android"
+    ],
+    "repository": "https://github.com/ceno-app/ceno-android",
+    "discovery_sources": [
+      "https://github.com/ceno-app/ceno-android"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 GitHub 页面明确是官方 GitLab 仓库的镜像。README 区分 Public 与 Personal 模式，公共模式涉及公开缓存，不能宣传为匿名浏览的同义词。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Ouinet",
+        "evidence_url": "https://raw.githubusercontent.com/ceno-app/ceno-android/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络客户端"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/ceno-app/ceno-android/HEAD/README.md",
+      "readme_sha256": "23ae840c54d11dea7f8357f6507c23dccef1ff9327ceab09764d763105b22702",
+      "readme_bytes": 5470,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "invizible-pro",
+    "name": "InviZible Pro",
+    "aliases": [],
+    "kind": "client",
+    "summary": "在 Android 中整合 DNSCrypt、Tor 与 I2P 的网络工具。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/Gedsh/InviZible"
+    ],
+    "repository": "https://github.com/Gedsh/InviZible",
+    "discovery_sources": [
+      "https://github.com/Gedsh/InviZible"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 上游说明 Google Play 发行版不包含 DNSCrypt；发行渠道影响功能，不能只按项目总功能列表展示。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Tor",
+        "evidence_url": "https://raw.githubusercontent.com/Gedsh/InviZible/HEAD/README.md"
+      },
+      {
+        "predicate": "related_to",
+        "target_name": "I2P",
+        "evidence_url": "https://raw.githubusercontent.com/Gedsh/InviZible/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "网络客户端"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/Gedsh/InviZible/HEAD/README.md",
+      "readme_sha256": "6a683773dfa80bf201fa0ab944af39f65f4dea820da1095045940a66bdc64263",
+      "readme_bytes": 7789,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "i2p",
+    "name": "I2P",
+    "aliases": [],
+    "kind": "core",
+    "summary": "用于构建匿名覆盖网络与运行内部网络服务的 I2P 实现。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux",
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/i2p/i2p.i2p"
+    ],
+    "repository": "https://github.com/i2p/i2p.i2p",
+    "discovery_sources": [
+      "https://github.com/i2p/i2p.i2p",
+      "https://github.com/danoctavian/awesome-anti-censorship"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/i2p/i2p.i2p/HEAD/README.md",
+      "readme_sha256": "94a07682ef2324029c07fd3bacb81583f68550aa727f3b44239c41c6f18ef43d",
+      "readme_bytes": 3027,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "hyphanet",
+    "name": "Hyphanet",
+    "aliases": [
+      "Freenet（原项目）",
+      "Fred"
+    ],
+    "kind": "core",
+    "summary": "以前称为 Freenet 的分布式内容存储和访问网络实现。",
+    "platforms": [],
+    "ecosystems": [
+      "Hyphanet"
+    ],
+    "official_urls": [
+      "https://github.com/hyphanet/fred",
+      "https://www.hyphanet.org/freenet-renamed-to-hyphanet.html"
+    ],
+    "repository": "https://github.com/hyphanet/fred",
+    "discovery_sources": [
+      "https://github.com/hyphanet/fred"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 已核对官方更名说明：原 Freenet 更名 Hyphanet；新 Freenet 原名 Locutus，二者不能合并为同一实现。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "代理与网络核心"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/hyphanet/fred/HEAD/README.md",
+      "readme_sha256": "b4aa015703ef6c29d964d3e8d244ecd06f3503539b1f7013f1115a156813d21b",
+      "readme_bytes": 4854,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "mullvad-vpn",
+    "name": "Mullvad VPN app",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "连接 Mullvad 服务的桌面与移动客户端代码项目。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux",
+      "Android",
+      "iOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/mullvad/mullvadvpn-app"
+    ],
+    "repository": "https://github.com/mullvad/mullvadvpn-app",
+    "discovery_sources": [
+      "https://github.com/mullvad/mullvadvpn-app"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 此为 Mullvad 服务的客户端源码，本轮未核验服务端实现、费用、可用地区或实际隐私表现。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/mullvad/mullvadvpn-app/HEAD/README.md",
+      "readme_sha256": "f82701ffff2373462859d2d1855e60a364ea1cb100c9cd166b1f9590781ad423",
+      "readme_bytes": 20147,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "proton-vpn-android",
+    "name": "Proton VPN for Android",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "连接 Proton VPN 服务的 Android 客户端。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/ProtonVPN/android-app",
+      "https://protonvpn.com/download-android"
+    ],
+    "repository": "https://github.com/ProtonVPN/android-app",
+    "discovery_sources": [
+      "https://github.com/ProtonVPN/android-app"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已实际阅读第一方 README 的用途概述并核对本条原创概要。未执行软件、安装脚本或连接测试；平台与维护状态只填有明确证据的部分。 本条只代表 Android 客户端；官方说明使用时需要 Proton VPN 账号，不是任意服务端通用客户端。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "VPN工具"
+    ],
+    "source_claims": {
+      "readme_url": "https://raw.githubusercontent.com/ProtonVPN/android-app/HEAD/README.md",
+      "readme_sha256": "09491985cd2ff080d200760f11359daafe0c27bff2d69021e52dc42431d9e9b9",
+      "readme_bytes": 3719,
+      "reviewed_scope": "README用途说明与相关组件边界；不表示完整源码审计"
+    }
+  },
+  {
+    "id": "tor-browser",
+    "name": "Tor Browser",
+    "aliases": [],
+    "kind": "client",
+    "summary": "使用 Tor 网络与隐私保护功能访问网页的浏览器。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux",
+      "Android"
+    ],
+    "ecosystems": [
+      "Tor"
+    ],
+    "official_urls": [
+      "https://www.torproject.org/",
+      "https://download.torproject.org/tor-browser-for-desktop/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://www.torproject.org/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已读 Tor 官网及下载页；Tor Browser、独立 Tor 核心与 Tor VPN Beta 是不同产品。 已实际阅读第一方说明；未运行客户端或测试网络效果。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "隐私浏览器",
+      "匿名网络"
+    ],
+    "source_claims": {
+      "reviewed_document": "https://www.torproject.org/",
+      "reviewed_scope": "产品用途与组件边界"
+    }
+  },
+  {
+    "id": "tor-core",
+    "name": "Tor（little-t tor）",
+    "aliases": [],
+    "kind": "core",
+    "summary": "可独立运行在系统或服务器上的 Tor 网络核心程序。",
+    "platforms": [],
+    "ecosystems": [
+      "Tor"
+    ],
+    "official_urls": [
+      "https://download.torproject.org/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://download.torproject.org/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "官方软件下载页将 little-t tor 定位为不含浏览器或界面的系统与服务器程序。 已实际阅读第一方说明；未运行客户端或测试网络效果。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "匿名网络",
+      "独立核心"
+    ],
+    "source_claims": {
+      "reviewed_document": "https://download.torproject.org/",
+      "reviewed_scope": "产品用途与组件边界"
+    }
+  },
+  {
+    "id": "snowflake",
+    "name": "Snowflake",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "通过志愿者代理与 WebRTC 为 Tor 应用提供连接入口的可插拔传输。",
+    "platforms": [],
+    "ecosystems": [
+      "Tor"
+    ],
+    "official_urls": [
+      "https://snowflake.torproject.org/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://snowflake.torproject.org/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "浏览器扩展供志愿者帮助他人接入；想使用该传输的用户需在 Tor Browser、Orbot 等应用中启用，扩展本身不是用户上网客户端。 已实际阅读第一方说明；未运行客户端或测试网络效果。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "related_to",
+        "target_name": "Tor",
+        "evidence_url": "https://snowflake.torproject.org/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "可插拔传输",
+      "WebRTC"
+    ],
+    "source_claims": {
+      "reviewed_document": "https://snowflake.torproject.org/",
+      "reviewed_scope": "产品用途与组件边界"
+    }
+  },
+  {
+    "id": "lyrebird",
+    "name": "Lyrebird",
+    "aliases": [],
+    "kind": "transport",
+    "summary": "Tor 项目用于实现多种可插拔传输和连接辅助功能的程序。",
+    "platforms": [],
+    "ecosystems": [
+      "Tor"
+    ],
+    "official_urls": [
+      "https://support.torproject.org/tor-browser/circumvention/unblocking-tor/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://support.torproject.org/tor-browser/circumvention/unblocking-tor/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "官方支持文档明确列出 obfs4、meek、Snowflake、WebTunnel 与连接辅助能力；GitLab 仓库页面本次抓取403，未据此否定项目可用性。 已实际阅读第一方说明；未运行客户端或测试网络效果。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "implements",
+        "target_name": "Snowflake",
+        "evidence_url": "https://support.torproject.org/tor-browser/circumvention/unblocking-tor/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "可插拔传输",
+      "obfs4",
+      "Snowflake",
+      "WebTunnel"
+    ],
+    "source_claims": {
+      "reviewed_document": "https://support.torproject.org/tor-browser/circumvention/unblocking-tor/",
+      "reviewed_scope": "产品用途与组件边界"
+    }
+  },
+  {
+    "id": "nthlink",
+    "name": "nthLink",
+    "aliases": [],
+    "kind": "client",
+    "summary": "提供自动连接和服务地址恢复机制的网络访问应用。",
+    "platforms": [
+      "Android",
+      "iOS",
+      "Windows",
+      "macOS"
+    ],
+    "ecosystems": [
+      "nthLink"
+    ],
+    "official_urls": [
+      "https://www.nthlink.com/",
+      "https://github.com/nthlink/nthlink-os-android",
+      "https://github.com/nthlink/nthlink-os-ios",
+      "https://github.com/nthlink/nthlink-os-windows",
+      "https://github.com/nthlink/nthlink-os-macos"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://www.nthlink.com/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已读官网功能与源码入口；客户端依赖项目运营网络，源码公开不等于服务全套实现或特定地区有效。 已实际阅读第一方说明；未运行客户端或测试网络效果。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "客户端与运营网络"
+    ],
+    "source_claims": {
+      "reviewed_document": "https://www.nthlink.com/",
+      "reviewed_scope": "产品用途与组件边界"
+    }
+  },
+  {
+    "id": "briar",
+    "name": "Briar",
+    "aliases": [],
+    "kind": "client",
+    "summary": "利用 Tor、蓝牙或 Wi-Fi 在联系人之间交换消息的点对点通信应用。",
+    "platforms": [],
+    "ecosystems": [
+      "Tor"
+    ],
+    "official_urls": [
+      "https://briarproject.org/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://briarproject.org/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "这是消息与论坛通信应用，不能当作通用网页代理或 VPN。 已实际阅读第一方说明；未运行客户端或测试网络效果。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Tor",
+        "evidence_url": "https://briarproject.org/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "去中心化通信",
+      "即时通信"
+    ],
+    "source_claims": {
+      "reviewed_document": "https://briarproject.org/",
+      "reviewed_scope": "产品用途与组件边界"
+    }
+  },
+  {
+    "id": "cloudflare-warp",
+    "name": "Cloudflare WARP",
+    "aliases": [],
+    "kind": "vpn",
+    "summary": "将设备连接至 Cloudflare 网络的个人版网络客户端。",
+    "platforms": [
+      "Android",
+      "iOS",
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Cloudflare WARP"
+    ],
+    "official_urls": [
+      "https://developers.cloudflare.com/warp-client/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://developers.cloudflare.com/warp-client/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "notes": "已读个人版 WARP 官方文档；消费者 WARP 与 Cloudflare One 企业客户端分开，未核验服务效果、价格或地区连通性。 已实际阅读第一方说明；未运行客户端或测试网络效果。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "服务商客户端"
+    ],
+    "source_claims": {
+      "reviewed_document": "https://developers.cloudflare.com/warp-client/",
+      "reviewed_scope": "产品用途与组件边界"
+    }
+  }
+]

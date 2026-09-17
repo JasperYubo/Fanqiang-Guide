@@ -1,0 +1,15 @@
+# Local data and credentials
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+__pycache__/
+*.py[cod]
+.venv/
+.DS_Store
+Thumbs.db
+/sources/
+/staging/
+/PROJECT_STATE*

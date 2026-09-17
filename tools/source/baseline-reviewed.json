@@ -1,0 +1,2348 @@
+[
+  {
+    "id": "clash-verge-rev",
+    "name": "Clash Verge Rev",
+    "aliases": [],
+    "kind": "client",
+    "summary": "采用 Tauri 的桌面代理客户端，承接 Clash Verge 项目，内置 Mihomo 核心。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/clash-verge-rev/clash-verge-rev"
+    ],
+    "repository": "https://github.com/clash-verge-rev/clash-verge-rev",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/clash-verge-rev",
+      "https://raw.githubusercontent.com/clash-verge-rev/clash-verge-rev/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/clash-verge-rev/clash-verge-rev/HEAD/README.md"
+      ],
+      "notes": "README 明确列出 Windows、Linux、macOS，并说明内置 Clash.Meta(mihomo)。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://raw.githubusercontent.com/clash-verge-rev/clash-verge-rev/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "桌面端"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/clash-verge-rev",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "Mihomo",
+      "tag": "桌面端",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v2.5.2",
+      "lastUpdated": "2026-07-19",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/v2.5.2",
+      "url": "https://github.com/clash-verge-rev/clash-verge-rev",
+      "repositoryUrl": "https://github.com/clash-verge-rev/clash-verge-rev",
+      "download_platforms": [
+        "Windows",
+        "macOS"
+      ],
+      "download_architectures": [
+        "x64",
+        "arm64"
+      ],
+      "download_source_urls": [
+        "https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/v2.5.2"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "flclash",
+    "name": "FlClash",
+    "aliases": [],
+    "kind": "client",
+    "summary": "使用 Clash.Meta 的跨平台代理客户端，提供订阅导入和 WebDAV 数据同步。",
+    "platforms": [
+      "Android",
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/chen08209/FlClash"
+    ],
+    "repository": "https://github.com/chen08209/FlClash",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/flclash",
+      "https://raw.githubusercontent.com/chen08209/FlClash/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/chen08209/FlClash/HEAD/README.md"
+      ],
+      "notes": "README 列出四个平台、ClashMeta 基础和 WebDAV 功能；没有核验源码完整性或广告状态。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://raw.githubusercontent.com/chen08209/FlClash/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "跨平台"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/flclash",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android",
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "Mihomo",
+      "tag": "跨平台",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v0.8.97",
+      "lastUpdated": "2026-09-10",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/chen08209/FlClash/releases/tag/v0.8.97",
+      "url": "https://github.com/chen08209/FlClash",
+      "repositoryUrl": "https://github.com/chen08209/FlClash",
+      "download_platforms": [
+        "Android",
+        "Windows",
+        "macOS"
+      ],
+      "download_architectures": [
+        "arm64",
+        "armv7",
+        "x64"
+      ],
+      "download_source_urls": [
+        "https://github.com/chen08209/FlClash/releases/tag/v0.8.97"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "hiddify",
+    "name": "Hiddify",
+    "aliases": [
+      "Hiddify Next"
+    ],
+    "kind": "client",
+    "summary": "基于 sing-box 的跨平台代理客户端，提供延迟选路、配置订阅和多种配置格式导入。",
+    "platforms": [
+      "Android",
+      "iOS",
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://github.com/hiddify/hiddify-app"
+    ],
+    "repository": "https://github.com/hiddify/hiddify-app",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/hiddify",
+      "https://raw.githubusercontent.com/hiddify/hiddify-app/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/hiddify/hiddify-app/HEAD/README.md"
+      ],
+      "notes": "README 明确列出五个平台与 sing-box；对自动选路能力只确认文档描述，未测试。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://raw.githubusercontent.com/hiddify/hiddify-app/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "多端通用"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/hiddify",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "alias": "Hiddify Next",
+      "platforms": [
+        "Android",
+        "iOS",
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "sing-box",
+      "tag": "多端通用",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v4.1.1",
+      "lastUpdated": "2026-03-05",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/hiddify/hiddify-app/releases/tag/v4.1.1",
+      "url": "https://github.com/hiddify/hiddify-app",
+      "repositoryUrl": "https://github.com/hiddify/hiddify-app",
+      "download_platforms": [
+        "iOS",
+        "Android",
+        "Windows",
+        "macOS"
+      ],
+      "download_architectures": [
+        "universal",
+        "x64"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532",
+        "https://github.com/hiddify/hiddify-app/releases/tag/v4.1.1"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "v2rayn",
+    "name": "v2rayN",
+    "aliases": [],
+    "kind": "client",
+    "summary": "面向 Windows、Linux 和 macOS 的代理图形客户端，可配置 Xray、sing-box 等核心。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Xray",
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://github.com/2dust/v2rayN"
+    ],
+    "repository": "https://github.com/2dust/v2rayN",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/v2rayn",
+      "https://raw.githubusercontent.com/2dust/v2rayN/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/2dust/v2rayN/HEAD/README.md"
+      ],
+      "notes": "README 同时列出 Xray 与 sing-box；修正参考目录只列 Xray 的单核心归类。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Xray",
+        "evidence_url": "https://raw.githubusercontent.com/2dust/v2rayN/HEAD/README.md"
+      },
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://raw.githubusercontent.com/2dust/v2rayN/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "多核心"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/v2rayn",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "Xray",
+      "tag": "多核心",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "7.24.9",
+      "lastUpdated": "2026-08-29",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/2dust/v2rayN/releases/tag/7.24.9",
+      "url": "https://github.com/2dust/v2rayN",
+      "repositoryUrl": "https://github.com/2dust/v2rayN",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "v2rayng",
+    "name": "v2rayNG",
+    "aliases": [],
+    "kind": "client",
+    "summary": "Android 代理客户端，项目 README 列出 Xray 与 V2Fly 核心支持。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [
+      "Xray",
+      "V2Fly"
+    ],
+    "official_urls": [
+      "https://github.com/2dust/v2rayNG"
+    ],
+    "repository": "https://github.com/2dust/v2rayNG",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/v2rayng",
+      "https://raw.githubusercontent.com/2dust/v2rayNG/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/2dust/v2rayNG/HEAD/README.md"
+      ],
+      "notes": "README 同时列出 Xray core 与 v2fly core；修正参考目录只有 Xray 的归类。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Xray",
+        "evidence_url": "https://raw.githubusercontent.com/2dust/v2rayNG/HEAD/README.md"
+      },
+      {
+        "predicate": "uses_core",
+        "target_name": "V2Fly",
+        "evidence_url": "https://raw.githubusercontent.com/2dust/v2rayNG/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "Android"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/v2rayng",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android"
+      ],
+      "core": "Xray",
+      "tag": "Android",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "2.2.6",
+      "lastUpdated": "2026-07-05",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/2dust/v2rayNG/releases/tag/2.2.6",
+      "url": "https://github.com/2dust/v2rayNG",
+      "repositoryUrl": "https://github.com/2dust/v2rayNG",
+      "download_platforms": [
+        "Android"
+      ],
+      "download_architectures": [
+        "arm64",
+        "armv7",
+        "x64",
+        "x86"
+      ],
+      "download_source_urls": [
+        "https://github.com/2dust/v2rayNG/releases/tag/2.2.6"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "karing",
+    "name": "Karing",
+    "aliases": [],
+    "kind": "client",
+    "summary": "采用 Flutter 界面的代理工具，使用 KaringX 修改的 sing-box 核心，支持多种订阅格式与配置同步。",
+    "platforms": [
+      "Android",
+      "iOS",
+      "Windows",
+      "macOS",
+      "Linux",
+      "tvOS"
+    ],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://github.com/KaringX/karing"
+    ],
+    "repository": "https://github.com/KaringX/karing",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/karing",
+      "https://raw.githubusercontent.com/KaringX/karing/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/KaringX/karing/HEAD/README.md"
+      ],
+      "notes": "README 列出 Windows、Android、Linux、iOS、macOS 系统要求，并提供 iOS/tvOS App Store 入口；没有核验参考目录的源码完整性判断。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://raw.githubusercontent.com/KaringX/karing/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "多端通用"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/karing",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android",
+        "iOS",
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "sing-box",
+      "tag": "多端通用",
+      "sourceType": "源码不完整",
+      "priceUsd": 0,
+      "version": "v1.2.25.2802",
+      "lastUpdated": "2026-09-10",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/KaringX/karing/releases/tag/v1.2.25.2802",
+      "url": "https://github.com/KaringX/karing",
+      "repositoryUrl": "https://github.com/KaringX/karing",
+      "download_platforms": [
+        "iOS",
+        "Android",
+        "Windows",
+        "macOS"
+      ],
+      "download_architectures": [
+        "universal",
+        "x64"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/us/app/karing/id6472431552",
+        "https://github.com/KaringX/karing/releases/tag/v1.2.25.2802"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ],
+      "source_notice_evidence_urls": [
+        "https://github.com/KaringX/karing",
+        "https://github.com/KaringX/karing/blob/main/LICENSE.md",
+        "https://github.com/KaringX/karing/blob/main/pubspec.yaml",
+        "https://github.com/KaringX/karing/issues/603",
+        "https://github.com/KaringX/karing/issues/1460"
+      ],
+      "source_notice_verified_at_claim": "2026-09-06"
+    }
+  },
+  {
+    "id": "nekobox-for-android",
+    "name": "NekoBox for Android",
+    "aliases": [
+      "NekoBox"
+    ],
+    "kind": "client",
+    "summary": "使用 sing-box 的 Android 代理客户端，支持多种代理协议和订阅出站解析。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://github.com/MatsuriDayo/NekoBoxForAndroid"
+    ],
+    "repository": "https://github.com/MatsuriDayo/NekoBoxForAndroid",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/nekobox-for-android",
+      "https://raw.githubusercontent.com/MatsuriDayo/NekoBoxForAndroid/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/MatsuriDayo/NekoBoxForAndroid/HEAD/README.md"
+      ],
+      "notes": "README 说明订阅只解析出站，分流规则会忽略；项目声明 Google Play 同名版自 2024 年 5 月起由第三方控制，因此保留 GitHub 为项目入口。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://raw.githubusercontent.com/MatsuriDayo/NekoBoxForAndroid/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/nekobox-for-android",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "alias": "NekoBox",
+      "platforms": [
+        "Android"
+      ],
+      "core": "sing-box",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "1.4.2",
+      "lastUpdated": "2026-02-09",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/MatsuriDayo/NekoBoxForAndroid/releases/tag/1.4.2",
+      "url": "https://github.com/MatsuriDayo/NekoBoxForAndroid",
+      "repositoryUrl": "https://github.com/MatsuriDayo/NekoBoxForAndroid",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "throne",
+    "name": "Throne",
+    "aliases": [],
+    "kind": "client",
+    "summary": "采用 Qt 的桌面代理客户端，以 sing-box 为基础，并提供 Xray 自定义配置和出站选项。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "sing-box",
+      "Xray"
+    ],
+    "official_urls": [
+      "https://github.com/throneproj/Throne"
+    ],
+    "repository": "https://github.com/throneproj/Throne",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/throne",
+      "https://raw.githubusercontent.com/throneproj/Throne/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/throneproj/Throne/HEAD/README.md"
+      ],
+      "notes": "README 列出 Windows、Linux、macOS；自述 Formerly Nekoray，但未将独立历史 Nekoray 条目合并为同一实体。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://raw.githubusercontent.com/throneproj/Throne/HEAD/README.md"
+      },
+      {
+        "predicate": "uses_core",
+        "target_name": "Xray",
+        "evidence_url": "https://raw.githubusercontent.com/throneproj/Throne/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/throne",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "sing-box",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "1.2.4",
+      "lastUpdated": "2026-08-08",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/throneproj/Throne/releases/tag/1.2.4",
+      "url": "https://github.com/throneproj/Throne",
+      "repositoryUrl": "https://github.com/throneproj/Throne",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "clash-meta-for-android",
+    "name": "Clash Meta for Android",
+    "aliases": [
+      "CMFA"
+    ],
+    "kind": "client",
+    "summary": "Clash.Meta 的 Android 图形客户端，项目 README 列出系统和处理器架构要求。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/MetaCubeX/ClashMetaForAndroid"
+    ],
+    "repository": "https://github.com/MetaCubeX/ClashMetaForAndroid",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/clash-meta-for-android",
+      "https://raw.githubusercontent.com/MetaCubeX/ClashMetaForAndroid/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/MetaCubeX/ClashMetaForAndroid/HEAD/README.md"
+      ],
+      "notes": "README 使用 Clash.Meta 名称描述内核，并说明 Android 专用内核分支；没有测试所有架构包。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://raw.githubusercontent.com/MetaCubeX/ClashMetaForAndroid/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/clash-meta-for-android",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "alias": "CMFA",
+      "platforms": [
+        "Android"
+      ],
+      "core": "Mihomo",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v2.11.33",
+      "lastUpdated": "2026-08-16",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/MetaCubeX/ClashMetaForAndroid/releases/tag/v2.11.33",
+      "url": "https://github.com/MetaCubeX/ClashMetaForAndroid",
+      "repositoryUrl": "https://github.com/MetaCubeX/ClashMetaForAndroid",
+      "download_platforms": [
+        "Android"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://github.com/MetaCubeX/ClashMetaForAndroid/releases/tag/v2.11.33"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "exclave",
+    "name": "Exclave",
+    "aliases": [],
+    "kind": "client",
+    "summary": "Android 代理客户端，提供分组订阅、路由和代理链；部分协议通过独立插件接入。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://github.com/ExclaveNetwork/Exclave"
+    ],
+    "repository": "https://github.com/ExclaveNetwork/Exclave",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/exclave",
+      "https://raw.githubusercontent.com/ExclaveNetwork/Exclave/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "platforms",
+        "repository",
+        "official_urls"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/ExclaveNetwork/Exclave/HEAD/README.md"
+      ],
+      "notes": "README 列出默认版 Android 6.0+ 与 legacy 版 Android 5.0+；不把 Linux/macOS/Windows 构建主机误记为客户端支持平台。 本次只核验 reviewed_fields 所列字段；aliases、tags、source_claims 中版本/价格/更新时间/代码公开状态等仍为参考目录线索；未安装、测速或审计安全。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/exclave",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android"
+      ],
+      "core": "自研原生",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "0.17.56",
+      "lastUpdated": "2026-09-06",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/ExclaveNetwork/Exclave/releases/tag/0.17.56",
+      "url": "https://github.com/ExclaveNetwork/Exclave",
+      "repositoryUrl": "https://github.com/ExclaveNetwork/Exclave",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "clash-nyanpasu",
+    "name": "Clash Nyanpasu",
+    "aliases": [],
+    "kind": "client",
+    "summary": "采用 Tauri 的桌面代理界面，支持多个 Clash 系核心与配置管理，可通过 YAML、JavaScript 和 Lua 调整配置。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Clash Premium",
+      "Mihomo",
+      "Clash Rust",
+      "Meow"
+    ],
+    "official_urls": [
+      "https://github.com/libnyanpasu/clash-nyanpasu",
+      "https://nyanpasu.org/tutorial/install"
+    ],
+    "repository": "https://github.com/libnyanpasu/clash-nyanpasu",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/clash-nyanpasu",
+      "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md",
+      "https://nyanpasu.org/tutorial/install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "platforms",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md",
+        "https://nyanpasu.org/tutorial/install"
+      ],
+      "notes": "README 明确列出 Clash Premium、Mihomo、Clash Rust、Meow，安装文档覆盖 Windows、macOS、Linux；没有把原站单一 Mihomo 标签当成全部能力。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Clash Premium",
+        "evidence_url": "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md"
+      },
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md"
+      },
+      {
+        "predicate": "uses_core",
+        "target_name": "Clash Rust",
+        "evidence_url": "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md"
+      },
+      {
+        "predicate": "uses_core",
+        "target_name": "Meow",
+        "evidence_url": "https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/clash-nyanpasu",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "Mihomo",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v1.6.1",
+      "lastUpdated": "2024-09-07",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/libnyanpasu/clash-nyanpasu/releases/tag/v1.6.1",
+      "url": "https://github.com/libnyanpasu/clash-nyanpasu",
+      "repositoryUrl": "https://github.com/libnyanpasu/clash-nyanpasu",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "clash-party",
+    "name": "Clash Party",
+    "aliases": [],
+    "kind": "client",
+    "summary": "Mihomo 图形客户端，提供配置覆写、WebDAV 备份与 Sub-Store 集成，并提供 Smart 内核选项。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Mihomo",
+      "Smart Core"
+    ],
+    "official_urls": [
+      "https://github.com/mihomo-party-org/clash-party",
+      "https://clashparty.org/docs/install"
+    ],
+    "repository": "https://github.com/mihomo-party-org/clash-party",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/clash-party",
+      "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/README.md",
+      "https://clashparty.org/docs/install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "platforms",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/README.md",
+        "https://clashparty.org/docs/install"
+      ],
+      "notes": "README 列出 Mihomo 和 Smart 核心；官方安装页列 Windows/macOS/Linux。没有采用 README 中机场推广或稳定性宣传。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/README.md"
+      },
+      {
+        "predicate": "uses_core",
+        "target_name": "Smart Core",
+        "evidence_url": "https://raw.githubusercontent.com/mihomo-party-org/clash-party/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/clash-party",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "Mihomo",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v2.0.2",
+      "lastUpdated": "2026-08-14",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/mihomo-party-org/clash-party/releases/tag/v2.0.2",
+      "url": "https://github.com/mihomo-party-org/clash-party",
+      "repositoryUrl": "https://github.com/mihomo-party-org/clash-party",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "gui-for-clash",
+    "name": "GUI.for.Clash",
+    "aliases": [],
+    "kind": "client",
+    "summary": "用于管理 Mihomo 的桌面图形界面，提供订阅、配置文件、规则与插件管理。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/GUI-for-Cores/GUI.for.Clash",
+      "https://gui-for-cores.github.io/guide/gfc/how-to-use",
+      "https://gui-for-cores.github.io/guide/01-install"
+    ],
+    "repository": "https://github.com/GUI-for-Cores/GUI.for.Clash",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/gui-for-clash",
+      "https://raw.githubusercontent.com/GUI-for-Cores/GUI.for.Clash/HEAD/README.md",
+      "https://gui-for-cores.github.io/guide/gfc/how-to-use",
+      "https://gui-for-cores.github.io/guide/01-install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "platforms",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/GUI-for-Cores/GUI.for.Clash/HEAD/README.md",
+        "https://gui-for-cores.github.io/guide/gfc/how-to-use",
+        "https://gui-for-cores.github.io/guide/01-install"
+      ],
+      "notes": "官方手册确认 Mihomo 核心路径，通用安装文档列 Windows/macOS/Ubuntu 包；文档说明 Linux 仅在 Ubuntu 22.04.4 测试，不能扩展为所有发行版实测。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://gui-for-cores.github.io/guide/gfc/how-to-use"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/gui-for-clash",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "Mihomo",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v1.27.0",
+      "lastUpdated": "2026-09-07",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/GUI-for-Cores/GUI.for.Clash/releases/tag/v1.27.0",
+      "url": "https://github.com/GUI-for-Cores/GUI.for.Clash",
+      "repositoryUrl": "https://github.com/GUI-for-Cores/GUI.for.Clash",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "gui-for-singbox",
+    "name": "GUI.for.SingBox",
+    "aliases": [],
+    "kind": "client",
+    "summary": "sing-box 的桌面图形管理界面，属于 GUI.for.Cores 项目系列。",
+    "platforms": [
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://github.com/GUI-for-Cores/GUI.for.SingBox",
+      "https://gui-for-cores.github.io/guide/gfs/",
+      "https://gui-for-cores.github.io/guide/01-install"
+    ],
+    "repository": "https://github.com/GUI-for-Cores/GUI.for.SingBox",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/gui-for-singbox",
+      "https://raw.githubusercontent.com/GUI-for-Cores/GUI.for.SingBox/HEAD/README.md",
+      "https://gui-for-cores.github.io/guide/gfs/",
+      "https://gui-for-cores.github.io/guide/01-install"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "platforms",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/GUI-for-Cores/GUI.for.SingBox/HEAD/README.md",
+        "https://gui-for-cores.github.io/guide/gfs/",
+        "https://gui-for-cores.github.io/guide/01-install"
+      ],
+      "notes": "官方简介确认 sing-box GUI，通用安装文档列 Windows/macOS/Ubuntu 包；未验证所有 Linux 发行版。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://gui-for-cores.github.io/guide/gfs/"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "桌面工具"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/gui-for-singbox",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "sing-box",
+      "tag": "桌面工具",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v1.27.0",
+      "lastUpdated": "2026-09-07",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/tag/v1.27.0",
+      "url": "https://github.com/GUI-for-Cores/GUI.for.SingBox",
+      "repositoryUrl": "https://github.com/GUI-for-Cores/GUI.for.SingBox",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "clash-mi",
+    "name": "Clash Mi",
+    "aliases": [],
+    "kind": "client",
+    "summary": "采用 Flutter 界面的 Mihomo 代理客户端，内置 zashboard，并使用 YAML 配置。",
+    "platforms": [
+      "Android",
+      "iOS",
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/KaringX/clashmi",
+      "https://clashmi.app"
+    ],
+    "repository": "https://github.com/KaringX/clashmi",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/clash-mi",
+      "https://raw.githubusercontent.com/KaringX/clashmi/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "platforms",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/KaringX/clashmi/HEAD/README.md"
+      ],
+      "notes": "实际读取 README，确认 Mihomo、Flutter、zashboard 和五个平台，补上参考目录遗漏的 Linux；官网地址由 README 明确列为唯一官网，但未另行阅读网站页面。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://raw.githubusercontent.com/KaringX/clashmi/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "四端通用"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/clash-mi",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android",
+        "iOS",
+        "Windows",
+        "macOS"
+      ],
+      "core": "Mihomo",
+      "tag": "四端通用",
+      "sourceType": "源码不完整",
+      "priceUsd": 0,
+      "version": "v1.0.29.1503",
+      "lastUpdated": "2026-09-02",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/KaringX/clashmi/releases/tag/v1.0.29.1503",
+      "url": "https://github.com/KaringX/clashmi",
+      "repositoryUrl": "https://github.com/KaringX/clashmi",
+      "download_platforms": [
+        "iOS",
+        "Android",
+        "Windows",
+        "macOS"
+      ],
+      "download_architectures": [
+        "universal",
+        "x64"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/us/app/clash-mi/id6744321968",
+        "https://github.com/KaringX/clashmi/releases/tag/v1.0.29.1503"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ],
+      "source_notice_evidence_urls": [
+        "https://github.com/KaringX/clashmi",
+        "https://github.com/KaringX/clashmi/blob/main/LICENSE",
+        "https://github.com/KaringX/clashmi/blob/main/pubspec.yaml",
+        "https://github.com/KaringX/clashmi/issues/372",
+        "https://github.com/KaringX/clashmi/issues/350"
+      ],
+      "source_notice_verified_at_claim": "2026-09-06"
+    }
+  },
+  {
+    "id": "flclashx",
+    "name": "FlClashX",
+    "aliases": [],
+    "kind": "client",
+    "summary": "FlClash 的派生客户端，增加 Android TV 操作适配与 Remnawave 面板相关功能。",
+    "platforms": [
+      "Android",
+      "Windows",
+      "macOS"
+    ],
+    "ecosystems": [
+      "Mihomo"
+    ],
+    "official_urls": [
+      "https://github.com/pluralplay/FlClashX"
+    ],
+    "repository": "https://github.com/pluralplay/FlClashX",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/flclashx",
+      "https://raw.githubusercontent.com/pluralplay/FlClashX/HEAD/README.md",
+      "https://raw.githubusercontent.com/pluralplay/FlClashX/HEAD/README_EN.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/pluralplay/FlClashX/HEAD/README.md",
+        "https://raw.githubusercontent.com/pluralplay/FlClashX/HEAD/README_EN.md"
+      ],
+      "notes": "实际读取俄文和英文 README，确认 FlClash 派生关系、ClashMeta 与 Android TV 适配；现有平台数组仍是目录来源，本次未完整验证全部发行平台。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Mihomo",
+        "evidence_url": "https://raw.githubusercontent.com/pluralplay/FlClashX/HEAD/README.md"
+      },
+      {
+        "predicate": "fork_of",
+        "target_name": "FlClash",
+        "evidence_url": "https://raw.githubusercontent.com/pluralplay/FlClashX/HEAD/README_EN.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "FlClash 分支"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/flclashx",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android",
+        "Windows",
+        "macOS"
+      ],
+      "core": "Mihomo",
+      "tag": "FlClash 分支",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v0.4.2",
+      "lastUpdated": "2026-07-18",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/pluralplay/FlClashX/releases/tag/v0.4.2",
+      "url": "https://github.com/pluralplay/FlClashX",
+      "repositoryUrl": "https://github.com/pluralplay/FlClashX",
+      "download_platforms": [
+        "Android",
+        "Windows",
+        "macOS"
+      ],
+      "download_architectures": [
+        "universal",
+        "x64",
+        "arm64"
+      ],
+      "download_source_urls": [
+        "https://github.com/pluralplay/FlClashX/releases/tag/v0.4.2"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "onexray",
+    "name": "OneXray",
+    "aliases": [],
+    "kind": "client",
+    "summary": "基于 Xray-core 的跨平台代理客户端，支持服务器和订阅导入、自定义路由与完整 JSON 配置。",
+    "platforms": [
+      "Android",
+      "iOS",
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "Xray"
+    ],
+    "official_urls": [
+      "https://github.com/OneXray/OneXray",
+      "https://onexray.com"
+    ],
+    "repository": "https://github.com/OneXray/OneXray",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/onexray",
+      "https://raw.githubusercontent.com/OneXray/OneXray/HEAD/README.md"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "platforms",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/OneXray/OneXray/HEAD/README.md"
+      ],
+      "notes": "README 确认五个平台并列出 Linux 下载项，补上目录遗漏的 Linux。README 特别说明当前代码与商店/发行构建可能不同，未将构建能力等同全部商店包功能。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "Xray",
+        "evidence_url": "https://raw.githubusercontent.com/OneXray/OneXray/HEAD/README.md"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "多平台"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/onexray",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android",
+        "iOS",
+        "Windows",
+        "macOS"
+      ],
+      "core": "Xray",
+      "tag": "多平台",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v26.9.1",
+      "lastUpdated": "2026-09-09",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/OneXray/OneXray/releases/tag/v26.9.1",
+      "url": "https://github.com/OneXray/OneXray",
+      "repositoryUrl": "https://github.com/OneXray/OneXray",
+      "download_platforms": [
+        "iOS",
+        "Android",
+        "Windows"
+      ],
+      "download_architectures": [
+        "universal",
+        "x64",
+        "arm64"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/us/app/onexray/id6745748773",
+        "https://github.com/OneXray/OneXray/releases/tag/v26.9.1"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "husi",
+    "name": "Husi",
+    "aliases": [
+      "虎兕"
+    ],
+    "kind": "client",
+    "summary": "覆盖 Android 与桌面系统的代理工具集，核心依赖 sing-box，提供独立桌面核心与客户端打包流程。",
+    "platforms": [
+      "Android",
+      "Windows",
+      "macOS",
+      "Linux"
+    ],
+    "ecosystems": [
+      "sing-box"
+    ],
+    "official_urls": [
+      "https://github.com/xchacha20-poly1305/husi"
+    ],
+    "repository": "https://github.com/xchacha20-poly1305/husi",
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/husi",
+      "https://raw.githubusercontent.com/xchacha20-poly1305/husi/HEAD/README.md",
+      "https://raw.githubusercontent.com/xchacha20-poly1305/husi/HEAD/libcore/go.mod"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "repository",
+        "platforms",
+        "ecosystems",
+        "relations"
+      ],
+      "evidence_urls": [
+        "https://raw.githubusercontent.com/xchacha20-poly1305/husi/HEAD/README.md",
+        "https://raw.githubusercontent.com/xchacha20-poly1305/husi/HEAD/libcore/go.mod"
+      ],
+      "notes": "README 列出 Android 和 Windows/macOS/Linux 打包流程，libcore/go.mod 明确依赖 sing-box；只是核对项目目标平台，未编译或运行各平台包。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [
+      {
+        "predicate": "uses_core",
+        "target_name": "sing-box",
+        "evidence_url": "https://raw.githubusercontent.com/xchacha20-poly1305/husi/HEAD/libcore/go.mod"
+      }
+    ],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/husi",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "alias": "虎兕",
+      "platforms": [
+        "Android",
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "core": "sing-box",
+      "sourceType": "开源",
+      "priceUsd": 0,
+      "version": "v2.1.0",
+      "lastUpdated": "2026-09-08",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/xchacha20-poly1305/husi/releases/tag/v2.1.0",
+      "url": "https://github.com/xchacha20-poly1305/husi",
+      "repositoryUrl": "https://github.com/xchacha20-poly1305/husi",
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  },
+  {
+    "id": "shadowrocket",
+    "name": "Shadowrocket",
+    "aliases": [
+      "小火箭"
+    ],
+    "kind": "client",
+    "summary": "Apple 平台的规则代理工具，提供请求记录、域名与 IP 分流、DNS 设置和流量处理。",
+    "platforms": [
+      "iOS",
+      "iPadOS",
+      "macOS",
+      "tvOS",
+      "visionOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://apps.apple.com/app/shadowrocket/id932747118",
+      "https://apps.apple.com/us/app/shadowrocket/id932747118"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/shadowrocket",
+      "https://apps.apple.com/us/app/shadowrocket/id932747118"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "platforms",
+        "compatibility.notes"
+      ],
+      "evidence_urls": [
+        "https://apps.apple.com/us/app/shadowrocket/id932747118"
+      ],
+      "notes": "读取 App Store 的开发者说明与兼容性区：iOS/iPadOS 13+、macOS 10.15+、tvOS 17+、visionOS 1+。未引用用户评论作为功能或安全证据。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "App Store 列出的兼容条件：iOS/iPadOS 13+、macOS 10.15+、tvOS 17+、visionOS 1+；兼容运行不代表每个平台功能一致。"
+    },
+    "tags": [
+      "规则代理"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/shadowrocket",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "alias": "小火箭",
+      "platforms": [
+        "iOS"
+      ],
+      "core": "自研原生",
+      "tag": "规则代理",
+      "sourceType": "未公开",
+      "priceUsd": 2.99,
+      "version": "2.2.92",
+      "lastUpdated": "2026-09-07",
+      "versionSource": "app-store",
+      "versionSourceUrl": "https://apps.apple.com/app/shadowrocket/id932747118",
+      "url": "https://apps.apple.com/app/shadowrocket/id932747118",
+      "repositoryUrl": null,
+      "download_platforms": [
+        "iOS"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/app/shadowrocket/id932747118"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "quantumult-x",
+    "name": "Quantumult X",
+    "aliases": [
+      "圈 X"
+    ],
+    "kind": "client",
+    "summary": "面向代理定制与网络调试的工具，支持 HTTP 请求记录、重写、自定义 DNS 与规则分流。",
+    "platforms": [
+      "iOS",
+      "iPadOS",
+      "macOS",
+      "tvOS",
+      "visionOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://apps.apple.com/app/quantumult-x/id1443988620",
+      "https://apps.apple.com/us/app/quantumult-x/id1443988620"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/quantumult-x",
+      "https://apps.apple.com/us/app/quantumult-x/id1443988620"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "platforms",
+        "compatibility.notes"
+      ],
+      "evidence_urls": [
+        "https://apps.apple.com/us/app/quantumult-x/id1443988620"
+      ],
+      "notes": "App Store 的兼容性区列出 iOS/iPadOS 14+、macOS 11+、tvOS 17+、visionOS 1+；功能来自开发者说明，未引用商店用户评论。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "App Store 列出的兼容条件：iOS/iPadOS 14+、macOS 11+、tvOS 17+、visionOS 1+；不保证跨平台功能完全相同。"
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/quantumult-x",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "alias": "圈 X",
+      "platforms": [
+        "iOS"
+      ],
+      "core": "自研原生",
+      "sourceType": "未公开",
+      "priceUsd": 9.99,
+      "version": "1.7.0",
+      "lastUpdated": "2026-08-16",
+      "versionSource": "app-store",
+      "versionSourceUrl": "https://apps.apple.com/app/quantumult-x/id1443988620",
+      "url": "https://apps.apple.com/app/quantumult-x/id1443988620",
+      "repositoryUrl": null,
+      "download_platforms": [
+        "iOS"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/app/quantumult-x/id1443988620"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "loon",
+    "name": "Loon",
+    "aliases": [],
+    "kind": "client",
+    "summary": "代理与网络调试工具，提供协议接入、请求抓取、规则分流、DNS 调整和 JavaScript 扩展。",
+    "platforms": [
+      "iOS",
+      "iPadOS",
+      "macOS",
+      "tvOS",
+      "visionOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://apps.apple.com/app/loon/id1373567447",
+      "https://apps.apple.com/us/app/loon/id1373567447"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/loon",
+      "https://apps.apple.com/us/app/loon/id1373567447"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "platforms",
+        "compatibility.notes"
+      ],
+      "evidence_urls": [
+        "https://apps.apple.com/us/app/loon/id1373567447"
+      ],
+      "notes": "App Store 列出 iOS/iPadOS 14+、tvOS 17+、visionOS 1+，Mac 需 macOS 11+ 和 M1 或更新芯片；商店同时标为 Designed for iPad / Not verified for macOS，不能宣传为已验证的原生 Mac 应用。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "Mac 为商店列出的兼容运行，要求 macOS 11+ 且 M1 或更新芯片；页面明确 Not verified for macOS。iOS/iPadOS 14+、tvOS 17+、visionOS 1+。"
+    },
+    "tags": [
+      "网络调试"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/loon",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "iOS",
+        "macOS"
+      ],
+      "core": "自研原生",
+      "tag": "网络调试",
+      "sourceType": "未公开",
+      "priceUsd": 7.99,
+      "version": "3.5.0",
+      "lastUpdated": "2026-06-25",
+      "versionSource": "app-store",
+      "versionSourceUrl": "https://apps.apple.com/app/loon/id1373567447",
+      "url": "https://apps.apple.com/app/loon/id1373567447",
+      "repositoryUrl": null,
+      "download_platforms": [
+        "iOS",
+        "macOS"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/app/loon/id1373567447"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "streisand",
+    "name": "Streisand",
+    "aliases": [],
+    "kind": "client",
+    "summary": "用于接入自备代理服务器的客户端，提供规则配置、多协议接入与自定义 DNS。",
+    "platforms": [
+      "iOS",
+      "iPadOS",
+      "macOS",
+      "visionOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://apps.apple.com/app/streisand/id6450534064",
+      "https://apps.apple.com/us/app/streisand/id6450534064"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/streisand",
+      "https://apps.apple.com/us/app/streisand/id6450534064"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "platforms",
+        "compatibility.notes"
+      ],
+      "evidence_urls": [
+        "https://apps.apple.com/us/app/streisand/id6450534064"
+      ],
+      "notes": "App Store 开发者说明明确工具不提供 VPN 服务，需用户自行配置服务器；兼容性区列出 iOS/iPadOS 14+、macOS 12+ 且 M1 或更新芯片、visionOS 1+。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "iOS/iPadOS 14+；Mac 兼容运行要求 macOS 12+ 且 M1 或更新芯片；visionOS 1+。未确认存在独立原生 macOS 客户端。"
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/streisand",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "iOS"
+      ],
+      "core": "自研原生",
+      "sourceType": "未公开",
+      "priceUsd": 0,
+      "version": "1.6.76",
+      "lastUpdated": "2026-09-10",
+      "versionSource": "app-store",
+      "versionSourceUrl": "https://apps.apple.com/app/streisand/id6450534064",
+      "url": "https://apps.apple.com/app/streisand/id6450534064",
+      "repositoryUrl": null,
+      "download_platforms": [
+        "iOS"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/app/streisand/id6450534064"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "stash",
+    "name": "Stash",
+    "aliases": [],
+    "kind": "client",
+    "summary": "基于规则控制连接的网络工具，提供 YAML 配置、请求检查、DNS 与 HTTP 处理功能。",
+    "platforms": [
+      "iOS",
+      "iPadOS",
+      "tvOS",
+      "macOS",
+      "Android",
+      "Windows"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://stash.ws/",
+      "https://stash.ws/download"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/stash",
+      "https://stash.ws/",
+      "https://stash.ws/download"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "platforms",
+        "compatibility.notes"
+      ],
+      "evidence_urls": [
+        "https://stash.ws/",
+        "https://stash.ws/download"
+      ],
+      "notes": "官网和下载页确认 iOS/tvOS、macOS、Android 和 Windows。Android 标为 Early access，Windows 标为 Early build，不能将所有平台当作同等成熟；补上目录缺少的 tvOS 与 Windows。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": "官网将 Android 标为早期体验（Android 7+），Windows 标为早期版本（Windows 11 64 位）；未下载测试。"
+    },
+    "tags": [
+      "Clash 配置"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/stash",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "iOS",
+        "macOS",
+        "Android"
+      ],
+      "core": "自研原生",
+      "tag": "Clash 配置",
+      "sourceType": "未公开",
+      "priceUsd": 5.99,
+      "subscription": {
+        "sourceLabel": "Stash 官方价格方案",
+        "sourceUrl": "https://stash.ws/zh/macos/pricing"
+      },
+      "version": "3.4.1",
+      "lastUpdated": "2026-07-16",
+      "versionSource": "app-store",
+      "versionSourceUrl": "https://apps.apple.com/app/stash-rule-based-proxy/id1596063349",
+      "url": "https://stash.ws/",
+      "officialUrl": "https://stash.ws/",
+      "repositoryUrl": null,
+      "download_platforms": [
+        "iOS",
+        "macOS",
+        "Android"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/app/stash-rule-based-proxy/id1596063349",
+        "https://stash.ws/zh/android"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "surge",
+    "name": "Surge",
+    "aliases": [],
+    "kind": "client",
+    "summary": "面向 macOS 与 iOS 的网络工具箱，提供代理分流、DNS 控制、HTTPS 调试与脚本自动化，并包含 tvOS 版本。",
+    "platforms": [
+      "iOS",
+      "macOS",
+      "tvOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://nssurge.com/",
+      "https://apps.apple.com/app/surge-5/id1442620678",
+      "https://manual.nssurge.com/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/surge",
+      "https://manual.nssurge.com/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "platforms"
+      ],
+      "evidence_urls": [
+        "https://manual.nssurge.com/"
+      ],
+      "notes": "官网首页只返回 JavaScript 提示，转读官方手册；手册明确 Mac/iOS 两产品及 iOS 附带 tvOS，且指出平台功能不同。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [
+      "专业工具"
+    ],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/surge",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "iOS",
+        "macOS"
+      ],
+      "core": "自研原生",
+      "tag": "专业工具",
+      "sourceType": "未公开",
+      "priceUsd": 49.99,
+      "downloadPriceUsd": 0,
+      "subscription": {
+        "sourceLabel": "Surge 官方授权说明",
+        "sourceUrl": "https://nssurge.com/buy_now"
+      },
+      "version": "5.22.0",
+      "lastUpdated": "2026-09-01",
+      "versionSource": "app-store",
+      "versionSourceUrl": "https://apps.apple.com/app/surge-5/id1442620678",
+      "url": "https://apps.apple.com/app/surge-5/id1442620678",
+      "officialUrl": "https://nssurge.com/",
+      "repositoryUrl": null,
+      "download_platforms": [
+        "iOS",
+        "macOS"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/app/surge-5/id1442620678"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "egern",
+    "name": "Egern",
+    "aliases": [],
+    "kind": "client",
+    "summary": "用于代理、检查和修改网络流量的工具，提供策略路由、DNS 控制与 HTTP 调试。",
+    "platforms": [
+      "iOS",
+      "macOS"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://egernapp.com/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/egern",
+      "https://egernapp.com/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls"
+      ],
+      "evidence_urls": [
+        "https://egernapp.com/"
+      ],
+      "notes": "web 工具读到官网功能简介；普通 HTTP 另一次读取返回 403。只提升名称、分类、概要和官网字段，平台仍保留目录线索。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/egern",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "iOS",
+        "macOS"
+      ],
+      "core": "自研原生",
+      "sourceType": "未公开",
+      "priceUsd": 0,
+      "version": "2.20.0",
+      "lastUpdated": "2026-07-23",
+      "versionSource": "app-store",
+      "versionSourceUrl": "https://apps.apple.com/app/egern/id1616105820",
+      "url": "https://egernapp.com/",
+      "officialUrl": "https://egernapp.com/",
+      "repositoryUrl": null,
+      "download_platforms": [
+        "iOS",
+        "macOS"
+      ],
+      "download_architectures": [
+        "universal"
+      ],
+      "download_source_urls": [
+        "https://apps.apple.com/app/egern/id1616105820"
+      ],
+      "download_verified_at_claims": [
+        "2026-09-11"
+      ]
+    }
+  },
+  {
+    "id": "surfboard",
+    "name": "Surfboard",
+    "aliases": [],
+    "kind": "client",
+    "summary": "Android 网络流量处理工具，提供配置管理、内置编辑器和调试界面。",
+    "platforms": [
+      "Android"
+    ],
+    "ecosystems": [],
+    "official_urls": [
+      "https://getsurfboard.com/"
+    ],
+    "repository": null,
+    "discovery_sources": [
+      "https://huarun.win/",
+      "https://huarun.win/apps/surfboard",
+      "https://getsurfboard.com/"
+    ],
+    "verification": {
+      "status": "primary_reviewed",
+      "checked_at": "2026-09-11",
+      "reviewed_fields": [
+        "name",
+        "kind",
+        "summary",
+        "official_urls",
+        "platforms"
+      ],
+      "evidence_urls": [
+        "https://getsurfboard.com/"
+      ],
+      "notes": "官方手册首页明确 Android 平台、配置管理、内置编辑器和调试工具。没有将类似 Surge 界面推断成同一内核。 仅 reviewed_fields 所列字段完成本次第一方资料核对；其他字段与 source_claims 中版本、价格、更新时间、代码公开状态仍保留参考来源属性；未安装、测速或安全审计。"
+    },
+    "maintenance": {
+      "status": "unknown",
+      "evidence_url": null
+    },
+    "relations": [],
+    "compatibility": {
+      "supported_models": null,
+      "notes": null
+    },
+    "tags": [],
+    "source_claims": {
+      "source_url": "https://huarun.win/apps/surfboard",
+      "captured_at": "2026-09-11",
+      "independently_verified": false,
+      "platforms": [
+        "Android"
+      ],
+      "core": "自研原生",
+      "sourceType": "未公开",
+      "priceUsd": 0,
+      "version": "mobile-2.34.4",
+      "lastUpdated": "2026-09-01",
+      "versionSource": "github-release",
+      "versionSourceUrl": "https://github.com/getsurfboard/surfboard/releases/tag/mobile-2.34.4",
+      "url": "https://getsurfboard.com/",
+      "officialUrl": "https://getsurfboard.com/",
+      "repositoryUrl": null,
+      "download_platforms": [],
+      "download_architectures": [],
+      "download_source_urls": [],
+      "download_verified_at_claims": []
+    }
+  }
+]

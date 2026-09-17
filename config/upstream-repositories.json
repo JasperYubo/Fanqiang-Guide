@@ -1,0 +1,1671 @@
+{
+  "schema_version": 1,
+  "repositories": [
+    {
+      "full_name": "233boy/sing-box",
+      "entity_ids": [
+        "233boy-sing-box"
+      ]
+    },
+    {
+      "full_name": "233boy/v2ray",
+      "entity_ids": [
+        "233boy-v2ray"
+      ]
+    },
+    {
+      "full_name": "2dust/clashN",
+      "entity_ids": [
+        "clashn"
+      ]
+    },
+    {
+      "full_name": "2dust/v2rayN",
+      "entity_ids": [
+        "v2rayn"
+      ]
+    },
+    {
+      "full_name": "2dust/v2rayNG",
+      "entity_ids": [
+        "v2rayng"
+      ]
+    },
+    {
+      "full_name": "5VNetwork/VX",
+      "entity_ids": [
+        "vproxy"
+      ]
+    },
+    {
+      "full_name": "821869798/carton",
+      "entity_ids": [
+        "carton"
+      ]
+    },
+    {
+      "full_name": "ACL4SSR/ACL4SSR",
+      "entity_ids": [
+        "acl4ssr"
+      ]
+    },
+    {
+      "full_name": "Adamm00/IPSet_ASUS",
+      "entity_ids": [
+        "skynet-asus"
+      ]
+    },
+    {
+      "full_name": "AdguardTeam/AdGuardHome",
+      "entity_ids": [
+        "adguard-home"
+      ]
+    },
+    {
+      "full_name": "AdguardTeam/dnsproxy",
+      "entity_ids": [
+        "dnsproxy"
+      ]
+    },
+    {
+      "full_name": "aimy1/clash-xiaoy",
+      "entity_ids": [
+        "clash-xiaoy"
+      ]
+    },
+    {
+      "full_name": "akashaProxy/akashaProxy",
+      "entity_ids": [
+        "akashaproxy"
+      ]
+    },
+    {
+      "full_name": "alireza0/s-ui",
+      "entity_ids": [
+        "s-ui"
+      ]
+    },
+    {
+      "full_name": "Alvin9999-newpac/fanqiang",
+      "entity_ids": [
+        "alvin9999-fanqiang"
+      ]
+    },
+    {
+      "full_name": "amnezia-vpn/amnezia-client",
+      "entity_ids": [
+        "amnezia-client"
+      ]
+    },
+    {
+      "full_name": "angristan/openvpn-install",
+      "entity_ids": [
+        "openvpn-install"
+      ]
+    },
+    {
+      "full_name": "angristan/wireguard-install",
+      "entity_ids": [
+        "wireguard-install"
+      ]
+    },
+    {
+      "full_name": "AnyPortal/AnyPortal",
+      "entity_ids": [
+        "anyportal"
+      ]
+    },
+    {
+      "full_name": "anytls/anytls-go",
+      "entity_ids": [
+        "anytls"
+      ]
+    },
+    {
+      "full_name": "apernet/hysteria",
+      "entity_ids": [
+        "hysteria"
+      ]
+    },
+    {
+      "full_name": "appshubcc/Bettbox",
+      "entity_ids": [
+        "bettbox"
+      ]
+    },
+    {
+      "full_name": "AXEVO/Clash-MIX",
+      "entity_ids": [
+        "clash-mix"
+      ]
+    },
+    {
+      "full_name": "bannedbook/fanqiang",
+      "entity_ids": [
+        "bannedbook-fanqiang"
+      ]
+    },
+    {
+      "full_name": "bol-van/zapret",
+      "entity_ids": [
+        "zapret"
+      ]
+    },
+    {
+      "full_name": "boxproxy/box",
+      "entity_ids": [
+        "box-for-android"
+      ]
+    },
+    {
+      "full_name": "CareyWang/sub-web",
+      "entity_ids": [
+        "sub-web"
+      ]
+    },
+    {
+      "full_name": "cbeuw/Cloak",
+      "entity_ids": [
+        "cloak"
+      ]
+    },
+    {
+      "full_name": "ceno-app/ceno-android",
+      "entity_ids": [
+        "ceno-android"
+      ]
+    },
+    {
+      "full_name": "chen08209/FlClash",
+      "entity_ids": [
+        "flclash"
+      ]
+    },
+    {
+      "full_name": "chenx-dust/FlClash-Patched",
+      "entity_ids": [
+        "flclash-patched"
+      ]
+    },
+    {
+      "full_name": "CHIZI-0618/box4magisk",
+      "entity_ids": [
+        "box4magisk"
+      ]
+    },
+    {
+      "full_name": "clash-verge-rev/clash-verge-rev",
+      "entity_ids": [
+        "clash-verge-rev"
+      ]
+    },
+    {
+      "full_name": "coolsnowwolf/lede",
+      "entity_ids": [
+        "lean-lede"
+      ]
+    },
+    {
+      "full_name": "curl/curl",
+      "entity_ids": [
+        "curl"
+      ]
+    },
+    {
+      "full_name": "daeuniverse/dae",
+      "entity_ids": [
+        "dae"
+      ]
+    },
+    {
+      "full_name": "daeuniverse/daed",
+      "entity_ids": [
+        "daed"
+      ]
+    },
+    {
+      "full_name": "danoctavian/awesome-anti-censorship",
+      "entity_ids": [
+        "awesome-anti-censorship"
+      ]
+    },
+    {
+      "full_name": "dndx/phantun",
+      "entity_ids": [
+        "phantun"
+      ]
+    },
+    {
+      "full_name": "DNSCrypt/dnscrypt-proxy",
+      "entity_ids": [
+        "dnscrypt-proxy"
+      ]
+    },
+    {
+      "full_name": "dododook/FlowZ",
+      "entity_ids": [
+        "flowz"
+      ]
+    },
+    {
+      "full_name": "Dreamacro/clash",
+      "entity_ids": [
+        "clash-premium"
+      ]
+    },
+    {
+      "full_name": "EAimTY/tuic",
+      "entity_ids": [
+        "protocol-tuic"
+      ]
+    },
+    {
+      "full_name": "EasyTier/EasyTier",
+      "entity_ids": [
+        "easytier"
+      ]
+    },
+    {
+      "full_name": "Elegying/SSRVPN",
+      "entity_ids": [
+        "ssrvpn"
+      ]
+    },
+    {
+      "full_name": "Elziy/sing-box-for-apple",
+      "entity_ids": [
+        "sing-box-for-apple"
+      ]
+    },
+    {
+      "full_name": "enfein/mieru",
+      "entity_ids": [
+        "mieru"
+      ]
+    },
+    {
+      "full_name": "Entware/Entware",
+      "entity_ids": [
+        "entware"
+      ]
+    },
+    {
+      "full_name": "erebe/wstunnel",
+      "entity_ids": [
+        "wstunnel"
+      ]
+    },
+    {
+      "full_name": "ericpaulbishop/gargoyle",
+      "entity_ids": [
+        "gargoyle"
+      ]
+    },
+    {
+      "full_name": "esnet/iperf",
+      "entity_ids": [
+        "iperf3"
+      ]
+    },
+    {
+      "full_name": "ExclaveNetwork/Exclave",
+      "entity_ids": [
+        "exclave"
+      ]
+    },
+    {
+      "full_name": "fatedier/frp",
+      "entity_ids": [
+        "frp"
+      ]
+    },
+    {
+      "full_name": "FelisCatus/SwitchyOmega",
+      "entity_ids": [
+        "switchyomega"
+      ]
+    },
+    {
+      "full_name": "firezone/firezone",
+      "entity_ids": [
+        "firezone"
+      ]
+    },
+    {
+      "full_name": "fivesheep/chnroutes",
+      "entity_ids": [
+        "chnroutes"
+      ]
+    },
+    {
+      "full_name": "foxyproxy/browser-extension",
+      "entity_ids": [
+        "foxyproxy"
+      ]
+    },
+    {
+      "full_name": "frank-vpl/IRBox",
+      "entity_ids": [
+        "irbox"
+      ]
+    },
+    {
+      "full_name": "FreshTomato-Project/freshtomato-arm",
+      "entity_ids": [
+        "freshtomato"
+      ]
+    },
+    {
+      "full_name": "fw876/helloworld",
+      "entity_ids": [
+        "shadowsocksr-plus"
+      ]
+    },
+    {
+      "full_name": "Gedsh/InviZible",
+      "entity_ids": [
+        "invizible-pro"
+      ]
+    },
+    {
+      "full_name": "geph-official/geph5",
+      "entity_ids": [
+        "geph"
+      ]
+    },
+    {
+      "full_name": "getlantern/lantern",
+      "entity_ids": [
+        "lantern"
+      ]
+    },
+    {
+      "full_name": "gfwlist/gfwlist",
+      "entity_ids": [
+        "gfwlist"
+      ]
+    },
+    {
+      "full_name": "GitMetaio/Surfing",
+      "entity_ids": [
+        "surfing"
+      ]
+    },
+    {
+      "full_name": "gnuton/asuswrt-merlin.ng",
+      "entity_ids": [
+        "asuswrt-merlin-gnuton"
+      ]
+    },
+    {
+      "full_name": "go-gost/gost",
+      "entity_ids": [
+        "gost"
+      ]
+    },
+    {
+      "full_name": "Gozargah/Marzban",
+      "entity_ids": [
+        "marzban"
+      ]
+    },
+    {
+      "full_name": "gravitl/netmaker",
+      "entity_ids": [
+        "netmaker"
+      ]
+    },
+    {
+      "full_name": "GtxFury/FlyClash",
+      "entity_ids": [
+        "flyclash"
+      ]
+    },
+    {
+      "full_name": "guardianproject/orbot",
+      "entity_ids": [
+        "orbot"
+      ]
+    },
+    {
+      "full_name": "GUI-for-Cores/GUI.for.Clash",
+      "entity_ids": [
+        "gui-for-clash"
+      ]
+    },
+    {
+      "full_name": "GUI-for-Cores/GUI.for.SingBox",
+      "entity_ids": [
+        "gui-for-singbox"
+      ]
+    },
+    {
+      "full_name": "gurucomputing/headscale-ui",
+      "entity_ids": [
+        "headscale-ui"
+      ]
+    },
+    {
+      "full_name": "h2y/Shadowrocket-ADBlock-Rules",
+      "entity_ids": [
+        "shadowrocket-adblock"
+      ]
+    },
+    {
+      "full_name": "hanwckf/rt-n56u",
+      "entity_ids": [
+        "padavan-hanwckf"
+      ]
+    },
+    {
+      "full_name": "Happ-proxy/happ-desktop",
+      "entity_ids": [
+        "happ-proxy"
+      ]
+    },
+    {
+      "full_name": "HatsuneMikuUwU/MikuBoxForAndroid",
+      "entity_ids": [
+        "mikubox-for-android"
+      ]
+    },
+    {
+      "full_name": "hiddify/hiddify-app",
+      "entity_ids": [
+        "hiddify"
+      ]
+    },
+    {
+      "full_name": "hiddify/hiddify-manager",
+      "entity_ids": [
+        "hiddify-manager"
+      ]
+    },
+    {
+      "full_name": "hq450/fancyss",
+      "entity_ids": [
+        "fancyss"
+      ]
+    },
+    {
+      "full_name": "hwdsl2/setup-ipsec-vpn",
+      "entity_ids": [
+        "ipsec-vpn-server"
+      ]
+    },
+    {
+      "full_name": "hyphanet/fred",
+      "entity_ids": [
+        "hyphanet"
+      ]
+    },
+    {
+      "full_name": "i2p/i2p.i2p",
+      "entity_ids": [
+        "i2p"
+      ]
+    },
+    {
+      "full_name": "ihciah/shadow-tls",
+      "entity_ids": [
+        "shadow-tls"
+      ]
+    },
+    {
+      "full_name": "immortalwrt/homeproxy",
+      "entity_ids": [
+        "homeproxy"
+      ]
+    },
+    {
+      "full_name": "immortalwrt/immortalwrt",
+      "entity_ids": [
+        "immortalwrt"
+      ]
+    },
+    {
+      "full_name": "IrineSistiana/mosdns",
+      "entity_ids": [
+        "mosdns"
+      ]
+    },
+    {
+      "full_name": "istoreos/istoreos",
+      "entity_ids": [
+        "istoreos"
+      ]
+    },
+    {
+      "full_name": "jackyaz/YazFi",
+      "entity_ids": [
+        "yazfi"
+      ]
+    },
+    {
+      "full_name": "Jigsaw-Code/outline-apps",
+      "entity_ids": [
+        "outline"
+      ]
+    },
+    {
+      "full_name": "JohanChane/clashtui",
+      "entity_ids": [
+        "clashtui"
+      ]
+    },
+    {
+      "full_name": "jpillora/chisel",
+      "entity_ids": [
+        "chisel"
+      ]
+    },
+    {
+      "full_name": "jsdelivr/globalping-cli",
+      "entity_ids": [
+        "globalping-cli"
+      ]
+    },
+    {
+      "full_name": "juanfont/headscale",
+      "entity_ids": [
+        "headscale"
+      ]
+    },
+    {
+      "full_name": "juewuy/ShellCrash",
+      "entity_ids": [
+        "shellcrash"
+      ]
+    },
+    {
+      "full_name": "juicity/juicity",
+      "entity_ids": [
+        "juicity"
+      ]
+    },
+    {
+      "full_name": "KaringX/clashmi",
+      "entity_ids": [
+        "clash-mi"
+      ]
+    },
+    {
+      "full_name": "KaringX/karing",
+      "entity_ids": [
+        "karing"
+      ]
+    },
+    {
+      "full_name": "Kindness-Kismet/Stelliberty",
+      "entity_ids": [
+        "stelliberty"
+      ]
+    },
+    {
+      "full_name": "klzgrad/naiveproxy",
+      "entity_ids": [
+        "naiveproxy"
+      ]
+    },
+    {
+      "full_name": "koolshare/rogsoft",
+      "entity_ids": [
+        "koolshare-rogsoft"
+      ]
+    },
+    {
+      "full_name": "libnyanpasu/clash-nyanpasu",
+      "entity_ids": [
+        "clash-nyanpasu"
+      ]
+    },
+    {
+      "full_name": "linkease/istore",
+      "entity_ids": [
+        "istore"
+      ]
+    },
+    {
+      "full_name": "Loyalsoldier/clash-rules",
+      "entity_ids": [
+        "loyalsoldier-rules"
+      ]
+    },
+    {
+      "full_name": "mapleafgo/singcast",
+      "entity_ids": [
+        "singcast"
+      ]
+    },
+    {
+      "full_name": "marzneshin/marzneshin",
+      "entity_ids": [
+        "marzneshin"
+      ]
+    },
+    {
+      "full_name": "MatsuriDayo/NekoBoxForAndroid",
+      "entity_ids": [
+        "nekobox-for-android"
+      ]
+    },
+    {
+      "full_name": "MatsuriDayo/nekoray",
+      "entity_ids": [
+        "nekoray"
+      ]
+    },
+    {
+      "full_name": "meow-rs/meow-ios",
+      "entity_ids": [
+        "meow"
+      ]
+    },
+    {
+      "full_name": "MetaCubeX/ClashMetaForAndroid",
+      "entity_ids": [
+        "clash-meta-for-android"
+      ]
+    },
+    {
+      "full_name": "MetaCubeX/ClashX.Meta",
+      "entity_ids": [
+        "clashx-meta"
+      ]
+    },
+    {
+      "full_name": "MetaCubeX/meta-rules-dat",
+      "entity_ids": [
+        "meta-rules-dat"
+      ]
+    },
+    {
+      "full_name": "MetaCubeX/mihomo",
+      "entity_ids": [
+        "mihomo"
+      ]
+    },
+    {
+      "full_name": "MHSanaei/3x-ui",
+      "entity_ids": [
+        "3x-ui"
+      ]
+    },
+    {
+      "full_name": "mihomo-party-org/clash-party",
+      "entity_ids": [
+        "clash-party"
+      ]
+    },
+    {
+      "full_name": "MonadBoxLab/MonadBox",
+      "entity_ids": [
+        "monadbox"
+      ]
+    },
+    {
+      "full_name": "mullvad/mullvadvpn-app",
+      "entity_ids": [
+        "mullvad-vpn"
+      ]
+    },
+    {
+      "full_name": "Nemu-x/ClashFest",
+      "entity_ids": [
+        "clashfest"
+      ]
+    },
+    {
+      "full_name": "netbirdio/netbird",
+      "entity_ids": [
+        "netbird"
+      ]
+    },
+    {
+      "full_name": "netchx/netch",
+      "entity_ids": [
+        "netch"
+      ]
+    },
+    {
+      "full_name": "nikkinikki-org/OpenWrt-nikki",
+      "entity_ids": [
+        "nikki"
+      ]
+    },
+    {
+      "full_name": "NLnetLabs/unbound",
+      "entity_ids": [
+        "unbound"
+      ]
+    },
+    {
+      "full_name": "NodePassProject/Anywhere",
+      "entity_ids": [
+        "anywhere"
+      ]
+    },
+    {
+      "full_name": "NodePassProject/Everywhere",
+      "entity_ids": [
+        "everywhere"
+      ]
+    },
+    {
+      "full_name": "nxtrace/NTrace-core",
+      "entity_ids": [
+        "nexttrace"
+      ]
+    },
+    {
+      "full_name": "okunvei/singboard_for_mac",
+      "entity_ids": [
+        "singboard-for-mac"
+      ]
+    },
+    {
+      "full_name": "OneOhCloud/OneBox",
+      "entity_ids": [
+        "onebox"
+      ]
+    },
+    {
+      "full_name": "OneXray/OneXray",
+      "entity_ids": [
+        "onexray"
+      ]
+    },
+    {
+      "full_name": "ooni/probe-cli",
+      "entity_ids": [
+        "ooni-probe"
+      ]
+    },
+    {
+      "full_name": "openconnect/ocserv",
+      "entity_ids": [
+        "ocserv"
+      ]
+    },
+    {
+      "full_name": "openconnect/openconnect",
+      "entity_ids": [
+        "openconnect"
+      ]
+    },
+    {
+      "full_name": "OpenVPN/openvpn",
+      "entity_ids": [
+        "openvpn"
+      ]
+    },
+    {
+      "full_name": "Openwrt-Passwall/openwrt-passwall",
+      "entity_ids": [
+        "passwall"
+      ]
+    },
+    {
+      "full_name": "Openwrt-Passwall/openwrt-passwall2",
+      "entity_ids": [
+        "passwall2"
+      ]
+    },
+    {
+      "full_name": "openwrt/luci",
+      "entity_ids": [
+        "luci"
+      ]
+    },
+    {
+      "full_name": "openwrt/openwrt",
+      "entity_ids": [
+        "openwrt"
+      ]
+    },
+    {
+      "full_name": "orf/gping",
+      "entity_ids": [
+        "gping"
+      ]
+    },
+    {
+      "full_name": "OutlineFoundation/outline-server",
+      "entity_ids": [
+        "outline-server"
+      ]
+    },
+    {
+      "full_name": "p4gefau1t/trojan-go",
+      "entity_ids": [
+        "trojan-go"
+      ]
+    },
+    {
+      "full_name": "PhoenixNil/XrayUI-dev",
+      "entity_ids": [
+        "xrayui"
+      ]
+    },
+    {
+      "full_name": "pluralplay/FlClashX",
+      "entity_ids": [
+        "flclashx"
+      ]
+    },
+    {
+      "full_name": "popsiclelmlm/Hey",
+      "entity_ids": [
+        "hey"
+      ]
+    },
+    {
+      "full_name": "ProjectKumo/KumoApp",
+      "entity_ids": [
+        "kumoapp"
+      ]
+    },
+    {
+      "full_name": "ProtonVPN/android-app",
+      "entity_ids": [
+        "proton-vpn-android"
+      ]
+    },
+    {
+      "full_name": "Psiphon-Labs/psiphon-tunnel-core",
+      "entity_ids": [
+        "psiphon-core"
+      ]
+    },
+    {
+      "full_name": "pymumu/luci-app-smartdns",
+      "entity_ids": [
+        "luci-app-smartdns"
+      ]
+    },
+    {
+      "full_name": "pymumu/smartdns",
+      "entity_ids": [
+        "smartdns"
+      ]
+    },
+    {
+      "full_name": "qr243vbi/nekobox",
+      "entity_ids": [
+        "nekobox-for-pc"
+      ]
+    },
+    {
+      "full_name": "rapiz1/rathole",
+      "entity_ids": [
+        "rathole"
+      ]
+    },
+    {
+      "full_name": "RMerl/asuswrt-merlin.ng",
+      "entity_ids": [
+        "asuswrt-merlin"
+      ]
+    },
+    {
+      "full_name": "roseforljh/KunBox",
+      "entity_ids": [
+        "kunbox"
+      ]
+    },
+    {
+      "full_name": "rts600/MerlinClash",
+      "entity_ids": [
+        "merlinclash"
+      ]
+    },
+    {
+      "full_name": "SaeedDev94/Xray",
+      "entity_ids": [
+        "xray-gui"
+      ]
+    },
+    {
+      "full_name": "SagerNet/sing-box",
+      "entity_ids": [
+        "sing-box"
+      ]
+    },
+    {
+      "full_name": "sbwml/luci-app-mosdns",
+      "entity_ids": [
+        "luci-app-mosdns"
+      ]
+    },
+    {
+      "full_name": "shadowsocks/luci-app-shadowsocks",
+      "entity_ids": [
+        "luci-app-shadowsocks"
+      ]
+    },
+    {
+      "full_name": "shadowsocks/shadowsocks-android",
+      "entity_ids": [
+        "shadowsocks-android"
+      ]
+    },
+    {
+      "full_name": "shadowsocks/shadowsocks-libev",
+      "entity_ids": [
+        "shadowsocks-libev"
+      ]
+    },
+    {
+      "full_name": "shadowsocks/shadowsocks-rust",
+      "entity_ids": [
+        "shadowsocks-rust"
+      ]
+    },
+    {
+      "full_name": "Sitoi/ClashBar",
+      "entity_ids": [
+        "clashbar"
+      ]
+    },
+    {
+      "full_name": "slackhq/nebula",
+      "entity_ids": [
+        "nebula"
+      ]
+    },
+    {
+      "full_name": "snakem982/Pandora-Box",
+      "entity_ids": [
+        "pandora-box"
+      ]
+    },
+    {
+      "full_name": "SoftEtherVPN/SoftEtherVPN",
+      "entity_ids": [
+        "softether-vpn"
+      ]
+    },
+    {
+      "full_name": "sshuttle/sshuttle",
+      "entity_ids": [
+        "sshuttle"
+      ]
+    },
+    {
+      "full_name": "starifly/NekoBoxForAndroid",
+      "entity_ids": [
+        "nekobox-by-starifly"
+      ]
+    },
+    {
+      "full_name": "strongswan/strongswan",
+      "entity_ids": [
+        "strongswan"
+      ]
+    },
+    {
+      "full_name": "sub-store-org/Sub-Store",
+      "entity_ids": [
+        "sub-store"
+      ]
+    },
+    {
+      "full_name": "SUDOKU-ASCII/sudoku-android",
+      "entity_ids": [
+        "sudodroid"
+      ]
+    },
+    {
+      "full_name": "SUDOKU-ASCII/sudoku-desktop",
+      "entity_ids": [
+        "sudoku-desktop"
+      ]
+    },
+    {
+      "full_name": "taamarin/box_for_magisk",
+      "entity_ids": [
+        "box-for-root"
+      ]
+    },
+    {
+      "full_name": "tailscale/tailscale",
+      "entity_ids": [
+        "tailscale"
+      ]
+    },
+    {
+      "full_name": "TechnitiumSoftware/DnsServer",
+      "entity_ids": [
+        "technitium-dns"
+      ]
+    },
+    {
+      "full_name": "teddysun/shadowsocks_install",
+      "entity_ids": [
+        "shadowsocks-install"
+      ]
+    },
+    {
+      "full_name": "TelegramMessenger/MTProxy",
+      "entity_ids": [
+        "mtproxy"
+      ]
+    },
+    {
+      "full_name": "throneproj/Throne",
+      "entity_ids": [
+        "throne"
+      ]
+    },
+    {
+      "full_name": "tindy2013/subconverter",
+      "entity_ids": [
+        "subconverter"
+      ]
+    },
+    {
+      "full_name": "TokenPLS/Hako-Client",
+      "entity_ids": [
+        "clash-by-hako"
+      ]
+    },
+    {
+      "full_name": "trailofbits/algo",
+      "entity_ids": [
+        "algo"
+      ]
+    },
+    {
+      "full_name": "traviscross/mtr",
+      "entity_ids": [
+        "mtr"
+      ]
+    },
+    {
+      "full_name": "trojan-gfw/trojan",
+      "entity_ids": [
+        "trojan"
+      ]
+    },
+    {
+      "full_name": "txthinking/brook",
+      "entity_ids": [
+        "brook"
+      ]
+    },
+    {
+      "full_name": "v2fly/domain-list-community",
+      "entity_ids": [
+        "v2fly-domain-list"
+      ]
+    },
+    {
+      "full_name": "v2fly/fhs-install-v2ray",
+      "entity_ids": [
+        "v2ray-fhs-install"
+      ]
+    },
+    {
+      "full_name": "v2fly/geoip",
+      "entity_ids": [
+        "v2fly-geoip"
+      ]
+    },
+    {
+      "full_name": "v2fly/v2ray-core",
+      "entity_ids": [
+        "v2fly"
+      ]
+    },
+    {
+      "full_name": "v2rayA/v2rayA",
+      "entity_ids": [
+        "v2raya"
+      ]
+    },
+    {
+      "full_name": "ValdikSS/GoodbyeDPI",
+      "entity_ids": [
+        "goodbyedpi"
+      ]
+    },
+    {
+      "full_name": "vernesong/mihomo",
+      "entity_ids": [
+        "mihomo-smart-vernesong"
+      ]
+    },
+    {
+      "full_name": "vernesong/OpenClash",
+      "entity_ids": [
+        "openclash"
+      ]
+    },
+    {
+      "full_name": "wangyu-/udp2raw",
+      "entity_ids": [
+        "udp2raw"
+      ]
+    },
+    {
+      "full_name": "wangyu-/UDPspeeder",
+      "entity_ids": [
+        "udpspeeder"
+      ]
+    },
+    {
+      "full_name": "Watfaq/clash-rs",
+      "entity_ids": [
+        "clash-rs"
+      ]
+    },
+    {
+      "full_name": "wg-easy/wg-easy",
+      "entity_ids": [
+        "wg-easy"
+      ]
+    },
+    {
+      "full_name": "WireGuard/wireguard-tools",
+      "entity_ids": [
+        "wireguard-tools"
+      ]
+    },
+    {
+      "full_name": "xchacha20-poly1305/husi",
+      "entity_ids": [
+        "husi"
+      ]
+    },
+    {
+      "full_name": "Xentrk/x3mRouting",
+      "entity_ids": [
+        "x3mrouting"
+      ]
+    },
+    {
+      "full_name": "xiaoli8571/NekoBox4Harmony",
+      "entity_ids": [
+        "nekobox-for-harmony"
+      ]
+    },
+    {
+      "full_name": "xinggaoya/sing-box-windows",
+      "entity_ids": [
+        "sing-box-windows"
+      ]
+    },
+    {
+      "full_name": "xishang0128/sparkle",
+      "entity_ids": [
+        "sparkle"
+      ]
+    },
+    {
+      "full_name": "xtaci/kcptun",
+      "entity_ids": [
+        "kcptun"
+      ]
+    },
+    {
+      "full_name": "XTLS/Xray-core",
+      "entity_ids": [
+        "xray-core"
+      ]
+    },
+    {
+      "full_name": "XTLS/Xray-install",
+      "entity_ids": [
+        "xray-install"
+      ]
+    },
+    {
+      "full_name": "yanue/V2rayU",
+      "entity_ids": [
+        "v2rayu"
+      ]
+    },
+    {
+      "full_name": "yaog6700-bit/Swell-Proxy",
+      "entity_ids": [
+        "swell-proxy"
+      ]
+    },
+    {
+      "full_name": "yarrick/iodine",
+      "entity_ids": [
+        "iodine"
+      ]
+    },
+    {
+      "full_name": "Yawning/obfs4",
+      "entity_ids": [
+        "obfs4"
+      ]
+    },
+    {
+      "full_name": "YumeYucca/YumeBox",
+      "entity_ids": [
+        "yumebox"
+      ]
+    },
+    {
+      "full_name": "zero-peak/ZeroOmega",
+      "entity_ids": [
+        "zeroomega"
+      ]
+    },
+    {
+      "full_name": "zerotier/ZeroTierOne",
+      "entity_ids": [
+        "zerotier"
+      ]
+    },
+    {
+      "full_name": "zfl9/chinadns-ng",
+      "entity_ids": [
+        "chinadns-ng"
+      ]
+    },
+    {
+      "full_name": "zn0wii/satelite-proxy",
+      "entity_ids": [
+        "satelite"
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "entity_id": "adblock-fast",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "amtm",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "asuswrt",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "bamboo-dragonfly",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "bclient",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "briar",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "clash-lite",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "clash-net",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "clash-plus",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "clashbox",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "clashmac",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "cloudflare-warp",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "concept-clash-api",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "concept-fakeip",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "concept-redirect",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "concept-ruleset",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "concept-tproxy",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "concept-tun",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "concept-urltest",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "connect-now",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "dash-vpn",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "diversion",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "egern",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "foxray",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "glinet-router-firmware",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "incy",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "insightbox",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "jamjams",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "karing-harmony-hap",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "koolcenter-asuswrt-mod",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "koolcenter-merlin-mod",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "linkclashx",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "loon",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "loon-lite",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "lvory",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "lyrebird",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "mconnect",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "mwan3",
+      "reason": "invalid_repository_mapping"
+    },
+    {
+      "entity_id": "nextin",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "nthlink",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "oneboxm",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "oneok-vpn",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "onlynet",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "openvxs",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "openwrt-pbr",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "orbit-x",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "ouinet",
+      "reason": "non_github_repository"
+    },
+    {
+      "entity_id": "pantheon",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "panvell",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "pharos-pro",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "pixel-proxy",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "potatso",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-anytls",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-doh",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-doq",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-dot",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-http-proxy",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-hysteria1",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-hysteria2",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-shadowsocks",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-snell",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-socks",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-trojan",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-vless",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-vmess",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "protocol-wireguard",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "quantumult-x",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "rabbithole",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "shadowclash",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "shadowrocket",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "ship",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "snowflake",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "stash",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "streisand",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "surfboard",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "surge",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "susi-connect",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "tor-browser",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "tor-core",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-grpc",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-httpupgrade",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-mkcp",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-reality",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-shadowtls",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-ssh",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-websocket",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "transport-xhttp",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "tunna",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "v2box",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "v2rage",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "voxiproxytun",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "vpn",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "vpnet",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "vpsus",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "wisp",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "xray-connect",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "xrayclient",
+      "reason": "missing_repository"
+    },
+    {
+      "entity_id": "xtunnel",
+      "reason": "missing_repository"
+    }
+  ]
+}

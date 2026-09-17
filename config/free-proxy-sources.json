@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "id": "pawdroid",
+      "name": "Pawdroid Free-servers",
+      "repository": "https://github.com/Pawdroid/Free-servers",
+      "category": "subscription",
+      "description": "公开分享多种协议的免费节点订阅。",
+      "feeds": [
+        {
+          "id": "pawdroid-sub",
+          "label": "通用订阅",
+          "format": "base64_uri",
+          "url": "https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub"
+        }
+      ]
+    },
+    {
+      "id": "free-nodes",
+      "name": "free-nodes / v2rayfree",
+      "repository": "https://github.com/free-nodes/v2rayfree",
+      "category": "subscription",
+      "description": "按日期维护免费节点，并提供固定订阅入口。",
+      "feeds": [
+        {
+          "id": "free-nodes-sub",
+          "label": "通用订阅",
+          "format": "base64_uri",
+          "url": "https://raw.githubusercontent.com/free-nodes/v2rayfree/main/sub"
+        }
+      ]
+    },
+    {
+      "id": "v2ray-aggregator",
+      "name": "V2RayAggregator",
+      "repository": "https://github.com/mahdibland/V2RayAggregator",
+      "category": "subscription",
+      "description": "提供多来源聚合节点的公开订阅。",
+      "feeds": [
+        {
+          "id": "v2ray-aggregator-eternity",
+          "label": "Eternity 订阅",
+          "format": "base64_uri",
+          "url": "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/Eternity"
+        }
+      ]
+    },
+    {
+      "id": "monosans",
+      "name": "monosans proxy-list",
+      "repository": "https://github.com/monosans/proxy-list",
+      "category": "proxy_list",
+      "description": "提供 HTTP、SOCKS4 和 SOCKS5 代理地址列表。",
+      "feeds": [
+        {
+          "id": "monosans-all",
+          "label": "完整代理列表",
+          "format": "plain_uri",
+          "url": "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/all.txt"
+        }
+      ]
+    }
+  ]
+}
