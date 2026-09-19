@@ -170,8 +170,15 @@ def validate_exports(export_dir):
 
 
 def atomic_bytes(path, content):
-    if path.is_file() and path.read_bytes() == content:
-        return False
+    if path.is_file():
+        current = path.read_bytes()
+        if current == content:
+            return False
+        # Git may materialize Markdown with CRLF on Windows even though the
+        # repository blob and deterministic renderer use LF.  Treat an EOL-only
+        # difference as unchanged so a local rebuild remains idempotent.
+        if path.suffix == ".md" and current.replace(b"\r\n", b"\n") == content.replace(b"\r\n", b"\n"):
+            return False
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = None
     try:

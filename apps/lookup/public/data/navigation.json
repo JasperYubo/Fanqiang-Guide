@@ -1,0 +1,75 @@
+{
+  "version": "1.0",
+  "site": "https://fanqiang.guide",
+  "source": "https://github.com/JasperYubo/Fanqiang-Guide",
+  "source_revision": "fe895e2be9ce8da0fd4f0003faab7303b3bda9bd",
+  "checked_at": "2026-09-12",
+  "content_type": "public_navigation_snapshot",
+  "entries": [
+    {
+      "id": "catalog",
+      "name": "完整目录",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/blob/main/CATALOG.md"
+    },
+    {
+      "id": "windows",
+      "name": "Windows",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/#windows"
+    },
+    {
+      "id": "macos",
+      "name": "macOS",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/#macos"
+    },
+    {
+      "id": "linux",
+      "name": "Linux",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/#linux"
+    },
+    {
+      "id": "android",
+      "name": "Android",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/#android"
+    },
+    {
+      "id": "ios",
+      "name": "iPhone / iPad",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/#ios"
+    },
+    {
+      "id": "merlin",
+      "name": "华硕梅林",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/#merlin"
+    },
+    {
+      "id": "openwrt",
+      "name": "OpenWrt",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/#openwrt"
+    },
+    {
+      "id": "merlin-guide",
+      "name": "梅林资料导读",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/blob/main/knowledge/merlin-guide-v0.1-2026-09-11.md"
+    },
+    {
+      "id": "merlin-models",
+      "name": "梅林机型支持资料",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/blob/main/knowledge/merlin-model-matrix-v0.1-2026-09-11.md"
+    },
+    {
+      "id": "daily",
+      "name": "每日免费代理资料归档",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies"
+    },
+    {
+      "id": "updates",
+      "name": "资料更新记录",
+      "url": "https://github.com/JasperYubo/Fanqiang-Guide/blob/main/UPDATES.md"
+    }
+  ],
+  "limitations": [
+    "仅公开资料导航；上游来源可继续更新。",
+    "机型支持声明不等于实机兼容测试。",
+    "免费代理资料的抓取时间不等于节点可用性验证。"
+  ]
+}

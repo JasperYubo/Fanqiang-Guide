@@ -1,0 +1,17 @@
+html.fg-external-browser{overflow:hidden!important;background:#fff!important}
+html.fg-external-browser body{visibility:hidden!important;margin:0!important}
+html.fg-external-browser body>:not(#fg-external-browser-guard){display:none!important}
+#fg-external-browser-guard{visibility:visible!important;display:block!important;position:fixed;inset:0;z-index:2147483647;overflow:auto;background:#fff;color:#20354d;font-family:system-ui,-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;text-align:center;box-sizing:border-box}
+#fg-external-browser-guard *{box-sizing:border-box}
+#fg-external-browser-guard [hidden]{display:none!important}
+.fg-external-browser-inner{max-width:420px;margin:0 auto;padding:clamp(105px,20vh,180px) 25px 40px}
+#fg-external-browser-guard h1{margin:0 0 18px;font-size:24px;line-height:1.45;letter-spacing:0;color:#183654;font-weight:700}
+.fg-external-browser-instruction{margin:0 0 30px;font-size:16px;line-height:1.8;color:#526a85}
+.fg-external-browser-arrow{position:fixed;right:22px;top:12px;color:#2858dc;font-size:48px;line-height:1;font-weight:500}
+.fg-external-browser-copy{min-height:46px;border:1px solid #2858dc;border-radius:9px;padding:12px 27px;background:#2858dc;color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer}
+.fg-external-browser-copy:disabled{opacity:.65;cursor:default}
+.fg-external-browser-copy:focus-visible,#fg-external-browser-url:focus-visible{outline:3px solid #8badf8;outline-offset:3px}
+.fg-external-browser-status{min-height:42px;margin:17px 0 0;font-size:13px;line-height:1.8;color:#647991}
+.fg-external-browser-fallback{margin-top:20px;text-align:left}
+.fg-external-browser-fallback label{display:block;font-size:13px;line-height:1.8;color:#526a85;margin-bottom:9px}
+#fg-external-browser-url{display:block;width:100%;resize:none;border:1px solid #ccd9ec;border-radius:8px;padding:11px;background:#f7faff;color:#2858b7;font:inherit;font-size:14px;line-height:1.6;overflow-wrap:anywhere;word-break:break-all;user-select:text;-webkit-user-select:text}

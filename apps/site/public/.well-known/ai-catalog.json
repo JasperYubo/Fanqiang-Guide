@@ -1,0 +1,59 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Fanqiang Guide",
+    "identifier": "fanqiang.guide"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:fanqiang.guide:mcp:library",
+      "displayName": "公开工具资料查询 MCP",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/.well-known/mcp/server-card.json",
+      "representativeQueries": [
+        "查询 Windows 客户端",
+        "按条目编号读取原始资料"
+      ]
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:api:library",
+      "displayName": "公开工具资料查询 API",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/openapi.json"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:skill:library-lookup",
+      "displayName": "工具资料查询 Skill",
+      "type": "text/markdown",
+      "url": "https://fanqiang.guide/ai/skills/library-lookup/SKILL.md"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:reference",
+      "displayName": "完整公开资料参考",
+      "type": "text/markdown",
+      "url": "https://fanqiang.guide/ai/index.md"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:guides",
+      "displayName": "翻墙与科学上网工具指南：专题答案",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/data/guides.json",
+      "representativeQueries": [
+        "翻墙工具怎么下载",
+        "科学上网客户端怎么选择",
+        "小火箭节点二维码和订阅有什么区别",
+        "华硕梅林支持哪些型号"
+      ]
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:client-comparison",
+      "displayName": "客户端系统与架构对照",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/data/client-comparison.json",
+      "representativeQueries": [
+        "按系统查客户端官方发布入口",
+        "ARM64客户端安装包怎样核对"
+      ]
+    }
+  ]
+}

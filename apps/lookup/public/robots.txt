@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /agent-auth/
+
+Sitemap: https://fanqiang.guide/sitemap.xml
+Agentmap: https://fanqiang.guide/.well-known/ai-catalog.json

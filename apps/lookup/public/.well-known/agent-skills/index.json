@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "library-lookup",
+      "type": "skill-md",
+      "description": "Read the public Fanqiang Guide library and retrieve exact source records.",
+      "url": "https://fanqiang.guide/ai/skills/library-lookup/SKILL.md",
+      "digest": "sha256:8b4405db6659cb9e6eca81760c568897fd522cc4f0418e500383263d8229b33c"
+    }
+  ]
+}

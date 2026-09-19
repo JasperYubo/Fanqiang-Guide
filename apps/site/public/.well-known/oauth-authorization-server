@@ -1,0 +1,56 @@
+{
+  "status": "under_construction",
+  "available": false,
+  "capabilities_status": "planned_contract_only",
+  "message": "Coming soon. Agent authentication is unavailable.",
+  "launch_date": null,
+  "launch_notice": "Launch date not announced.",
+  "public_lookup_url": "https://fanqiang.guide/ai/",
+  "public_lookup_api_url": "https://fanqiang.guide/api/agent/search",
+  "openapi_url": "https://fanqiang.guide/openapi.json",
+  "mcp_url": "https://fanqiang.guide/mcp",
+  "issuer": "https://fanqiang.guide",
+  "authorization_endpoint": "https://fanqiang.guide/agent-auth/authorize",
+  "token_endpoint": "https://fanqiang.guide/agent-auth/token",
+  "jwks_uri": "https://fanqiang.guide/.well-known/jwks.json",
+  "grant_types_supported": [
+    "authorization_code",
+    "urn:ietf:params:oauth:grant-type:jwt-bearer"
+  ],
+  "response_types_supported": [
+    "code"
+  ],
+  "code_challenge_methods_supported": [
+    "S256"
+  ],
+  "scopes_supported": [
+    "library:read"
+  ],
+  "agent_auth": {
+    "status": "under_construction",
+    "available": false,
+    "capabilities_status": "planned_contract_only",
+    "message": "Coming soon. Agent authentication is unavailable.",
+    "launch_date": null,
+    "launch_notice": "Launch date not announced.",
+    "skill": "https://fanqiang.guide/auth.md",
+    "register_uri": "https://fanqiang.guide/agent-auth/register",
+    "claim_uri": "https://fanqiang.guide/agent-auth/claim",
+    "identity_types_supported": [
+      "anonymous"
+    ],
+    "anonymous": {
+      "status": "under_construction",
+      "available": false,
+      "capabilities_status": "planned_contract_only",
+      "message": "Coming soon. Agent authentication is unavailable.",
+      "launch_date": null,
+      "launch_notice": "Launch date not announced.",
+      "credential_types_supported": [
+        "access_token"
+      ],
+      "description": "Planned identity assertion exchange. No identity or token issuance is available."
+    }
+  },
+  "agent_instructions": "::ILANG::v5.0\n::STATE{status:under_construction; available:false; capabilities_status:planned_contract_only; launch_date:not_announced}\n::MODULE{AUTHENTICATION_STATUS}\n  [MUST] Treat the listed authentication operations as planned and unavailable.\n  [MUST] Do not submit identity data, passwords, assertions or tokens to these endpoints while available=false.\n  [MUST] Expect HTTP 503 temporarily_unavailable. No account, assertion, claim or token will be created.\n  [MUST] Use the unauthenticated reference at https://fanqiang.guide/ai/, read-only API at https://fanqiang.guide/openapi.json or MCP at https://fanqiang.guide/mcp.\n  [MUST] Keep public lookup unauthenticated. These future declarations do not change its access rules.\n  [MUST] Do not infer or promise a launch date.\n::MODULE{PLANNED_AUTH_CONTRACT}\n  oauth:authorization_code; pkce:S256; scope:library:read\n  anonymous:planned_identity_assertion_then_JWT_bearer_exchange; final_credential:access_token\n  registration_uri:https://fanqiang.guide/agent-auth/register\n  claim_uri:https://fanqiang.guide/agent-auth/claim\n  [MUST] Interpret all grants and credential types as future design only, never current acceptance.\n::ILANG::COMPLETE::"
+}

@@ -13,3 +13,18 @@ Thumbs.db
 /sources/
 /staging/
 /PROJECT_STATE*
+
+# Application build and local runtime files
+.build/
+node_modules/
+.wrangler/
+.dev.vars
+.dev.vars.*
+secrets/
+credentials/
+*.token
+*.log
+*.tar.gz
+*.zip
+*.aesgcm
+venv/

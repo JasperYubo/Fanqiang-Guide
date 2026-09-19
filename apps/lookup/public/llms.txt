@@ -1,0 +1,13 @@
+# Fanqiang Guide
+
+> 公开中文翻墙工具与网络知识库；310条工具与知识记录，58条华硕梅林机型支持声明。目录快照日期2026-09-12；各条记录核对日期见原文。
+
+## 资料
+- [完整 I-Lang 参考页](https://fanqiang.guide/ai/index.md)
+- [查询 Skill](https://fanqiang.guide/ai/skills/library-lookup/SKILL.md)
+- [OpenAPI](https://fanqiang.guide/openapi.json)
+- [MCP 服务卡](https://fanqiang.guide/.well-known/mcp/server-card.json)
+- [公开 GitHub 知识库](https://github.com/JasperYubo/Fanqiang-Guide)
+- [每日代理资料文件夹](https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies)
+
+具体适用性与核验状态以每条记录的来源和限定说明为准。

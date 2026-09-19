@@ -73,6 +73,12 @@ class RebuildTests(unittest.TestCase):
     def write_source_rows(self, rows):
         (self.source / "github-extra.json").write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
 
+    def test_markdown_eol_only_difference_is_idempotent(self):
+        target = self.base / "generated.md"
+        target.write_bytes(b"first\r\nsecond\r\n")
+        self.assertFalse(builder.atomic_bytes(target, b"first\nsecond\n"))
+        self.assertEqual(target.read_bytes(), b"first\r\nsecond\r\n")
+
     def test_current_snapshot_rebuild_is_exact_and_database_is_not_replaced(self):
         self.seed_published_outputs()
         before = file_hashes(self.output)

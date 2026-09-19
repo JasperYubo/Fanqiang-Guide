@@ -1,0 +1,37 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Fanqiang Guide",
+    "identifier": "fanqiang.guide"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:fanqiang.guide:mcp:library",
+      "displayName": "公开知识库查询 MCP",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/.well-known/mcp/server-card.json",
+      "representativeQueries": [
+        "查询 Windows 客户端",
+        "按条目编号读取原始资料"
+      ]
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:api:library",
+      "displayName": "公开知识库查询 API",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/openapi.json"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:skill:library-lookup",
+      "displayName": "知识库查询 Skill",
+      "type": "text/markdown",
+      "url": "https://fanqiang.guide/ai/skills/library-lookup/SKILL.md"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:reference",
+      "displayName": "完整公开资料参考",
+      "type": "text/markdown",
+      "url": "https://fanqiang.guide/ai/index.md"
+    }
+  ]
+}

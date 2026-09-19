@@ -1,0 +1,98 @@
+{
+  "version": "1.3",
+  "checked_at": "2026-09-12",
+  "title": "按系统与架构选择官方下载入口",
+  "summary": "先匹配设备，再进入官方发布页查看附件。表中列出常见组合和已核对的包名标记；正式发布入口会随项目更新，具体系统要求以所选版本说明为准。",
+  "rows": [
+    {
+      "platform": "Windows",
+      "architecture": "x64、ARM64",
+      "client": "v2rayN",
+      "release_url": "https://github.com/2dust/v2rayN/releases/latest",
+      "package_note": "在附件中按 windows-64 或 windows-arm64 区分；ZIP 为便携包，带 desktop 的附件使用另一套桌面界面。",
+      "source_urls": ["https://github.com/2dust/v2rayN/releases/tag/7.24.9", "https://github.com/2dust/v2rayN/wiki/Release-files-introduction"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "macOS",
+      "architecture": "Intel x64、Apple Silicon ARM64",
+      "client": "v2rayN",
+      "release_url": "https://github.com/2dust/v2rayN/releases/latest",
+      "package_note": "按 macos-64 或 macos-arm64 选择；发布附件提供 DMG 与 ZIP，下载前同时核对系统版本要求。",
+      "source_urls": ["https://github.com/2dust/v2rayN/releases/tag/7.24.9", "https://github.com/2dust/v2rayN/wiki/Release-files-introduction"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "Linux",
+      "architecture": "常见组合：x64、ARM64",
+      "client": "v2rayN",
+      "release_url": "https://github.com/2dust/v2rayN/releases/latest",
+      "package_note": "按 linux-64 或 linux-arm64 匹配架构；Debian/Ubuntu 查看 DEB，Fedora/Red Hat 查看 RPM，也有 ZIP。其他架构以正式附件为准。",
+      "source_urls": ["https://github.com/2dust/v2rayN/releases/tag/7.24.9", "https://github.com/2dust/v2rayN/wiki/Release-files-introduction"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "Windows",
+      "architecture": "x64、ARM64",
+      "client": "Clash Verge Rev",
+      "release_url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/latest",
+      "package_note": "已核对正式附件中的 x64-setup.exe 与 arm64-setup.exe；同时提供 fixed_webview2 包型，按发布说明选择。",
+      "source_urls": ["https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/v2.5.2", "https://github.com/clash-verge-rev/clash-verge-rev"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "macOS",
+      "architecture": "Intel x64、Apple Silicon ARM64",
+      "client": "Clash Verge Rev",
+      "release_url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/latest",
+      "package_note": "DMG 附件用 x64 区分 Intel，aarch64 区分 Apple Silicon；同时核对该版本的 macOS 要求。",
+      "source_urls": ["https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/v2.5.2", "https://github.com/clash-verge-rev/clash-verge-rev"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "Linux",
+      "architecture": "x64、ARM64、ARMHF",
+      "client": "Clash Verge Rev",
+      "release_url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/latest",
+      "package_note": "DEB 用 amd64、arm64、armhf 标记，RPM 用 x86_64、aarch64、armhfp 标记；包格式和架构都要匹配发行版。",
+      "source_urls": ["https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/v2.5.2"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "Android",
+      "architecture": "arm64-v8a、armeabi-v7a、x86、x86_64",
+      "client": "v2rayNG",
+      "release_url": "https://github.com/2dust/v2rayNG/releases/latest",
+      "package_note": "APK 文件名标明设备 ABI；按系统支持的 ABI 选择。发布页中的 .sig 是签名附件，应用安装包后缀为 .apk。",
+      "source_urls": ["https://github.com/2dust/v2rayNG/releases/tag/2.2.6", "https://github.com/2dust/v2rayNG"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "Android",
+      "architecture": "ARM64、ARMv7、x86_64；另有 universal 包",
+      "client": "Hiddify",
+      "release_url": "https://github.com/hiddify/hiddify-app/releases/latest",
+      "package_note": "正式发布列出 Android-arm64、Android-arm7、Android-x86_64 与 Android-universal APK；按设备及发布说明选择。",
+      "source_urls": ["https://github.com/hiddify/hiddify-app/releases/tag/v4.1.1", "https://github.com/hiddify/hiddify-app"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "iPhone / iPad",
+      "architecture": "按 App Store 设备兼容性选择",
+      "client": "Hiddify",
+      "release_url": "https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532",
+      "package_note": "官方项目 README 指向此 App Store 应用；核对商店的设备、系统及地区条件。",
+      "source_urls": ["https://github.com/hiddify/hiddify-app", "https://raw.githubusercontent.com/hiddify/hiddify-app/main/README.md", "https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532"],
+      "checked_at": "2026-09-12"
+    },
+    {
+      "platform": "iPhone / iPad",
+      "architecture": "按 App Store 设备兼容性选择",
+      "client": "Shadowrocket",
+      "release_url": "https://apps.apple.com/us/app/shadowrocket/id932747118",
+      "package_note": "开发者的 Apple 商店应用，应用 ID 为 932747118；查看商店兼容性列表确认设备系统要求。",
+      "source_urls": ["https://apps.apple.com/us/app/shadowrocket/id932747118"],
+      "checked_at": "2026-09-12"
+    }
+  ]
+}

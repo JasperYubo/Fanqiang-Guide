@@ -1,0 +1,25 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://fanqiang.guide/api/agent/search",
+      "service-desc": [
+        {
+          "href": "https://fanqiang.guide/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://fanqiang.guide/ai/index.md",
+          "type": "text/markdown"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://fanqiang.guide/api/agent/health",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

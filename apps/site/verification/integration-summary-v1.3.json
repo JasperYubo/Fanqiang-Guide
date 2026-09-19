@@ -1,0 +1,31 @@
+{
+  "catalog": {
+    "urls": [
+      "https://fanqiang.guide/guides/library.html",
+      "https://fanqiang.guide/guides/merlin-models.html"
+    ],
+    "counts": {
+      "library": 310,
+      "merlin_models": 58,
+      "categories": 20,
+      "verification": {
+        "reference_only": 103,
+        "primary_reviewed": 206,
+        "historical_reference": 1
+      },
+      "support_claims": {
+        "current_listed": 39,
+        "explicitly_unsupported": 19
+      },
+      "tested_models": 0,
+      "undecodable_model_notes": 0
+    }
+  },
+  "comparison_rows": 10,
+  "merlin_examples": 5,
+  "new_html_routes": [
+    "https://fanqiang.guide/guides/library.html",
+    "https://fanqiang.guide/guides/merlin-models.html",
+    "https://fanqiang.guide/guides/about.html"
+  ]
+}
