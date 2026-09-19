@@ -9,8 +9,8 @@ REPO = 'https://github.com/JasperYubo/Fanqiang-Guide'
 ARCHIVE = REPO + '/tree/main/free-proxies'
 TITLE = '翻墙与科学上网工具指南'
 DATE = '2026-09-19'
-GA4_MEASUREMENT_ID = 'G-BYQ07HCRTF'
-GSC_VERIFICATION_FILE = 'google1f18e2b026e70ecc.html'
+GA4_MEASUREMENT_ID = 'G-V0RLGGS7FB'
+GSC_VERIFICATION_FILE = 'google35643466072986f6.html'
 GSC_VERIFICATION_SOURCE = B / 'verification' / GSC_VERIFICATION_FILE
 e = html.escape
 

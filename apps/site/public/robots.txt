@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /agent-auth/
-Content-Signal: search=yes, ai-input=yes
 
 User-agent: Google-Extended
 Allow: /

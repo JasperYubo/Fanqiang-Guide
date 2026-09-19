@@ -41,14 +41,15 @@ for rel in ('data/library.json','data/merlin-models.json','robots.txt','auth.md'
     check(rel+': frozen_input_hash', stable_hash_matches(P/rel,json.loads((B/'content-invariants-v1.0.json').read_text(encoding='utf-8'))[rel]))
 check('llms_full_consistent',(P/'llms-full.txt').read_bytes()==(P/'ai/index.md').read_bytes())
 check('no_editorial_probability_public',not any('largest_observed_intent_query' in (P/r).read_text(encoding='utf-8') for r in ('data/guides.json','index.html','ai/index.md')))
-gsc_name='google1f18e2b026e70ecc.html'
-gsc_expected=b'google-site-verification: google1f18e2b026e70ecc.html'
+gsc_name='google35643466072986f6.html'
+gsc_expected=b'google-site-verification: google35643466072986f6.html'
+ga4_id='G-V0RLGGS7FB'
 check('gsc_verification_exact',(P/gsc_name).read_bytes()==(B/'verification'/gsc_name).read_bytes()==gsc_expected)
 for path in sorted(P.rglob('*.html')):
     if path.name==gsc_name:continue
     raw=path.read_text(encoding='utf-8')
     rel=path.relative_to(P).as_posix()
-    check(rel+': ga4_once',raw.count('<!-- Google tag (gtag.js) -->')==1 and raw.count('googletagmanager.com/gtag/js?id=G-BYQ07HCRTF')==1 and raw.count("gtag('config', 'G-BYQ07HCRTF');")==1)
+    check(rel+': ga4_once',raw.count('<!-- Google tag (gtag.js) -->')==1 and raw.count('googletagmanager.com/gtag/js?id='+ga4_id)==1 and raw.count("gtag('config', '"+ga4_id+"');")==1)
 manifest=json.loads((B/'release-manifest-v1.4-2026-09-13.json').read_text(encoding='utf-8'))
 for rel,digest in manifest.items():
     path=P/rel

@@ -112,7 +112,7 @@ def iterate(P,page,guides,date):
     p=P/'llms.txt';put(P,'llms.txt',p.read_text(encoding='utf-8')+f'\n\n## 分类与设备检索\n- [代理工具与开源项目资料库]({SITE}{LIB})\n- [梅林型号支持记录]({SITE}{MODELS})\n- [客户端下载对照数据]({SITE}/data/client-comparison.json)')
     cat_path=P/'.well-known/ai-catalog.json';cat=json.loads(cat_path.read_text(encoding='utf-8'))
     cat['entries'].append({'identifier':'urn:air:fanqiang.guide:resource:client-comparison','displayName':'客户端系统与架构对照','type':'application/json','url':SITE+'/data/client-comparison.json','representativeQueries':['按系统查客户端官方发布入口','ARM64客户端安装包怎样核对']});put(P,cat_path.relative_to(P),json.dumps(cat,ensure_ascii=False,indent=2))
-    robots='User-agent: *\nAllow: /\nDisallow: /agent-auth/\nContent-Signal: search=yes, ai-input=yes\n\nUser-agent: Google-Extended\nAllow: /\nDisallow: /agent-auth/\n\n'
+    robots='User-agent: *\nAllow: /\nDisallow: /agent-auth/\n\nUser-agent: Google-Extended\nAllow: /\nDisallow: /agent-auth/\n\n'
     for bot in ['GPTBot','ClaudeBot','Applebot-Extended','Bytespider','CCBot','meta-externalagent','Amazonbot']:
         robots+='User-agent: '+bot+'\nDisallow: /\n\n'
     robots+='Sitemap: '+SITE+'/sitemap.xml\nAgentmap: '+SITE+'/.well-known/ai-catalog.json\n';put(P,'robots.txt',robots)
