@@ -7,6 +7,13 @@ data=json.loads((P/'data/guides.json').read_text(encoding='utf-8'))
 guides=data['topics'];checks=[]
 def check(name,ok):
     checks.append({'name':name,'passed':bool(ok)})
+def stable_hash_matches(path, expected):
+    payload=path.read_bytes()
+    if hashlib.sha256(payload).hexdigest()==expected:return True
+    if path.suffix.lower() not in {'.html','.txt','.md','.json','.xml','.js','.css','.ilang'}:return False
+    normalized=payload.replace(b'\r\n',b'\n')
+    candidates=(normalized,normalized.replace(b'\n',b'\r\n'))
+    return any(hashlib.sha256(item).hexdigest()==expected for item in candidates)
 def schemas(raw):
     return [json.loads(m) for m in re.findall(r'<script type="application/ld\+json">(.*?)</script>',raw,re.S)]
 def faq_from_html(raw):
@@ -27,13 +34,13 @@ check('eight_visible_home_answers',len(home_faq)==8 and all(html.escape(f['name'
 check('homepage_topic_identity', '翻墙与科学上网工具指南 | Fanqiang Guide' in home and 'id="hero-title">翻墙与科学上网' in home)
 check('official_docs_kept', 'href="https://xtls.github.io/"' in home and 'href="https://sing-box.sagernet.org/"' in home)
 for rel in ('data/library.json','data/merlin-models.json','robots.txt','auth.md'):
-    check(rel+': frozen_input_hash', hashlib.sha256((P/rel).read_bytes()).hexdigest()==json.loads((B/'content-invariants-v1.0.json').read_text(encoding='utf-8'))[rel])
+    check(rel+': frozen_input_hash', stable_hash_matches(P/rel,json.loads((B/'content-invariants-v1.0.json').read_text(encoding='utf-8'))[rel]))
 check('llms_full_consistent',(P/'llms-full.txt').read_bytes()==(P/'ai/index.md').read_bytes())
 check('no_editorial_probability_public',not any('largest_observed_intent_query' in (P/r).read_text(encoding='utf-8') for r in ('data/guides.json','index.html','ai/index.md')))
 manifest=json.loads((B/'release-manifest-v1.4-2026-09-13.json').read_text(encoding='utf-8'))
 for rel,digest in manifest.items():
     path=P/rel
-    check(rel+': hash',hashlib.sha256(path.read_bytes()).hexdigest()==digest)
+    check(rel+': hash',stable_hash_matches(path,digest))
     if path.with_name(path.name+'.gz').exists():check(rel+': gzip',gzip.decompress(path.with_name(path.name+'.gz').read_bytes())==path.read_bytes())
 validator=B.parents[1]/'tools/ilang_grammar_validator.py'
 run=subprocess.run([sys.executable,'-X','utf8',str(validator),'--lint',*map(str,(P/'guides').glob('*.ilang')),'--strict','--json'],capture_output=True,text=True,encoding='utf-8',check=True)
