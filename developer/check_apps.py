@@ -65,6 +65,7 @@ def main():
             if counts.get("fail", 1) != 0 or counts.get("skipped", 1) != 0 or not counts.get("tests"):
                 step["validation_failed"] = True
         if result.returncode or step.get("validation_failed"):
+            print(json.dumps({"failed_step": name, "log_tail": log.splitlines()[-80:]}, ensure_ascii=False))
             break
     else:
         release = output / "release"
