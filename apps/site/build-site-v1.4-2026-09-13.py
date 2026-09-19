@@ -9,7 +9,25 @@ REPO = 'https://github.com/JasperYubo/Fanqiang-Guide'
 ARCHIVE = REPO + '/tree/main/free-proxies'
 TITLE = '翻墙与科学上网工具指南'
 DATE = '2026-09-19'
+GA4_MEASUREMENT_ID = 'G-BYQ07HCRTF'
+GSC_VERIFICATION_FILE = 'google1f18e2b026e70ecc.html'
+GSC_VERIFICATION_SOURCE = B / 'verification' / GSC_VERIFICATION_FILE
 e = html.escape
+
+GA4_SNIPPET = f'''<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA4_MEASUREMENT_ID}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  gtag('js', new Date());
+
+  gtag('config', '{GA4_MEASUREMENT_ID}');
+</script>
+<!-- End Google tag (gtag.js) -->'''
+GA4_BLOCK = re.compile(
+    r'\s*<!-- Google tag \(gtag\.js\) -->.*?<!-- End Google tag \(gtag\.js\) -->\s*',
+    re.S,
+)
 
 def write(path, text):
     p = P / path
@@ -18,6 +36,28 @@ def write(path, text):
 
 def dump(path, obj):
     write(path, json.dumps(obj, ensure_ascii=False, indent=2))
+
+def inject_ga4_into_final_html():
+    injected = []
+    for path in sorted(P.rglob('*.html')):
+        # Google requires the verification response to remain exact plaintext.
+        if path.name == GSC_VERIFICATION_FILE:
+            continue
+        raw = path.read_text(encoding='utf-8')
+        raw = GA4_BLOCK.sub('', raw)
+        if raw.count('<head>') != 1:
+            raise ValueError(f'Expected exactly one <head> in {path.relative_to(P)}')
+        rendered = raw.replace('<head>', '<head>\n' + GA4_SNIPPET + '\n', 1)
+        if (
+            rendered.count('<!-- Google tag (gtag.js) -->') != 1
+            or rendered.count(f'googletagmanager.com/gtag/js?id={GA4_MEASUREMENT_ID}') != 1
+            or rendered.count(f"gtag('config', '{GA4_MEASUREMENT_ID}');") != 1
+            or rendered.index('<!-- Google tag (gtag.js) -->') > rendered.index('</head>')
+        ):
+            raise ValueError(f'GA4 injection was not unique in {path.relative_to(P)}')
+        path.write_text(rendered.rstrip() + '\n', encoding='utf-8', newline='\n')
+        injected.append(path.relative_to(P).as_posix())
+    return injected
 
 data = json.loads((B / 'content/guide-answers-v1.4-2026-09-13.json').read_text(encoding='utf-8'))
 guides = data['guides']
@@ -183,6 +223,13 @@ add_official_docs(P)
 from answer_fit_v14 import fit_answers
 fit_answers(P, guides, page, faq_schema)
 
+# Keep Search Console verification under versioned build input so a clean or
+# repeated build always recreates the exact public verification response.
+gsc_public_path = P / GSC_VERIFICATION_FILE
+gsc_public_path.parent.mkdir(parents=True, exist_ok=True)
+gsc_public_path.write_bytes(GSC_VERIFICATION_SOURCE.read_bytes())
+ga4_pages = inject_ga4_into_final_html()
+
 manifest={}
 for p in P.rglob('*'):
     if p.is_file() and p.suffix!='.gz':
@@ -191,4 +238,4 @@ for p in P.rglob('*'):
         elif p.with_name(p.name+'.gz').exists():p.with_name(p.name+'.gz').unlink()
 (B/'release-manifest-v1.4-2026-09-13.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
 with tarfile.open(B/'release-v1.4-2026-09-13.tar.gz','w:gz') as t:t.add(P,arcname='public')
-print(json.dumps({'guides':len(guides),'public_files':len(manifest),'package_bytes':(B/'release-v1.4-2026-09-13.tar.gz').stat().st_size},ensure_ascii=False))
+print(json.dumps({'guides':len(guides),'public_files':len(manifest),'ga4_pages':len(ga4_pages),'package_bytes':(B/'release-v1.4-2026-09-13.tar.gz').stat().st_size},ensure_ascii=False))
