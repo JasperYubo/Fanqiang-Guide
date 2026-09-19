@@ -45,6 +45,7 @@ gsc_name='google35643466072986f6.html'
 gsc_expected=b'google-site-verification: google35643466072986f6.html'
 ga4_id='G-V0RLGGS7FB'
 check('gsc_verification_exact',(P/gsc_name).read_bytes()==(B/'verification'/gsc_name).read_bytes()==gsc_expected)
+check('sitemap_not_precompressed',not (P/'sitemap.xml.gz').exists())
 for path in sorted(P.rglob('*.html')):
     if path.name==gsc_name:continue
     raw=path.read_text(encoding='utf-8')

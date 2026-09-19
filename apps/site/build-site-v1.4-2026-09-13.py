@@ -234,7 +234,7 @@ manifest={}
 for p in P.rglob('*'):
     if p.is_file() and p.suffix!='.gz':
         raw=p.read_bytes();manifest[p.relative_to(P).as_posix()]=hashlib.sha256(raw).hexdigest()
-        if len(raw)>512:p.with_name(p.name+'.gz').write_bytes(gzip.compress(raw,compresslevel=9,mtime=0))
+        if len(raw)>512 and p.relative_to(P).as_posix()!='sitemap.xml':p.with_name(p.name+'.gz').write_bytes(gzip.compress(raw,compresslevel=9,mtime=0))
         elif p.with_name(p.name+'.gz').exists():p.with_name(p.name+'.gz').unlink()
 (B/'release-manifest-v1.4-2026-09-13.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
 with tarfile.open(B/'release-v1.4-2026-09-13.tar.gz','w:gz') as t:t.add(P,arcname='public')
