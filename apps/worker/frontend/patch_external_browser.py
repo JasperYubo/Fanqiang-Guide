@@ -15,6 +15,15 @@ ASSETS = ("external-browser-v1.0.css", "external-browser-v1.0.js", "chat-v1.1.1.
 INJECTION = '<link rel="stylesheet" href="/assets/external-browser-v1.0.css"><script data-cfasync="false" src="/assets/external-browser-v1.0.js"></script>'
 
 
+def is_google_site_verification(file: Path, base: Path, content: str) -> bool:
+    """Recognize Google's root-level plain-text verification response."""
+    return (
+        file.parent == base
+        and re.fullmatch(r"google[A-Za-z0-9_-]+\.html", file.name) is not None
+        and content == f"google-site-verification: {file.name}"
+    )
+
+
 def patch(base: Path, output: Path) -> dict:
     base = base.resolve(strict=True)
     output = output.resolve()
@@ -26,8 +35,12 @@ def patch(base: Path, output: Path) -> dict:
     if not html_files:
         raise ValueError("No HTML pages found.")
     transformed = {}
+    preserved_verification = []
     for file in html_files:
         before = file.read_bytes().decode("utf-8")
+        if is_google_site_verification(file, base, before):
+            preserved_verification.append(file.relative_to(base).as_posix())
+            continue
         if "external-browser-v1.0.js" in before:
             raise ValueError(f"Already patched: {file}")
         heads = list(re.finditer(r"<head(?:\s[^>]*)?>", before, re.I))
@@ -54,6 +67,7 @@ def patch(base: Path, output: Path) -> dict:
         file.with_name(file.name + ".gz").write_bytes(compressed)
     return {"version": "external-browser-v1.0", "source": str(base), "output": str(output),
             "html_pages": len(transformed), "changed": changed,
+            "preserved_verification": preserved_verification,
             "preserved": "Original HTML bytes remain identical after reversing only guard head injection and chat asset reference.",
             "sha256": {relative: hashlib.sha256((output / relative).read_bytes()).hexdigest() for relative in changed}}
 
