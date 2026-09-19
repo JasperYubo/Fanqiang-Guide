@@ -1,20 +1,20 @@
 {
   "last_run": {
-    "checked_at": "2026-09-18T00:22:27Z",
+    "checked_at": "2026-09-19T00:22:50Z",
     "error_count": 2,
     "ok_count": 210,
     "repository_count": 212
   },
   "repositories": {
     "233boy/sing-box": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/233boy/sing-box/releases/tag/v1.18",
         "published_at": "2026-06-04T06:27:22Z",
         "tag_name": "v1.18"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -24,18 +24,18 @@
         "html_url": "https://github.com/233boy/sing-box",
         "pushed_at": "2026-06-04T06:27:22Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "233boy/v2ray": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/233boy/v2ray/releases/tag/v4.27",
         "published_at": "2026-01-15T00:50:11Z",
         "tag_name": "v4.27"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -45,18 +45,18 @@
         "html_url": "https://github.com/233boy/v2ray",
         "pushed_at": "2026-01-15T00:50:11Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "2dust/clashN": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/2dust/clashN/releases/tag/2.22",
         "published_at": "2024-04-28T04:25:18Z",
         "tag_name": "2.22"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -66,18 +66,18 @@
         "html_url": "https://github.com/2dust/clashN",
         "pushed_at": "2024-06-29T02:06:24Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "2dust/v2rayN": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/2dust/v2rayN/releases/tag/7.24.9",
         "published_at": "2026-08-29T02:47:27Z",
         "tag_name": "7.24.9"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -85,20 +85,20 @@
         "disabled": false,
         "full_name": "2dust/v2rayN",
         "html_url": "https://github.com/2dust/v2rayN",
-        "pushed_at": "2026-09-16T18:46:06Z"
+        "pushed_at": "2026-09-18T18:46:25Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "2dust/v2rayNG": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/2dust/v2rayNG/releases/tag/2.2.6",
         "published_at": "2026-07-05T10:17:21Z",
         "tag_name": "2.2.6"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -108,18 +108,18 @@
         "html_url": "https://github.com/2dust/v2rayNG",
         "pushed_at": "2026-09-14T21:24:31Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "5VNetwork/VX": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/5VNetwork/VX/releases/tag/v3.10.5",
         "published_at": "2026-09-06T13:34:09Z",
         "tag_name": "v3.10.5"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -129,18 +129,18 @@
         "html_url": "https://github.com/5VNetwork/VX",
         "pushed_at": "2026-09-10T10:53:42Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "821869798/carton": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/821869798/carton/releases/tag/v0.6.2",
         "published_at": "2026-09-15T17:19:25Z",
         "tag_name": "v0.6.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -150,14 +150,14 @@
         "html_url": "https://github.com/821869798/carton",
         "pushed_at": "2026-09-17T14:46:10Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ACL4SSR/ACL4SSR": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -167,14 +167,14 @@
         "html_url": "https://github.com/ACL4SSR/ACL4SSR",
         "pushed_at": "2026-09-12T02:36:24Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "AXEVO/Clash-MIX": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -184,14 +184,14 @@
         "html_url": "https://github.com/AXEVO/Clash-MIX",
         "pushed_at": "2026-04-15T14:26:13Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Adamm00/IPSet_ASUS": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -201,18 +201,18 @@
         "html_url": "https://github.com/Adamm00/IPSet_ASUS",
         "pushed_at": "2026-07-20T03:49:14Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "AdguardTeam/AdGuardHome": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/AdguardTeam/AdGuardHome/releases/tag/v0.107.79",
         "published_at": "2026-08-18T15:45:27Z",
         "tag_name": "v0.107.79"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -220,20 +220,20 @@
         "disabled": false,
         "full_name": "AdguardTeam/AdGuardHome",
         "html_url": "https://github.com/AdguardTeam/AdGuardHome",
-        "pushed_at": "2026-09-17T15:06:42Z"
+        "pushed_at": "2026-09-18T10:50:20Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "AdguardTeam/dnsproxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/AdguardTeam/dnsproxy/releases/tag/v0.84.2",
         "published_at": "2026-09-04T04:25:50Z",
         "tag_name": "v0.84.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -241,16 +241,16 @@
         "disabled": false,
         "full_name": "AdguardTeam/dnsproxy",
         "html_url": "https://github.com/AdguardTeam/dnsproxy",
-        "pushed_at": "2026-09-10T08:01:39Z"
+        "pushed_at": "2026-09-18T15:32:52Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Alvin9999-newpac/fanqiang": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -258,20 +258,20 @@
         "disabled": false,
         "full_name": "Alvin9999-newpac/fanqiang",
         "html_url": "https://github.com/Alvin9999-newpac/fanqiang",
-        "pushed_at": "2026-09-18T00:16:55Z"
+        "pushed_at": "2026-09-19T00:16:56Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "AnyPortal/AnyPortal": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/AnyPortal/AnyPortal/releases/tag/v0.6.31%2B105",
         "published_at": "2025-10-17T13:09:40Z",
         "tag_name": "v0.6.31+105"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -281,18 +281,18 @@
         "html_url": "https://github.com/AnyPortal/AnyPortal",
         "pushed_at": "2025-10-17T13:09:40Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "CHIZI-0618/box4magisk": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/CHIZI-0618/box4magisk/releases/tag/v5.1",
         "published_at": "2024-09-16T05:42:02Z",
         "tag_name": "v5.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -302,18 +302,18 @@
         "html_url": "https://github.com/CHIZI-0618/box4magisk",
         "pushed_at": "2026-09-06T17:09:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "CareyWang/sub-web": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/CareyWang/sub-web/releases/tag/v1.0",
         "published_at": "2020-02-23T15:48:52Z",
         "tag_name": "v1.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -323,18 +323,18 @@
         "html_url": "https://github.com/CareyWang/sub-web",
         "pushed_at": "2026-09-11T02:23:37Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "DNSCrypt/dnscrypt-proxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/DNSCrypt/dnscrypt-proxy/releases/tag/2.1.18",
         "published_at": "2026-07-18T12:14:35Z",
         "tag_name": "2.1.18"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -342,13 +342,13 @@
         "disabled": false,
         "full_name": "DNSCrypt/dnscrypt-proxy",
         "html_url": "https://github.com/DNSCrypt/dnscrypt-proxy",
-        "pushed_at": "2026-09-14T12:31:09Z"
+        "pushed_at": "2026-09-18T17:15:35Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Dreamacro/clash": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": "repository_not_found",
       "release": null,
       "release_last_success_at": null,
@@ -358,20 +358,20 @@
       "repository_status": "unavailable"
     },
     "EAimTY/tuic": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/tuic-protocol/tuic/releases/tag/tuic-server-1.0.0",
         "published_at": "2023-06-08T07:40:51Z",
         "tag_name": "tuic-server-1.0.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/EAimTY/tuic",
           "https://api.github.com/repositories/440810736"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "tuic-protocol/tuic"
       },
       "release_status": "ok",
@@ -383,26 +383,26 @@
         "html_url": "https://github.com/tuic-protocol/tuic",
         "pushed_at": "2025-05-15T07:03:37Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/EAimTY/tuic",
           "https://api.github.com/repositories/440810736"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "tuic-protocol/tuic"
       },
       "repository_status": "ok"
     },
     "EasyTier/EasyTier": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/EasyTier/EasyTier/releases/tag/v2.6.4",
         "published_at": "2026-05-12T15:25:14Z",
         "tag_name": "v2.6.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -410,20 +410,20 @@
         "disabled": false,
         "full_name": "EasyTier/EasyTier",
         "html_url": "https://github.com/EasyTier/EasyTier",
-        "pushed_at": "2026-09-16T15:02:41Z"
+        "pushed_at": "2026-09-19T00:22:12Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Elegying/SSRVPN": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/Elegying/SSRVPN/releases/tag/v5.0.11",
-        "published_at": "2026-09-17T16:46:07Z",
-        "tag_name": "v5.0.11"
+        "html_url": "https://github.com/Elegying/SSRVPN/releases/tag/v5.0.12",
+        "published_at": "2026-09-18T15:33:27Z",
+        "tag_name": "v5.0.12"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -431,20 +431,20 @@
         "disabled": false,
         "full_name": "Elegying/SSRVPN",
         "html_url": "https://github.com/Elegying/SSRVPN",
-        "pushed_at": "2026-09-17T16:55:04Z"
+        "pushed_at": "2026-09-18T15:20:40Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Elziy/sing-box-for-apple": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Elziy/sing-box-for-apple/releases/tag/2.1.3",
         "published_at": "2025-02-07T06:21:05Z",
         "tag_name": "2.1.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -454,14 +454,14 @@
         "html_url": "https://github.com/Elziy/sing-box-for-apple",
         "pushed_at": "2025-02-07T06:21:05Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Entware/Entware": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -471,18 +471,18 @@
         "html_url": "https://github.com/Entware/Entware",
         "pushed_at": "2026-09-17T00:53:24Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ExclaveNetwork/Exclave": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/ExclaveNetwork/Exclave/releases/tag/0.17.56",
         "published_at": "2026-09-06T18:54:29Z",
         "tag_name": "0.17.56"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -492,18 +492,18 @@
         "html_url": "https://github.com/ExclaveNetwork/Exclave",
         "pushed_at": "2026-09-16T05:02:26Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "FelisCatus/SwitchyOmega": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/FelisCatus/SwitchyOmega/releases/tag/v2.5.20",
         "published_at": "2018-08-27T04:03:14Z",
         "tag_name": "v2.5.20"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -513,18 +513,18 @@
         "html_url": "https://github.com/FelisCatus/SwitchyOmega",
         "pushed_at": "2024-12-27T12:00:30Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "FreshTomato-Project/freshtomato-arm": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/FreshTomato-Project/freshtomato-arm/releases/tag/2026.4",
         "published_at": "2026-09-13T15:10:24Z",
         "tag_name": "2026.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -534,18 +534,18 @@
         "html_url": "https://github.com/FreshTomato-Project/freshtomato-arm",
         "pushed_at": "2026-09-16T08:53:52Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "GUI-for-Cores/GUI.for.Clash": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/GUI-for-Cores/GUI.for.Clash/releases/tag/v1.27.0",
         "published_at": "2026-09-07T16:45:45Z",
         "tag_name": "v1.27.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -553,20 +553,20 @@
         "disabled": false,
         "full_name": "GUI-for-Cores/GUI.for.Clash",
         "html_url": "https://github.com/GUI-for-Cores/GUI.for.Clash",
-        "pushed_at": "2026-09-17T15:02:32Z"
+        "pushed_at": "2026-09-18T17:51:20Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "GUI-for-Cores/GUI.for.SingBox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/GUI-for-Cores/GUI.for.SingBox/releases/tag/v1.27.0",
         "published_at": "2026-09-07T16:38:11Z",
         "tag_name": "v1.27.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -574,20 +574,20 @@
         "disabled": false,
         "full_name": "GUI-for-Cores/GUI.for.SingBox",
         "html_url": "https://github.com/GUI-for-Cores/GUI.for.SingBox",
-        "pushed_at": "2026-09-17T15:07:43Z"
+        "pushed_at": "2026-09-18T17:51:29Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Gedsh/InviZible": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Gedsh/InviZible/releases/tag/v2.7.3-beta",
         "published_at": "2026-08-19T11:10:13Z",
         "tag_name": "v2.7.3-beta"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -597,18 +597,18 @@
         "html_url": "https://github.com/Gedsh/InviZible",
         "pushed_at": "2026-09-06T13:54:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "GitMetaio/Surfing": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/GitMetaio/Surfing/releases/tag/v7.8.4",
         "published_at": "2026-09-07T01:21:28Z",
         "tag_name": "v7.8.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -616,20 +616,20 @@
         "disabled": false,
         "full_name": "GitMetaio/Surfing",
         "html_url": "https://github.com/GitMetaio/Surfing",
-        "pushed_at": "2026-09-17T15:44:06Z"
+        "pushed_at": "2026-09-18T15:16:37Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Gozargah/Marzban": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Gozargah/Marzban/releases/tag/v0.8.4",
         "published_at": "2025-01-09T16:11:13Z",
         "tag_name": "v0.8.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -639,18 +639,18 @@
         "html_url": "https://github.com/Gozargah/Marzban",
         "pushed_at": "2026-06-08T11:31:10Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "GtxFury/FlyClash": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/GtxFury/FlyClash/releases/tag/v0.2.9",
         "published_at": "2026-05-17T05:09:56Z",
         "tag_name": "v0.2.9"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -660,18 +660,18 @@
         "html_url": "https://github.com/GtxFury/FlyClash",
         "pushed_at": "2026-09-07T02:38:29Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Happ-proxy/happ-desktop": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Happ-proxy/happ-desktop/releases/tag/4.2.1",
         "published_at": "2026-09-04T15:46:15Z",
         "tag_name": "4.2.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -681,18 +681,18 @@
         "html_url": "https://github.com/Happ-proxy/happ-desktop",
         "pushed_at": "2026-09-15T15:27:48Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "HatsuneMikuUwU/MikuBoxForAndroid": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/HatsuneMikuUwU/MikuBoxForAndroid/releases/tag/1.4.3-UwU-2",
         "published_at": "2026-02-22T16:51:21Z",
         "tag_name": "1.4.3-UwU-2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -702,18 +702,18 @@
         "html_url": "https://github.com/HatsuneMikuUwU/MikuBoxForAndroid",
         "pushed_at": "2026-07-16T15:10:45Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "IrineSistiana/mosdns": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/IrineSistiana/mosdns/releases/tag/v5.3.4",
         "published_at": "2026-01-11T11:42:56Z",
         "tag_name": "v5.3.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -723,24 +723,24 @@
         "html_url": "https://github.com/IrineSistiana/mosdns",
         "pushed_at": "2026-02-27T07:01:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Jigsaw-Code/outline-apps": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/OutlineFoundation/outline-apps/releases/tag/v1.10.1",
         "published_at": "2023-03-20T21:16:19Z",
         "tag_name": "v1.10.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/Jigsaw-Code/outline-apps",
           "https://api.github.com/repositories/125118418"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "OutlineFoundation/outline-apps"
       },
       "release_status": "ok",
@@ -750,28 +750,28 @@
         "disabled": false,
         "full_name": "OutlineFoundation/outline-apps",
         "html_url": "https://github.com/OutlineFoundation/outline-apps",
-        "pushed_at": "2026-09-16T15:54:22Z"
+        "pushed_at": "2026-09-18T23:02:51Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/Jigsaw-Code/outline-apps",
           "https://api.github.com/repositories/125118418"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "OutlineFoundation/outline-apps"
       },
       "repository_status": "ok"
     },
     "JohanChane/clashtui": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/JohanChane/clashtui/releases/tag/v0.3.1",
         "published_at": "2026-05-26T16:45:16Z",
         "tag_name": "v0.3.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -781,18 +781,18 @@
         "html_url": "https://github.com/JohanChane/clashtui",
         "pushed_at": "2026-08-25T23:35:53Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "KaringX/clashmi": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/KaringX/clashmi/releases/tag/v1.0.29.1503",
         "published_at": "2026-09-02T01:37:32Z",
         "tag_name": "v1.0.29.1503"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -802,18 +802,18 @@
         "html_url": "https://github.com/KaringX/clashmi",
         "pushed_at": "2026-09-17T04:31:48Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "KaringX/karing": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/KaringX/karing/releases/tag/v1.2.25.2802",
         "published_at": "2026-09-10T02:20:39Z",
         "tag_name": "v1.2.25.2802"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -823,18 +823,18 @@
         "html_url": "https://github.com/KaringX/karing",
         "pushed_at": "2026-09-17T05:51:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Kindness-Kismet/Stelliberty": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Kindness-Kismet/stelliberty/releases/tag/v2.0.32",
         "published_at": "2026-09-17T23:49:56Z",
         "tag_name": "v2.0.32"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -844,18 +844,18 @@
         "html_url": "https://github.com/Kindness-Kismet/stelliberty",
         "pushed_at": "2026-09-17T23:49:58Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Loyalsoldier/clash-rules": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/Loyalsoldier/clash-rules/releases/tag/202609170048",
-        "published_at": "2026-09-17T00:48:31Z",
-        "tag_name": "202609170048"
+        "html_url": "https://github.com/Loyalsoldier/clash-rules/releases/tag/202609180040",
+        "published_at": "2026-09-18T00:41:18Z",
+        "tag_name": "202609180040"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -863,20 +863,20 @@
         "disabled": false,
         "full_name": "Loyalsoldier/clash-rules",
         "html_url": "https://github.com/Loyalsoldier/clash-rules",
-        "pushed_at": "2026-09-17T00:48:34Z"
+        "pushed_at": "2026-09-18T00:41:21Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MHSanaei/3x-ui": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MHSanaei/3x-ui/releases/tag/v3.8.5",
         "published_at": "2026-09-16T00:10:08Z",
         "tag_name": "v3.8.5"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -884,20 +884,20 @@
         "disabled": false,
         "full_name": "MHSanaei/3x-ui",
         "html_url": "https://github.com/MHSanaei/3x-ui",
-        "pushed_at": "2026-09-17T07:54:12Z"
+        "pushed_at": "2026-09-18T10:29:36Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MatsuriDayo/NekoBoxForAndroid": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MatsuriDayo/NekoBoxForAndroid/releases/tag/1.4.2",
         "published_at": "2026-02-09T03:55:00Z",
         "tag_name": "1.4.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -907,18 +907,18 @@
         "html_url": "https://github.com/MatsuriDayo/NekoBoxForAndroid",
         "pushed_at": "2026-02-09T03:54:59Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MatsuriDayo/nekoray": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MatsuriDayo/nekoray/releases/tag/4.0.1",
         "published_at": "2024-12-12T08:19:14Z",
         "tag_name": "4.0.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": true,
@@ -928,18 +928,18 @@
         "html_url": "https://github.com/MatsuriDayo/nekoray",
         "pushed_at": "2024-12-12T08:25:39Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MetaCubeX/ClashMetaForAndroid": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MetaCubeX/ClashMetaForAndroid/releases/tag/v2.11.34",
         "published_at": "2026-09-14T13:24:09Z",
         "tag_name": "v2.11.34"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -949,18 +949,18 @@
         "html_url": "https://github.com/MetaCubeX/ClashMetaForAndroid",
         "pushed_at": "2026-09-15T16:55:10Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MetaCubeX/ClashX.Meta": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MetaCubeX/ClashX.Meta/releases/tag/v1.4.45",
         "published_at": "2026-09-14T14:23:24Z",
         "tag_name": "v1.4.45"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -970,18 +970,18 @@
         "html_url": "https://github.com/MetaCubeX/ClashX.Meta",
         "pushed_at": "2026-09-14T14:23:11Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MetaCubeX/meta-rules-dat": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MetaCubeX/meta-rules-dat/releases/tag/latest",
-        "published_at": "2026-09-17T00:46:38Z",
+        "published_at": "2026-09-18T00:36:16Z",
         "tag_name": "latest"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -989,20 +989,20 @@
         "disabled": false,
         "full_name": "MetaCubeX/meta-rules-dat",
         "html_url": "https://github.com/MetaCubeX/meta-rules-dat",
-        "pushed_at": "2026-09-17T00:48:08Z"
+        "pushed_at": "2026-09-18T00:37:45Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MetaCubeX/mihomo": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MetaCubeX/mihomo/releases/tag/v1.19.31",
         "published_at": "2026-09-14T13:34:02Z",
         "tag_name": "v1.19.31"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1012,18 +1012,18 @@
         "html_url": "https://github.com/MetaCubeX/mihomo",
         "pushed_at": "2026-09-15T17:30:48Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "MonadBoxLab/MonadBox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/MonadBoxLab/MonadBox/releases/tag/meta-v1.19.31-ab405bad",
         "published_at": "2026-09-14T21:51:52Z",
         "tag_name": "meta-v1.19.31-ab405bad"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1031,20 +1031,20 @@
         "disabled": false,
         "full_name": "MonadBoxLab/MonadBox",
         "html_url": "https://github.com/MonadBoxLab/MonadBox",
-        "pushed_at": "2026-09-15T21:14:41Z"
+        "pushed_at": "2026-09-18T20:44:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "NLnetLabs/unbound": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/NLnetLabs/unbound/releases/tag/release-1.26.1",
         "published_at": "2026-09-16T08:22:30Z",
         "tag_name": "release-1.26.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1054,18 +1054,18 @@
         "html_url": "https://github.com/NLnetLabs/unbound",
         "pushed_at": "2026-09-16T08:47:49Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Nemu-x/ClashFest": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Nemu-x/ClashFest/releases/tag/v1.1.0",
         "published_at": "2026-09-14T16:32:30Z",
         "tag_name": "v1.1.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1075,14 +1075,14 @@
         "html_url": "https://github.com/Nemu-x/ClashFest",
         "pushed_at": "2026-09-15T15:23:41Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "NodePassProject/Anywhere": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1092,14 +1092,14 @@
         "html_url": "https://github.com/NodePassProject/Anywhere",
         "pushed_at": "2026-09-14T15:37:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "NodePassProject/Everywhere": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1109,18 +1109,18 @@
         "html_url": "https://github.com/NodePassProject/Everywhere",
         "pushed_at": "2026-09-10T10:02:50Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "OneOhCloud/OneBox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/OneOhCloud/OneBox/releases/tag/v1.4.39",
         "published_at": "2026-09-05T05:28:05Z",
         "tag_name": "v1.4.39"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1130,18 +1130,18 @@
         "html_url": "https://github.com/OneOhCloud/OneBox",
         "pushed_at": "2026-09-16T01:50:13Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "OneXray/OneXray": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/OneXray/OneXray/releases/tag/v26.9.3",
         "published_at": "2026-09-16T10:15:37Z",
         "tag_name": "v26.9.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1151,18 +1151,18 @@
         "html_url": "https://github.com/OneXray/OneXray",
         "pushed_at": "2026-09-17T12:56:29Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "OpenVPN/openvpn": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/OpenVPN/openvpn/releases/tag/v2.7.7",
         "published_at": "2026-09-03T18:09:30Z",
         "tag_name": "v2.7.7"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1170,20 +1170,20 @@
         "disabled": false,
         "full_name": "OpenVPN/openvpn",
         "html_url": "https://github.com/OpenVPN/openvpn",
-        "pushed_at": "2026-09-17T22:24:58Z"
+        "pushed_at": "2026-09-18T21:23:04Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Openwrt-Passwall/openwrt-passwall": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Openwrt-Passwall/openwrt-passwall/releases/tag/26.9.16-1",
         "published_at": "2026-09-16T06:42:58Z",
         "tag_name": "26.9.16-1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1191,20 +1191,20 @@
         "disabled": false,
         "full_name": "Openwrt-Passwall/openwrt-passwall",
         "html_url": "https://github.com/Openwrt-Passwall/openwrt-passwall",
-        "pushed_at": "2026-09-17T11:01:15Z"
+        "pushed_at": "2026-09-18T18:06:29Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Openwrt-Passwall/openwrt-passwall2": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Openwrt-Passwall/openwrt-passwall2/releases/tag/26.9.16-1",
         "published_at": "2026-09-16T14:58:19Z",
         "tag_name": "26.9.16-1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1212,20 +1212,20 @@
         "disabled": false,
         "full_name": "Openwrt-Passwall/openwrt-passwall2",
         "html_url": "https://github.com/Openwrt-Passwall/openwrt-passwall2",
-        "pushed_at": "2026-09-17T11:00:40Z"
+        "pushed_at": "2026-09-18T02:52:00Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "OutlineFoundation/outline-server": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/OutlineFoundation/outline-server/releases/tag/server-v1.12.3",
         "published_at": "2025-02-24T23:10:28Z",
         "tag_name": "server-v1.12.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1235,18 +1235,18 @@
         "html_url": "https://github.com/OutlineFoundation/outline-server",
         "pushed_at": "2026-05-13T08:51:02Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "PhoenixNil/XrayUI-dev": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/PhoenixNil/XrayUI-dev/releases/tag/1.18",
         "published_at": "2026-07-26T15:06:07Z",
         "tag_name": "1.18"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1254,20 +1254,20 @@
         "disabled": false,
         "full_name": "PhoenixNil/XrayUI-dev",
         "html_url": "https://github.com/PhoenixNil/XrayUI-dev",
-        "pushed_at": "2026-09-17T23:38:05Z"
+        "pushed_at": "2026-09-18T05:44:05Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ProjectKumo/KumoApp": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/ProjectKumo/KumoApp/releases/tag/0.0.15",
         "published_at": "2026-05-23T04:28:59Z",
         "tag_name": "0.0.15"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1277,18 +1277,18 @@
         "html_url": "https://github.com/ProjectKumo/KumoApp",
         "pushed_at": "2026-06-05T17:08:02Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ProtonVPN/android-app": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/ProtonVPN/android-app/releases/tag/5.20.21.0",
         "published_at": "2026-09-03T07:31:54Z",
         "tag_name": "5.20.21.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1298,18 +1298,18 @@
         "html_url": "https://github.com/ProtonVPN/android-app",
         "pushed_at": "2026-09-03T07:31:23Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Psiphon-Labs/psiphon-tunnel-core": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Psiphon-Labs/psiphon-tunnel-core/releases/tag/v2.0.41",
         "published_at": "2026-09-01T15:57:46Z",
         "tag_name": "v2.0.41"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1317,16 +1317,16 @@
         "disabled": false,
         "full_name": "Psiphon-Labs/psiphon-tunnel-core",
         "html_url": "https://github.com/Psiphon-Labs/psiphon-tunnel-core",
-        "pushed_at": "2026-09-16T15:42:38Z"
+        "pushed_at": "2026-09-18T17:48:18Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "RMerl/asuswrt-merlin.ng": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1336,18 +1336,18 @@
         "html_url": "https://github.com/RMerl/asuswrt-merlin.ng",
         "pushed_at": "2026-09-17T21:53:42Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "SUDOKU-ASCII/sudoku-android": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/SUDOKU-ASCII/sudoku-android/releases/tag/v0.3.1",
         "published_at": "2026-09-06T03:57:24Z",
         "tag_name": "v0.3.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1357,18 +1357,18 @@
         "html_url": "https://github.com/SUDOKU-ASCII/sudoku-android",
         "pushed_at": "2026-09-10T13:59:24Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "SUDOKU-ASCII/sudoku-desktop": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/SUDOKU-ASCII/sudoku-desktop/releases/tag/v0.2.2",
         "published_at": "2026-09-06T14:50:14Z",
         "tag_name": "v0.2.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1378,18 +1378,18 @@
         "html_url": "https://github.com/SUDOKU-ASCII/sudoku-desktop",
         "pushed_at": "2026-09-06T16:03:01Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "SaeedDev94/Xray": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/SaeedDev94/Xray/releases/tag/v12.6.0",
         "published_at": "2026-08-23T14:42:13Z",
         "tag_name": "v12.6.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1399,18 +1399,18 @@
         "html_url": "https://github.com/SaeedDev94/Xray",
         "pushed_at": "2026-08-23T14:35:15Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "SagerNet/sing-box": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/SagerNet/sing-box/releases/tag/v1.14.1",
         "published_at": "2026-09-15T00:06:50Z",
         "tag_name": "v1.14.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1418,20 +1418,20 @@
         "disabled": false,
         "full_name": "SagerNet/sing-box",
         "html_url": "https://github.com/SagerNet/sing-box",
-        "pushed_at": "2026-09-17T16:43:44Z"
+        "pushed_at": "2026-09-18T02:59:04Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Sitoi/ClashBar": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/Sitoi/ClashBar/releases/tag/v0.3.3",
         "published_at": "2026-09-02T01:19:40Z",
         "tag_name": "v0.3.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1441,18 +1441,18 @@
         "html_url": "https://github.com/Sitoi/ClashBar",
         "pushed_at": "2026-09-17T02:45:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "SoftEtherVPN/SoftEtherVPN": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/SoftEtherVPN/SoftEtherVPN/releases/tag/5.2.5188",
         "published_at": "2025-07-18T12:28:02Z",
         "tag_name": "5.2.5188"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1462,18 +1462,18 @@
         "html_url": "https://github.com/SoftEtherVPN/SoftEtherVPN",
         "pushed_at": "2026-09-13T10:36:43Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "TechnitiumSoftware/DnsServer": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/TechnitiumSoftware/DnsServer/releases/tag/v15.4.0",
         "published_at": "2026-07-11T11:22:50Z",
         "tag_name": "v15.4.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1483,18 +1483,18 @@
         "html_url": "https://github.com/TechnitiumSoftware/DnsServer",
         "pushed_at": "2026-09-12T10:27:56Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "TelegramMessenger/MTProxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/TelegramMessenger/MTProxy/releases/tag/v1",
         "published_at": "2018-10-07T23:25:47Z",
         "tag_name": "v1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1504,14 +1504,14 @@
         "html_url": "https://github.com/TelegramMessenger/MTProxy",
         "pushed_at": "2026-08-04T15:42:31Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "TokenPLS/Hako-Client": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1521,18 +1521,18 @@
         "html_url": "https://github.com/TokenPLS/Hako-Client",
         "pushed_at": "2026-09-07T07:46:34Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ValdikSS/GoodbyeDPI": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/ValdikSS/GoodbyeDPI/releases/tag/0.2.2",
         "published_at": "2022-03-21T11:19:44Z",
         "tag_name": "0.2.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1542,35 +1542,31 @@
         "html_url": "https://github.com/ValdikSS/GoodbyeDPI",
         "pushed_at": "2026-01-19T12:59:23Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Watfaq/clash-rs": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
-      "release": {
-        "html_url": "https://github.com/Watfaq/clash-rs/releases/tag/v0.10.8",
-        "published_at": "2026-07-23T09:13:49Z",
-        "tag_name": "v0.10.8"
-      },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
-      "release_status": "ok",
+      "release": null,
+      "release_last_success_at": "2026-09-19T00:22:50Z",
+      "release_status": "none",
       "repository": {
         "archived": false,
         "default_branch": "master",
         "disabled": false,
         "full_name": "Watfaq/clash-rs",
         "html_url": "https://github.com/Watfaq/clash-rs",
-        "pushed_at": "2026-09-17T10:50:33Z"
+        "pushed_at": "2026-09-18T19:26:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "WireGuard/wireguard-tools": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1580,18 +1576,18 @@
         "html_url": "https://github.com/WireGuard/wireguard-tools",
         "pushed_at": "2026-05-06T21:28:18Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "XTLS/Xray-core": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/XTLS/Xray-core/releases/tag/v26.3.27",
         "published_at": "2026-03-27T17:51:11Z",
         "tag_name": "v26.3.27"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1601,14 +1597,14 @@
         "html_url": "https://github.com/XTLS/Xray-core",
         "pushed_at": "2026-09-16T05:55:06Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "XTLS/Xray-install": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1618,14 +1614,14 @@
         "html_url": "https://github.com/XTLS/Xray-install",
         "pushed_at": "2026-01-18T22:07:49Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Xentrk/x3mRouting": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1635,14 +1631,14 @@
         "html_url": "https://github.com/Xentrk/x3mRouting",
         "pushed_at": "2021-05-23T07:50:04Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "Yawning/obfs4": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1652,18 +1648,18 @@
         "html_url": "https://github.com/Yawning/obfs4",
         "pushed_at": "2023-11-15T20:20:29Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "YumeYucca/YumeBox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/YumeYucca/YumeBox/releases/tag/v0.6.3",
         "published_at": "2026-09-16T18:02:48Z",
         "tag_name": "v0.6.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1671,20 +1667,20 @@
         "disabled": false,
         "full_name": "YumeYucca/YumeBox",
         "html_url": "https://github.com/YumeYucca/YumeBox",
-        "pushed_at": "2026-09-17T17:58:40Z"
+        "pushed_at": "2026-09-18T16:02:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "aimy1/clash-xiaoy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/aimy1/clash-xiaoy/releases/tag/v2.7.20",
         "published_at": "2026-04-25T19:45:27Z",
         "tag_name": "v2.7.20"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": true,
@@ -1694,18 +1690,18 @@
         "html_url": "https://github.com/aimy1/clash-xiaoy",
         "pushed_at": "2026-06-18T05:36:38Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "akashaProxy/akashaProxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/akashaProxy/akashaProxy/releases/tag/20260825-e3ba5d6",
         "published_at": "2026-08-25T03:05:40Z",
         "tag_name": "20260825-e3ba5d6"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1715,18 +1711,18 @@
         "html_url": "https://github.com/akashaProxy/akashaProxy",
         "pushed_at": "2026-08-25T03:05:40Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "alireza0/s-ui": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/alireza0/s-ui/releases/tag/v1.6.3",
         "published_at": "2026-09-16T01:14:27Z",
         "tag_name": "v1.6.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1736,18 +1732,18 @@
         "html_url": "https://github.com/alireza0/s-ui",
         "pushed_at": "2026-09-16T01:08:02Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "amnezia-vpn/amnezia-client": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/amnezia-vpn/amnezia-client/releases/tag/5.0.1.5",
         "published_at": "2026-08-21T14:47:49Z",
         "tag_name": "5.0.1.5"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1755,16 +1751,16 @@
         "disabled": false,
         "full_name": "amnezia-vpn/amnezia-client",
         "html_url": "https://github.com/amnezia-vpn/amnezia-client",
-        "pushed_at": "2026-09-17T20:14:03Z"
+        "pushed_at": "2026-09-18T14:56:55Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "angristan/openvpn-install": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1774,14 +1770,14 @@
         "html_url": "https://github.com/angristan/openvpn-install",
         "pushed_at": "2026-09-16T10:49:25Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "angristan/wireguard-install": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -1791,18 +1787,18 @@
         "html_url": "https://github.com/angristan/wireguard-install",
         "pushed_at": "2026-05-02T15:59:41Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "anytls/anytls-go": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/anytls/anytls-go/releases/tag/v0.0.13",
         "published_at": "2026-06-27T09:35:07Z",
         "tag_name": "v0.0.13"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1812,24 +1808,24 @@
         "html_url": "https://github.com/anytls/anytls-go",
         "pushed_at": "2026-08-03T13:22:52Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "apernet/hysteria": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/HyNetworks/hysteria/releases/tag/app/v2.12.3",
         "published_at": "2026-09-16T03:56:45Z",
         "tag_name": "app/v2.12.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/apernet/hysteria",
           "https://api.github.com/repositories/257434373"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "HyNetworks/hysteria"
       },
       "release_status": "ok",
@@ -1841,26 +1837,26 @@
         "html_url": "https://github.com/HyNetworks/hysteria",
         "pushed_at": "2026-09-16T03:45:21Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/apernet/hysteria",
           "https://api.github.com/repositories/257434373"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "HyNetworks/hysteria"
       },
       "repository_status": "ok"
     },
     "appshubcc/Bettbox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/appshubcc/Bettbox/releases/tag/v1.19.1",
         "published_at": "2026-09-09T15:56:57Z",
         "tag_name": "v1.19.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1868,20 +1864,20 @@
         "disabled": false,
         "full_name": "appshubcc/Bettbox",
         "html_url": "https://github.com/appshubcc/Bettbox",
-        "pushed_at": "2026-09-17T05:03:06Z"
+        "pushed_at": "2026-09-18T06:37:30Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "bannedbook/fanqiang": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/bannedbook/fanqiang/releases/tag/FQNews-v1.3.8",
         "published_at": "2024-08-18T07:10:04Z",
         "tag_name": "FQNews-v1.3.8"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1891,18 +1887,18 @@
         "html_url": "https://github.com/bannedbook/fanqiang",
         "pushed_at": "2026-09-13T05:26:36Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "bol-van/zapret": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/bol-van/zapret/releases/tag/v72.13",
         "published_at": "2026-07-21T06:25:03Z",
         "tag_name": "v72.13"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1910,20 +1906,20 @@
         "disabled": false,
         "full_name": "bol-van/zapret",
         "html_url": "https://github.com/bol-van/zapret",
-        "pushed_at": "2026-07-21T06:19:36Z"
+        "pushed_at": "2026-09-18T10:18:54Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "boxproxy/box": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/boxproxy/box/releases/tag/1.2.8",
         "published_at": "2026-06-13T09:50:17Z",
         "tag_name": "1.2.8"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1933,18 +1929,18 @@
         "html_url": "https://github.com/boxproxy/box",
         "pushed_at": "2026-08-16T15:59:05Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "cbeuw/Cloak": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/cbeuw/Cloak/releases/tag/v2.12.0",
         "published_at": "2025-07-23T19:14:03Z",
         "tag_name": "v2.12.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1954,18 +1950,18 @@
         "html_url": "https://github.com/cbeuw/Cloak",
         "pushed_at": "2026-05-29T22:14:31Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ceno-app/ceno-android": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/ceno-app/ceno-android/releases/tag/v2.11.3",
         "published_at": "2026-08-24T18:37:10Z",
         "tag_name": "v2.11.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1973,20 +1969,20 @@
         "disabled": false,
         "full_name": "ceno-app/ceno-android",
         "html_url": "https://github.com/ceno-app/ceno-android",
-        "pushed_at": "2026-09-16T16:54:30Z"
+        "pushed_at": "2026-09-18T11:33:18Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "chen08209/FlClash": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/chen08209/FlClash/releases/tag/v0.8.98",
         "published_at": "2026-09-14T03:20:30Z",
         "tag_name": "v0.8.98"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -1996,18 +1992,18 @@
         "html_url": "https://github.com/chen08209/FlClash",
         "pushed_at": "2026-09-17T01:50:47Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "chenx-dust/FlClash-Patched": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/chenx-dust/FlClash-Patched/releases/tag/v0.8.124",
         "published_at": "2026-09-17T08:55:23Z",
         "tag_name": "v0.8.124"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2015,20 +2011,20 @@
         "disabled": false,
         "full_name": "chenx-dust/FlClash-Patched",
         "html_url": "https://github.com/chenx-dust/FlClash-Patched",
-        "pushed_at": "2026-09-17T08:11:07Z"
+        "pushed_at": "2026-09-18T13:32:49Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "clash-verge-rev/clash-verge-rev": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/clash-verge-rev/clash-verge-rev/releases/tag/v2.5.2",
         "published_at": "2026-07-19T17:00:26Z",
         "tag_name": "v2.5.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2036,20 +2032,20 @@
         "disabled": false,
         "full_name": "clash-verge-rev/clash-verge-rev",
         "html_url": "https://github.com/clash-verge-rev/clash-verge-rev",
-        "pushed_at": "2026-09-17T22:23:26Z"
+        "pushed_at": "2026-09-18T13:27:41Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "coolsnowwolf/lede": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/coolsnowwolf/lede/releases/tag/20251001",
         "published_at": "2025-09-30T06:18:31Z",
         "tag_name": "20251001"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2059,18 +2055,18 @@
         "html_url": "https://github.com/coolsnowwolf/lede",
         "pushed_at": "2026-09-16T03:17:45Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "curl/curl": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/curl/curl/releases/tag/curl-8_22_0",
         "published_at": "2026-09-02T05:59:35Z",
         "tag_name": "curl-8_22_0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2078,20 +2074,20 @@
         "disabled": false,
         "full_name": "curl/curl",
         "html_url": "https://github.com/curl/curl",
-        "pushed_at": "2026-09-17T22:38:13Z"
+        "pushed_at": "2026-09-18T22:44:36Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "daeuniverse/dae": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/daeuniverse/dae/releases/tag/v2.0.0",
-        "published_at": "2026-07-08T23:38:13Z",
-        "tag_name": "v2.0.0"
+        "html_url": "https://github.com/daeuniverse/dae/releases/tag/v2.1.1",
+        "published_at": "2026-09-18T14:44:07Z",
+        "tag_name": "v2.1.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2099,20 +2095,20 @@
         "disabled": false,
         "full_name": "daeuniverse/dae",
         "html_url": "https://github.com/daeuniverse/dae",
-        "pushed_at": "2026-09-16T10:04:46Z"
+        "pushed_at": "2026-09-18T14:55:56Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "daeuniverse/daed": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/daeuniverse/daed/releases/tag/dae-lang-core-v0.2.0",
         "published_at": "2026-04-17T01:12:19Z",
         "tag_name": "dae-lang-core-v0.2.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2122,14 +2118,14 @@
         "html_url": "https://github.com/daeuniverse/daed",
         "pushed_at": "2026-09-12T04:26:58Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "danoctavian/awesome-anti-censorship": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2139,18 +2135,18 @@
         "html_url": "https://github.com/danoctavian/awesome-anti-censorship",
         "pushed_at": "2026-09-07T15:36:01Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "dndx/phantun": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/dndx/phantun/releases/tag/v0.8.1",
         "published_at": "2025-08-23T03:58:10Z",
         "tag_name": "v0.8.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2160,18 +2156,18 @@
         "html_url": "https://github.com/dndx/phantun",
         "pushed_at": "2026-08-22T03:22:33Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "dododook/FlowZ": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/dododook/FlowZ/releases/tag/v4.3.3",
         "published_at": "2026-08-26T14:26:04Z",
         "tag_name": "v4.3.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2181,18 +2177,18 @@
         "html_url": "https://github.com/dododook/FlowZ",
         "pushed_at": "2026-08-26T18:13:21Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "enfein/mieru": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/enfein/mieru/releases/tag/v3.37.0",
         "published_at": "2026-09-13T03:20:58Z",
         "tag_name": "v3.37.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2200,20 +2196,20 @@
         "disabled": false,
         "full_name": "enfein/mieru",
         "html_url": "https://github.com/enfein/mieru",
-        "pushed_at": "2026-09-17T23:41:35Z"
+        "pushed_at": "2026-09-18T21:49:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "erebe/wstunnel": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/erebe/wstunnel/releases/tag/v10.7.1",
         "published_at": "2026-09-01T12:24:15Z",
         "tag_name": "v10.7.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2223,14 +2219,14 @@
         "html_url": "https://github.com/erebe/wstunnel",
         "pushed_at": "2026-09-15T20:44:10Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ericpaulbishop/gargoyle": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2240,18 +2236,18 @@
         "html_url": "https://github.com/ericpaulbishop/gargoyle",
         "pushed_at": "2026-08-25T13:09:54Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "esnet/iperf": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/esnet/iperf/releases/tag/3.21",
         "published_at": "2026-04-09T19:22:56Z",
         "tag_name": "3.21"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2261,18 +2257,18 @@
         "html_url": "https://github.com/esnet/iperf",
         "pushed_at": "2026-07-10T19:21:20Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "fatedier/frp": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/fatedier/frp/releases/tag/v0.71.0",
         "published_at": "2026-08-14T06:36:29Z",
         "tag_name": "v0.71.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2282,18 +2278,18 @@
         "html_url": "https://github.com/fatedier/frp",
         "pushed_at": "2026-09-15T05:55:33Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "firezone/firezone": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/firezone/firezone/releases/tag/apple-client-1.5.20",
         "published_at": "2026-09-15T23:15:21Z",
         "tag_name": "apple-client-1.5.20"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2301,20 +2297,20 @@
         "disabled": false,
         "full_name": "firezone/firezone",
         "html_url": "https://github.com/firezone/firezone",
-        "pushed_at": "2026-09-18T00:21:54Z"
+        "pushed_at": "2026-09-18T09:58:34Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "fivesheep/chnroutes": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/fivesheep/chnroutes/releases/tag/v0.1.0",
         "published_at": "2017-06-29T08:14:48Z",
         "tag_name": "v0.1.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2324,18 +2320,18 @@
         "html_url": "https://github.com/fivesheep/chnroutes",
         "pushed_at": "2018-09-06T08:02:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "foxyproxy/browser-extension": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/foxyproxy/browser-extension/releases/tag/v9.8",
         "published_at": "2026-09-14T17:16:13Z",
         "tag_name": "v9.8"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2345,18 +2341,18 @@
         "html_url": "https://github.com/foxyproxy/browser-extension",
         "pushed_at": "2026-09-14T17:16:13Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "frank-vpl/IRBox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/frank-vpl/IRBox/releases/tag/v1.0.2",
         "published_at": "2026-02-17T02:37:49Z",
         "tag_name": "v1.0.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2366,18 +2362,18 @@
         "html_url": "https://github.com/frank-vpl/IRBox",
         "pushed_at": "2026-02-18T22:13:10Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "fw876/helloworld": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/fw876/helloworld/releases/tag/v196.9",
         "published_at": "2026-09-07T01:44:10Z",
         "tag_name": "v196.9"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2387,18 +2383,18 @@
         "html_url": "https://github.com/fw876/helloworld",
         "pushed_at": "2026-09-15T13:07:53Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "geph-official/geph5": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/geph-official/geph5/releases/tag/geph5-client-v0.2.36",
         "published_at": "2025-02-15T14:40:10Z",
         "tag_name": "geph5-client-v0.2.36"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2408,18 +2404,18 @@
         "html_url": "https://github.com/geph-official/geph5",
         "pushed_at": "2026-09-14T12:08:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "getlantern/lantern": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/getlantern/lantern/releases/tag/v9.1.6-ios",
-        "published_at": "2026-05-06T13:52:37Z",
-        "tag_name": "v9.1.6-ios"
+        "html_url": "https://github.com/getlantern/lantern/releases/tag/v10.0.0",
+        "published_at": "2026-09-18T19:20:52Z",
+        "tag_name": "v10.0.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2427,16 +2423,16 @@
         "disabled": false,
         "full_name": "getlantern/lantern",
         "html_url": "https://github.com/getlantern/lantern",
-        "pushed_at": "2026-09-17T23:53:13Z"
+        "pushed_at": "2026-09-18T22:14:43Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "gfwlist/gfwlist": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2446,18 +2442,18 @@
         "html_url": "https://github.com/gfwlist/gfwlist",
         "pushed_at": "2026-09-11T14:54:26Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "gnuton/asuswrt-merlin.ng": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/gnuton/asuswrt-merlin.ng/releases/tag/3004.388.11_1-gnuton1",
         "published_at": "2026-06-10T08:34:58Z",
         "tag_name": "3004.388.11_1-gnuton1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2467,18 +2463,18 @@
         "html_url": "https://github.com/gnuton/asuswrt-merlin.ng",
         "pushed_at": "2026-09-17T15:26:17Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "go-gost/gost": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/go-gost/gost/releases/tag/v3.3.0",
         "published_at": "2026-08-30T10:06:08Z",
         "tag_name": "v3.3.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2488,18 +2484,18 @@
         "html_url": "https://github.com/go-gost/gost",
         "pushed_at": "2026-09-13T15:04:10Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "gravitl/netmaker": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/gravitl/netmaker/releases/tag/v1.7.0",
         "published_at": "2026-08-31T14:48:24Z",
         "tag_name": "v1.7.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2507,26 +2503,26 @@
         "disabled": false,
         "full_name": "gravitl/netmaker",
         "html_url": "https://github.com/gravitl/netmaker",
-        "pushed_at": "2026-09-17T11:54:16Z"
+        "pushed_at": "2026-09-18T11:10:19Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "guardianproject/orbot": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/guardianproject/orbot-android/releases/tag/17.9.5-RC-4-tor-0.4.9.11",
-        "published_at": "2026-07-07T14:08:25Z",
-        "tag_name": "17.9.5-RC-4-tor-0.4.9.11"
+        "html_url": "https://github.com/guardianproject/orbot-android/releases/tag/17.9.6-BETA-1-tor-0.4.9.12",
+        "published_at": "2026-09-18T19:55:40Z",
+        "tag_name": "17.9.6-BETA-1-tor-0.4.9.12"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/guardianproject/orbot",
           "https://api.github.com/repositories/20008432"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "guardianproject/orbot-android"
       },
       "release_status": "ok",
@@ -2536,28 +2532,28 @@
         "disabled": false,
         "full_name": "guardianproject/orbot-android",
         "html_url": "https://github.com/guardianproject/orbot-android",
-        "pushed_at": "2026-09-15T11:44:04Z"
+        "pushed_at": "2026-09-18T20:25:22Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/guardianproject/orbot",
           "https://api.github.com/repositories/20008432"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "guardianproject/orbot-android"
       },
       "repository_status": "ok"
     },
     "gurucomputing/headscale-ui": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/gurucomputing/headscale-ui/releases/tag/2026.03.17",
         "published_at": "2026-03-16T19:37:31Z",
         "tag_name": "2026.03.17"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2567,14 +2563,14 @@
         "html_url": "https://github.com/gurucomputing/headscale-ui",
         "pushed_at": "2026-03-16T19:37:30Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "h2y/Shadowrocket-ADBlock-Rules": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": true,
@@ -2584,18 +2580,18 @@
         "html_url": "https://github.com/h2y/Shadowrocket-ADBlock-Rules",
         "pushed_at": "2021-04-12T16:11:40Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "hanwckf/rt-n56u": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/hanwckf/rt-n56u/releases/tag/v2020-11-27",
         "published_at": "2020-11-27T11:11:11Z",
         "tag_name": "v2020-11-27"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2605,18 +2601,18 @@
         "html_url": "https://github.com/hanwckf/rt-n56u",
         "pushed_at": "2024-06-13T05:43:19Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "hiddify/hiddify-app": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/hiddify/hiddify-app/releases/tag/v4.1.1",
         "published_at": "2026-03-05T17:22:57Z",
         "tag_name": "v4.1.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2626,18 +2622,18 @@
         "html_url": "https://github.com/hiddify/hiddify-app",
         "pushed_at": "2026-08-10T17:43:24Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "hiddify/hiddify-manager": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/hiddify/Hiddify-Manager/releases/tag/v12.3.3",
         "published_at": "2026-05-29T06:29:06Z",
         "tag_name": "v12.3.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2645,16 +2641,16 @@
         "disabled": false,
         "full_name": "hiddify/Hiddify-Manager",
         "html_url": "https://github.com/hiddify/Hiddify-Manager",
-        "pushed_at": "2026-09-17T20:26:38Z"
+        "pushed_at": "2026-09-18T22:02:05Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "hq450/fancyss": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2664,14 +2660,14 @@
         "html_url": "https://github.com/hq450/fancyss",
         "pushed_at": "2026-06-01T16:01:19Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "hwdsl2/setup-ipsec-vpn": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2679,20 +2675,20 @@
         "disabled": false,
         "full_name": "hwdsl2/setup-ipsec-vpn",
         "html_url": "https://github.com/hwdsl2/setup-ipsec-vpn",
-        "pushed_at": "2026-09-17T04:55:01Z"
+        "pushed_at": "2026-09-18T04:16:44Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "hyphanet/fred": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/hyphanet/fred/releases/tag/build01507",
         "published_at": "2026-09-04T23:33:54Z",
         "tag_name": "build01507"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2702,18 +2698,18 @@
         "html_url": "https://github.com/hyphanet/fred",
         "pushed_at": "2026-09-13T09:58:48Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "i2p/i2p.i2p": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/i2p/i2p.i2p/releases/tag/i2p-2.13.0",
         "published_at": "2026-07-24T00:33:08Z",
         "tag_name": "i2p-2.13.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2721,20 +2717,20 @@
         "disabled": false,
         "full_name": "i2p/i2p.i2p",
         "html_url": "https://github.com/i2p/i2p.i2p",
-        "pushed_at": "2026-09-17T00:49:03Z"
+        "pushed_at": "2026-09-18T00:48:40Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ihciah/shadow-tls": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/ihciah/shadow-tls/releases/tag/v0.2.25",
         "published_at": "2023-12-13T13:57:52Z",
         "tag_name": "v0.2.25"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2744,14 +2740,14 @@
         "html_url": "https://github.com/ihciah/shadow-tls",
         "pushed_at": "2025-04-25T16:27:14Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "immortalwrt/homeproxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2761,14 +2757,14 @@
         "html_url": "https://github.com/immortalwrt/homeproxy",
         "pushed_at": "2026-09-01T07:25:49Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "immortalwrt/immortalwrt": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2776,16 +2772,16 @@
         "disabled": false,
         "full_name": "immortalwrt/immortalwrt",
         "html_url": "https://github.com/immortalwrt/immortalwrt",
-        "pushed_at": "2026-09-17T03:40:09Z"
+        "pushed_at": "2026-09-18T02:53:07Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "istoreos/istoreos": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2795,18 +2791,18 @@
         "html_url": "https://github.com/istoreos/istoreos",
         "pushed_at": "2026-09-14T10:44:36Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "jackyaz/YazFi": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/jackyaz/YazFi/releases/tag/v4.4.4",
         "published_at": "2023-11-26T19:20:33Z",
         "tag_name": "v4.4.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": true,
@@ -2816,18 +2812,18 @@
         "html_url": "https://github.com/jackyaz/YazFi",
         "pushed_at": "2025-05-20T19:02:36Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "jpillora/chisel": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/jpillora/chisel/releases/tag/v1.12.0",
         "published_at": "2026-08-29T13:30:36Z",
         "tag_name": "v1.12.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2837,18 +2833,18 @@
         "html_url": "https://github.com/jpillora/chisel",
         "pushed_at": "2026-09-01T20:21:22Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "jsdelivr/globalping-cli": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/jsdelivr/globalping-cli/releases/tag/v1.6.0",
         "published_at": "2026-09-17T14:00:01Z",
         "tag_name": "v1.6.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2858,18 +2854,18 @@
         "html_url": "https://github.com/jsdelivr/globalping-cli",
         "pushed_at": "2026-09-17T14:35:09Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "juanfont/headscale": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/juanfont/headscale/releases/tag/v0.29.3",
         "published_at": "2026-07-29T12:51:35Z",
         "tag_name": "v0.29.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2879,18 +2875,18 @@
         "html_url": "https://github.com/juanfont/headscale",
         "pushed_at": "2026-09-17T21:57:02Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "juewuy/ShellCrash": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/juewuy/ShellCrash/releases/tag/1.9.4",
         "published_at": "2026-02-15T11:33:00Z",
         "tag_name": "1.9.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2898,20 +2894,20 @@
         "disabled": false,
         "full_name": "juewuy/ShellCrash",
         "html_url": "https://github.com/juewuy/ShellCrash",
-        "pushed_at": "2026-09-17T18:18:32Z"
+        "pushed_at": "2026-09-18T18:17:47Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "juicity/juicity": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/juicity/juicity/releases/tag/v0.5.0",
         "published_at": "2025-06-30T12:44:40Z",
         "tag_name": "v0.5.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2921,18 +2917,18 @@
         "html_url": "https://github.com/juicity/juicity",
         "pushed_at": "2025-06-30T12:39:34Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "klzgrad/naiveproxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/klzgrad/naiveproxy/releases/tag/v150.0.7871.63-1",
         "published_at": "2026-07-03T14:09:55Z",
         "tag_name": "v150.0.7871.63-1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2942,14 +2938,14 @@
         "html_url": "https://github.com/klzgrad/naiveproxy",
         "pushed_at": "2026-09-14T14:15:11Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "koolshare/rogsoft": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2957,20 +2953,20 @@
         "disabled": false,
         "full_name": "koolshare/rogsoft",
         "html_url": "https://github.com/koolshare/rogsoft",
-        "pushed_at": "2026-09-15T05:10:39Z"
+        "pushed_at": "2026-09-18T04:07:22Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "libnyanpasu/clash-nyanpasu": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/libnyanpasu/clash-nyanpasu/releases/tag/v1.6.1",
         "published_at": "2024-09-07T16:48:05Z",
         "tag_name": "v1.6.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -2978,16 +2974,16 @@
         "disabled": false,
         "full_name": "libnyanpasu/clash-nyanpasu",
         "html_url": "https://github.com/libnyanpasu/clash-nyanpasu",
-        "pushed_at": "2026-09-17T23:41:09Z"
+        "pushed_at": "2026-09-18T11:25:18Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "linkease/istore": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -2997,18 +2993,18 @@
         "html_url": "https://github.com/linkease/istore",
         "pushed_at": "2026-08-28T09:02:41Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "mapleafgo/singcast": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/mapleafgo/singcast/releases/tag/v1.2.2",
         "published_at": "2026-08-28T00:35:39Z",
         "tag_name": "v1.2.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3018,18 +3014,18 @@
         "html_url": "https://github.com/mapleafgo/singcast",
         "pushed_at": "2026-08-28T00:35:34Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "marzneshin/marzneshin": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/marzneshin/marzneshin/releases/tag/v0.7.4",
         "published_at": "2025-07-12T14:16:07Z",
         "tag_name": "v0.7.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3039,18 +3035,18 @@
         "html_url": "https://github.com/marzneshin/marzneshin",
         "pushed_at": "2025-10-04T03:24:11Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "meow-rs/meow-ios": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/meow-rs/meow-ios/releases/tag/v1.6.0",
         "published_at": "2026-08-25T06:00:07Z",
         "tag_name": "v1.6.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3060,18 +3056,18 @@
         "html_url": "https://github.com/meow-rs/meow-ios",
         "pushed_at": "2026-09-17T09:44:10Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "mihomo-party-org/clash-party": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/mihomo-party-org/clash-party/releases/tag/v2.0.2",
         "published_at": "2026-08-14T15:07:21Z",
         "tag_name": "v2.0.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3079,20 +3075,20 @@
         "disabled": false,
         "full_name": "mihomo-party-org/clash-party",
         "html_url": "https://github.com/mihomo-party-org/clash-party",
-        "pushed_at": "2026-09-18T00:03:33Z"
+        "pushed_at": "2026-09-18T16:10:43Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "mullvad/mullvadvpn-app": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/mullvad/mullvadvpn-app/releases/tag/android/2026.10",
         "published_at": "2026-09-17T10:08:35Z",
         "tag_name": "android/2026.10"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3100,20 +3096,20 @@
         "disabled": false,
         "full_name": "mullvad/mullvadvpn-app",
         "html_url": "https://github.com/mullvad/mullvadvpn-app",
-        "pushed_at": "2026-09-17T21:06:55Z"
+        "pushed_at": "2026-09-18T21:40:15Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "netbirdio/netbird": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/netbirdio/netbird/releases/tag/v0.78.2",
-        "published_at": "2026-09-14T17:18:49Z",
-        "tag_name": "v0.78.2"
+        "html_url": "https://github.com/netbirdio/netbird/releases/tag/v0.79.0",
+        "published_at": "2026-09-18T17:06:28Z",
+        "tag_name": "v0.79.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3121,20 +3117,20 @@
         "disabled": false,
         "full_name": "netbirdio/netbird",
         "html_url": "https://github.com/netbirdio/netbird",
-        "pushed_at": "2026-09-17T23:56:56Z"
+        "pushed_at": "2026-09-18T19:21:59Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "netchx/netch": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/netchx/netch/releases/tag/1.9.7",
         "published_at": "2022-06-24T07:04:37Z",
         "tag_name": "1.9.7"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3144,18 +3140,18 @@
         "html_url": "https://github.com/netchx/netch",
         "pushed_at": "2026-09-12T00:22:26Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "nikkinikki-org/OpenWrt-nikki": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/nikkinikki-org/OpenWrt-nikki/releases/tag/v1.26.1",
         "published_at": "2026-06-10T15:43:13Z",
         "tag_name": "v1.26.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3163,20 +3159,20 @@
         "disabled": false,
         "full_name": "nikkinikki-org/OpenWrt-nikki",
         "html_url": "https://github.com/nikkinikki-org/OpenWrt-nikki",
-        "pushed_at": "2026-09-17T00:51:25Z"
+        "pushed_at": "2026-09-18T00:34:57Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "nxtrace/NTrace-core": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/nxtrace/NTrace-core/releases/tag/v1.7.3",
         "published_at": "2026-08-26T22:30:27Z",
         "tag_name": "v1.7.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3186,18 +3182,18 @@
         "html_url": "https://github.com/nxtrace/NTrace-core",
         "pushed_at": "2026-09-17T16:09:47Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "okunvei/singboard_for_mac": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/okunvei/singboard_for_mac/releases/tag/build-20260627-121223-f6c9f44",
         "published_at": "2026-06-27T12:18:00Z",
         "tag_name": "build-20260627-121223-f6c9f44"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3207,18 +3203,18 @@
         "html_url": "https://github.com/okunvei/singboard_for_mac",
         "pushed_at": "2026-06-27T12:17:59Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "ooni/probe-cli": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/ooni/probe-cli/releases/tag/v3.30.0",
         "published_at": "2026-07-27T15:34:35Z",
         "tag_name": "v3.30.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3226,16 +3222,16 @@
         "disabled": false,
         "full_name": "ooni/probe-cli",
         "html_url": "https://github.com/ooni/probe-cli",
-        "pushed_at": "2026-09-17T14:14:41Z"
+        "pushed_at": "2026-09-18T05:10:32Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "openconnect/ocserv": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": true,
@@ -3245,14 +3241,14 @@
         "html_url": "https://github.com/openconnect/ocserv",
         "pushed_at": "2021-02-22T16:25:46Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "openconnect/openconnect": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": true,
@@ -3262,14 +3258,14 @@
         "html_url": "https://github.com/openconnect/openconnect",
         "pushed_at": "2023-04-28T14:51:07Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "openwrt/luci": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -3277,20 +3273,20 @@
         "disabled": false,
         "full_name": "openwrt/luci",
         "html_url": "https://github.com/openwrt/luci",
-        "pushed_at": "2026-09-17T20:01:16Z"
+        "pushed_at": "2026-09-18T18:18:17Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "openwrt/openwrt": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/openwrt/openwrt/releases/tag/v25.12.5",
         "published_at": "2026-07-01T00:10:15Z",
         "tag_name": "v25.12.5"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3298,20 +3294,20 @@
         "disabled": false,
         "full_name": "openwrt/openwrt",
         "html_url": "https://github.com/openwrt/openwrt",
-        "pushed_at": "2026-09-17T16:19:29Z"
+        "pushed_at": "2026-09-18T20:31:28Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "orf/gping": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/orf/gping/releases/tag/gping-v1.21.0",
         "published_at": "2026-08-31T20:13:19Z",
         "tag_name": "gping-v1.21.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3319,20 +3315,20 @@
         "disabled": false,
         "full_name": "orf/gping",
         "html_url": "https://github.com/orf/gping",
-        "pushed_at": "2026-09-10T10:33:36Z"
+        "pushed_at": "2026-09-18T10:32:36Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "p4gefau1t/trojan-go": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/p4gefau1t/trojan-go/releases/tag/v0.10.6",
         "published_at": "2021-09-14T08:12:05Z",
         "tag_name": "v0.10.6"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3342,18 +3338,18 @@
         "html_url": "https://github.com/p4gefau1t/trojan-go",
         "pushed_at": "2024-07-14T08:52:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "pluralplay/FlClashX": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/pluralplay/FlClashX/releases/tag/v0.4.2",
         "published_at": "2026-07-18T10:51:50Z",
         "tag_name": "v0.4.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3363,14 +3359,14 @@
         "html_url": "https://github.com/pluralplay/FlClashX",
         "pushed_at": "2026-09-02T12:05:37Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "popsiclelmlm/Hey": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -3380,14 +3376,14 @@
         "html_url": "https://github.com/popsiclelmlm/Hey",
         "pushed_at": "2026-09-06T01:34:11Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "pymumu/luci-app-smartdns": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -3397,18 +3393,18 @@
         "html_url": "https://github.com/pymumu/luci-app-smartdns",
         "pushed_at": "2026-07-08T23:03:37Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "pymumu/smartdns": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/pymumu/smartdns/releases/tag/Release48.4",
         "published_at": "2026-08-05T09:20:21Z",
         "tag_name": "Release48.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3418,18 +3414,18 @@
         "html_url": "https://github.com/pymumu/smartdns",
         "pushed_at": "2026-08-30T18:28:15Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "qr243vbi/nekobox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/qr243vbi/nekobox/releases/tag/5.11.28.3",
         "published_at": "2026-08-26T18:54:32Z",
         "tag_name": "5.11.28.3"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3437,26 +3433,26 @@
         "disabled": false,
         "full_name": "qr243vbi/nekobox",
         "html_url": "https://github.com/qr243vbi/nekobox",
-        "pushed_at": "2026-09-06T07:28:38Z"
+        "pushed_at": "2026-09-18T13:51:04Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "rapiz1/rathole": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/rathole-org/rathole/releases/tag/v0.5.0",
         "published_at": "2023-10-01T10:14:10Z",
         "tag_name": "v0.5.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/rapiz1/rathole",
           "https://api.github.com/repositories/438123986"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "rathole-org/rathole"
       },
       "release_status": "ok",
@@ -3468,26 +3464,26 @@
         "html_url": "https://github.com/rathole-org/rathole",
         "pushed_at": "2026-08-23T15:38:44Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/rapiz1/rathole",
           "https://api.github.com/repositories/438123986"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "rathole-org/rathole"
       },
       "repository_status": "ok"
     },
     "roseforljh/KunBox": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/roseforljh/KunBox/releases/tag/v2.24.1",
         "published_at": "2026-09-03T12:16:44Z",
         "tag_name": "v2.24.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3497,14 +3493,14 @@
         "html_url": "https://github.com/roseforljh/KunBox",
         "pushed_at": "2026-09-16T19:18:25Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "rts600/MerlinClash": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -3514,18 +3510,18 @@
         "html_url": "https://github.com/rts600/MerlinClash",
         "pushed_at": "2026-09-15T01:50:38Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "sbwml/luci-app-mosdns": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/sbwml/luci-app-mosdns/releases/tag/v5.3.4-r14",
         "published_at": "2026-09-12T15:12:00Z",
         "tag_name": "v5.3.4-r14"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3535,18 +3531,18 @@
         "html_url": "https://github.com/sbwml/luci-app-mosdns",
         "pushed_at": "2026-09-13T13:54:40Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "shadowsocks/luci-app-shadowsocks": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/shadowsocks/luci-app-shadowsocks/releases/tag/v2.1.1",
         "published_at": "2022-09-13T02:13:45Z",
         "tag_name": "v2.1.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3556,18 +3552,18 @@
         "html_url": "https://github.com/shadowsocks/luci-app-shadowsocks",
         "pushed_at": "2023-05-28T16:53:00Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "shadowsocks/shadowsocks-android": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/shadowsocks/shadowsocks-android/releases/tag/v5.3.5-nightly",
         "published_at": "2026-02-10T06:47:17Z",
         "tag_name": "v5.3.5-nightly"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3577,24 +3573,24 @@
         "html_url": "https://github.com/shadowsocks/shadowsocks-android",
         "pushed_at": "2026-08-09T11:06:54Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "shadowsocks/shadowsocks-libev": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/shadowsocks/shadowsocks-c/releases/tag/v3.3.6",
         "published_at": "2026-02-09T01:15:44Z",
         "tag_name": "v3.3.6"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/shadowsocks/shadowsocks-libev",
           "https://api.github.com/repositories/7177269"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "shadowsocks/shadowsocks-c"
       },
       "release_status": "ok",
@@ -3606,26 +3602,26 @@
         "html_url": "https://github.com/shadowsocks/shadowsocks-c",
         "pushed_at": "2026-09-13T03:19:30Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_resolution": {
         "api_redirect_chain": [
           "https://api.github.com/repos/shadowsocks/shadowsocks-libev",
           "https://api.github.com/repositories/7177269"
         ],
-        "checked_at": "2026-09-18T00:22:27Z",
+        "checked_at": "2026-09-19T00:22:50Z",
         "full_name": "shadowsocks/shadowsocks-c"
       },
       "repository_status": "ok"
     },
     "shadowsocks/shadowsocks-rust": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/shadowsocks/shadowsocks-rust/releases/tag/v1.25.0",
         "published_at": "2026-08-26T18:31:35Z",
         "tag_name": "v1.25.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3635,18 +3631,18 @@
         "html_url": "https://github.com/shadowsocks/shadowsocks-rust",
         "pushed_at": "2026-09-16T20:10:01Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "slackhq/nebula": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/slackhq/nebula/releases/tag/v1.11.1",
         "published_at": "2026-08-21T19:34:36Z",
         "tag_name": "v1.11.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3656,18 +3652,18 @@
         "html_url": "https://github.com/slackhq/nebula",
         "pushed_at": "2026-09-17T18:00:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "snakem982/Pandora-Box": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/snakem982/Pandora-Box/releases/tag/v1.0.23",
         "published_at": "2026-08-22T07:46:56Z",
         "tag_name": "v1.0.23"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3677,18 +3673,18 @@
         "html_url": "https://github.com/snakem982/Pandora-Box",
         "pushed_at": "2026-09-07T12:13:30Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "sshuttle/sshuttle": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/sshuttle/sshuttle/releases/tag/v1.3.2",
         "published_at": "2025-08-10T22:16:39Z",
         "tag_name": "v1.3.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3698,18 +3694,18 @@
         "html_url": "https://github.com/sshuttle/sshuttle",
         "pushed_at": "2026-09-17T23:43:50Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "starifly/NekoBoxForAndroid": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/starifly/NekoBoxForAndroid/releases/tag/1.4.2-rev-24",
         "published_at": "2026-08-22T09:36:54Z",
         "tag_name": "1.4.2-rev-24"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3719,18 +3715,18 @@
         "html_url": "https://github.com/starifly/NekoBoxForAndroid",
         "pushed_at": "2026-08-22T09:36:54Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "strongswan/strongswan": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/strongswan/strongswan/releases/tag/6.1.0",
         "published_at": "2026-09-07T12:03:02Z",
         "tag_name": "6.1.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3740,18 +3736,18 @@
         "html_url": "https://github.com/strongswan/strongswan",
         "pushed_at": "2026-09-17T12:06:01Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "sub-store-org/Sub-Store": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/sub-store-org/Sub-Store/releases/tag/2.39.8",
-        "published_at": "2026-09-15T14:16:30Z",
-        "tag_name": "2.39.8"
+        "html_url": "https://github.com/sub-store-org/Sub-Store/releases/tag/2.39.9",
+        "published_at": "2026-09-18T16:00:39Z",
+        "tag_name": "2.39.9"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3759,20 +3755,20 @@
         "disabled": false,
         "full_name": "sub-store-org/Sub-Store",
         "html_url": "https://github.com/sub-store-org/Sub-Store",
-        "pushed_at": "2026-09-17T00:48:20Z"
+        "pushed_at": "2026-09-18T16:00:42Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "taamarin/box_for_magisk": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/taamarin/box_for_magisk/releases/tag/v1.10.2",
         "published_at": "2025-09-05T12:45:22Z",
         "tag_name": "v1.10.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3782,18 +3778,18 @@
         "html_url": "https://github.com/taamarin/box_for_magisk",
         "pushed_at": "2025-10-21T12:08:48Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "tailscale/tailscale": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/tailscale/tailscale/releases/tag/v1.102.4",
         "published_at": "2026-09-10T22:25:41Z",
         "tag_name": "v1.102.4"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3801,16 +3797,16 @@
         "disabled": false,
         "full_name": "tailscale/tailscale",
         "html_url": "https://github.com/tailscale/tailscale",
-        "pushed_at": "2026-09-18T00:11:02Z"
+        "pushed_at": "2026-09-18T23:14:13Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "teddysun/shadowsocks_install": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -3820,18 +3816,18 @@
         "html_url": "https://github.com/teddysun/shadowsocks_install",
         "pushed_at": "2026-03-07T08:57:16Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "throneproj/Throne": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/throneproj/Throne/releases/tag/1.3.0",
         "published_at": "2026-09-17T22:30:18Z",
         "tag_name": "1.3.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3839,20 +3835,20 @@
         "disabled": false,
         "full_name": "throneproj/Throne",
         "html_url": "https://github.com/throneproj/Throne",
-        "pushed_at": "2026-09-17T22:30:18Z"
+        "pushed_at": "2026-09-18T22:46:27Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "tindy2013/subconverter": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/tindy2013/subconverter/releases/tag/v0.9.0",
         "published_at": "2024-04-08T10:09:55Z",
         "tag_name": "v0.9.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3862,18 +3858,18 @@
         "html_url": "https://github.com/tindy2013/subconverter",
         "pushed_at": "2026-07-09T15:40:27Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "trailofbits/algo": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/trailofbits/algo/releases/tag/v2.0.1",
         "published_at": "2025-11-27T19:51:45Z",
         "tag_name": "v2.0.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3883,14 +3879,14 @@
         "html_url": "https://github.com/trailofbits/algo",
         "pushed_at": "2026-09-09T08:46:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "traviscross/mtr": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -3900,18 +3896,18 @@
         "html_url": "https://github.com/traviscross/mtr",
         "pushed_at": "2026-06-16T09:03:54Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "trojan-gfw/trojan": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/trojan-gfw/trojan/releases/tag/v1.16.0",
         "published_at": "2020-06-10T18:50:49Z",
         "tag_name": "v1.16.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3921,18 +3917,18 @@
         "html_url": "https://github.com/trojan-gfw/trojan",
         "pushed_at": "2024-08-21T09:27:36Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "txthinking/brook": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/txthinking/brook/releases/tag/v20270101",
         "published_at": "2026-09-14T04:56:56Z",
         "tag_name": "v20270101"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3942,18 +3938,18 @@
         "html_url": "https://github.com/txthinking/brook",
         "pushed_at": "2026-09-14T06:34:22Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "v2fly/domain-list-community": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/v2fly/domain-list-community/releases/tag/20260914091725",
         "published_at": "2026-09-14T09:17:33Z",
         "tag_name": "20260914091725"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -3963,14 +3959,14 @@
         "html_url": "https://github.com/v2fly/domain-list-community",
         "pushed_at": "2026-09-14T09:17:33Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "v2fly/fhs-install-v2ray": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -3980,18 +3976,18 @@
         "html_url": "https://github.com/v2fly/fhs-install-v2ray",
         "pushed_at": "2024-11-05T11:40:15Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "v2fly/geoip": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/v2fly/geoip/releases/tag/202609050329",
         "published_at": "2026-09-05T03:29:34Z",
         "tag_name": "202609050329"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4001,18 +3997,18 @@
         "html_url": "https://github.com/v2fly/geoip",
         "pushed_at": "2026-09-11T05:55:23Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "v2fly/v2ray-core": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/v2fly/v2ray-core/releases/tag/v5.53.0",
         "published_at": "2026-08-02T22:46:29Z",
         "tag_name": "v5.53.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4022,18 +4018,18 @@
         "html_url": "https://github.com/v2fly/v2ray-core",
         "pushed_at": "2026-09-08T22:27:45Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "v2rayA/v2rayA": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/v2rayA/v2rayA/releases/tag/v2.4.20",
-        "published_at": "2026-09-16T10:47:58Z",
-        "tag_name": "v2.4.20"
+        "html_url": "https://github.com/v2rayA/v2rayA/releases/tag/v2.4.23",
+        "published_at": "2026-09-18T23:14:39Z",
+        "tag_name": "v2.4.23"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4041,20 +4037,20 @@
         "disabled": false,
         "full_name": "v2rayA/v2rayA",
         "html_url": "https://github.com/v2rayA/v2rayA",
-        "pushed_at": "2026-09-18T00:01:34Z"
+        "pushed_at": "2026-09-18T23:14:38Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "vernesong/OpenClash": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/vernesong/OpenClash/releases/tag/v0.47.156",
         "published_at": "2026-08-10T14:59:36Z",
         "tag_name": "v0.47.156"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4062,16 +4058,16 @@
         "disabled": false,
         "full_name": "vernesong/OpenClash",
         "html_url": "https://github.com/vernesong/OpenClash",
-        "pushed_at": "2026-09-16T20:24:50Z"
+        "pushed_at": "2026-09-18T20:18:35Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "vernesong/mihomo": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -4079,20 +4075,20 @@
         "disabled": false,
         "full_name": "vernesong/mihomo",
         "html_url": "https://github.com/vernesong/mihomo",
-        "pushed_at": "2026-09-05T15:37:07Z"
+        "pushed_at": "2026-09-18T18:32:59Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "wangyu-/UDPspeeder": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/wangyu-/UDPspeeder/releases/tag/20230206.0",
         "published_at": "2023-02-07T13:49:06Z",
         "tag_name": "20230206.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4102,18 +4098,18 @@
         "html_url": "https://github.com/wangyu-/UDPspeeder",
         "pushed_at": "2026-07-31T02:02:07Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "wangyu-/udp2raw": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/wangyu-/udp2raw/releases/tag/20230206.0",
         "published_at": "2023-02-07T13:52:34Z",
         "tag_name": "20230206.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4123,18 +4119,18 @@
         "html_url": "https://github.com/wangyu-/udp2raw",
         "pushed_at": "2025-10-12T07:14:28Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "wg-easy/wg-easy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/wg-easy/wg-easy/releases/tag/v15.4.0",
         "published_at": "2026-08-14T07:28:01Z",
         "tag_name": "v15.4.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4142,20 +4138,20 @@
         "disabled": false,
         "full_name": "wg-easy/wg-easy",
         "html_url": "https://github.com/wg-easy/wg-easy",
-        "pushed_at": "2026-09-16T17:03:32Z"
+        "pushed_at": "2026-09-18T23:01:16Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "xchacha20-poly1305/husi": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/xchacha20-poly1305/husi/releases/tag/v2.1.4",
-        "published_at": "2026-09-16T11:43:17Z",
-        "tag_name": "v2.1.4"
+        "html_url": "https://github.com/xchacha20-poly1305/husi/releases/tag/v2.1.5",
+        "published_at": "2026-09-18T07:06:26Z",
+        "tag_name": "v2.1.5"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4163,20 +4159,20 @@
         "disabled": false,
         "full_name": "xchacha20-poly1305/husi",
         "html_url": "https://github.com/xchacha20-poly1305/husi",
-        "pushed_at": "2026-09-17T22:54:06Z"
+        "pushed_at": "2026-09-18T23:35:06Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "xiaoli8571/NekoBox4Harmony": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
-        "html_url": "https://github.com/xiaoli8571/NekoBox4Harmony/releases/tag/v1.9.3",
-        "published_at": "2026-09-16T02:18:12Z",
-        "tag_name": "v1.9.3"
+        "html_url": "https://github.com/xiaoli8571/NekoBox4Harmony/releases/tag/v2.0.2",
+        "published_at": "2026-09-18T08:46:49Z",
+        "tag_name": "v2.0.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4184,20 +4180,20 @@
         "disabled": false,
         "full_name": "xiaoli8571/NekoBox4Harmony",
         "html_url": "https://github.com/xiaoli8571/NekoBox4Harmony",
-        "pushed_at": "2026-09-16T02:18:11Z"
+        "pushed_at": "2026-09-18T08:46:47Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "xinggaoya/sing-box-windows": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/xinggaoya/sing-box-windows/releases/tag/v2.3.1",
         "published_at": "2026-06-17T10:02:35Z",
         "tag_name": "v2.3.1"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4207,18 +4203,18 @@
         "html_url": "https://github.com/xinggaoya/sing-box-windows",
         "pushed_at": "2026-09-08T07:28:08Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "xishang0128/sparkle": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/xishang0128/sparkle/releases/tag/1.26.8",
         "published_at": "2026-09-03T04:58:27Z",
         "tag_name": "1.26.8"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4228,11 +4224,11 @@
         "html_url": "https://github.com/xishang0128/sparkle",
         "pushed_at": "2026-09-14T15:37:52Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "xtaci/kcptun": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": "repository_not_found",
       "release": null,
       "release_last_success_at": null,
@@ -4242,14 +4238,14 @@
       "repository_status": "unavailable"
     },
     "yanue/V2rayU": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/yanue/V2rayU/releases/tag/v5.2.0",
         "published_at": "2026-08-02T13:11:02Z",
         "tag_name": "v5.2.0"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4259,18 +4255,18 @@
         "html_url": "https://github.com/yanue/V2rayU",
         "pushed_at": "2026-08-02T13:11:02Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "yaog6700-bit/Swell-Proxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/yaog6700-bit/Swell-Proxy/releases/tag/v3.3.6",
         "published_at": "2026-09-14T09:33:58Z",
         "tag_name": "v3.3.6"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4280,14 +4276,14 @@
         "html_url": "https://github.com/yaog6700-bit/Swell-Proxy",
         "pushed_at": "2026-09-14T09:30:02Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "yarrick/iodine": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": null,
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "none",
       "repository": {
         "archived": false,
@@ -4297,18 +4293,18 @@
         "html_url": "https://github.com/yarrick/iodine",
         "pushed_at": "2026-09-17T08:43:01Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "zero-peak/ZeroOmega": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/zero-peak/ZeroOmega/releases/tag/v3.5.2",
         "published_at": "2026-09-09T14:09:37Z",
         "tag_name": "v3.5.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4318,18 +4314,18 @@
         "html_url": "https://github.com/zero-peak/ZeroOmega",
         "pushed_at": "2026-09-09T14:08:31Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "zerotier/ZeroTierOne": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/zerotier/ZeroTierOne/releases/tag/1.16.2",
         "published_at": "2026-05-28T20:21:10Z",
         "tag_name": "1.16.2"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4339,18 +4335,18 @@
         "html_url": "https://github.com/zerotier/ZeroTierOne",
         "pushed_at": "2026-09-03T17:04:55Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "zfl9/chinadns-ng": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/zfl9/chinadns-ng/releases/tag/2025.08.09",
         "published_at": "2025-08-09T10:05:57Z",
         "tag_name": "2025.08.09"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4360,18 +4356,18 @@
         "html_url": "https://github.com/zfl9/chinadns-ng",
         "pushed_at": "2025-08-09T09:22:44Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     },
     "zn0wii/satelite-proxy": {
-      "checked_at": "2026-09-18T00:22:27Z",
+      "checked_at": "2026-09-19T00:22:50Z",
       "error_code": null,
       "release": {
         "html_url": "https://github.com/zn0wii/satelite-proxy/releases/tag/v1.0.36",
         "published_at": "2026-09-16T12:24:15Z",
         "tag_name": "v1.0.36"
       },
-      "release_last_success_at": "2026-09-18T00:22:27Z",
+      "release_last_success_at": "2026-09-19T00:22:50Z",
       "release_status": "ok",
       "repository": {
         "archived": false,
@@ -4379,9 +4375,9 @@
         "disabled": false,
         "full_name": "zn0wii/satelite-proxy",
         "html_url": "https://github.com/zn0wii/satelite-proxy",
-        "pushed_at": "2026-09-16T11:52:44Z"
+        "pushed_at": "2026-09-18T12:58:00Z"
       },
-      "repository_last_success_at": "2026-09-18T00:22:27Z",
+      "repository_last_success_at": "2026-09-19T00:22:50Z",
       "repository_status": "ok"
     }
   },
