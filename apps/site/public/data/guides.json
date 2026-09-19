@@ -2,7 +2,7 @@
   "version": "1.4",
   "site": "https://fanqiang.guide",
   "title": "翻墙与科学上网工具指南",
-  "published_at": "2026-09-13",
+  "published_at": "2026-09-19",
   "topics": [
     {
       "slug": "client-downloads",
@@ -238,6 +238,578 @@
       }
     },
     {
+      "slug": "ladder-vpn-proxy",
+      "title": "梯子、VPN 和代理有什么区别？科学上网新手选择指南",
+      "short_title": "梯子、VPN 与代理的区别",
+      "summary": "“梯子”是口语泛称，不是协议或软件；VPN、代理、客户端、节点和订阅属于不同层次。先确认设备、需要覆盖的流量范围及持有的配置类型，再选择相应工具。",
+      "keywords": [
+        "梯子",
+        "梯子推荐",
+        "翻墙梯子",
+        "科学上网梯子",
+        "vpn和代理区别",
+        "代理工具",
+        "科学上网工具",
+        "翻墙软件"
+      ],
+      "items": [
+        "vpn",
+        "openvpn",
+        "wireguard-tools",
+        "v2rayn",
+        "clash-verge-rev",
+        "shadowrocket",
+        "concept-tun"
+      ],
+      "sections": [
+        {
+          "heading": "梯子、VPN、代理、客户端和节点分别是什么",
+          "paragraphs": [
+            "“梯子”是中文网络中的口语泛称，可能指 VPN 服务、代理客户端、节点服务或整套路由器方案，本身不是固定协议。VPN 通常在设备与远端网络之间建立虚拟网络通道；代理则按照应用、系统代理或路由规则转发被选中的连接。",
+            "v2rayN、Clash Verge Rev、Shadowrocket 等主要是客户端或客户端项目；客户端负责读取配置并调用内核，节点提供服务器连接参数，订阅则用于取得一组节点或完整配置。安装客户端不等于已经拥有节点。"
+          ],
+          "bullets": [
+            "VPN、代理和“梯子”不是三个可以直接互换的产品名称。",
+            "系统显示 VPN 图标，不能单独证明底层使用的是哪种协议或配置方式。",
+            "客户端、代理内核、节点与订阅应分别记录，不能只用一个软件名称概括全部链路。"
+          ],
+          "sources": [
+            {
+              "label": "MDN Proxy server 术语说明",
+              "url": "https://developer.mozilla.org/en-US/docs/Glossary/Proxy_server"
+            },
+            {
+              "label": "NIST VPN 术语定义",
+              "url": "https://csrc.nist.gov/glossary/term/virtual_private_network"
+            },
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
+            },
+            {
+              "label": "Clash Verge Rev 项目",
+              "url": "https://github.com/clash-verge-rev/clash-verge-rev"
+            },
+            {
+              "label": "Shadowrocket 开发者 App Store 页面",
+              "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ]
+        },
+        {
+          "heading": "新手按设备、覆盖范围和配置类型选择",
+          "paragraphs": [
+            "先确认 Windows、macOS、Linux、Android、iPhone 还是路由器，再从对应项目或应用商店的正式入口选择客户端。随后确认只需处理单个应用、整台设备，还是希望多台家庭设备共用规则。",
+            "最后辨认手中的输入是单节点分享链接、订阅地址、完整 YAML 或 JSON 配置，还是 HTTP/SOCKS 地址列表。相同协议可能由不同客户端支持，但完整配置中的分组、规则和 DNS 字段未必通用。"
+          ],
+          "bullets": [
+            "单台电脑或手机通常先从设备客户端开始，安装和排错范围更小。",
+            "需要多台固定设备共用规则时，再评估路由器方案。",
+            "导入成功只说明客户端读到了内容，不代表服务器当前可达或全部流量已经按预期处理。"
+          ],
+          "sources": [
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
+            },
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Clash Verge Rev 项目",
+              "url": "https://github.com/clash-verge-rev/clash-verge-rev"
+            },
+            {
+              "label": "Shadowrocket 开发者 App Store 页面",
+              "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+            }
+          ]
+        },
+        {
+          "heading": "客户端、内核和实际流量要分层检查",
+          "paragraphs": [
+            "客户端提供配置管理界面，Mihomo、Xray、sing-box 等内核负责解释配置并处理流量。排查时应同时记录客户端、内核、系统和输入类型，再区分失败发生在导入、内核启动、服务器连接、DNS 还是路由阶段。",
+            "TUN 或系统代理开关处于启用状态，不能单独证明每个应用的所有连接都经过代理；实际结果还受系统权限、路由、DNS、IPv4、IPv6 和应用行为影响。"
+          ],
+          "bullets": [
+            "下载软件时核对项目所有者、正式发布入口、系统和处理器架构。",
+            "未知代理可能接触连接元数据及未被端到端加密的内容，不能仅凭“免费”或“付费”判断可信度。",
+            "没有同一设备、网络与时间下的可复现实测，不按 VPN 或代理的名称给出速度排名。"
+          ],
+          "sources": [
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            },
+            {
+              "label": "sing-box 官方文档",
+              "url": "https://sing-box.sagernet.org/"
+            },
+            {
+              "label": "Xray 官方中文文档",
+              "url": "https://xtls.github.io/"
+            },
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
+            }
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "梯子就是 VPN 吗？",
+          "answer": "不是。“梯子”是口语泛称，可能指商业 VPN、代理客户端、节点服务或路由器方案；VPN 是其中一种技术或产品形态，两者不能直接画等号。",
+          "sources": [
+            {
+              "label": "MDN Proxy server 术语说明",
+              "url": "https://developer.mozilla.org/en-US/docs/Glossary/Proxy_server"
+            },
+            {
+              "label": "NIST VPN 术语定义",
+              "url": "https://csrc.nist.gov/glossary/term/virtual_private_network"
+            },
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
+            },
+            {
+              "label": "Clash Verge Rev 项目",
+              "url": "https://github.com/clash-verge-rev/clash-verge-rev"
+            },
+            {
+              "label": "Shadowrocket 开发者 App Store 页面",
+              "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-1"
+        },
+        {
+          "question": "VPN 和代理哪个速度更快？",
+          "answer": "仅凭技术名称不能判断速度。服务器位置、网络路径、协议、拥塞、设备性能和规则都会影响结果；没有同一环境下的可复现实测，就不应给出固定速度排名。",
+          "sources": [
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            },
+            {
+              "label": "sing-box 官方文档",
+              "url": "https://sing-box.sagernet.org/"
+            },
+            {
+              "label": "Xray 官方中文文档",
+              "url": "https://xtls.github.io/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-2"
+        },
+        {
+          "question": "Clash、v2rayN 和小火箭都是 VPN 吗？",
+          "answer": "这些名称通常指客户端或相关项目，它们读取配置并调用相应内核。平台可能借助系统 VPN 接口处理流量，但界面中的 VPN 标识不能代替对客户端、内核和协议的具体判断。",
+          "sources": [
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
+            },
+            {
+              "label": "Clash Verge Rev 项目",
+              "url": "https://github.com/clash-verge-rev/clash-verge-rev"
+            },
+            {
+              "label": "Shadowrocket 开发者 App Store 页面",
+              "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-3"
+        },
+        {
+          "question": "客户端安装好以后还需要节点或订阅吗？",
+          "answer": "通常仍需要兼容的节点、订阅或完整配置。客户端是软件，节点和订阅提供连接参数；程序安装成功、配置导入成功和服务器连接成功是三项不同结果。",
+          "sources": [
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
+            },
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-4"
+        },
+        {
+          "question": "一台电脑能用的配置，手机也能直接用吗？",
+          "answer": "不一定。需要同时核对手机客户端、配置格式、协议和版本。单个节点参数可能可以迁移，完整配置中的规则、DNS 和平台字段则未必通用。",
+          "sources": [
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            },
+            {
+              "label": "sing-box 官方文档",
+              "url": "https://sing-box.sagernet.org/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-5"
+        }
+      ],
+      "engineering": {
+        "goal": "为用户自己的 AI 建立从设备、覆盖范围和配置类型选择科学上网工具的核对任务",
+        "required_inputs": [
+          "设备、操作系统与处理器架构",
+          "希望覆盖单个应用、整台设备还是家庭网络",
+          "已有客户端和内核版本",
+          "持有资料的类型，不含密码、令牌或完整私密订阅"
+        ],
+        "checks": [
+          "分别记录客户端、内核、节点和订阅",
+          "核对官方来源、系统平台和输入格式",
+          "将导入、启动、连接、DNS 与路由结果分开",
+          "不从产品名称推导速度、隐私或全部流量结果"
+        ],
+        "deliverables": [
+          "适合目标设备的候选客户端与正式来源",
+          "输入格式和兼容性对照",
+          "已确认事实、待验证事项及下一步核对顺序",
+          "供用户自己的 AI 使用的 I-Lang 后续任务书"
+        ],
+        "sources": [
+          {
+            "label": "MDN Proxy server 术语说明",
+            "url": "https://developer.mozilla.org/en-US/docs/Glossary/Proxy_server"
+          },
+          {
+            "label": "NIST VPN 术语定义",
+            "url": "https://csrc.nist.gov/glossary/term/virtual_private_network"
+          },
+          {
+            "label": "v2rayN 项目与下载入口",
+            "url": "https://github.com/2dust/v2rayN"
+          },
+          {
+            "label": "Clash Verge Rev 项目",
+            "url": "https://github.com/clash-verge-rev/clash-verge-rev"
+          },
+          {
+            "label": "Shadowrocket 开发者 App Store 页面",
+            "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+          },
+          {
+            "label": "Mihomo 配置文档",
+            "url": "https://wiki.metacubex.one/config/"
+          },
+          {
+            "label": "sing-box 官方文档",
+            "url": "https://sing-box.sagernet.org/"
+          },
+          {
+            "label": "Xray 官方中文文档",
+            "url": "https://xtls.github.io/"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "airport-subscription-nodes",
+      "title": "机场、订阅和节点是什么？Clash 与 V2Ray 新手说明",
+      "short_title": "机场、订阅与节点的区别",
+      "summary": "“机场”是网络社区对一类配置或节点服务的口语称呼；节点是一份服务器连接参数，订阅是客户端读取一组节点或完整配置的地址或文件。导入成功不等于节点当前可用。",
+      "keywords": [
+        "机场",
+        "机场订阅",
+        "节点订阅",
+        "clash订阅",
+        "v2ray订阅",
+        "订阅节点",
+        "节点是什么",
+        "机场节点"
+      ],
+      "items": [
+        "sub-store",
+        "subconverter",
+        "sub-web",
+        "v2rayn",
+        "shadowrocket",
+        "protocol-shadowsocks",
+        "protocol-vmess",
+        "protocol-vless",
+        "protocol-trojan"
+      ],
+      "sections": [
+        {
+          "heading": "机场、订阅、节点和客户端的关系",
+          "paragraphs": [
+            "“机场”是网络社区对一类配置或节点服务的口语称呼，不是标准技术名称。节点是一份服务器连接参数；订阅是客户端用来取得一组节点或完整配置的地址或文件；客户端负责读取配置并调用内核建立连接。",
+            "常见链路可以理解为“配置来源或服务—订阅—客户端—节点—远端连接”。其中每一层都可以独立变化：一个订阅可能包含多个节点，一个节点也可以通过单独的分享链接导入，同一订阅则不一定适合所有客户端。"
+          ],
+          "bullets": [
+            "订阅不是代理协议，协议和参数位于订阅返回的具体内容中。",
+            "客户端解析成功不等于远端服务器当前可达。",
+            "订阅地址如果包含账户令牌或访问凭据，应像密码一样保管。"
+          ],
+          "sources": [
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Shadowsocks SIP002 分享链接规范",
+              "url": "https://shadowsocks.org/doc/sip002.html"
+            },
+            {
+              "label": "Shadowsocks SIP008 在线配置规范",
+              "url": "https://shadowsocks.org/doc/sip008.html"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ]
+        },
+        {
+          "heading": "怎样识别单节点、订阅、配置文件和二维码",
+          "paragraphs": [
+            "ss、vmess、vless、trojan 等 URI 通常表达单节点参数；HTTPS 地址可能是订阅接口、配置文件或普通网页；YAML 和 JSON 可能保存节点列表或完整配置；IP、端口列表则可能属于 HTTP/SOCKS 代理资料。",
+            "二维码只承载文本，里面可以是单节点 URI、订阅地址、配置链接或普通网页。应先识别解码后的内容，再判断目标客户端是否支持，而不是根据二维码图片或文件后缀猜测用途。"
+          ],
+          "bullets": [
+            "修改文件后缀不会把一种配置转换成另一种格式。",
+            "Base64 只是一种编码外观，仍需查看解码后的实际内容。",
+            "HTTP/SOCKS 地址列表不能仅凭“免费代理”四个字当成 Clash 或 V2Ray 订阅。"
+          ],
+          "sources": [
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Shadowsocks SIP002 分享链接规范",
+              "url": "https://shadowsocks.org/doc/sip002.html"
+            },
+            {
+              "label": "Shadowsocks SIP008 在线配置规范",
+              "url": "https://shadowsocks.org/doc/sip008.html"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ]
+        },
+        {
+          "heading": "导入、连接与订阅转换要分别判断",
+          "paragraphs": [
+            "订阅无法使用时，依次检查地址是否能读取、返回内容是否符合预期、客户端能否解析、内核是否支持协议字段、节点是否可达，以及路由和 DNS 是否命中。把这些阶段合并成“订阅不能用”，会丢失定位所需的信息。",
+            "输入与目标客户端格式不一致时可以评估 Sub-Store、subconverter 或 sub-web 等项目。转换结果能被解析，只说明格式检查通过；节点、分组、规则和 DNS 语义是否保留，仍需逐项对照。"
+          ],
+          "bullets": [
+            "免费或付费只描述获取方式，不能直接证明速度、安全性或持续时间。",
+            "来源访问、格式解析和用户设备连接测试应分别记录。",
+            "历史日期页引用的上游链接可能继续变化，不能自动视为全部原始节点的不可变备份。"
+          ],
+          "sources": [
+            {
+              "label": "Sub-Store 项目",
+              "url": "https://github.com/sub-store-org/Sub-Store"
+            },
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "sub-web 项目",
+              "url": "https://github.com/CareyWang/sub-web"
+            },
+            {
+              "label": "按日期查看免费代理与节点资料",
+              "url": "https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "机场是一个客户端吗？",
+          "answer": "不是。“机场”通常指提供节点或订阅的一类服务，具体含义没有统一标准。v2rayN、Clash Verge Rev、Shadowrocket 等才是客户端或客户端项目。",
+          "sources": [
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
+            },
+            {
+              "label": "Clash Verge Rev 项目",
+              "url": "https://github.com/clash-verge-rev/clash-verge-rev"
+            },
+            {
+              "label": "Shadowrocket 开发者 App Store 页面",
+              "url": "https://apps.apple.com/us/app/shadowrocket/id932747118"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-1"
+        },
+        {
+          "question": "一个订阅就是一个节点吗？",
+          "answer": "不是。订阅通常返回一组节点或一份完整配置，节点则是一份具体连接参数。订阅也可能只返回少量内容，因此应查看实际响应而不是按名称推断。",
+          "sources": [
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Shadowsocks SIP002 分享链接规范",
+              "url": "https://shadowsocks.org/doc/sip002.html"
+            },
+            {
+              "label": "Shadowsocks SIP008 在线配置规范",
+              "url": "https://shadowsocks.org/doc/sip008.html"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-2"
+        },
+        {
+          "question": "Clash 订阅可以直接导入 v2rayN 吗？",
+          "answer": "不能只看订阅名称判断。需要检查实际返回格式、其中的协议，以及目标客户端和内核版本。格式不匹配时可能需要转换，但转换后仍要核对丢失或改变的字段。",
+          "sources": [
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-3"
+        },
+        {
+          "question": "二维码一定是小火箭节点吗？",
+          "answer": "不是。二维码可以承载单节点链接、订阅地址、配置链接或普通网页。应先识别其中的文本和响应内容，再决定使用哪个客户端处理。",
+          "sources": [
+            {
+              "label": "Shadowsocks SIP002 分享链接规范",
+              "url": "https://shadowsocks.org/doc/sip002.html"
+            },
+            {
+              "label": "Shadowsocks SIP008 在线配置规范",
+              "url": "https://shadowsocks.org/doc/sip008.html"
+            },
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-4"
+        },
+        {
+          "question": "为什么订阅导入成功后仍然不能连接？",
+          "answer": "导入成功只说明客户端读取并解析了某种内容。还需检查内核对协议字段的支持、节点当前可达性、路由、DNS 和系统权限，不能把解析结果当作连接证据。",
+          "sources": [
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            },
+            {
+              "label": "sing-box 官方文档",
+              "url": "https://sing-box.sagernet.org/"
+            },
+            {
+              "label": "Xray 官方中文文档",
+              "url": "https://xtls.github.io/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-5"
+        },
+        {
+          "question": "订阅链接可以公开发给别人帮忙看吗？",
+          "answer": "不建议公开发送。订阅地址可能包含账户令牌或访问凭据。排错时应隐藏敏感参数，只提供返回格式、客户端、版本和具体错误阶段。",
+          "sources": [
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Sub-Store 项目",
+              "url": "https://github.com/sub-store-org/Sub-Store"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-6"
+        }
+      ],
+      "engineering": {
+        "goal": "为用户自己的 AI 辨认机场、订阅、节点和配置文件的层次及兼容条件",
+        "required_inputs": [
+          "目标客户端与内核版本",
+          "输入类型和脱敏后的结构",
+          "订阅或配置来源的公开说明",
+          "失败发生在读取、解析、启动、连接还是访问阶段"
+        ],
+        "checks": [
+          "不把机场当作协议或客户端",
+          "不把单节点、订阅与完整配置互相替代",
+          "按目标客户端和内核核对格式与字段",
+          "分别记录来源访问、解析结果和实际连接证据",
+          "隐藏订阅令牌、密码和私密参数"
+        ],
+        "deliverables": [
+          "输入内容的类型判断",
+          "客户端与格式兼容性对照",
+          "转换时保留、改变和无法表达的字段",
+          "供用户自己的 AI 使用的 I-Lang 核对任务"
+        ],
+        "sources": [
+          {
+            "label": "v2rayN 订阅与分享格式说明",
+            "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+          },
+          {
+            "label": "Shadowsocks SIP002 分享链接规范",
+            "url": "https://shadowsocks.org/doc/sip002.html"
+          },
+          {
+            "label": "Shadowsocks SIP008 在线配置规范",
+            "url": "https://shadowsocks.org/doc/sip008.html"
+          },
+          {
+            "label": "Sub-Store 项目",
+            "url": "https://github.com/sub-store-org/Sub-Store"
+          },
+          {
+            "label": "subconverter 项目",
+            "url": "https://github.com/tindy2013/subconverter"
+          },
+          {
+            "label": "Mihomo 配置文档",
+            "url": "https://wiki.metacubex.one/config/"
+          }
+        ]
+      }
+    },
+    {
       "slug": "free-nodes",
       "title": "免费节点与订阅来源：Clash、V2Ray 和每日日期归档",
       "short_title": "免费节点：Clash 与 V2Ray 订阅来源",
@@ -413,6 +985,215 @@
           {
             "label": "subconverter 项目",
             "url": "https://github.com/tindy2013/subconverter"
+          }
+        ]
+      }
+    },
+    {
+      "slug": "subscription-conversion",
+      "title": "订阅转换怎么选：Sub-Store、subconverter 与 sub-web 的区别",
+      "short_title": "订阅转换：Sub-Store、subconverter",
+      "summary": "订阅转换处理格式与字段。Sub-Store 偏向订阅管理，subconverter 提供格式转换，sub-web 提供前端界面；输出仍需与目标客户端逐项核对。",
+      "keywords": [
+        "订阅转换",
+        "substore",
+        "sub store",
+        "subconverter",
+        "机场订阅转换"
+      ],
+      "items": [
+        "sub-store",
+        "subconverter",
+        "sub-web",
+        "v2rayn",
+        "mihomo"
+      ],
+      "sections": [
+        {
+          "heading": "三个项目各自做什么",
+          "paragraphs": [
+            "Sub-Store 提供订阅管理能力；subconverter 负责在不同订阅格式间转换；sub-web 是订阅转换的 Web 前端。界面与实际执行转换的服务应分别辨认。"
+          ],
+          "bullets": [
+            "管理多份来源、组合输出：查看 Sub-Store 的当前功能。",
+            "需要指定来源与目标格式：查看 subconverter 的支持范围。",
+            "看到 sub-web 界面时，还要知道它使用哪个转换后端。"
+          ],
+          "sources": [
+            {
+              "label": "Sub-Store 项目",
+              "url": "https://github.com/sub-store-org/Sub-Store"
+            },
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "sub-web 项目",
+              "url": "https://github.com/CareyWang/sub-web"
+            }
+          ]
+        },
+        {
+          "heading": "先写清输入和目标",
+          "paragraphs": [
+            "转换任务至少需要来源格式、目标客户端及版本。文件扩展名、订阅名称或“通用”标签都不足以表达全部兼容条件；协议、传输方式和规则能力也会影响结果。"
+          ],
+          "bullets": [
+            "输入：单节点分享 URI、通用节点列表，还是完整配置。",
+            "目标：客户端名称、内核、版本和接受的格式。",
+            "期望保留：节点名称、协议参数、分组、规则和 DNS 设置。"
+          ],
+          "sources": [
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ]
+        },
+        {
+          "heading": "转换成功以后看什么",
+          "paragraphs": [
+            "输出能被解析，说明格式检查通过；它不证明所有语义都保留，也不证明服务器可达。节点字段与完整的路由、DNS 配置需要分别对照。"
+          ],
+          "bullets": [
+            "检查节点数量与被过滤项目，不把过滤当成新增节点。",
+            "对照目标格式无法表达的字段，列明差异。",
+            "订阅更新后仍应复核输出，不能用一次结果保证以后都相同。"
+          ],
+          "sources": [
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "Sub-Store 项目",
+              "url": "https://github.com/sub-store-org/Sub-Store"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "question": "Clash 订阅转换可以用什么工具？",
+          "answer": "subconverter 提供订阅格式转换，Sub-Store 提供订阅管理，sub-web 提供转换的网页界面。选择项目时应明确原始输入、目标客户端与内核版本；网页前端的名称还不能说明实际由哪个后端处理转换。",
+          "sources": [
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "Sub-Store 项目",
+              "url": "https://github.com/sub-store-org/Sub-Store"
+            },
+            {
+              "label": "sub-web 项目",
+              "url": "https://github.com/CareyWang/sub-web"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-1"
+        },
+        {
+          "question": "把订阅交给自己的 AI 转换，需要提供哪些信息？",
+          "answer": "订阅转换需要原始输入的类型、目标客户端及版本，以及要保留的节点、分组、规则和 DNS 设置。单节点 URI、节点列表与完整配置是不同输入；这些信息能让自己的 AI 对照转换器和目标内核文档判断可保留的内容。",
+          "sources": [
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "v2rayN 订阅与分享格式说明",
+              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-2"
+        },
+        {
+          "question": "订阅文件改成 YAML 后，为什么还是导不进 Clash？",
+          "answer": "Mihomo 读取的是符合配置文档的结构与字段，修改文件后缀不会转换内容。原始节点列表或其他客户端配置需要按目标格式处理，再核对协议参数、分组、规则与 DNS 字段；YAML 后缀本身不说明配置是否合格。",
+          "sources": [
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            },
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-3"
+        },
+        {
+          "question": "订阅转换成功后，原来的规则和 DNS 会都保留吗？",
+          "answer": "订阅转换的输出能被解析，只能说明它通过了相应格式检查。节点字段、分组、路由和 DNS 的表达方式可能不同，需要分别对照目标内核；转换结果应列出保留、改变和无法表达的内容，而不是只给一个“成功”。",
+          "sources": [
+            {
+              "label": "subconverter 项目",
+              "url": "https://github.com/tindy2013/subconverter"
+            },
+            {
+              "label": "Sub-Store 项目",
+              "url": "https://github.com/sub-store-org/Sub-Store"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-4"
+        }
+      ],
+      "engineering": {
+        "goal": "为用户自己的 AI 制定保留必要字段的订阅格式转换验证方案",
+        "required_inputs": [
+          "来源类型与脱敏样本",
+          "目标客户端、内核与版本",
+          "必须保留的协议、分组、规则和 DNS 行为",
+          "选用管理器、转换器和前端的公开来源"
+        ],
+        "checks": [
+          "核对工具角色与实际转换后端",
+          "先列输入与输出字段映射",
+          "标明不支持或丢失字段",
+          "分别记录解析验证和实际连接证据"
+        ],
+        "deliverables": [
+          "来源到目标的字段对照表",
+          "转换差异与无法支持项",
+          "可交给用户自己的 AI 的 I-Lang 验证任务"
+        ],
+        "sources": [
+          {
+            "label": "Sub-Store 项目",
+            "url": "https://github.com/sub-store-org/Sub-Store"
+          },
+          {
+            "label": "subconverter 项目",
+            "url": "https://github.com/tindy2013/subconverter"
+          },
+          {
+            "label": "sub-web 项目",
+            "url": "https://github.com/CareyWang/sub-web"
+          },
+          {
+            "label": "Mihomo 配置文档",
+            "url": "https://wiki.metacubex.one/config/"
           }
         ]
       }
@@ -801,68 +1582,102 @@
       }
     },
     {
-      "slug": "subscription-conversion",
-      "title": "订阅转换怎么选：Sub-Store、subconverter 与 sub-web 的区别",
-      "short_title": "订阅转换：Sub-Store、subconverter",
-      "summary": "订阅转换处理格式与字段。Sub-Store 偏向订阅管理，subconverter 提供格式转换，sub-web 提供前端界面；输出仍需与目标客户端逐项核对。",
+      "slug": "router-guide",
+      "title": "路由器翻墙与科学上网怎么选？OpenWrt、OpenClash 与梅林指南",
+      "short_title": "路由器翻墙与科学上网指南",
+      "summary": "路由器方案适合统一管理多台设备，但安装插件不会自动让所有流量按预期处理。先分清硬件、固件、插件、代理内核和配置，再选择 OpenWrt 或华硕梅林路线。",
       "keywords": [
-        "订阅转换",
-        "substore",
-        "sub store",
-        "subconverter",
-        "机场订阅转换"
+        "路由器翻墙",
+        "路由器科学上网",
+        "openwrt翻墙",
+        "openclash教程",
+        "梅林翻墙",
+        "华硕路由器翻墙",
+        "旁路由科学上网",
+        "路由器代理"
       ],
       "items": [
-        "sub-store",
-        "subconverter",
-        "sub-web",
-        "v2rayn",
-        "mihomo"
+        "openwrt",
+        "openclash",
+        "passwall2",
+        "mihomo",
+        "xray-core",
+        "sing-box",
+        "asuswrt-merlin",
+        "asuswrt-merlin-gnuton",
+        "fancyss",
+        "merlinclash"
       ],
       "sections": [
         {
-          "heading": "三个项目各自做什么",
+          "heading": "先判断是否需要路由器方案",
           "paragraphs": [
-            "Sub-Store 提供订阅管理能力；subconverter 负责在不同订阅格式间转换；sub-web 是订阅转换的 Web 前端。界面与实际执行转换的服务应分别辨认。"
+            "路由器方案把流量规则放在家庭或办公网络的网关上，适合需要统一管理多台固定设备，或电视、游戏机等不方便安装客户端的场景。只有一台电脑或手机时，设备客户端通常更容易安装、停用和排错。",
+            "安装路由器插件不会自动让所有设备按预期联网。实际结果仍取决于 DHCP、DNS、IPv4、IPv6、策略路由、绕过规则以及设备取得的网络参数。"
           ],
           "bullets": [
-            "管理多份来源、组合输出：查看 Sub-Store 的当前功能。",
-            "需要指定来源与目标格式：查看 subconverter 的支持范围。",
-            "看到 sub-web 界面时，还要知道它使用哪个转换后端。"
+            "经常更换 Wi-Fi 或使用移动网络的设备，优先评估随设备移动的客户端。",
+            "不熟悉固件恢复和局域网排错时，先从单台设备客户端开始。",
+            "需要多台固定设备共用规则时，再评估网关集中管理的收益和维护成本。"
           ],
           "sources": [
             {
-              "label": "Sub-Store 项目",
-              "url": "https://github.com/sub-store-org/Sub-Store"
+              "label": "OpenWrt 用户文档",
+              "url": "https://openwrt.org/docs/guide-user/start"
             },
             {
-              "label": "subconverter 项目",
-              "url": "https://github.com/tindy2013/subconverter"
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
             },
             {
-              "label": "sub-web 项目",
-              "url": "https://github.com/CareyWang/sub-web"
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+            },
+            {
+              "label": "v2rayN 项目与下载入口",
+              "url": "https://github.com/2dust/v2rayN"
             }
           ]
         },
         {
-          "heading": "先写清输入和目标",
+          "heading": "把硬件、固件、插件、内核和配置分开",
           "paragraphs": [
-            "转换任务至少需要来源格式、目标客户端及版本。文件扩展名、订阅名称或“通用”标签都不足以表达全部兼容条件；协议、传输方式和规则能力也会影响结果。"
+            "硬件层包括完整型号、硬件修订、CPU 架构、内存、存储和网口；固件层包括 OpenWrt、Asuswrt-Merlin、GNUton 构建及厂商原版固件；OpenClash、PassWall2、fancyss 和 MerlinClash 则属于不同环境下的应用或插件。",
+            "Mihomo、Xray、sing-box 等内核负责解释配置并处理流量，节点、订阅、分组、路由和 DNS 属于配置层。固件能运行、插件能安装、内核能启动和实际流量符合预期，是四项需要分别验证的结果。"
           ],
           "bullets": [
-            "输入：单节点分享 URI、通用节点列表，还是完整配置。",
-            "目标：客户端名称、内核、版本和接受的格式。",
-            "期望保留：节点名称、协议参数、分组、规则和 DNS 设置。"
+            "同一系列名称下的不同硬件修订，固件支持可能不同。",
+            "OpenWrt 软件包不能因路由器品牌相同就直接用于梅林固件。",
+            "节点协议相同，不代表 OpenClash 与 PassWall2 的完整配置可以原样互换。"
           ],
           "sources": [
             {
-              "label": "subconverter 项目",
-              "url": "https://github.com/tindy2013/subconverter"
+              "label": "OpenWrt 用户文档",
+              "url": "https://openwrt.org/docs/guide-user/start"
             },
             {
-              "label": "v2rayN 订阅与分享格式说明",
-              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
+            },
+            {
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+            },
+            {
+              "label": "Asuswrt-Merlin 官方支持设备表",
+              "url": "https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"
+            },
+            {
+              "label": "GNUton 构建与支持设备",
+              "url": "https://github.com/gnuton/asuswrt-merlin.ng"
+            },
+            {
+              "label": "fancyss 固件环境与平台包说明",
+              "url": "https://github.com/hq450/fancyss"
+            },
+            {
+              "label": "MerlinClash 项目说明",
+              "url": "https://github.com/rts600/MerlinClash/blob/main/README.md"
             },
             {
               "label": "Mihomo 配置文档",
@@ -871,136 +1686,253 @@
           ]
         },
         {
-          "heading": "转换成功以后看什么",
+          "heading": "OpenWrt 与华硕梅林分别怎么核对",
           "paragraphs": [
-            "输出能被解析，说明格式检查通过；它不证明所有语义都保留，也不证明服务器可达。节点字段与完整的路由、DNS 配置需要分别对照。"
+            "OpenWrt 路线先确认设备支持、CPU 架构、可用内存与存储、固件版本和包管理方式，再核对 OpenClash 或 PassWall2 的依赖、所用内核以及订阅或完整配置的格式。",
+            "华硕梅林路线先确认完整型号和 V1、V2、PRO 等硬件标记，再区分 Asuswrt-Merlin 原版、GNUton 构建及带软件中心的改版环境。型号出现在固件支持表中，不能代替 fancyss 或 MerlinClash 的插件适配检查。"
           ],
           "bullets": [
-            "检查节点数量与被过滤项目，不把过滤当成新增节点。",
-            "对照目标格式无法表达的字段，列明差异。",
-            "订阅更新后仍应复核输出，不能用一次结果保证以后都相同。"
+            "厂商原版固件即使提供 VPN 客户端，也不等于支持 OpenWrt 或梅林插件。",
+            "资源需求受协议、规则数量、DNS 功能、连接数和其他插件共同影响，不能用一个固定内存数字判断所有设备。",
+            "项目来源列为支持只证明存在相应声明，不代表本站已在该设备完成刷机、吞吐量或稳定性实测。"
           ],
           "sources": [
             {
-              "label": "subconverter 项目",
-              "url": "https://github.com/tindy2013/subconverter"
+              "label": "OpenWrt 用户文档",
+              "url": "https://openwrt.org/docs/guide-user/start"
             },
             {
-              "label": "Sub-Store 项目",
-              "url": "https://github.com/sub-store-org/Sub-Store"
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
             },
             {
-              "label": "Mihomo 配置文档",
-              "url": "https://wiki.metacubex.one/config/"
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+            },
+            {
+              "label": "Asuswrt-Merlin 官方支持设备表",
+              "url": "https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"
+            },
+            {
+              "label": "GNUton 构建与支持设备",
+              "url": "https://github.com/gnuton/asuswrt-merlin.ng"
+            },
+            {
+              "label": "fancyss 固件环境与平台包说明",
+              "url": "https://github.com/hq450/fancyss"
+            },
+            {
+              "label": "MerlinClash 项目说明",
+              "url": "https://github.com/rts600/MerlinClash/blob/main/README.md"
+            }
+          ]
+        },
+        {
+          "heading": "改动前保留恢复资料并分阶段验证",
+          "paragraphs": [
+            "开始改动前应记录完整型号、当前固件版本、WAN、LAN、DHCP、DNS、IPv6 设置以及可用的管理和救援入口，并保留与当前版本对应的配置备份。",
+            "不要在没有恢复路径时同时更换固件、插件、内核、DNS 和订阅。每完成一层，只验证该层的安装、启动和网络结果，便于出现问题时回到最近一次已知可用状态。"
+          ],
+          "bullets": [
+            "先确认有线管理地址和厂商恢复方式仍然可用。",
+            "分别测试路由器本身、普通直连设备和应使用规则的目标设备。",
+            "记录测试时间、设备、网络、配置版本和实际路径，不用一个网页能打开代替完整验证。"
+          ],
+          "sources": [
+            {
+              "label": "OpenWrt 用户文档",
+              "url": "https://openwrt.org/docs/guide-user/start"
+            },
+            {
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
+            },
+            {
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+            },
+            {
+              "label": "Asuswrt-Merlin 官方支持设备表",
+              "url": "https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"
+            },
+            {
+              "label": "fancyss 固件环境与平台包说明",
+              "url": "https://github.com/hq450/fancyss"
+            },
+            {
+              "label": "MerlinClash 项目说明",
+              "url": "https://github.com/rts600/MerlinClash/blob/main/README.md"
             }
           ]
         }
       ],
       "faq": [
         {
-          "question": "Clash 订阅转换可以用什么工具？",
-          "answer": "subconverter 提供订阅格式转换，Sub-Store 提供订阅管理，sub-web 提供转换的网页界面。选择项目时应明确原始输入、目标客户端与内核版本；网页前端的名称还不能说明实际由哪个后端处理转换。",
+          "question": "OpenWrt 和 OpenClash 是同一个东西吗？",
+          "answer": "不是。OpenWrt 是路由器操作系统或固件环境，OpenClash 是运行在 OpenWrt LuCI 环境中的客户端项目；OpenClash 还会调用 Mihomo 等组件处理配置和流量。",
           "sources": [
             {
-              "label": "subconverter 项目",
-              "url": "https://github.com/tindy2013/subconverter"
+              "label": "OpenWrt 用户文档",
+              "url": "https://openwrt.org/docs/guide-user/start"
             },
             {
-              "label": "Sub-Store 项目",
-              "url": "https://github.com/sub-store-org/Sub-Store"
-            },
-            {
-              "label": "sub-web 项目",
-              "url": "https://github.com/CareyWang/sub-web"
-            }
-          ],
-          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-1"
-        },
-        {
-          "question": "把订阅交给自己的 AI 转换，需要提供哪些信息？",
-          "answer": "订阅转换需要原始输入的类型、目标客户端及版本，以及要保留的节点、分组、规则和 DNS 设置。单节点 URI、节点列表与完整配置是不同输入；这些信息能让自己的 AI 对照转换器和目标内核文档判断可保留的内容。",
-          "sources": [
-            {
-              "label": "subconverter 项目",
-              "url": "https://github.com/tindy2013/subconverter"
-            },
-            {
-              "label": "v2rayN 订阅与分享格式说明",
-              "url": "https://github.com/2dust/v2rayN/wiki/Description-of-subscription"
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
             },
             {
               "label": "Mihomo 配置文档",
               "url": "https://wiki.metacubex.one/config/"
             }
           ],
-          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-2"
+          "url": "https://fanqiang.guide/guides/router-guide.html#question-1"
         },
         {
-          "question": "订阅文件改成 YAML 后，为什么还是导不进 Clash？",
-          "answer": "Mihomo 读取的是符合配置文档的结构与字段，修改文件后缀不会转换内容。原始节点列表或其他客户端配置需要按目标格式处理，再核对协议参数、分组、规则与 DNS 字段；YAML 后缀本身不说明配置是否合格。",
+          "question": "OpenClash 和 PassWall2 应该选哪个？",
+          "answer": "两者是 OpenWrt 上的不同 LuCI 应用，配置方式、依赖和所用组件不同。应根据当前固件、设备资源、输入格式及功能需求判断，不能只按名称或界面选择。",
           "sources": [
+            {
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
+            },
+            {
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/router-guide.html#question-2"
+        },
+        {
+          "question": "华硕梅林可以直接安装 OpenClash 吗？",
+          "answer": "OpenClash 面向 OpenWrt/LuCI 环境，梅林属于另一套固件与插件环境。梅林用户应核对对应固件、软件中心及 fancyss、MerlinClash 等项目要求。",
+          "sources": [
+            {
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
+            },
+            {
+              "label": "Asuswrt-Merlin 官方支持设备表",
+              "url": "https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"
+            },
+            {
+              "label": "fancyss 固件环境与平台包说明",
+              "url": "https://github.com/hq450/fancyss"
+            },
+            {
+              "label": "MerlinClash 项目说明",
+              "url": "https://github.com/rts600/MerlinClash/blob/main/README.md"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/router-guide.html#question-3"
+        },
+        {
+          "question": "路由器装好插件后，所有设备都会自动走代理吗？",
+          "answer": "不一定。哪些设备和连接被处理，还取决于 DHCP、DNS、IPv4、IPv6、策略路由、绕过规则及插件配置。应验证设备取得的网络参数和目标请求的实际路径。",
+          "sources": [
+            {
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
+            },
+            {
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+            },
             {
               "label": "Mihomo 配置文档",
               "url": "https://wiki.metacubex.one/config/"
-            },
-            {
-              "label": "subconverter 项目",
-              "url": "https://github.com/tindy2013/subconverter"
             }
           ],
-          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-3"
+          "url": "https://fanqiang.guide/guides/router-guide.html#question-4"
         },
         {
-          "question": "订阅转换成功后，原来的规则和 DNS 会都保留吗？",
-          "answer": "订阅转换的输出能被解析，只能说明它通过了相应格式检查。节点字段、分组、路由和 DNS 的表达方式可能不同，需要分别对照目标内核；转换结果应列出保留、改变和无法表达的内容，而不是只给一个“成功”。",
+          "question": "OpenClash 的完整配置能直接给 PassWall2 用吗？",
+          "answer": "不能默认通用。两者输入方式和依赖不同；部分节点参数可能重新使用，但分组、规则、DNS 及其他完整配置字段需要按目标项目重新核对。",
           "sources": [
             {
-              "label": "subconverter 项目",
-              "url": "https://github.com/tindy2013/subconverter"
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
             },
             {
-              "label": "Sub-Store 项目",
-              "url": "https://github.com/sub-store-org/Sub-Store"
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
             },
             {
               "label": "Mihomo 配置文档",
               "url": "https://wiki.metacubex.one/config/"
             }
           ],
-          "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-4"
+          "url": "https://fanqiang.guide/guides/router-guide.html#question-5"
+        },
+        {
+          "question": "路由器内存越大，速度就一定越快吗？",
+          "answer": "不一定。内存影响可加载的规则和组件数量，吞吐量还受 CPU、协议、内核、连接数、网口和网络路径影响。没有同一设备及配置下的测试，不能只凭内存判断速度。",
+          "sources": [
+            {
+              "label": "OpenClash 项目说明",
+              "url": "https://github.com/vernesong/OpenClash"
+            },
+            {
+              "label": "PassWall2 环境与依赖要求",
+              "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+            },
+            {
+              "label": "Mihomo 配置文档",
+              "url": "https://wiki.metacubex.one/config/"
+            }
+          ],
+          "url": "https://fanqiang.guide/guides/router-guide.html#question-6"
         }
       ],
       "engineering": {
-        "goal": "为用户自己的 AI 制定保留必要字段的订阅格式转换验证方案",
+        "goal": "为用户自己的 AI 建立路由器硬件、固件、插件、内核与配置的分层适配核对任务",
         "required_inputs": [
-          "来源类型与脱敏样本",
-          "目标客户端、内核与版本",
-          "必须保留的协议、分组、规则和 DNS 行为",
-          "选用管理器、转换器和前端的公开来源"
+          "完整设备型号与硬件修订",
+          "当前固件项目、版本和包管理方式",
+          "CPU 架构、内存、剩余存储与网口",
+          "现有 WAN、LAN、DHCP、DNS、IPv6 和救援入口",
+          "目标插件、内核、订阅或配置类型"
         ],
         "checks": [
-          "核对工具角色与实际转换后端",
-          "先列输入与输出字段映射",
-          "标明不支持或丢失字段",
-          "分别记录解析验证和实际连接证据"
+          "分别核对设备支持、固件分支、插件依赖和内核字段",
+          "不把能刷固件解释为插件已经兼容",
+          "不从固定内存数字推导吞吐量",
+          "保留既有管理、恢复和回滚路径",
+          "将安装、启动、配置解析和实际流量验证分开"
         ],
         "deliverables": [
-          "来源到目标的字段对照表",
-          "转换差异与无法支持项",
-          "可交给用户自己的 AI 的 I-Lang 验证任务"
+          "硬件到固件分支的来源对照",
+          "插件、内核及配置依赖清单",
+          "现有网络与恢复资料清单",
+          "分阶段验证和回滚顺序",
+          "供用户自己的 AI 使用的 I-Lang 工程书"
         ],
         "sources": [
           {
-            "label": "Sub-Store 项目",
-            "url": "https://github.com/sub-store-org/Sub-Store"
+            "label": "OpenWrt 用户文档",
+            "url": "https://openwrt.org/docs/guide-user/start"
           },
           {
-            "label": "subconverter 项目",
-            "url": "https://github.com/tindy2013/subconverter"
+            "label": "OpenClash 项目说明",
+            "url": "https://github.com/vernesong/OpenClash"
           },
           {
-            "label": "sub-web 项目",
-            "url": "https://github.com/CareyWang/sub-web"
+            "label": "PassWall2 环境与依赖要求",
+            "url": "https://github.com/Openwrt-Passwall/openwrt-passwall2"
+          },
+          {
+            "label": "Asuswrt-Merlin 官方支持设备表",
+            "url": "https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"
+          },
+          {
+            "label": "GNUton 构建与支持设备",
+            "url": "https://github.com/gnuton/asuswrt-merlin.ng"
+          },
+          {
+            "label": "fancyss 固件环境与平台包说明",
+            "url": "https://github.com/hq450/fancyss"
+          },
+          {
+            "label": "MerlinClash 项目说明",
+            "url": "https://github.com/rts600/MerlinClash/blob/main/README.md"
           },
           {
             "label": "Mihomo 配置文档",
@@ -1011,15 +1943,18 @@
     },
     {
       "slug": "openwrt-tools",
-      "title": "OpenWrt 科学上网工具：OpenClash、PassWall2 与设备条件",
-      "short_title": "OpenClash、PassWall 与 OpenWrt",
+      "title": "OpenWrt 路由器翻墙与科学上网：OpenClash、PassWall2 与设备条件",
+      "short_title": "OpenWrt 路由器翻墙：OpenClash 与 PassWall2",
       "summary": "OpenWrt 是路由器系统，OpenClash 和 PassWall2 是其应用层项目。选择工具前，要核对设备、固件版本、内存、存储、包格式及内核依赖。",
       "keywords": [
         "openclash教程",
         "passwall教程",
         "openwrt科学上网",
         "openclash",
-        "passwall2"
+        "passwall2",
+        "路由器翻墙",
+        "路由器科学上网",
+        "openwrt翻墙"
       ],
       "items": [
         "openwrt",
@@ -1202,8 +2137,8 @@
     },
     {
       "slug": "asus-merlin",
-      "title": "华硕梅林固件与插件：AX86U、AX58U 版本及支持范围",
-      "short_title": "华硕梅林固件：型号与插件",
+      "title": "华硕梅林路由器翻墙与科学上网：AX86U、AX58U 固件及插件",
+      "short_title": "华硕梅林路由器翻墙：固件与插件",
       "summary": "先确认完整型号与硬件修订，再区分原版 Merlin、GNUton 构建和带软件中心的改版环境。固件支持与 fancyss、MerlinClash 插件适配是两次不同的核对。",
       "keywords": [
         "梅林固件下载",
@@ -1212,7 +2147,10 @@
         "fancyss",
         "ax86u pro 梅林",
         "ax58u 梅林",
-        "ac68u 梅林"
+        "ac68u 梅林",
+        "华硕路由器翻墙",
+        "梅林科学上网",
+        "梅林翻墙"
       ],
       "items": [
         "asuswrt",

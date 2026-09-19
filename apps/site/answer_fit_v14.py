@@ -2,7 +2,7 @@
 import html, json, re
 
 SITE='https://fanqiang.guide'
-HOME_ORDER=['client-downloads','shadowrocket-platforms','free-nodes','subscription-conversion','asus-merlin','openwrt-tools','v2rayn-guide','shadowrocket-qr']
+HOME_ORDER=['ladder-vpn-proxy','airport-subscription-nodes','router-guide','client-downloads','shadowrocket-platforms','free-nodes','v2rayn-guide','shadowrocket-qr']
 e=html.escape
 
 def write(P,path,text):

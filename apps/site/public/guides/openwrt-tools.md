@@ -1,8 +1,8 @@
-# OpenWrt 科学上网工具：OpenClash、PassWall2 与设备条件
+# OpenWrt 路由器翻墙与科学上网：OpenClash、PassWall2 与设备条件
 
 OpenWrt 是路由器系统，OpenClash 和 PassWall2 是其应用层项目。选择工具前，要核对设备、固件版本、内存、存储、包格式及内核依赖。
 
-整理日期：2026-09-13。具体版本、平台与型号以所引来源为准。
+整理日期：2026-09-19。具体版本、平台与型号以所引来源为准。
 
 原文：https://fanqiang.guide/guides/openwrt-tools.html
 

@@ -2,7 +2,7 @@
 
 按 Windows、Android、iPhone、macOS 与 Linux 选择 v2rayN、v2rayNG、Clash Verge Rev、Hiddify 或小火箭，从官方入口核对安装包和系统架构。
 
-整理日期：2026-09-13。具体版本、平台与型号以所引来源为准。
+整理日期：2026-09-19。具体版本、平台与型号以所引来源为准。
 
 原文：https://fanqiang.guide/guides/client-downloads.html
 
@@ -24,7 +24,7 @@
 | iPhone / iPad / 按 App Store 设备兼容性选择 | Hiddify | [官方发布入口](https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532) | 官方项目 README 指向此 App Store 应用；核对商店的设备、系统及地区条件。（核对：2026-09-12） [依据 1](https://github.com/hiddify/hiddify-app) · [依据 2](https://raw.githubusercontent.com/hiddify/hiddify-app/main/README.md) · [依据 3](https://apps.apple.com/us/app/hiddify-proxy-vpn/id6596777532) |
 | iPhone / iPad / 按 App Store 设备兼容性选择 | Shadowrocket | [官方发布入口](https://apps.apple.com/us/app/shadowrocket/id932747118) | 开发者的 Apple 商店应用，应用 ID 为 932747118；查看商店兼容性列表确认设备系统要求。（核对：2026-09-12） [依据 1](https://apps.apple.com/us/app/shadowrocket/id932747118) |
 
-[全部工具目录](https://fanqiang.guide/guides/library.html)
+[代理工具与开源项目资料库](https://fanqiang.guide/guides/library.html)
 
 ## 按操作系统缩小选择
 

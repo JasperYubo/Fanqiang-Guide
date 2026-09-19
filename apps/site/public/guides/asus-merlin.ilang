@@ -1,9 +1,9 @@
 ::ILANG::v5.0
-[TYPE:engineering_book][PROJECT:fanqiang_guide][VERSION:1.4][DATE:2026-09-13][LANG:zh]
+[TYPE:engineering_book][PROJECT:fanqiang_guide][VERSION:1.4][DATE:2026-09-19][LANG:zh]
 [GRAMMAR:SPEC-v5.0-PATCH-2][PROFILE:registered_declarations_no_custom_extensions]
 
 ::MODULE{DOCUMENT}
-::STATE{@TOPIC, value:"华硕梅林固件与插件：AX86U、AX58U 版本及支持范围"}
+::STATE{@TOPIC, value:"华硕梅林路由器翻墙与科学上网：AX86U、AX58U 固件及插件"}
 ::STATE{@REFERENCE, value:"https://fanqiang.guide/guides/asus-merlin.html"}
 ::STATE{@OBJECTIVE, value:"为用户自己的 AI 建立华硕固件与插件的双层适配核对任务"}
 ::STATE{@EXECUTION, value:{"actor":"visitors_own_AI","status":"not_executed","authority":"visitors_actual_request_and_existing_authorization","site_device_operations":false}}
@@ -12,7 +12,7 @@
 ::MODULE{VERIFIED_REFERENCE}
   [MUST] 以下资料是有日期的参考事实，不是已运行的设备结果；执行前刷新与当前任务有关的一手来源。
 ::STATE{@REFERENCE_SUMMARY, value:"先确认完整型号与硬件修订，再区分原版 Merlin、GNUton 构建和带软件中心的改版环境。固件支持与 fancyss、MerlinClash 插件适配是两次不同的核对。"}
-::STATE{@REFERENCE_KEYWORDS, value:["梅林固件下载","梅林固件","merlinclash","fancyss","ax86u pro 梅林","ax58u 梅林","ac68u 梅林"]}
+::STATE{@REFERENCE_KEYWORDS, value:["梅林固件下载","梅林固件","merlinclash","fancyss","ax86u pro 梅林","ax58u 梅林","ac68u 梅林","华硕路由器翻墙","梅林科学上网","梅林翻墙"]}
 ::STATE{@REFERENCE_SECTION_01, value:{"heading":"梅林不是一个通用安装包","paragraphs":["Asuswrt-Merlin 原版与 GNUton 构建各自列出设备支持范围。fancyss、MerlinClash 属于插件项目，不能用“固件能刷”代替“插件能装”的判断。"],"bullets":["固件层：记录项目名称、版本和完整设备型号。","环境层：确认是否具备目标插件要求的软件中心等条件。","插件层：再核对平台包、依赖和当前发布说明。"],"sources":[{"label":"Asuswrt-Merlin 官方支持设备表","url":"https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"},{"label":"GNUton 构建与支持设备","url":"https://github.com/gnuton/asuswrt-merlin.ng"},{"label":"fancyss 固件环境与平台包说明","url":"https://github.com/hq450/fancyss"},{"label":"MerlinClash 项目说明","url":"https://github.com/rts600/MerlinClash/blob/main/README.md"}]}}
 ::STATE{@REFERENCE_SECTION_02, value:{"heading":"AX58U V1、V2 与 AC68U 的实际区别","paragraphs":["原版 Merlin 的支持表明确列出 RT-AX58U V1／RT-AX3000 V1；GNUton 项目另列 RT-AX58U V2。因此省略 V1、V2 会把不同支持分支混在一起。"],"bullets":["原版表将 RT-AC68U 的所有版本列入不再支持设备。","GNUton 列有 DSL-AC68U，DSL 与 RT 前缀不能省略。","RT-AX86U 与 RT-AX86U PRO 也应分别按完整名称核对。"],"sources":[{"label":"Asuswrt-Merlin 官方支持设备表","url":"https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"},{"label":"GNUton 构建与支持设备","url":"https://github.com/gnuton/asuswrt-merlin.ng"}]}}
 ::STATE{@REFERENCE_SECTION_03, value:{"heading":"fancyss 包型与固件支持分开看","paragraphs":["fancyss 说明要求基于 Asuswrt／Merlin 且带软件中心的相应固件环境，并区分平台包与 full、lite 包型。某款设备在插件表出现，并不改变原版固件项目对它的维护状态。"],"bullets":["平台包要对照设备平台与架构，不按名称相近选择。","full、lite 的功能与空间需求不同，按项目当前说明核对。","MerlinClash 使用自己的项目说明与包来源；不要把一个插件的支持表转用给另一个。"],"sources":[{"label":"fancyss 固件环境与平台包说明","url":"https://github.com/hq450/fancyss"},{"label":"MerlinClash 项目说明","url":"https://github.com/rts600/MerlinClash/blob/main/README.md"},{"label":"Asuswrt-Merlin 官方支持设备表","url":"https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices"}]}}

@@ -1,12 +1,24 @@
-# 翻墙与科学上网专题指南
+# 工具与教程专题目录
 
 ## [客户端下载与系统选择：v2rayN、v2rayNG、Clash Verge Rev、Hiddify](https://fanqiang.guide/guides/client-downloads.html)
 
 按 Windows、Android、iPhone、macOS 与 Linux 选择 v2rayN、v2rayNG、Clash Verge Rev、Hiddify 或小火箭，从官方入口核对安装包和系统架构。
 
+## [梯子、VPN 和代理有什么区别？科学上网新手选择指南](https://fanqiang.guide/guides/ladder-vpn-proxy.html)
+
+“梯子”是口语泛称，不是协议或软件；VPN、代理、客户端、节点和订阅属于不同层次。先确认设备、需要覆盖的流量范围及持有的配置类型，再选择相应工具。
+
+## [机场、订阅和节点是什么？Clash 与 V2Ray 新手说明](https://fanqiang.guide/guides/airport-subscription-nodes.html)
+
+“机场”是网络社区对一类配置或节点服务的口语称呼；节点是一份服务器连接参数，订阅是客户端读取一组节点或完整配置的地址或文件。导入成功不等于节点当前可用。
+
 ## [免费节点与订阅来源：Clash、V2Ray 和每日日期归档](https://fanqiang.guide/guides/free-nodes.html)
 
 每日资料通过固定文件夹进入，再选择日期文件。先辨认节点、订阅和 HTTP/SOCKS 代理的格式；资料收录与解析结果不等于连接可用性。
+
+## [订阅转换怎么选：Sub-Store、subconverter 与 sub-web 的区别](https://fanqiang.guide/guides/subscription-conversion.html)
+
+订阅转换处理格式与字段。Sub-Store 偏向订阅管理，subconverter 提供格式转换，sub-web 提供前端界面；输出仍需与目标客户端逐项核对。
 
 ## [Shadowrocket 小火箭支持哪些设备：iPhone、Mac、安卓与 Windows](https://fanqiang.guide/guides/shadowrocket-platforms.html)
 
@@ -16,15 +28,15 @@ Shadowrocket 的开发者商店页面列出 Apple 平台。搜索“安卓版”
 
 二维码承载文本，可能是单节点 URI、订阅地址、规则配置链接或普通网页。扫码识别、配置导入和实际连接是三个不同结果。
 
-## [订阅转换怎么选：Sub-Store、subconverter 与 sub-web 的区别](https://fanqiang.guide/guides/subscription-conversion.html)
+## [路由器翻墙与科学上网怎么选？OpenWrt、OpenClash 与梅林指南](https://fanqiang.guide/guides/router-guide.html)
 
-订阅转换处理格式与字段。Sub-Store 偏向订阅管理，subconverter 提供格式转换，sub-web 提供前端界面；输出仍需与目标客户端逐项核对。
+路由器方案适合统一管理多台设备，但安装插件不会自动让所有流量按预期处理。先分清硬件、固件、插件、代理内核和配置，再选择 OpenWrt 或华硕梅林路线。
 
-## [OpenWrt 科学上网工具：OpenClash、PassWall2 与设备条件](https://fanqiang.guide/guides/openwrt-tools.html)
+## [OpenWrt 路由器翻墙与科学上网：OpenClash、PassWall2 与设备条件](https://fanqiang.guide/guides/openwrt-tools.html)
 
 OpenWrt 是路由器系统，OpenClash 和 PassWall2 是其应用层项目。选择工具前，要核对设备、固件版本、内存、存储、包格式及内核依赖。
 
-## [华硕梅林固件与插件：AX86U、AX58U 版本及支持范围](https://fanqiang.guide/guides/asus-merlin.html)
+## [华硕梅林路由器翻墙与科学上网：AX86U、AX58U 固件及插件](https://fanqiang.guide/guides/asus-merlin.html)
 
 先确认完整型号与硬件修订，再区分原版 Merlin、GNUton 构建和带软件中心的改版环境。固件支持与 fancyss、MerlinClash 插件适配是两次不同的核对。
 
@@ -43,6 +55,6 @@ Clash 相关名称覆盖桌面客户端、路由器插件和内核。先确认�
 
 ## 资料查询
 
-- [310条工具目录与检索](https://fanqiang.guide/guides/library.html)
+- [代理工具与开源项目资料库（310条）](https://fanqiang.guide/guides/library.html)
 - [58条梅林型号支持记录](https://fanqiang.guide/guides/merlin-models.html)
-- [资料核对与纠错说明](https://fanqiang.guide/guides/about.html)
+- [资料收录与核对方法](https://fanqiang.guide/guides/about.html)

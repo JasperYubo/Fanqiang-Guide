@@ -201,7 +201,7 @@ def render_library(data, category_data):
     category_items = category_data["items"]
     categories = {row["kind"]: row["name"] for row in category_items}
     kinds = list(dict.fromkeys([row["kind"] for row in category_items] + [item["kind"] for item in items]))
-    title = "翻墙与科学上网工具目录"
+    title = "代理工具与开源项目资料库"
     description = f'按名称、平台线索、类别与核对范围查找 {len(items)} 条公开资料。已核对第一方资料仅覆盖条目列出的字段，不表示已安装、实测、安全审计或当前可用。'
     html, markdown = intro(title, description, data.get("source", {}), data.get("updated_at"), [("客户端下载与选择", "/guides/client-downloads.html"), ("华硕梅林型号表", "/guides/merlin-models.html"), ("Markdown 资料", "/guides/library.md")])
     html += '<div class="catalog-browser" data-catalog data-unit="条资料">'
@@ -229,7 +229,7 @@ def render_models(data):
     items = data["items"]
     title = "华硕梅林固件支持型号对照表"
     description = f'查找 {len(items)} 条完整型号记录，区分来源列为支持、来源明确不支持与仅来源记录。请逐字核对型号中的 V1、V2、PRO 等标识；固件支持、插件兼容与实际刷机结果分别判断。'
-    html, markdown = intro(title, description, data.get("source", {}), data.get("updated_at"), [("梅林固件选择指南", "/guides/asus-merlin.html"), ("全部工具目录", "/guides/library.html"), ("Markdown 型号表", "/guides/merlin-models.md")])
+    html, markdown = intro(title, description, data.get("source", {}), data.get("updated_at"), [("梅林固件选择指南", "/guides/asus-merlin.html"), ("代理工具与开源项目资料库", "/guides/library.html"), ("Markdown 型号表", "/guides/merlin-models.md")])
     count = Counter(item.get("support_claim", "source_only") for item in items)
     tested = sum(item.get("tested") is True for item in items)
     note = f'本页来源列为支持 {count["current_listed"]} 条，明确不支持 {count["explicitly_unsupported"]} 条，其他来源记录 {len(items) - count["current_listed"] - count["explicitly_unsupported"]} 条；已实测记录 {tested} 条。支持结论限定于每行固件分支与所列来源，不代表插件已经兼容。'
@@ -372,8 +372,8 @@ def build_catalog(P: Path, page_renderer) -> dict:
             raise ValueError("page_renderer must return complete HTML with a head element")
         assets = '<link rel="stylesheet" href="/assets/catalog-v1.3.css"><script defer src="/assets/catalog-v1.3.js"></script>'
         page = page.replace("</head>", assets + "</head>", 1)
-        (P / path.lstrip("/")).write_text(page, encoding="utf-8")
-        (P / markdown_path.lstrip("/")).write_text(markdown, encoding="utf-8")
+        (P / path.lstrip("/")).write_text(page.rstrip() + "\n", encoding="utf-8", newline="\n")
+        (P / markdown_path.lstrip("/")).write_text(markdown.rstrip() + "\n", encoding="utf-8", newline="\n")
         urls.append(ORIGIN + path)
     (P / "assets/catalog-v1.3.js").write_text(CATALOG_JS, encoding="utf-8")
     (P / "assets/catalog-v1.3.css").write_text(CATALOG_CSS, encoding="utf-8")

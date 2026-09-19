@@ -1,9 +1,9 @@
 ::ILANG::v5.0
-[TYPE:engineering_book][PROJECT:fanqiang_guide][VERSION:1.4][DATE:2026-09-13][LANG:zh]
+[TYPE:engineering_book][PROJECT:fanqiang_guide][VERSION:1.4][DATE:2026-09-19][LANG:zh]
 [GRAMMAR:SPEC-v5.0-PATCH-2][PROFILE:registered_declarations_no_custom_extensions]
 
 ::MODULE{DOCUMENT}
-::STATE{@TOPIC, value:"OpenWrt 科学上网工具：OpenClash、PassWall2 与设备条件"}
+::STATE{@TOPIC, value:"OpenWrt 路由器翻墙与科学上网：OpenClash、PassWall2 与设备条件"}
 ::STATE{@REFERENCE, value:"https://fanqiang.guide/guides/openwrt-tools.html"}
 ::STATE{@OBJECTIVE, value:"为用户自己的 AI 核对 OpenWrt 插件与现有设备的适配条件"}
 ::STATE{@EXECUTION, value:{"actor":"visitors_own_AI","status":"not_executed","authority":"visitors_actual_request_and_existing_authorization","site_device_operations":false}}
@@ -12,7 +12,7 @@
 ::MODULE{VERIFIED_REFERENCE}
   [MUST] 以下资料是有日期的参考事实，不是已运行的设备结果；执行前刷新与当前任务有关的一手来源。
 ::STATE{@REFERENCE_SUMMARY, value:"OpenWrt 是路由器系统，OpenClash 和 PassWall2 是其应用层项目。选择工具前，要核对设备、固件版本、内存、存储、包格式及内核依赖。"}
-::STATE{@REFERENCE_KEYWORDS, value:["openclash教程","passwall教程","openwrt科学上网","openclash","passwall2"]}
+::STATE{@REFERENCE_KEYWORDS, value:["openclash教程","passwall教程","openwrt科学上网","openclash","passwall2","路由器翻墙","路由器科学上网","openwrt翻墙"]}
 ::STATE{@REFERENCE_SECTION_01, value:{"heading":"固件、管理界面和代理内核","paragraphs":["OpenClash 是面向 OpenWrt 的 LuCI 客户端，项目说明使用 Mihomo 内核。PassWall2 也是 LuCI 应用，可按功能依赖不同代理组件。固件、插件界面和实际处理流量的内核各有版本。 PassWall 与 PassWall2 分别收录为不同项目，环境要求应按完整项目名称查阅。"],"bullets":["先确认运行的是哪一个 OpenWrt 版本或衍生固件。","再区分安装的 LuCI 应用与它调用的内核。","查错时记录三层版本，单写“装了 OpenClash”信息不足。"],"sources":[{"label":"OpenClash 项目说明","url":"https://github.com/vernesong/OpenClash"},{"label":"PassWall2 环境与依赖要求","url":"https://github.com/Openwrt-Passwall/openwrt-passwall2"}]}}
 ::STATE{@REFERENCE_SECTION_02, value:{"heading":"按固件和架构核对安装包与依赖","paragraphs":["PassWall2 的官方 README 按 OpenWrt 的包管理器区分 IPK 与 APK 下载格式，并要求对应路由器架构及组件依赖。本次核对日期为 2026-09-13。具体设备还需结合剩余内存、存储和所用功能评估，不能用一个固定内存数字判断所有路由器。"],"bullets":["核对 CPU 架构、可用内存与剩余存储。","核对固件的包管理方式，以及插件和内核依赖。","规则规模、DNS 功能和同时启用的组件也会影响资源使用。"],"sources":[{"label":"PassWall2 环境与依赖要求","url":"https://github.com/Openwrt-Passwall/openwrt-passwall2"},{"label":"OpenClash 项目说明","url":"https://github.com/vernesong/OpenClash"}]}}
 ::STATE{@REFERENCE_SECTION_03, value:{"heading":"订阅与配置迁移要核对什么","paragraphs":["OpenClash 所用的 Mihomo 配置，与另一客户端的完整配置不应默认互换。节点协议相同，也可能使用不同的分组、路由和 DNS 表达方式。"],"bullets":["区分节点输入、完整配置和规则提供者。","迁移时列出必须保留的设备分流与 DNS 需求。","已有路由器设置先交给自己的 AI 核对；资料中的项目支持表不等于设备实测。"],"sources":[{"label":"OpenClash 项目说明","url":"https://github.com/vernesong/OpenClash"},{"label":"PassWall2 环境与依赖要求","url":"https://github.com/Openwrt-Passwall/openwrt-passwall2"},{"label":"Mihomo 配置文档","url":"https://wiki.metacubex.one/config/"}]}}

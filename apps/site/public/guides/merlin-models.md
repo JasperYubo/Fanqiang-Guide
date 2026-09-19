@@ -4,7 +4,7 @@
 
 资料快照日期：2026-09-12 · [本页资料快照](<https://github.com/JasperYubo/Fanqiang-Guide/blob/fe895e2be9ce8da0fd4f0003faab7303b3bda9bd/export/merlin-model-matrix-v0.1-2026-09-11.json>)。日期表示资料整理时间，不代表所有项目仍可用。
 
-[梅林固件选择指南](<https://fanqiang.guide/guides/asus-merlin.html>) · [全部工具目录](<https://fanqiang.guide/guides/library.html>) · [Markdown 型号表](<https://fanqiang.guide/guides/merlin-models.md>)
+[梅林固件选择指南](<https://fanqiang.guide/guides/asus-merlin.html>) · [代理工具与开源项目资料库](<https://fanqiang.guide/guides/library.html>) · [Markdown 型号表](<https://fanqiang.guide/guides/merlin-models.md>)
 
 本页来源列为支持 39 条，明确不支持 19 条，其他来源记录 0 条；已实测记录 0 条。支持结论限定于每行固件分支与所列来源，不代表插件已经兼容。
 

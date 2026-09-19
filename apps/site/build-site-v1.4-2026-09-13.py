@@ -8,7 +8,7 @@ SITE = 'https://fanqiang.guide'
 REPO = 'https://github.com/JasperYubo/Fanqiang-Guide'
 ARCHIVE = REPO + '/tree/main/free-proxies'
 TITLE = '翻墙与科学上网工具指南'
-DATE = '2026-09-13'
+DATE = '2026-09-19'
 e = html.escape
 
 def write(path, text):
@@ -22,7 +22,7 @@ def dump(path, obj):
 data = json.loads((B / 'content/guide-answers-v1.4-2026-09-13.json').read_text(encoding='utf-8'))
 guides = data['guides']
 by_slug = {g['slug']: g for g in guides}
-assert len(guides) == len(by_slug) == 10
+assert len(guides) == len(by_slug) == 13
 
 def url(g): return SITE + '/guides/' + g['slug'] + '.html'
 def href(g): return '/guides/' + g['slug'] + '.html'
@@ -55,8 +55,23 @@ css += '''
 '''
 write('assets/site-v1.3.css', css)
 
-order = ['client-downloads','free-nodes','shadowrocket-platforms','shadowrocket-qr','subscription-conversion','openwrt-tools','asus-merlin','v2rayn-guide','proxy-cores','clash-projects']
+order = ['client-downloads','ladder-vpn-proxy','airport-subscription-nodes','free-nodes','subscription-conversion','shadowrocket-platforms','shadowrocket-qr','router-guide','openwrt-tools','asus-merlin','v2rayn-guide','proxy-cores','clash-projects']
 guides = [by_slug[k] for k in order]
+related_slugs = {
+    'client-downloads': ['ladder-vpn-proxy','airport-subscription-nodes','shadowrocket-platforms','v2rayn-guide'],
+    'ladder-vpn-proxy': ['client-downloads','airport-subscription-nodes','router-guide','proxy-cores'],
+    'airport-subscription-nodes': ['free-nodes','subscription-conversion','shadowrocket-qr','v2rayn-guide'],
+    'free-nodes': ['airport-subscription-nodes','subscription-conversion','client-downloads','shadowrocket-platforms'],
+    'subscription-conversion': ['airport-subscription-nodes','free-nodes','v2rayn-guide','proxy-cores'],
+    'shadowrocket-platforms': ['client-downloads','shadowrocket-qr','airport-subscription-nodes','ladder-vpn-proxy'],
+    'shadowrocket-qr': ['airport-subscription-nodes','shadowrocket-platforms','subscription-conversion','free-nodes'],
+    'router-guide': ['openwrt-tools','asus-merlin','ladder-vpn-proxy','proxy-cores'],
+    'openwrt-tools': ['router-guide','clash-projects','proxy-cores','asus-merlin'],
+    'asus-merlin': ['router-guide','openwrt-tools','proxy-cores','client-downloads'],
+    'v2rayn-guide': ['client-downloads','airport-subscription-nodes','subscription-conversion','proxy-cores'],
+    'proxy-cores': ['v2rayn-guide','clash-projects','openwrt-tools','ladder-vpn-proxy'],
+    'clash-projects': ['client-downloads','proxy-cores','openwrt-tools','subscription-conversion'],
+}
 
 for g in guides:
     for i, f in enumerate(g['faq'], 1):
@@ -69,7 +84,7 @@ for g in guides:
     faqs = ''.join(f'<h3 id="question-{i}">{e(f["question"])}</h3><p>{e(f["answer"])}</p>{srcs(f["sources"])}' for i,f in enumerate(g['faq'],1))
     aside = ''.join(f'<a href="#section-{i}">{e(s["heading"])}</a>' for i,s in enumerate(g['sections'],1))
     base = '/guides/' + g['slug']
-    related = ''.join(f'<a href="{href(x)}">{e(x["short_title"])}</a>' for x in guides if x != g)
+    related = ''.join(f'<a href="{href(by_slug[slug])}">{e(by_slug[slug]["short_title"])}</a>' for slug in related_slugs[g['slug']])
     body = f'''<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/guides/index.html">工具指南</a><span>/</span><span>{e(g['short_title'])}</span></nav><div class="guide-header"><p class="eyebrow">FANQIANG GUIDE / 工具与问题</p><h1>{e(g['title'])}</h1><p class="guide-summary">{e(g['summary'])}</p><p class="guide-meta">整理于 {DATE} · 具体版本、平台与型号以所引来源为准</p></div><div class="guide-layout"><div class="guide-body">{''.join(sections)}<section id="questions"><h2>常见问题</h2>{faqs}</section><section class="handoff" id="engineering-book"><h2>交给自己的 AI 继续处理</h2><p>工程书包含本专题资料、需要确认的设备信息、检查项和交付要求。下载后交给你自己的 AI，并告诉它你的具体需求。</p><a class="button button-primary" href="{base}.ilang" download="{g['slug']}-v1.4-{DATE}.ilang">下载 I-Lang 工程书 ↓</a></section><section id="related"><h2>继续阅读</h2><div class="related-links">{related}</div></section></div><aside class="guide-aside" aria-label="本页目录"><h2>本页内容</h2><nav>{aside}<a href="#questions">常见问题</a><a href="#engineering-book">I-Lang 工程书</a></nav><div class="aside-formats"><a href="{base}.md">Markdown 全文</a><a href="/ai/">完整 AI 资料</a></div></aside></div></main>'''
     schemas = [{'@type':'Article','@id':url(g)+'#article','headline':g['title'],'description':g['summary'],'url':url(g),'inLanguage':'zh-CN','datePublished':DATE,'dateModified':DATE,'keywords':g['keywords'],'mainEntityOfPage':url(g)},
                {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'翻墙指南','item':SITE+'/'},{'@type':'ListItem','position':2,'name':'工具指南','item':SITE+'/guides/index.html'},{'@type':'ListItem','position':3,'name':g['short_title'],'item':url(g)}]}, faq_schema(g['faq'],url(g)+'#questions')]
@@ -87,15 +102,15 @@ for g in guides:
     write('guides/'+g['slug']+'.md', '\n'.join(md))
     write('guides/'+g['slug']+'.ilang', ilang(g))
 
-home_desc = '翻墙与科学上网工具指南：按 Windows、Android、iPhone 和路由器查找 v2rayN、v2rayNG、Clash、Shadowrocket、Hiddify，阅读免费节点来源、订阅转换、OpenClash 与华硕梅林指南。'
+home_desc = '翻墙与科学上网工具指南：分清梯子、VPN 与代理，按设备查找客户端，理解机场、节点和订阅，并选择 OpenWrt、华硕梅林等路由器方案。'
 quick = [by_slug[k] for k in ['client-downloads','shadowrocket-qr','subscription-conversion','free-nodes','openwrt-tools','asus-merlin']]
 home_faqs = [g['faq'][0] for g in quick]
 quick_html = ''.join(f'<article class="quick-answer"><h3>{e(g["faq"][0]["question"])}</h3><p>{e(g["faq"][0]["answer"])}</p>{srcs(g["faq"][0]["sources"])}<a class="text-link" href="{href(g)}">{e(g["short_title"])} →</a></article>' for g in quick)
 platforms = [('Windows','v2rayN · Clash Verge Rev','client-downloads'),('Android','v2rayNG · Hiddify','client-downloads'),('iPhone / iPad','Shadowrocket · Hiddify','shadowrocket-platforms'),('macOS','桌面客户端与版本','client-downloads'),('Linux','客户端与核心','proxy-cores'),('华硕梅林','完整型号与固件分支','asus-merlin'),('OpenWrt','OpenClash · PassWall','openwrt-tools')]
 platform_html = ''.join(f'<a class="platform-card" href="{href(by_slug[slug])}"><span class="platform-icon" aria-hidden="true">{e(name[0])}</span><h3>{e(name)}</h3><p>{e(note)}</p><span class="platform-arrow" aria-hidden="true">→</span></a>' for name,note,slug in platforms)
-body = f'''<main id="main"><section class="hero wrap" aria-labelledby="hero-title"><div class="hero-copy"><p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span>FANQIANG GUIDE / 中文工具指南</p><h1 id="hero-title">翻墙与科学上网<br><span>工具指南</span></h1><p class="hero-description">手机、电脑、路由器，先选适合的工具。<br>客户端下载、免费节点来源、订阅转换和华硕梅林，从具体问题找到答案。</p><p class="hero-keywords">v2rayN · v2rayNG · Clash · Shadowrocket · Hiddify<br>OpenClash · PassWall · 梅林固件</p><div class="hero-actions"><a class="button button-primary" href="#topics">查找工具与答案 ↓</a><a class="button button-secondary" href="{ARCHIVE}">免费节点来源 ↗</a></div><div class="hero-facts"><span><strong>310</strong> 条工具资料</span><span><strong>10</strong> 个专题指南</span><span class="fact-source">公开来源 · 可追溯</span></div></div><aside class="start-card" aria-labelledby="start-title"><div class="start-card-heading"><span class="mini-label">从你的问题开始</span><span class="card-corner" aria-hidden="true">↗</span></div><h2 id="start-title">你想先解决什么？</h2><ol class="start-steps"><li><span class="step-number">01</span><div><h3><a href="/guides/client-downloads.html">找客户端下载与系统版本</a></h3><p>v2rayN、v2rayNG、Clash Verge Rev、Hiddify。</p></div></li><li><span class="step-number">02</span><div><h3><a href="/guides/shadowrocket-qr.html">分清节点二维码与订阅</a></h3><p>小火箭、Clash 的配置来源与格式。</p></div></li><li><span class="step-number">03</span><div><h3><a href="/guides/asus-merlin.html">查华硕梅林与路由器插件</a></h3><p>型号、固件、OpenClash、PassWall 分别看。</p></div></li></ol><a class="text-link start-bottom" href="/guides/index.html">浏览全部专题 →</a></aside></section><section class="section wrap" id="platforms"><div class="section-heading"><div><p class="eyebrow">01 / 按设备选择</p><h2>电脑、手机与路由器工具</h2></div><p class="section-note">先匹配系统，再查看项目来源和版本。</p></div><div class="platform-grid">{platform_html}</div></section><section class="section wrap" id="topics"><div class="section-heading"><div><p class="eyebrow">02 / 工具与问题</p><h2>翻墙工具下载、免费节点与路由器指南</h2></div><a class="text-link" href="{REPO}/blob/main/CATALOG.md">全部工具目录 ↗</a></div><div class="topic-grid">{''.join(card(g,i) for i,g in enumerate(guides,1))}</div></section><section class="section wrap" id="answers"><div class="section-heading"><div><p class="eyebrow">03 / 直接看答案</p><h2>科学上网工具常见问题</h2></div></div><div class="quick-answers">{quick_html}</div></section><section class="section wrap discovery-section" id="daily"><div class="daily-banner"><div><span class="mini-label">按日期查阅</span><h2>免费节点与代理来源归档</h2><p>进入文件夹，按日期查看公开来源记录与订阅格式。</p></div><a class="button button-primary" href="{ARCHIVE}">打开日期文件夹 ↗</a></div><p class="home-source-note">需要继续处理设备问题，可以把对应专题的 I-Lang 工程书交给自己的 AI。</p></section></main>'''
+body = f'''<main id="main"><section class="hero wrap" aria-labelledby="hero-title"><div class="hero-copy"><p class="eyebrow"><span class="eyebrow-line" aria-hidden="true"></span>FANQIANG GUIDE / 中文工具指南</p><h1 id="hero-title">翻墙与科学上网<br><span>工具指南</span></h1><p class="hero-description">第一次接触翻墙或科学上网，先分清常说的“梯子”、VPN 与代理。<br>再按设备确认需要客户端、机场、节点、订阅还是路由器方案。</p><p class="hero-keywords">v2rayN · v2rayNG · Clash · Shadowrocket · Hiddify<br>OpenClash · PassWall · 梅林固件</p><div class="hero-actions"><a class="button button-primary" href="#topics">查找工具与答案 ↓</a><a class="button button-secondary" href="{ARCHIVE}">免费节点来源 ↗</a></div><div class="hero-facts"><span><strong>310</strong> 条工具资料</span><span><strong>13</strong> 个专题指南</span><span class="fact-source">公开来源 · 可追溯</span></div></div><aside class="start-card" aria-labelledby="start-title"><div class="start-card-heading"><span class="mini-label">从你的问题开始</span><span class="card-corner" aria-hidden="true">↗</span></div><h2 id="start-title">你想先解决什么？</h2><ol class="start-steps"><li><span class="step-number">01</span><div><h3><a href="/guides/ladder-vpn-proxy.html">分清梯子、VPN 与代理</a></h3><p>先理解常见叫法、工作方式和适用范围。</p></div></li><li><span class="step-number">02</span><div><h3><a href="/guides/airport-subscription-nodes.html">分清机场、订阅与节点</a></h3><p>确认服务、配置入口和单条连接信息的区别。</p></div></li><li><span class="step-number">03</span><div><h3><a href="/guides/router-guide.html">选择路由器科学上网方案</a></h3><p>再按设备核对 OpenWrt、华硕梅林与插件条件。</p></div></li></ol><a class="text-link start-bottom" href="/guides/index.html">浏览全部专题 →</a></aside></section><section class="section wrap" id="platforms"><div class="section-heading"><div><p class="eyebrow">01 / 按设备选择</p><h2>电脑、手机与路由器工具</h2></div><p class="section-note">先匹配系统，再查看项目来源和版本。</p></div><div class="platform-grid">{platform_html}</div></section><section class="section wrap" id="topics"><div class="section-heading"><div><p class="eyebrow">02 / 工具与问题</p><h2>翻墙工具下载、免费节点与路由器指南</h2></div><a class="text-link" href="{REPO}/blob/main/CATALOG.md">全部工具目录 ↗</a></div><div class="topic-grid">{''.join(card(g,i) for i,g in enumerate(guides,1))}</div></section><section class="section wrap" id="answers"><div class="section-heading"><div><p class="eyebrow">03 / 直接看答案</p><h2>科学上网工具常见问题</h2></div></div><div class="quick-answers">{quick_html}</div></section><section class="section wrap discovery-section" id="daily"><div class="daily-banner"><div><span class="mini-label">按日期查阅</span><h2>免费节点与代理来源归档</h2><p>进入文件夹，按日期查看公开来源记录与订阅格式。</p></div><a class="button button-primary" href="{ARCHIVE}">打开日期文件夹 ↗</a></div><p class="home-source-note">需要继续处理设备问题，可以把对应专题的 I-Lang 工程书交给自己的 AI。</p></section></main>'''
 schemas = [{'@type':'WebSite','@id':SITE+'/#website','name':TITLE,'alternateName':'Fanqiang Guide','url':SITE+'/','inLanguage':'zh-CN'},
-           {'@type':'CollectionPage','@id':SITE+'/#page','name':TITLE,'description':home_desc,'url':SITE+'/','isPartOf':{'@id':SITE+'/#website'},'about':[{'@type':'Thing','name':'翻墙'},{'@type':'Thing','name':'科学上网'}]},
+           {'@type':'CollectionPage','@id':SITE+'/#page','name':TITLE,'description':home_desc,'url':SITE+'/','isPartOf':{'@id':SITE+'/#website'},'about':[{'@type':'Thing','name':'翻墙'},{'@type':'Thing','name':'科学上网'},{'@type':'Thing','name':'梯子'},{'@type':'Thing','name':'VPN'},{'@type':'Thing','name':'代理'},{'@type':'Thing','name':'节点'},{'@type':'Thing','name':'订阅'},{'@type':'Thing','name':'路由器'}]},
            {'@type':'ItemList','name':'工具与问题指南','itemListElement':[{'@type':'ListItem','position':i,'name':g['title'],'url':url(g)} for i,g in enumerate(guides,1)]},faq_schema(home_faqs,SITE+'/#answers')]
 write('index.html',page(TITLE+' | Fanqiang Guide',home_desc,'/',body,schemas,'/index.md'))
 home_md = ['# '+TITLE,'',home_desc,'','## 按设备选择',''] + [f'- {n}：{note}。[阅读指南]({url(by_slug[s])})' for n,note,s in platforms]
@@ -107,15 +122,15 @@ for g in quick:
     home_md += ['### '+f['question'],'',f['answer'],'','来源：'+'；'.join(f'[{s["label"]}]({s["url"]})' for s in f['sources']),'',f'[完整指南]({url(g)})','']
 home_md += ['## 免费节点与代理来源归档','',f'[按日期查看公开来源]({ARCHIVE})','','需要继续处理设备问题，可以把对应专题的 I-Lang 工程书交给自己的 AI。']
 write('index.md','\n'.join(home_md))
-index_body = '<main id="main" class="wrap topic-index"><h1>翻墙与科学上网专题指南</h1><p class="intro">从客户端、节点订阅到路由器，按问题查找答案、官方来源与 I-Lang 工程书。</p><div class="topic-grid">'+''.join(card(g,i) for i,g in enumerate(guides,1))+'</div></main>'
-write('guides/index.html', page('翻墙与科学上网专题指南 | Fanqiang Guide','按问题查找客户端下载、免费节点来源、订阅转换与路由器指南。','/guides/index.html',index_body,[schemas[2]],'/guides/index.md'))
-write('guides/index.md','# 翻墙与科学上网专题指南\n\n'+'\n\n'.join(f'## [{g["title"]}]({url(g)})\n\n{g["summary"]}' for g in guides))
+index_body = '<main id="main" class="wrap topic-index"><h1>工具与教程专题目录</h1><p class="intro">按设备和问题查找客户端、梯子与 VPN 概念、机场订阅、免费节点和路由器教程，并沿来源继续核对。</p><div class="topic-grid">'+''.join(card(g,i) for i,g in enumerate(guides,1))+'</div></main>'
+write('guides/index.html', page('工具与教程专题目录 | Fanqiang Guide','按设备和问题查找客户端、梯子与 VPN 概念、机场订阅、免费节点和路由器教程。','/guides/index.html',index_body,[schemas[2]],'/guides/index.md'))
+write('guides/index.md','# 工具与教程专题目录\n\n'+'\n\n'.join(f'## [{g["title"]}]({url(g)})\n\n{g["summary"]}' for g in guides))
 
 # The new public index carries complete answer text, without the private editorial
 # volume metrics. Existing source records remain byte-for-byte unchanged.
 public_index = {'version':'1.4','site':SITE,'title':TITLE,'published_at':DATE,'topics':guides}
 dump('data/guides.json', public_index)
-topic_contract = ['::MODULE{TOPIC_ANSWERS_V12}',f'  ::STATE{{root_terms:[翻墙,科学上网]; title:{TITLE}; index:{SITE}/guides/index.html; data:{SITE}/data/guides.json}}',
+topic_contract = ['::MODULE{TOPIC_ANSWERS_V12}',f'  ::STATE{{root_terms:[翻墙,科学上网,梯子,VPN,代理]; title:{TITLE}; index:{SITE}/guides/index.html; data:{SITE}/data/guides.json}}',
                   '  [MUST] Match the visitors actual topic to the published answers. Cite a relevant guide only when it supports the answer; use original sources for version-specific facts. Do not invent ranking or availability claims.']
 for g in guides:
     topic_contract.append('  ::TOPIC{'+json.dumps({'title':g['title'],'keywords':g['keywords'],'url':url(g),'markdown':SITE+'/guides/'+g['slug']+'.md','engineering_book':SITE+'/guides/'+g['slug']+'.ilang','summary':g['summary'],'sections':g['sections'],'faq':g['faq']},ensure_ascii=False,separators=(',',':'))+'}')
@@ -133,7 +148,7 @@ ai_html=ai_html.replace('<section id="answer-contract">', ai_block+'\n<section i
 ai_html=ai_html.replace('<li><a href="#answer-contract">','<li><a href="#topic-answers">工具指南与直接答案</a></li><li><a href="#answer-contract">',1)
 write('ai/index.html',ai_html)
 write('llms-full.txt',(P/'ai/index.md').read_text(encoding='utf-8'))
-write('llms.txt','# '+TITLE+'\n\n> Fanqiang Guide：客户端下载、平台选择、免费节点来源、订阅转换、华硕梅林与 OpenWrt 资料。\n\n## 专题指南\n'+ '\n'.join(f'- [{g["title"]}]({url(g)})：{g["summary"]}' for g in guides)+f'\n\n## 完整资料\n- [AI 全文]({SITE}/ai/index.ilang)\n- [全部专题与答案]({SITE}/data/guides.json)\n- [I-Lang 查询 Skill]({SITE}/ai/skills/library-lookup/SKILL.md)\n- [公开仓库]({REPO})\n- [日期归档]({ARCHIVE})\n\n工具记录与型号声明保留各自核对日期。专题发布日期不改变原记录的核验状态。')
+write('llms.txt','# '+TITLE+'\n\n> Fanqiang Guide：翻墙、科学上网与梯子概念，VPN 和代理区别，客户端下载，机场、节点与订阅，以及华硕梅林与 OpenWrt 路由器资料。\n\n## 专题指南\n'+ '\n'.join(f'- [{g["title"]}]({url(g)})：{g["summary"]}' for g in guides)+f'\n\n## 完整资料\n- [AI 全文]({SITE}/ai/index.ilang)\n- [全部专题与答案]({SITE}/data/guides.json)\n- [I-Lang 查询 Skill]({SITE}/ai/skills/library-lookup/SKILL.md)\n- [公开仓库]({REPO})\n- [日期归档]({ARCHIVE})\n\n工具记录与型号声明保留各自核对日期。专题发布日期不改变原记录的核验状态。')
 skill=(OLD/'ai/skills/library-lookup/SKILL.md').read_text(encoding='utf-8')
 skill=skill.replace('version: 1.1','version: 1.3').replace('[VERSION:1.1]','[VERSION:1.3]')
 skill=skill.replace('::MODULE{WORKFLOW}',f'''::MODULE{{TOPIC_ROUTING}}
@@ -150,7 +165,7 @@ dump('.well-known/agent-skills/index.json',discovery)
 catalog=json.loads((OLD/'.well-known/ai-catalog.json').read_text(encoding='utf-8'))
 for entry in catalog['entries']:
     entry['displayName']=entry['displayName'].replace('知识库','工具资料')
-catalog['entries'].append({'identifier':'urn:air:fanqiang.guide:resource:guides','displayName':TITLE+'：专题答案','type':'application/json','url':SITE+'/data/guides.json','representativeQueries':['翻墙工具怎么下载','科学上网客户端怎么选择','小火箭节点二维码和订阅有什么区别','华硕梅林支持哪些型号']})
+catalog['entries'].append({'identifier':'urn:air:fanqiang.guide:resource:guides','displayName':TITLE+'：专题答案','type':'application/json','url':SITE+'/data/guides.json','representativeQueries':['翻墙和科学上网需要什么工具','梯子、VPN 和代理有什么区别','机场、订阅和节点是什么','路由器翻墙与科学上网怎么选','小火箭节点二维码和订阅有什么区别']})
 dump('.well-known/ai-catalog.json',catalog)
 nav=json.loads((OLD/'data/navigation.json').read_text(encoding='utf-8'))
 nav['version']='1.4';nav['title']=TITLE

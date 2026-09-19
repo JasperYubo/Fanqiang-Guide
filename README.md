@@ -2,9 +2,16 @@
 
 [fanqiang.guide](https://fanqiang.guide) ｜ [全部工具](CATALOG.md) ｜ [软件版本与项目动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
 
-按你的设备查找翻墙工具，了解客户端、代理协议、华硕梅林和 OpenWrt。点击工具名称可查看中文介绍与官方资料。
+按你的设备查找翻墙与科学上网工具，分清常说的“梯子”、VPN、代理、机场、订阅和节点，再查看客户端、华硕梅林与 OpenWrt 的中文说明和官方资料。
 
 **[Windows](#windows) · [Android 安卓](#android) · [iPhone / iPad](#ios) · [macOS](#macos) · [Linux](#linux) · [华硕梅林](#merlin) · [OpenWrt](#openwrt)**
+
+## 新手概念与教程
+
+- [梯子、VPN 和代理有什么区别？](apps/site/public/guides/ladder-vpn-proxy.md)
+- [机场、订阅和节点是什么？](apps/site/public/guides/airport-subscription-nodes.md)
+- [路由器翻墙与科学上网怎么选？](apps/site/public/guides/router-guide.md)
+- [工具与教程专题目录](https://fanqiang.guide/guides/index.html)
 
 <a id="start"></a>
 ## 新手从这里开始

@@ -39,7 +39,7 @@ def main():
         row["canonical"] = "".join(c for c in norm(row["model_exact"]) if c.isascii() and c.isalnum())
         models.append(row)
     meta = {"version": "1.0", "guide_version": documents["guides"]["version"], "published_at": documents["guides"]["published_at"], "counts": {"guides": len(guides), "faq": sum(len(g["faq"]) for g in guides), "library": len(library), "models": len(models)}, "public_source_urls": {name: f"https://fanqiang.guide/data/{name}.json" for name in documents}, "sha256": hashes, "library_source": documents["library"]["source"], "model_source": documents["merlin-models"]["source"]}
-    if meta["counts"] != {"guides": 10, "faq": 37, "library": 310, "models": 58}:
+    if meta["counts"] != {"guides": 13, "faq": 54, "library": 310, "models": 58}:
         raise ValueError(f"Unexpected published snapshot counts: {meta['counts']}")
     blocks = ["// Generated from public JSON by scripts/build_knowledge.py. Do not hand-edit."]
     for name, value in (("KNOWLEDGE_META", meta), ("GUIDES", guides), ("MODELS", models), ("LIBRARY", library)):

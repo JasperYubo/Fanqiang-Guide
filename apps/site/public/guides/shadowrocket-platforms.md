@@ -2,7 +2,7 @@
 
 Shadowrocket 的开发者商店页面列出 Apple 平台。搜索“安卓版”或“Windows 版”时，先确认项目身份，再按设备选择其他客户端。
 
-整理日期：2026-09-13。具体版本、平台与型号以所引来源为准。
+整理日期：2026-09-19。具体版本、平台与型号以所引来源为准。
 
 原文：https://fanqiang.guide/guides/shadowrocket-platforms.html
 

@@ -14,10 +14,10 @@ const records = query => JSON.parse(retrieve(query).facts).records;
 const base = {question:'RT-AX58U V2 和 V1 有何不同？', answer:'两个修订对应的来源分支不同，不能据固件列表推定插件兼容或实测成功。',sources:[{title:'梅林型号来源',url:'https://fanqiang.guide/guides/merlin-models.html'}],createdAt:'2026-09-13T00:00:00Z'};
 function states(text) {const rows=new Map();for(const line of text.split('\n')){const match=line.match(/^::STATE\{@([^,]+), value:(.*)\}$/);if(match)rows.set(match[1],JSON.parse(match[2]));}return rows;}
 
-test('complete public snapshot: 10 guides / 37 FAQ / 310 directory / 58 models',()=>{
-  assert.equal(GUIDES.length,10);assert.equal(GUIDES.reduce((n,g)=>n+g.faq.length,0),37);assert.equal(LIBRARY.length,310);assert.equal(MODELS.length,58);assert.ok(MODELS.every(m=>m.tested===false));
+test('complete public snapshot: 13 guides / 54 FAQ / 310 directory / 58 models',()=>{
+  assert.equal(GUIDES.length,13);assert.equal(GUIDES.reduce((n,g)=>n+g.faq.length,0),54);assert.equal(LIBRARY.length,310);assert.equal(MODELS.length,58);assert.ok(MODELS.every(m=>m.tested===false));
 });
-test('all 37 actual FAQ questions retrieve their exact uncut answer and current topic',()=>{
+test('all 54 actual FAQ questions retrieve their exact uncut answer and current topic',()=>{
   for(const g of GUIDES)for(const f of g.faq){const r=retrieve(f.question);assert.ok(r.topics.includes(g.slug),f.question);const fact=JSON.parse(r.facts).records.find(x=>x.slug===g.slug);assert.ok(fact.faq.some(x=>x.question===f.question&&x.answer===f.answer),f.question);}
 });
 test('all 58 complete model names retrieve themselves with unchanged qualifiers',()=>{

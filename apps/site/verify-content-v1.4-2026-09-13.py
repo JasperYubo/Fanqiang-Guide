@@ -18,7 +18,7 @@ def schemas(raw):
     return [json.loads(m) for m in re.findall(r'<script type="application/ld\+json">(.*?)</script>',raw,re.S)]
 def faq_from_html(raw):
     return [x for d in schemas(raw) for x in d.get('@graph',[]) if x.get('@type')=='FAQPage'][0]['mainEntity']
-check('ten_existing_topics',len(guides)==10)
+check('thirteen_topics',len(guides)==13)
 seen=[]
 for g in guides:
     stem='guides/'+g['slug'];raw=(P/(stem+'.html')).read_text(encoding='utf-8');md=(P/(stem+'.md')).read_text(encoding='utf-8');book=(P/(stem+'.ilang')).read_text(encoding='utf-8')
@@ -32,6 +32,10 @@ home=(P/'index.html').read_text(encoding='utf-8');home_md=(P/'index.md').read_te
 home_faq=faq_from_html(home)
 check('eight_visible_home_answers',len(home_faq)==8 and all(html.escape(f['name']) in home and html.escape(f['acceptedAnswer']['text']) in home and f['name'] in home_md for f in home_faq))
 check('homepage_topic_identity', '翻墙与科学上网工具指南 | Fanqiang Guide' in home and 'id="hero-title">翻墙与科学上网' in home)
+check('homepage_ladder_term', '梯子' in home and '梯子' in home_md)
+for slug in ('ladder-vpn-proxy','airport-subscription-nodes','router-guide'):
+    relative='/guides/'+slug+'.html'
+    check('homepage_new_topic_link:'+slug, 'href="'+relative+'"' in home and 'https://fanqiang.guide'+relative in home_md)
 check('official_docs_kept', 'href="https://xtls.github.io/"' in home and 'href="https://sing-box.sagernet.org/"' in home)
 for rel in ('data/library.json','data/merlin-models.json','robots.txt','auth.md'):
     check(rel+': frozen_input_hash', stable_hash_matches(P/rel,json.loads((B/'content-invariants-v1.0.json').read_text(encoding='utf-8'))[rel]))

@@ -19,7 +19,5 @@ def add_official_docs(P):
     p.write_text(text.replace(marker,md+marker,1),encoding='utf-8')
     p=P/'sitemap.xml';text=p.read_text(encoding='utf-8')
     for url in ('https://fanqiang.guide/','https://fanqiang.guide/ai/','https://fanqiang.guide/guides/proxy-cores.html'):
-        old='<loc>'+url+'</loc><lastmod>2026-09-13</lastmod>'
-        assert old in text
-        text=text.replace(old,'<loc>'+url+'</loc><lastmod>2026-09-13</lastmod>',1)
+        assert '<loc>'+url+'</loc><lastmod>' in text
     p.write_text(text,encoding='utf-8')

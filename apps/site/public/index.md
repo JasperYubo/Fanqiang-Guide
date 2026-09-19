@@ -1,6 +1,6 @@
 # 翻墙与科学上网工具指南
 
-翻墙与科学上网工具指南：按 Windows、Android、iPhone 和路由器查找 v2rayN、v2rayNG、Clash、Shadowrocket、Hiddify，阅读免费节点来源、订阅转换、OpenClash 与华硕梅林指南。
+翻墙与科学上网工具指南：分清梯子、VPN 与代理，按设备查找客户端，理解机场、节点和订阅，并选择 OpenWrt、华硕梅林等路由器方案。
 
 ## 按设备选择
 
@@ -18,9 +18,21 @@
 
 按 Windows、Android、iPhone、macOS 与 Linux 选择 v2rayN、v2rayNG、Clash Verge Rev、Hiddify 或小火箭，从官方入口核对安装包和系统架构。
 
+### [梯子、VPN 与代理的区别](https://fanqiang.guide/guides/ladder-vpn-proxy.html)
+
+“梯子”是口语泛称，不是协议或软件；VPN、代理、客户端、节点和订阅属于不同层次。先确认设备、需要覆盖的流量范围及持有的配置类型，再选择相应工具。
+
+### [机场、订阅与节点的区别](https://fanqiang.guide/guides/airport-subscription-nodes.html)
+
+“机场”是网络社区对一类配置或节点服务的口语称呼；节点是一份服务器连接参数，订阅是客户端读取一组节点或完整配置的地址或文件。导入成功不等于节点当前可用。
+
 ### [免费节点：Clash 与 V2Ray 订阅来源](https://fanqiang.guide/guides/free-nodes.html)
 
 每日资料通过固定文件夹进入，再选择日期文件。先辨认节点、订阅和 HTTP/SOCKS 代理的格式；资料收录与解析结果不等于连接可用性。
+
+### [订阅转换：Sub-Store、subconverter](https://fanqiang.guide/guides/subscription-conversion.html)
+
+订阅转换处理格式与字段。Sub-Store 偏向订阅管理，subconverter 提供格式转换，sub-web 提供前端界面；输出仍需与目标客户端逐项核对。
 
 ### [Shadowrocket 小火箭：下载与平台](https://fanqiang.guide/guides/shadowrocket-platforms.html)
 
@@ -30,15 +42,15 @@ Shadowrocket 的开发者商店页面列出 Apple 平台。搜索“安卓版”
 
 二维码承载文本，可能是单节点 URI、订阅地址、规则配置链接或普通网页。扫码识别、配置导入和实际连接是三个不同结果。
 
-### [订阅转换：Sub-Store、subconverter](https://fanqiang.guide/guides/subscription-conversion.html)
+### [路由器翻墙与科学上网指南](https://fanqiang.guide/guides/router-guide.html)
 
-订阅转换处理格式与字段。Sub-Store 偏向订阅管理，subconverter 提供格式转换，sub-web 提供前端界面；输出仍需与目标客户端逐项核对。
+路由器方案适合统一管理多台设备，但安装插件不会自动让所有流量按预期处理。先分清硬件、固件、插件、代理内核和配置，再选择 OpenWrt 或华硕梅林路线。
 
-### [OpenClash、PassWall 与 OpenWrt](https://fanqiang.guide/guides/openwrt-tools.html)
+### [OpenWrt 路由器翻墙：OpenClash 与 PassWall2](https://fanqiang.guide/guides/openwrt-tools.html)
 
 OpenWrt 是路由器系统，OpenClash 和 PassWall2 是其应用层项目。选择工具前，要核对设备、固件版本、内存、存储、包格式及内核依赖。
 
-### [华硕梅林固件：型号与插件](https://fanqiang.guide/guides/asus-merlin.html)
+### [华硕梅林路由器翻墙：固件与插件](https://fanqiang.guide/guides/asus-merlin.html)
 
 先确认完整型号与硬件修订，再区分原版 Merlin、GNUton 构建和带软件中心的改版环境。固件支持与 fancyss、MerlinClash 插件适配是两次不同的核对。
 
@@ -63,6 +75,30 @@ Clash 相关名称覆盖桌面客户端、路由器插件和内核。先确认�
 
 ## 翻墙与科学上网常见问题
 
+### 梯子就是 VPN 吗？
+
+不是。“梯子”是口语泛称，可能指商业 VPN、代理客户端、节点服务或路由器方案；VPN 是其中一种技术或产品形态，两者不能直接画等号。
+
+来源：[MDN Proxy server 术语说明](https://developer.mozilla.org/en-US/docs/Glossary/Proxy_server)；[NIST VPN 术语定义](https://csrc.nist.gov/glossary/term/virtual_private_network)；[v2rayN 项目与下载入口](https://github.com/2dust/v2rayN)；[Clash Verge Rev 项目](https://github.com/clash-verge-rev/clash-verge-rev)；[Shadowrocket 开发者 App Store 页面](https://apps.apple.com/us/app/shadowrocket/id932747118)
+
+[查看完整答案与资料](https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-1)
+
+### 机场是一个客户端吗？
+
+不是。“机场”通常指提供节点或订阅的一类服务，具体含义没有统一标准。v2rayN、Clash Verge Rev、Shadowrocket 等才是客户端或客户端项目。
+
+来源：[v2rayN 项目与下载入口](https://github.com/2dust/v2rayN)；[Clash Verge Rev 项目](https://github.com/clash-verge-rev/clash-verge-rev)；[Shadowrocket 开发者 App Store 页面](https://apps.apple.com/us/app/shadowrocket/id932747118)
+
+[查看完整答案与资料](https://fanqiang.guide/guides/airport-subscription-nodes.html#question-1)
+
+### OpenWrt 和 OpenClash 是同一个东西吗？
+
+不是。OpenWrt 是路由器操作系统或固件环境，OpenClash 是运行在 OpenWrt LuCI 环境中的客户端项目；OpenClash 还会调用 Mihomo 等组件处理配置和流量。
+
+来源：[OpenWrt 用户文档](https://openwrt.org/docs/guide-user/start)；[OpenClash 项目说明](https://github.com/vernesong/OpenClash)；[Mihomo 配置文档](https://wiki.metacubex.one/config/)
+
+[查看完整答案与资料](https://fanqiang.guide/guides/router-guide.html#question-1)
+
 ### Windows、Mac 和安卓分别用哪个客户端？
 
 v2rayN 和 Clash Verge Rev 面向 Windows、macOS 与 Linux，v2rayNG 面向 Android。Hiddify 的官方项目覆盖 Android、iOS、Windows、macOS 与 Linux。先按系统缩小选择，再对照对应发布页的处理器架构与系统要求。
@@ -86,30 +122,6 @@ Fanqiang Guide 的 free-proxies 文件夹按日期提供免费代理与节点来
 来源：[按日期查看免费代理与节点资料](https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies)
 
 [查看完整答案与资料](https://fanqiang.guide/guides/free-nodes.html#question-1)
-
-### Clash 订阅转换可以用什么工具？
-
-subconverter 提供订阅格式转换，Sub-Store 提供订阅管理，sub-web 提供转换的网页界面。选择项目时应明确原始输入、目标客户端与内核版本；网页前端的名称还不能说明实际由哪个后端处理转换。
-
-来源：[subconverter 项目](https://github.com/tindy2013/subconverter)；[Sub-Store 项目](https://github.com/sub-store-org/Sub-Store)；[sub-web 项目](https://github.com/CareyWang/sub-web)
-
-[查看完整答案与资料](https://fanqiang.guide/guides/subscription-conversion.html#question-1)
-
-### 华硕梅林支持哪些型号，去哪里查？
-
-Asuswrt-Merlin 原版的支持范围查官方 Supported Devices 表，GNUton 构建查 GNUton 自己的设备列表。型号要保留 RT/DSL 前缀及 V1、V2、PRO 等标记；固件支持和插件适配分别查各自项目，不能合并成一个通用支持结论。
-
-来源：[Asuswrt-Merlin 官方支持设备表](https://github.com/RMerl/asuswrt-merlin.ng/wiki/Supported-Devices)；[GNUton 构建与支持设备](https://github.com/gnuton/asuswrt-merlin.ng)；[fancyss 固件环境与平台包说明](https://github.com/hq450/fancyss)
-
-[查看完整答案与资料](https://fanqiang.guide/guides/asus-merlin.html#question-1)
-
-### OpenClash 和 PassWall2 有什么区别？
-
-OpenClash 是面向 OpenWrt、使用 Mihomo 内核的 LuCI 客户端；PassWall2 是另一款 OpenWrt LuCI 代理应用。两者的配置方式与依赖分别由各自项目说明，比较时需要同时看固件、应用与代理内核，不能只比较名称。
-
-来源：[OpenClash 项目说明](https://github.com/vernesong/OpenClash)；[PassWall2 环境与依赖要求](https://github.com/Openwrt-Passwall/openwrt-passwall2)
-
-[查看完整答案与资料](https://fanqiang.guide/guides/openwrt-tools.html#question-1)
 
 ### v2rayN 订阅导入了，为什么还不能连接？
 
@@ -136,6 +148,6 @@ v2rayN 接收订阅和内核完成连接是两个阶段。排查资料应包括�
 
 ## 资料查询
 
-- [310条工具目录与检索](https://fanqiang.guide/guides/library.html)
+- [代理工具与开源项目资料库（310条）](https://fanqiang.guide/guides/library.html)
 - [58条梅林型号支持记录](https://fanqiang.guide/guides/merlin-models.html)
-- [资料核对与纠错说明](https://fanqiang.guide/guides/about.html)
+- [资料收录与核对方法](https://fanqiang.guide/guides/about.html)

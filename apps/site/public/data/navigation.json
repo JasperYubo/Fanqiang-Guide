@@ -80,9 +80,24 @@
       "url": "https://fanqiang.guide/guides/client-downloads.html"
     },
     {
+      "id": "ladder-vpn-proxy",
+      "name": "梯子、VPN 和代理有什么区别？科学上网新手选择指南",
+      "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html"
+    },
+    {
+      "id": "airport-subscription-nodes",
+      "name": "机场、订阅和节点是什么？Clash 与 V2Ray 新手说明",
+      "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html"
+    },
+    {
       "id": "free-nodes",
       "name": "免费节点与订阅来源：Clash、V2Ray 和每日日期归档",
       "url": "https://fanqiang.guide/guides/free-nodes.html"
+    },
+    {
+      "id": "subscription-conversion",
+      "name": "订阅转换怎么选：Sub-Store、subconverter 与 sub-web 的区别",
+      "url": "https://fanqiang.guide/guides/subscription-conversion.html"
     },
     {
       "id": "shadowrocket-platforms",
@@ -95,18 +110,18 @@
       "url": "https://fanqiang.guide/guides/shadowrocket-qr.html"
     },
     {
-      "id": "subscription-conversion",
-      "name": "订阅转换怎么选：Sub-Store、subconverter 与 sub-web 的区别",
-      "url": "https://fanqiang.guide/guides/subscription-conversion.html"
+      "id": "router-guide",
+      "name": "路由器翻墙与科学上网怎么选？OpenWrt、OpenClash 与梅林指南",
+      "url": "https://fanqiang.guide/guides/router-guide.html"
     },
     {
       "id": "openwrt-tools",
-      "name": "OpenWrt 科学上网工具：OpenClash、PassWall2 与设备条件",
+      "name": "OpenWrt 路由器翻墙与科学上网：OpenClash、PassWall2 与设备条件",
       "url": "https://fanqiang.guide/guides/openwrt-tools.html"
     },
     {
       "id": "asus-merlin",
-      "name": "华硕梅林固件与插件：AX86U、AX58U 版本及支持范围",
+      "name": "华硕梅林路由器翻墙与科学上网：AX86U、AX58U 固件及插件",
       "url": "https://fanqiang.guide/guides/asus-merlin.html"
     },
     {
@@ -147,6 +162,61 @@
       "topic": "client-downloads"
     },
     {
+      "question": "梯子就是 VPN 吗？",
+      "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-1",
+      "topic": "ladder-vpn-proxy"
+    },
+    {
+      "question": "VPN 和代理哪个速度更快？",
+      "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-2",
+      "topic": "ladder-vpn-proxy"
+    },
+    {
+      "question": "Clash、v2rayN 和小火箭都是 VPN 吗？",
+      "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-3",
+      "topic": "ladder-vpn-proxy"
+    },
+    {
+      "question": "客户端安装好以后还需要节点或订阅吗？",
+      "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-4",
+      "topic": "ladder-vpn-proxy"
+    },
+    {
+      "question": "一台电脑能用的配置，手机也能直接用吗？",
+      "url": "https://fanqiang.guide/guides/ladder-vpn-proxy.html#question-5",
+      "topic": "ladder-vpn-proxy"
+    },
+    {
+      "question": "机场是一个客户端吗？",
+      "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-1",
+      "topic": "airport-subscription-nodes"
+    },
+    {
+      "question": "一个订阅就是一个节点吗？",
+      "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-2",
+      "topic": "airport-subscription-nodes"
+    },
+    {
+      "question": "Clash 订阅可以直接导入 v2rayN 吗？",
+      "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-3",
+      "topic": "airport-subscription-nodes"
+    },
+    {
+      "question": "二维码一定是小火箭节点吗？",
+      "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-4",
+      "topic": "airport-subscription-nodes"
+    },
+    {
+      "question": "为什么订阅导入成功后仍然不能连接？",
+      "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-5",
+      "topic": "airport-subscription-nodes"
+    },
+    {
+      "question": "订阅链接可以公开发给别人帮忙看吗？",
+      "url": "https://fanqiang.guide/guides/airport-subscription-nodes.html#question-6",
+      "topic": "airport-subscription-nodes"
+    },
+    {
       "question": "Clash 和 V2Ray 免费节点在哪里按日期找？",
       "url": "https://fanqiang.guide/guides/free-nodes.html#question-1",
       "topic": "free-nodes"
@@ -165,6 +235,26 @@
       "question": "以前日期的节点页面，是当时全部节点的备份吗？",
       "url": "https://fanqiang.guide/guides/free-nodes.html#question-4",
       "topic": "free-nodes"
+    },
+    {
+      "question": "Clash 订阅转换可以用什么工具？",
+      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-1",
+      "topic": "subscription-conversion"
+    },
+    {
+      "question": "把订阅交给自己的 AI 转换，需要提供哪些信息？",
+      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-2",
+      "topic": "subscription-conversion"
+    },
+    {
+      "question": "订阅文件改成 YAML 后，为什么还是导不进 Clash？",
+      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-3",
+      "topic": "subscription-conversion"
+    },
+    {
+      "question": "订阅转换成功后，原来的规则和 DNS 会都保留吗？",
+      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-4",
+      "topic": "subscription-conversion"
     },
     {
       "question": "小火箭有安卓或 Windows 版吗？",
@@ -202,24 +292,34 @@
       "topic": "shadowrocket-qr"
     },
     {
-      "question": "Clash 订阅转换可以用什么工具？",
-      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-1",
-      "topic": "subscription-conversion"
+      "question": "OpenWrt 和 OpenClash 是同一个东西吗？",
+      "url": "https://fanqiang.guide/guides/router-guide.html#question-1",
+      "topic": "router-guide"
     },
     {
-      "question": "把订阅交给自己的 AI 转换，需要提供哪些信息？",
-      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-2",
-      "topic": "subscription-conversion"
+      "question": "OpenClash 和 PassWall2 应该选哪个？",
+      "url": "https://fanqiang.guide/guides/router-guide.html#question-2",
+      "topic": "router-guide"
     },
     {
-      "question": "订阅文件改成 YAML 后，为什么还是导不进 Clash？",
-      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-3",
-      "topic": "subscription-conversion"
+      "question": "华硕梅林可以直接安装 OpenClash 吗？",
+      "url": "https://fanqiang.guide/guides/router-guide.html#question-3",
+      "topic": "router-guide"
     },
     {
-      "question": "订阅转换成功后，原来的规则和 DNS 会都保留吗？",
-      "url": "https://fanqiang.guide/guides/subscription-conversion.html#question-4",
-      "topic": "subscription-conversion"
+      "question": "路由器装好插件后，所有设备都会自动走代理吗？",
+      "url": "https://fanqiang.guide/guides/router-guide.html#question-4",
+      "topic": "router-guide"
+    },
+    {
+      "question": "OpenClash 的完整配置能直接给 PassWall2 用吗？",
+      "url": "https://fanqiang.guide/guides/router-guide.html#question-5",
+      "topic": "router-guide"
+    },
+    {
+      "question": "路由器内存越大，速度就一定越快吗？",
+      "url": "https://fanqiang.guide/guides/router-guide.html#question-6",
+      "topic": "router-guide"
     },
     {
       "question": "OpenClash 和 PassWall2 有什么区别？",

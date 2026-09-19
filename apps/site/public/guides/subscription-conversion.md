@@ -2,7 +2,7 @@
 
 订阅转换处理格式与字段。Sub-Store 偏向订阅管理，subconverter 提供格式转换，sub-web 提供前端界面；输出仍需与目标客户端逐项核对。
 
-整理日期：2026-09-13。具体版本、平台与型号以所引来源为准。
+整理日期：2026-09-19。具体版本、平台与型号以所引来源为准。
 
 原文：https://fanqiang.guide/guides/subscription-conversion.html
 
