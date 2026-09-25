@@ -1,5 +1,5 @@
 from pathlib import Path
-import json, html, re, gzip, hashlib, tarfile
+import json, html, re, gzip, hashlib, tarfile, runpy, shutil, tempfile
 
 B = Path(__file__).resolve().parent
 P = B / 'public'
@@ -229,6 +229,25 @@ gsc_public_path = P / GSC_VERIFICATION_FILE
 gsc_public_path.parent.mkdir(parents=True, exist_ok=True)
 gsc_public_path.write_bytes(GSC_VERIFICATION_SOURCE.read_bytes())
 ga4_pages = inject_ga4_into_final_html()
+
+# The site's own release archive must contain the chat entry and browser guard.
+# Keep public/ as the inherited build input; patch in temporary copies and only
+# overlay changed files, so existing records are never removed by a rebuild.
+frontend = B.parent / 'worker' / 'frontend'
+with tempfile.TemporaryDirectory(prefix='site-frontend-', dir=B) as temporary:
+    temporary = Path(temporary)
+    intake = temporary / 'intake'
+    final = temporary / 'final'
+    runpy.run_path(str(frontend / 'patch_frontend.py'))['patch'](P, intake)
+    runpy.run_path(str(frontend / 'patch_external_browser.py'))['patch'](intake, final)
+    for source in final.rglob('*'):
+        if source.is_file():
+            destination = P / source.relative_to(final)
+            if not destination.is_file() or destination.read_bytes() != source.read_bytes():
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source, destination)
+if 'id="chat-panel"' not in (P / 'index.html').read_text(encoding='utf-8'):
+    raise RuntimeError('Site release is missing the chat entry')
 
 manifest={}
 for p in P.rglob('*'):
