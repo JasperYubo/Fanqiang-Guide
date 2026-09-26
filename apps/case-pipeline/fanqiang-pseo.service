@@ -1,0 +1,18 @@
+[Unit]
+Description=Fanqiang private case pipeline outbound broker worker
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/fanqiang-pseo/backend
+EnvironmentFile=/etc/fanqiang-pseo/runtime.env
+ExecStart=/opt/fanqiang-pseo/venv/bin/python /opt/fanqiang-pseo/backend/runner.py --interval 30
+UMask=0077
+Restart=on-failure
+RestartSec=15
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

@@ -174,10 +174,10 @@ def atomic_bytes(path, content):
         current = path.read_bytes()
         if current == content:
             return False
-        # Git may materialize Markdown with CRLF on Windows even though the
+        # Git may materialize Markdown/JSON with CRLF on Windows even though the
         # repository blob and deterministic renderer use LF.  Treat an EOL-only
         # difference as unchanged so a local rebuild remains idempotent.
-        if path.suffix == ".md" and current.replace(b"\r\n", b"\n") == content.replace(b"\r\n", b"\n"):
+        if path.suffix in {".md", ".json"} and current.replace(b"\r\n", b"\n") == content.replace(b"\r\n", b"\n"):
             return False
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = None

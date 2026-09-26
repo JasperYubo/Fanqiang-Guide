@@ -79,6 +79,15 @@ class RebuildTests(unittest.TestCase):
         self.assertFalse(builder.atomic_bytes(target, b"first\nsecond\n"))
         self.assertEqual(target.read_bytes(), b"first\r\nsecond\r\n")
 
+    def test_json_eol_only_difference_is_idempotent_but_content_changes_write(self):
+        target = self.base / "generated.json"
+        original = b'{\r\n  "count": 310\r\n}\r\n'
+        target.write_bytes(original)
+        self.assertFalse(builder.atomic_bytes(target, b'{\n  "count": 310\n}\n'))
+        self.assertEqual(target.read_bytes(), original)
+        self.assertTrue(builder.atomic_bytes(target, b'{\n  "count": 311\n}\n'))
+        self.assertEqual(json.loads(target.read_bytes()), {"count": 311})
+
     def test_current_snapshot_rebuild_is_exact_and_database_is_not_replaced(self):
         self.seed_published_outputs()
         before = file_hashes(self.output)

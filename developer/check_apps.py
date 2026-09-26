@@ -15,7 +15,37 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 NODE_TESTS = ("worker-intake.test.mjs", "intake-integration-review.test.mjs", "intake.test.mjs",
-              "intake-artifact.test.mjs", "retrieval.test.mjs")
+              "intake-artifact.test.mjs", "retrieval.test.mjs", "cases.test.mjs")
+
+
+def validate_generated_knowledge(source: Path, generated: Path, public: Path) -> list[str]:
+    """Compare all records, then verify rebuilt hashes against actual release bytes.
+
+    Git can check inherited JSON out as CRLF on Windows. Hashes describe the
+    bytes actually packaged; an EOL-only input change must not hide record drift.
+    """
+    def exports(path):
+        values = {}
+        for line in path.read_text(encoding="utf-8").splitlines():
+            match = re.fullmatch(r"export const ([A-Z_]+) = (.+);", line)
+            if match:
+                values[match[1]] = json.loads(match[2])
+        if set(values) != {"KNOWLEDGE_META", "GUIDES", "MODELS", "LIBRARY"}:
+            raise ValueError("unexpected_knowledge_exports")
+        return values
+    try:
+        expected, actual = exports(source), exports(generated)
+        hashes = actual["KNOWLEDGE_META"].pop("sha256")
+        expected["KNOWLEDGE_META"].pop("sha256")
+        if expected != actual:
+            return ["worker/src/knowledge.mjs:generated_records_mismatch"]
+        if set(hashes) != {"guides", "library", "merlin-models"}:
+            return ["worker/src/knowledge.mjs:input_hash_keys_mismatch"]
+        return ["worker/src/knowledge.mjs:" + name + ":published_input_hash_mismatch"
+                for name, digest in hashes.items()
+                if hashlib.sha256((public / "data" / (name + ".json")).read_bytes()).hexdigest() != digest]
+    except (OSError, ValueError, KeyError, TypeError):
+        return ["worker/src/knowledge.mjs:invalid_generated_contract"]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
@@ -49,6 +79,8 @@ def main():
         ("knowledge-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests"), "-v"], ROOT),
         ("worker-tests", [node, "--test", "--test-reporter=tap", *[str(ROOT / "apps/worker/test" / name) for name in NODE_TESTS]], ROOT / "apps/worker"),
         ("lookup-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/lookup/runtime"), "-p", "test_app.py", "-v"], ROOT / "apps/lookup/runtime"),
+        ("case-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_cases*.py", "-v"], ROOT / "apps/site"),
+        ("case-pipeline-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/case-pipeline"), "-p", "test_*.py", "-v"], ROOT / "apps/case-pipeline"),
         ("build", [sys.executable, str(ROOT / "developer/build_apps.py"), "--output", str(output / "release")], output),
     ]
     report = {"version": "1.0", "checked_at": datetime.now(timezone.utc).isoformat(), "ok": False, "steps": [], "knowledge_snapshot": snapshot_check}
@@ -82,9 +114,10 @@ def main():
             if file.is_file() and file.suffix == ".gz":
                 if gzip.decompress(file.read_bytes()) != file.with_suffix("").read_bytes():
                     failures.append(file.relative_to(release).as_posix() + ":gzip_mismatch")
-        for name in ("worker.mjs", "intake.mjs", "ilang.mjs", "retrieval.mjs", "knowledge.mjs"):
+        for name in ("worker.mjs", "intake.mjs", "ilang.mjs", "retrieval.mjs", "cases.mjs", "openapi.mjs"):
             if (release / "worker/src" / name).read_bytes() != (ROOT / "apps/worker/src" / name).read_bytes():
                 failures.append("worker/src/" + name + ":generated_source_mismatch")
+        failures.extend(validate_generated_knowledge(ROOT / "apps/worker/src/knowledge.mjs", release / "worker/src/knowledge.mjs", release / "site"))
         for file in sorted(release.rglob("*")):
             if file.is_file() and file.suffix.lower() in {".html", ".txt", ".md", ".json", ".mjs", ".js", ".py", ".ilang"}:
                 if "github.com/mtmpss/Fanqiang-Guide" in file.read_text(encoding="utf-8"):

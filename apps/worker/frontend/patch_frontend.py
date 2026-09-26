@@ -48,7 +48,7 @@ def patch(base: Path, output: Path) -> dict:
         raise ValueError("The existing search action changed; review the integration first.")
     start, end = forms[0].span()
     after = before[:start] + FORM + before[end:]
-    additions = '<link rel="stylesheet" href="/assets/chat-v1.1.css"><script defer src="/assets/chat-v1.1.js"></script>'
+    additions = '<link rel="stylesheet" href="/assets/chat-v1.2.css"><script defer src="/assets/chat-v1.2.js"></script>'
     if after.count("</head>") != 1:
         raise ValueError("Expected one HTML head.")
     after = after.replace("</head>", additions + "</head>", 1)
@@ -58,9 +58,9 @@ def patch(base: Path, output: Path) -> dict:
     assert after.replace(additions, "", 1).replace(FORM, forms[0].group(), 1) == before
     shutil.copytree(base, output)
     (output / "index.html").write_text(after, encoding="utf-8")
-    for name in ("chat-v1.1.js", "chat-v1.1.css"):
+    for name in ("chat-v1.2.js", "chat-v1.2.css"):
         shutil.copyfile(HERE / "assets" / name, output / "assets" / name)
-    changed = ["index.html", "assets/chat-v1.1.js", "assets/chat-v1.1.css"]
+    changed = ["index.html", "assets/chat-v1.2.js", "assets/chat-v1.2.css"]
     for rel in changed:
         path = output / rel
         path.with_name(path.name + ".gz").write_bytes(gzip.compress(path.read_bytes(), mtime=0))

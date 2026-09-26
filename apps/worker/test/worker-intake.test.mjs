@@ -16,7 +16,7 @@ test('same-origin JSON, body size, session gate and no-store remain enforced',as
   assert.equal((await h.call('/api/chat/session',{},null,{'content-type':'text/plain'})).status,415);
   assert.equal((await h.call('/api/chat/session','x'.repeat(10001))).status,413);
   assert.equal((await h.call('/api/chat/message',askBody())).status,401);
-  const health=await h.call('/api/chat/health');assert.equal(health.headers.get('cache-control'),'private, no-store');assert.equal((await health.json()).version,'1.1.0');
+  const health=await h.call('/api/chat/health');assert.equal(health.headers.get('cache-control'),'private, no-store');assert.equal((await health.json()).version,'1.2.0');
 });
 
 test('AI question and DeepSeek fallback happen before any model call or artifact bypass',async()=>{

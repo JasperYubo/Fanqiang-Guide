@@ -223,6 +223,9 @@ add_official_docs(P)
 from answer_fit_v14 import fit_answers
 fit_answers(P, guides, page, faq_schema)
 
+from cases_v10 import build_cases
+case_build = build_cases(P, B / 'content/cases/public', page)
+
 # Keep Search Console verification under versioned build input so a clean or
 # repeated build always recreates the exact public verification response.
 gsc_public_path = P / GSC_VERIFICATION_FILE
@@ -257,4 +260,4 @@ for p in P.rglob('*'):
         elif p.with_name(p.name+'.gz').exists():p.with_name(p.name+'.gz').unlink()
 (B/'release-manifest-v1.4-2026-09-13.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
 with tarfile.open(B/'release-v1.4-2026-09-13.tar.gz','w:gz') as t:t.add(P,arcname='public')
-print(json.dumps({'guides':len(guides),'public_files':len(manifest),'ga4_pages':len(ga4_pages),'package_bytes':(B/'release-v1.4-2026-09-13.tar.gz').stat().st_size},ensure_ascii=False))
+print(json.dumps({'guides':len(guides),'cases':case_build['cases'],'public_files':len(manifest),'ga4_pages':len(ga4_pages),'package_bytes':(B/'release-v1.4-2026-09-13.tar.gz').stat().st_size},ensure_ascii=False))

@@ -6,8 +6,9 @@ import worker, { consumeModel } from '../src/worker.mjs';
 
 const origin = 'https://fanqiang.guide';
 const schema = readFileSync(new URL('../schema-v1.1-2026-09-13.sql', import.meta.url), 'utf8');
+const casesSchema = readFileSync(new URL('../migration-cases-v1.2-2026-09-27.sql', import.meta.url), 'utf8');
 function database() {
-  const db = new DatabaseSync(':memory:'); db.exec(schema);
+  const db = new DatabaseSync(':memory:'); db.exec(schema); db.exec(casesSchema);
   const api = {
     raw: db,
     prepare(sql) {

@@ -1,8 +1,10 @@
 import { retrieve } from './retrieval.mjs';
 import { buildArtifact, validateArtifact } from './ilang.mjs';
 import { createIntake, advanceIntake, publicFlow } from './intake.mjs';
+import { caseReviewState, submitCaseReview, internalCases, cancelCaseStatements, deliveryReviewStatements, resetCaseStatements } from './cases.mjs';
+import { CHAT_OPENAPI } from './openapi.mjs';
 
-const VERSION = '1.1.0';
+const VERSION = '1.2.0';
 const ORIGIN = 'https://fanqiang.guide';
 const COOKIE = '__Secure-fg_chat';
 const DAY = 86400;
@@ -87,7 +89,7 @@ async function ipKey(request, env, stamp) {
 }
 async function makeSession(request, env, reset = false) {
   const current = await getSession(request, env);
-  if (current && !reset) return json({ session: true, messages: await history(env, current.id), flow: publicFlow(await intakeState(env, current.id)), retentionDays: 7 });
+  if (current && !reset) return json({ session: true, messages: await history(env, current.id), flow: publicFlow(await intakeState(env, current.id)), ...await caseReviewState(env,current.id), retentionDays: 7 });
   const stamp = now();
   const ip = await ipKey(request, env, stamp);
   await quota(env, `session:${ip}:${Math.floor(stamp / 60)}`, 20, stamp + 120);
@@ -97,7 +99,8 @@ async function makeSession(request, env, reset = false) {
   if (current) {
     const locked = await env.DB.prepare('UPDATE sessions SET lock_id=?,lock_until=? WHERE id=? AND (lock_until<=? OR lock_id IS NULL) RETURNING id').bind(resetLock, stamp + 30, current.id, stamp).first();
     if (!locked) fail(409, 'busy', '上一条回答仍在结束，请稍后再开始新对话。');
-    for (const table of ['messages', 'artifacts', 'requests', 'intakes']) statements.push(env.DB.prepare(`DELETE FROM ${table} WHERE session_id=?`).bind(current.id));
+    statements.push(...resetCaseStatements(env,current.id,stamp));
+    for (const table of ['case_review_requests','case_reviews','messages', 'artifacts', 'requests', 'intakes']) statements.push(env.DB.prepare(`DELETE FROM ${table} WHERE session_id=?`).bind(current.id));
     statements.push(env.DB.prepare('DELETE FROM sessions WHERE id=?').bind(current.id));
   }
   statements.push(env.DB.prepare('INSERT INTO sessions(id,created_at,expires_at) VALUES(?,?,?)').bind(id, stamp, stamp + TTL));
@@ -112,6 +115,11 @@ async function makeSession(request, env, reset = false) {
 async function cleanup(env) {
   const stamp = now();
   await env.DB.batch([
+    env.DB.prepare('DELETE FROM case_jobs WHERE expires_at<=?').bind(stamp),
+    env.DB.prepare('DELETE FROM case_reviews WHERE expires_at<=?').bind(stamp),
+    env.DB.prepare('DELETE FROM case_review_requests WHERE created_at<?').bind(stamp-TTL),
+    env.DB.prepare("INSERT OR IGNORE INTO case_jobs(id,session_id,artifact_id,revision,kind,status,available_at,result,created_at,updated_at,expires_at) SELECT lower(hex(randomblob(4)))||'-'||lower(hex(randomblob(2)))||'-'||lower(hex(randomblob(2)))||'-'||lower(hex(randomblob(2)))||'-'||lower(hex(randomblob(6))),session_id,artifact_id,revision,'retract','pending',?,json_object('publicUrl',public_url,'sourceJobId',id),?,?,expires_at FROM case_jobs WHERE kind='publish' AND status='processing' AND lease_until<=? AND attempts>=4 AND public_url IS NOT NULL").bind(stamp,stamp,stamp,stamp),
+    env.DB.prepare("UPDATE case_jobs SET status='failed',lease_hash=NULL,lease_until=0,error_code='lease_attempts_exhausted',updated_at=? WHERE status='processing' AND lease_until<=? AND attempts>=4").bind(stamp,stamp),
     env.DB.prepare('DELETE FROM messages WHERE created_at<? OR session_id IN (SELECT id FROM sessions WHERE expires_at<=? LIMIT 200)').bind(stamp - TTL, stamp),
     env.DB.prepare('DELETE FROM artifacts WHERE expires_at<=?').bind(stamp),
     env.DB.prepare('DELETE FROM intakes WHERE expires_at<=?').bind(stamp),
@@ -199,6 +207,8 @@ async function ask(request, env, ctx) {
           let displayed = step.reply, sources = [], artifact = null;
           const statements = [];
           if (step.generate) {
+            // A fresh delivery invalidates earlier unpublished outcomes and consent.
+            await env.DB.batch([...cancelCaseStatements(env,session.id,stamp),env.DB.prepare('DELETE FROM case_reviews WHERE session_id=?').bind(session.id),env.DB.prepare('DELETE FROM case_review_requests WHERE session_id=?').bind(session.id)]);
             send('status', { message: '正在整理你的工程书…' });
             const refs = retrieve(step.query, []);
             sources = refs.sources || [];
@@ -227,6 +237,7 @@ async function ask(request, env, ctx) {
             const id = crypto.randomUUID();
             artifact = artifactMeta(id);
             statements.push(env.DB.prepare('INSERT INTO artifacts(id,session_id,filename,content,created_at,expires_at) VALUES(?,?,?,?,?,?)').bind(id, session.id, artifact.filename, content, stamp, stamp + TTL));
+            statements.push(...deliveryReviewStatements(env,session,id,stamp));
             flow = {...flow, stage:'delivered'};
             displayed = '工程书已准备好。点击“复制工程书”，把全部内容粘贴到你自己的 AI 对话框并发送；它会根据你的设备和需求，从第一步开始指导你。也可以下载文件后上传给 AI。';
           }
@@ -264,7 +275,9 @@ export default {
     const path = new URL(request.url).pathname;
     try {
       if (new URL(request.url).origin !== ORIGIN) return json({ error: 'not_found' }, 404);
-      if (path === '/api/chat/health' && request.method === 'GET') return json({ status: 'ok', version: VERSION });
+      if(path.startsWith('/api/chat/internal/cases/'))return await internalCases({request,env,path,readJson,fail,json,hash,stamp:now()});
+      if (path === '/api/chat/health' && request.method === 'GET') return json({ status: 'ok', version: VERSION, openapi:'https://fanqiang.guide/api/chat/openapi.json' });
+      if (path === '/api/chat/openapi.json' && request.method === 'GET') return json(CHAT_OPENAPI);
       if (request.method === 'POST') {
         if (request.headers.get('origin') !== ORIGIN) fail(403, 'origin_rejected', '请从本站首页发起提问。');
         if (path === '/api/chat/session' || path === '/api/chat/reset') {
@@ -272,6 +285,12 @@ export default {
           return await makeSession(request, env, path.endsWith('/reset'));
         }
         if (path === '/api/chat/message') return await ask(request, env, ctx);
+        if (path === '/api/chat/review')return await submitCaseReview({request,env,session:await getSession(request,env),readJson,fail,json,stamp:now()});
+      }
+      if(path==='/api/chat/review'&&request.method==='GET') {
+        const session=await getSession(request,env);
+        if(!session)fail(401,'session_required','对话已过期，请开始新对话。');
+        return json(await caseReviewState(env,session.id));
       }
       if (path.startsWith('/api/chat/artifacts/') && request.method === 'GET') {
         const session = await getSession(request, env);
