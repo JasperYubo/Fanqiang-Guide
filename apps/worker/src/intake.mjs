@@ -20,6 +20,7 @@ const unavailable=/(?:不能用|还不能|尚不能|用不了|不可用|无法�
 const shortYes=/^(?:有|有的|我有|可以|能用|可以用了|已经可以用了|现在可以用了|已能用|已经能用|现在能用|能正常用|能正常使用|可以正常使用|能正常发送消息|可以正常发送消息)[。！!\s]*$/;
 const generic=/^(?:你好|您好|嗨|哈喽|在吗|开始|谢谢|好的|好了|搞定|明白|收到|我(?:想|要|想要)?(?:翻墙|科学上网|上网|弄一下|试试|XXX|xxx|某某|这个|那个)|翻墙|科学上网|上网|我要|我想|帮我|请帮我|需求|生成工程书|再生成|再次生成工程书|我要(?:一个|一份)?工程书|根据本次对话生成\s*I-Lang\s*工程书)[。！!？?\s]*$/i;
 const broadGoal=/^(?:(?:我)?(?:想|要|想要|需要)|帮我|请帮我)?(翻墙|科学上网)[。！!？?\s]*$/;
+const knowledgeNeed=/(?:是什么|是什麼|是甚麼|什么意思|什麼意思|含义|含義|有什么用|有什麼用|作用|用途|区别|區別|官网|官網|官方(?:入口|来源|資料|资料)|怎么用|怎麼用|如何使用|教程|教學|教学|兼容|支持|支援|维护状态|維護狀態|\bwhat\s+is\b|\bmeaning\b|\bcompatibility\b|\bdocumentation\b)/i;
 const routerPattern=/(?:(?:华硕|ASUS|小米|红米|Redmi|TP-Link|华为|荣耀|GL[.]?iNet)\s*)?(?:(?:RT|DSL|GT|TUF|ZenWiFi|GL)[\s_-]*)?(?:AX|AC|BE|BQ|BT|XT|XD|ET|MT)[0-9]{2,5}[A-Z0-9]*(?:[\s_-]*(?:V[0-9]+|PRO|GO|B[0-9]+))?/ig;
 const clean=(value,max=LIMIT.text)=>typeof value==='string'?[...value.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g,'').trim()].slice(0,max).join(''):'';
 const plain=value=>value!==null&&typeof value==='object'&&!Array.isArray(value)&&(Object.getPrototypeOf(value)===Object.prototype||Object.getPrototypeOf(value)===null);
@@ -73,7 +74,7 @@ function correctionText(text) {
 }
 
 function extractDevice(text,previous='') {
-  const target=correctionText(text).replace(/[，,；;\n]\s*(?:需求|目标)[\s\S]*$/,'');
+  const target=correctionText(text).replace(/[，,；;\n]\s*(?:需求|目标)[\s\S]*$/,'').replace(/clash\s*for\s*windows|clashforwindows|sing[\s-]*box[\s-]*windows/ig,'');
   const knownUnknown=target.match(/(?:手机|电脑)（系统未知）|路由器（型号未知）/);
   if(knownUnknown)return knownUnknown[0];
   if(/^苹果[。！!\s]*$/.test(target)){
@@ -135,8 +136,9 @@ function concreteNeed(value) {
   if(/^(?:生成|下载|要|我要|给我|请给我|再次生成)?\s*(?:一份|一个)?\s*(?:I-Lang\s*)?工程书[。！!?？\s]*$/i.test(text))return false;
   if(/(?:XXX|待补充|随便弄|随便搞|某某)/i.test(text))return false;
   if(/^(?:我)?(?:想用|要用|用|使用)(?:这个|那个|一下|东西)[。！!？?\s]*$/.test(text))return false;
-  return /(?:下载|安装|找|选择|选|对比|比较|核对|检查|查|了解|访问|打开|导入|转换|解决|排查|修复|刷|配置|设置|连接|使用|想用|要用|用|支持|区别|报错|失败|连不上|打不开)/.test(text)
-    &&text.replace(/(?:我|想|要|请|帮|一下|下载|安装|找|选择|选|核对|查|配置|设置|使用|用|支持|吗|呢|吧|[\s。！!?？])/g,'').length>=2;
+  const explicit=knowledgeNeed.test(text)||/(?:下载|安装|找|选择|选|对比|比较|核对|检查|查|了解|访问|打开|导入|转换|解决|排查|修复|刷|配置|设置|连接|使用|想用|要用|用|支持|区别|报错|失败|连不上|打不开)/.test(text);
+  const subject=text.replace(/(?:是什么|是什麼|是甚麼|什么意思|什麼意思|含义|含義|有什么用|有什麼用|作用|用途|区别|區別|官网|官網|怎么用|怎麼用|如何使用|教程|教學|教学|兼容|维护状态|維護狀態|\bwhat\s+is\b|\bmeaning\b|\bcompatibility\b|\bdocumentation\b|我|想|要|请|帮|一下|下载|安装|找|选择|选|核对|查|配置|设置|使用|用|支持|支援|吗|呢|吧|[\s。！!?？])/gi,'');
+  return explicit&&subject.length>=2;
 }
 
 function extractNeed(text) {
@@ -152,7 +154,7 @@ function extractNeed(text) {
     if(device&&norm(clause).replace(norm(device),'').replace(/[我想要用的设备现在目前准备使用是：:\s]/g,'')==='')continue;
     if(!concreteNeed(clause))continue;
     const action=clause.match(/(?:下载|安装|寻找|找|选择|选|对比|比较|核对|检查|查|了解|访问|打开|导入|转换|解决|排查|修复|刷|配置|设置|连接|使用|想用|要用|用|支持|区别|报错|失败|连不上|打不开)/);
-    const candidate=action?clause.slice(action.index):clause;
+    const candidate=knowledgeNeed.test(clause)?clause:action?clause.slice(action.index):clause;
     if(concreteNeed(candidate))candidates.push(candidate);
   }
   return clean(candidates.join('；'));

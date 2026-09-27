@@ -29,7 +29,7 @@ function database() {
   };
   return api;
 }
-function harness() {
+function harness(workerInstance = worker) {
   const env = { DB: database(), DEEPSEEK_API_KEY: 'fake-test-key', IP_SALT: 'test-salt', IP_DAILY_LIMIT: '100' };
   const tasks = [];
   const ctx = { waitUntil(p) { tasks.push(p); } };
@@ -38,7 +38,7 @@ function harness() {
     headers: { 'content-type': 'application/json', origin, 'CF-Connecting-IP': '192.0.2.1', ...(cookie ? { cookie } : {}), ...overrides },
     ...(body === undefined ? {} : { body: typeof body === 'string' ? body : JSON.stringify(body) }),
   });
-  const call = (path, body, cookie, headers) => worker.fetch(req(path, body, cookie, headers), env, ctx);
+  const call = (path, body, cookie, headers) => workerInstance.fetch(req(path, body, cookie, headers), env, ctx);
   const session = async () => { const r = await call('/api/chat/session', {}); assert.equal(r.status, 200); return r.headers.get('set-cookie').split(';')[0]; };
   return { env, ctx, call, req, session, tasks };
 }

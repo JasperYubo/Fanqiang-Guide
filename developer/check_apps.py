@@ -15,7 +15,8 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 NODE_TESTS = ("worker-intake.test.mjs", "intake-integration-review.test.mjs", "intake.test.mjs",
-              "intake-artifact.test.mjs", "retrieval.test.mjs", "cases.test.mjs")
+              "intake-artifact.test.mjs", "retrieval.test.mjs", "cases.test.mjs",
+              "faq-cache.test.mjs", "worker-faq-cache.test.mjs")
 
 
 def validate_generated_knowledge(source: Path, generated: Path, public: Path) -> list[str]:
@@ -114,10 +115,16 @@ def main():
             if file.is_file() and file.suffix == ".gz":
                 if gzip.decompress(file.read_bytes()) != file.with_suffix("").read_bytes():
                     failures.append(file.relative_to(release).as_posix() + ":gzip_mismatch")
-        for name in ("worker.mjs", "intake.mjs", "ilang.mjs", "retrieval.mjs", "cases.mjs", "openapi.mjs"):
+        for name in ("worker.mjs", "intake.mjs", "ilang.mjs", "retrieval.mjs", "cases.mjs", "openapi.mjs", "faq-cache.mjs"):
             if (release / "worker/src" / name).read_bytes() != (ROOT / "apps/worker/src" / name).read_bytes():
                 failures.append("worker/src/" + name + ":generated_source_mismatch")
         failures.extend(validate_generated_knowledge(ROOT / "apps/worker/src/knowledge.mjs", release / "worker/src/knowledge.mjs", release / "site"))
+        faq_bytes = (ROOT / "data/faq-cache.json").read_bytes()
+        if (release / "site/data/faq-cache.json").read_bytes() != faq_bytes:
+            failures.append("site/data/faq-cache.json:source_mismatch")
+        faq_module = (release / "worker/src/faq-cache-data.mjs").read_text(encoding="utf-8")
+        if ("SHA256: " + hashlib.sha256(faq_bytes).hexdigest()) not in faq_module:
+            failures.append("worker/src/faq-cache-data.mjs:source_hash_mismatch")
         for file in sorted(release.rglob("*")):
             if file.is_file() and file.suffix.lower() in {".html", ".txt", ".md", ".json", ".mjs", ".js", ".py", ".ilang"}:
                 if "github.com/mtmpss/Fanqiang-Guide" in file.read_text(encoding="utf-8"):

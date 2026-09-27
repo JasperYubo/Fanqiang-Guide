@@ -3,6 +3,7 @@ import { buildArtifact, validateArtifact } from './ilang.mjs';
 import { createIntake, advanceIntake, publicFlow } from './intake.mjs';
 import { caseReviewState, submitCaseReview, internalCases, cancelCaseStatements, deliveryReviewStatements, resetCaseStatements } from './cases.mjs';
 import { CHAT_OPENAPI } from './openapi.mjs';
+import { lookupFaqCache } from './faq-cache.mjs';
 
 const VERSION = '1.2.0';
 const ORIGIN = 'https://fanqiang.guide';
@@ -213,13 +214,21 @@ async function ask(request, env, ctx) {
             const refs = retrieve(step.query, []);
             sources = refs.sources || [];
             let answer = '本站资料暂未找到这项需求的直接对应记录。请接收工程书的 AI 根据已提供的设备与目标核对相关官方资料，保留未知版本和待确认项，再从第一步开始指导用户。';
-            if (sources.length) {
+            const cached = lookupFaqCache(flow);
+            let modelCallCount = 0;
+            // Only public result metadata is logged; no visitor input or provider payload.
+            console.info(JSON.stringify({ event: 'faq_cache', status: cached.status, reason: cached.reason || null, faqId: cached.faqId || null }));
+            if (cached.status === 'hit') {
+              answer = cached.answer;
+              sources = cached.sources;
+            } else if (sources.length) {
               await quota(env, `global:${Math.floor(stamp / DAY)}`, Number(env.GLOBAL_DAILY_LIMIT || 1000), stamp + DAY * 2);
               const data = JSON.stringify({device:flow.device,need:flow.need,originalRequest:flow.originalRequest,details:flow.details}).replace(/</g,'\\u003c').replace(/::/g,'\\u003a\\u003a');
               const modelMessages = [
                 { role: 'system', content: SYSTEM + '\n' + refs.facts },
                 { role: 'user', content: `::ILANG::v5.0\n::MODULE{USER_CONTEXT}\n::STATE{@CONFIRMED_INTAKE, value:${data}}\n::ILANG::COMPLETE::` },
               ];
+              modelCallCount++;
               const response = await fetch('https://api.deepseek.com/chat/completions', {
                 method: 'POST', signal: abort.signal,
                 headers: { Authorization: `Bearer ${env.DEEPSEEK_API_KEY}`, 'Content-Type': 'application/json' },
@@ -228,6 +237,7 @@ async function ask(request, env, ctx) {
               if (!response.ok || !response.body) { await response.body?.cancel(); throw new Error('model_unavailable'); }
               answer = await consumeModel(response, () => {}, abort.signal);
             }
+            send('cache', { status: cached.status, reason: cached.reason || null, faqId: cached.faqId || null, modelCallCount });
             if (abort.signal.aborted) throw new Error('aborted');
             const sourceQuestion = `最初需求：${flow.originalRequest}\n当前设备：${flow.device}\n需要解决：${flow.need}`;
             const intake = Object.fromEntries(['aiTool','aiReady','originalRequest','device','need','details'].map(key => [key, flow[key]]));

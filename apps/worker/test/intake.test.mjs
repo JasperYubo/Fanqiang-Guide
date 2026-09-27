@@ -6,6 +6,22 @@ const step=(state,text,options)=>advanceIntake(state,text,options);
 const started=()=>step(createIntake(),'我想下载适合安卓手机的客户端').state;
 const ready=()=>step(createIntake(),'我有能正常使用的 DeepSeek，设备是 Windows 11 电脑，想下载 v2rayN').state;
 
+for(const question of ['v2rayN是什么','v2rayN含义','v2rayN有什么用','v2rayN官网','v2rayN怎么用','v2rayN教程','v2rayN兼容吗','v2rayN和v2rayNG区别'])test('explicit knowledge request retains its subject through the fixed gates: '+question,()=>{
+ let r=step(createIntake(),question);assert.equal(r.generate,false);assert.equal(r.state.stage,'awaiting_ai');assert.equal(r.state.need,question);
+ r=step(r.state,'DeepSeek 可以正常使用');assert.equal(r.generate,false);assert.equal(r.state.stage,'awaiting_requirements');
+ r=step(r.state,'Windows 11 电脑');assert.equal(r.generate,true);assert.equal(r.state.originalRequest,question);assert.equal(r.state.need,question);
+});
+for(const question of ['v2rayN','小火箭','Clash','是什么','官网','教程'])test('a product name or subjectless knowledge word still requests a concrete need: '+question,()=>{
+ let r=step(createIntake(),question);r=step(r.state,'DeepSeek 可以正常使用');r=step(r.state,'Windows 11 电脑');
+ assert.equal(r.generate,false);assert.equal(r.state.stage,'awaiting_requirements');assert.match(r.reply,/具体想完成什么/);
+});
+
+test('platform words inside a named product do not provide the visitor device',()=>{
+ let r=step(createIntake(),'Clash for Windows是什么');assert.equal(r.state.device,'');
+ r=step(r.state,'DeepSeek 可以正常使用');assert.equal(r.generate,false);assert.equal(r.state.stage,'awaiting_requirements');
+ r=step(r.state,'Android 手机');assert.equal(r.generate,true);assert.match(r.state.device,/Android/);assert.equal(r.state.need,'Clash for Windows是什么');
+});
+
 test('first technical request is saved but always begins with the fixed AI gate',()=>{
  const r=step(createIntake(),'我要给 RT-AX58U V2 核对梅林支持情况');
  assert.equal(r.reply,aiQuestion);assert.equal(r.generate,false);assert.equal(r.state.stage,'awaiting_ai');

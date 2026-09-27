@@ -63,6 +63,30 @@ def build(output: Path) -> dict:
         run(site / "verify-content-v1.4-2026-09-13.py")
         verify_final_site(site / "public")
         run(worker / "scripts/build_knowledge.py", "--public", site / "public", "--output", worker / "src/knowledge.mjs")
+        node = shutil.which("node")
+        if not node:
+            raise RuntimeError("Node.js is required for the reviewed FAQ compiler.")
+        faq_result = subprocess.run([node, str(worker / "scripts/build_faq_cache.mjs"),
+                                     "--input", str(ROOT / "data/faq-cache.json"),
+                                     "--output", str(worker / "src/faq-cache-data.mjs")],
+                                    capture_output=True, text=True, encoding="utf-8", timeout=60)
+        if faq_result.returncode:
+            raise RuntimeError("FAQ compilation failed: " + faq_result.stderr)
+        shutil.copyfile(ROOT / "data/faq-cache.json", site / "public/data/faq-cache.json")
+        faq_public = site / "public/data/faq-cache.json"
+        faq_public.with_suffix(".json.gz").write_bytes(gzip.compress(faq_public.read_bytes(), mtime=0))
+        llms = site / "public/llms.txt"
+        faq_line = "- [常见问题与官方参考](https://fanqiang.guide/data/faq-cache.json)：按软件、平台与问题意图整理的简体中文答案，保留原始搜索建议出处和官方资料核对日期。\n"
+        if "https://fanqiang.guide/data/faq-cache.json" not in llms.read_text(encoding="utf-8"):
+            llms.write_text(llms.read_text(encoding="utf-8").rstrip() + "\n\n" + faq_line, encoding="utf-8")
+        llms.with_suffix(".txt.gz").write_bytes(gzip.compress(llms.read_bytes(), mtime=0))
+        catalog = site / "public/.well-known/ai-catalog.json"
+        catalog_data = json.loads(catalog.read_text(encoding="utf-8"))
+        identifier = "urn:air:fanqiang.guide:resource:faq"
+        if not any(item.get("identifier") == identifier for item in catalog_data["entries"]):
+            catalog_data["entries"].append({"identifier": identifier, "displayName": "常见问题与官方参考", "type": "application/json", "url": "https://fanqiang.guide/data/faq-cache.json"})
+        catalog.write_text(json.dumps(catalog_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        catalog.with_suffix(".json.gz").write_bytes(gzip.compress(catalog.read_bytes(), mtime=0))
         output.mkdir()
         shutil.copytree(site / "public", output / "site")
         shutil.copytree(worker / "src", output / "worker/src")
