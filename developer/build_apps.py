@@ -56,10 +56,12 @@ def build(output: Path) -> dict:
         ignore = shutil.ignore_patterns("__pycache__", "*.pyc", ".venv", "venv", "node_modules", ".env", ".env.*")
         for name in ("site", "worker", "lookup"):
             shutil.copytree(ROOT / "apps" / name, scratch / "apps" / name, ignore=ignore)
+        (scratch / "data").mkdir()
+        shutil.copyfile(ROOT / "data/faq-cache.json", scratch / "data/faq-cache.json")
         (scratch / "tools").mkdir()
         shutil.copyfile(ROOT / "tools/ilang_grammar_validator.py", scratch / "tools/ilang_grammar_validator.py")
         site, worker, lookup = (scratch / "apps" / name for name in ("site", "worker", "lookup"))
-        run(site / "build-site-v1.4-2026-09-13.py")
+        run(site / "faq_pages_v10.py", "--source", scratch / "data/faq-cache.json")
         run(site / "verify-content-v1.4-2026-09-13.py")
         verify_final_site(site / "public")
         run(worker / "scripts/build_knowledge.py", "--public", site / "public", "--output", worker / "src/knowledge.mjs")

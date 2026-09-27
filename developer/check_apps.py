@@ -5,6 +5,8 @@ import argparse
 from datetime import datetime, timezone
 import gzip
 import hashlib
+import html
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -12,11 +14,65 @@ import re
 import shutil
 import subprocess
 import sys
+import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 NODE_TESTS = ("worker-intake.test.mjs", "intake-integration-review.test.mjs", "intake.test.mjs",
               "intake-artifact.test.mjs", "retrieval.test.mjs", "cases.test.mjs",
               "faq-cache.test.mjs", "worker-faq-cache.test.mjs")
+
+
+def validate_generated_answers(source: Path, public: Path) -> dict:
+    spec = importlib.util.spec_from_file_location("check_faq_pages", ROOT / "apps/site/faq_pages_v10.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    entries, _ = module.load_answers(source)
+    representatives, failures = {}, []
+    mapping = json.loads((public / "data/faq-pages.json").read_text(encoding="utf-8"))
+    mapped = {e["faq_id"]: e for e in mapping["entries"]}
+    if len(mapped) != len(entries) or mapping["pages"] != len(entries) or mapping["source_sha256"] != hashlib.sha256(source.read_bytes()).hexdigest():
+        failures.append("data/faq-pages.json:source_mapping_mismatch")
+    for entry in entries:
+        ident = representatives.setdefault(module.equivalent_key(entry), entry["faq_id"])
+        relative = "answers/" + entry["faq_id"] + "/"
+        canonical = module.SITE + "/answers/" + ident + "/"
+        try:
+            raw = (public / relative / "index.html").read_text(encoding="utf-8")
+            markdown = (public / relative / "index.md").read_text(encoding="utf-8")
+            if raw.count('rel="canonical" href="' + canonical + '"') != 1:
+                failures.append(relative + "canonical_mismatch")
+            if mapped[entry["faq_id"]]["canonical"] != canonical or mapped[entry["faq_id"]]["url"] != module.SITE + "/" + relative or "<h1>" + html.escape(mapped[entry["faq_id"]]["title"]) + "</h1>" not in raw:
+                failures.append(relative + "deployment_mapping_mismatch")
+            for fact in [entry["short_answer"], *[s["content"] for s in entry["sections"]]]:
+                if html.escape(fact) not in raw or module.mdtext(fact) not in markdown:
+                    failures.append(relative + "approved_fact_missing")
+            graph = json.loads(re.search(r'<script type="application/ld\+json">(.*?)</script>', raw, re.S)[1])["@graph"]
+            article = next(s for s in graph if s["@type"] == "Article")
+            if article["dateModified"] != entry["checked_at_utc"] or article["mainEntityOfPage"] != canonical:
+                failures.append(relative + "article_metadata_mismatch")
+            if any(s["@type"] == "FAQPage" for s in graph) or not any(s["@type"] == "BreadcrumbList" for s in graph):
+                failures.append(relative + "structured_data_mismatch")
+            if raw.count('/assets/external-browser-v1.0.js') != 1 or raw.count('googletagmanager.com/gtag/js?id=G-V0RLGGS7FB') != 1:
+                failures.append(relative + "template_guard_or_analytics_missing")
+            for source_item in entry["sources"]:
+                if html.escape(source_item["url"], quote=True) not in raw or source_item["url"] not in markdown:
+                    failures.append(relative + "approved_source_missing")
+        except (OSError, ValueError, KeyError, TypeError, StopIteration):
+            failures.append(relative + "invalid_page")
+    namespace = {"s": module.NS}
+    urls = [n.text for n in ET.parse(public / "sitemap-answers.xml").findall("s:url/s:loc", namespace)]
+    expected = {module.SITE + "/answers/" + ident + "/" for ident in representatives.values()}
+    if len(urls) != len(set(urls)) or not expected <= set(urls):
+        failures.append("sitemap-answers.xml:canonical_coverage_mismatch")
+    if mapping["canonical_pages"] != len(representatives) or mapping["sitemap_urls"] != len(urls):
+        failures.append("data/faq-pages.json:canonical_count_mismatch")
+    for ident in {e["faq_id"] for e in entries} - set(representatives.values()):
+        if module.SITE + "/answers/" + ident + "/" in urls:
+            failures.append("sitemap-answers.xml:duplicate_canonical_page")
+    actual_pages = len(list((public / "answers").glob("faq-*/index.html")))
+    if actual_pages != len(entries):
+        failures.append("answers:page_count_mismatch")
+    return {"pages": actual_pages, "canonical_pages": len(representatives), "sitemap_urls": len(urls), "failures": failures}
 
 
 def validate_generated_knowledge(source: Path, generated: Path, public: Path) -> list[str]:
@@ -81,6 +137,7 @@ def main():
         ("worker-tests", [node, "--test", "--test-reporter=tap", *[str(ROOT / "apps/worker/test" / name) for name in NODE_TESTS]], ROOT / "apps/worker"),
         ("lookup-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/lookup/runtime"), "-p", "test_app.py", "-v"], ROOT / "apps/lookup/runtime"),
         ("case-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_cases*.py", "-v"], ROOT / "apps/site"),
+        ("faq-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_faq_pages*.py", "-v"], ROOT / "apps/site"),
         ("case-pipeline-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/case-pipeline"), "-p", "test_*.py", "-v"], ROOT / "apps/case-pipeline"),
         ("build", [sys.executable, str(ROOT / "developer/build_apps.py"), "--output", str(output / "release")], output),
     ]
@@ -125,6 +182,8 @@ def main():
         faq_module = (release / "worker/src/faq-cache-data.mjs").read_text(encoding="utf-8")
         if ("SHA256: " + hashlib.sha256(faq_bytes).hexdigest()) not in faq_module:
             failures.append("worker/src/faq-cache-data.mjs:source_hash_mismatch")
+        report["faq_pages"] = validate_generated_answers(ROOT / "data/faq-cache.json", release / "site")
+        failures.extend(report["faq_pages"]["failures"])
         for file in sorted(release.rglob("*")):
             if file.is_file() and file.suffix.lower() in {".html", ".txt", ".md", ".json", ".mjs", ".js", ".py", ".ilang"}:
                 if "github.com/mtmpss/Fanqiang-Guide" in file.read_text(encoding="utf-8"):
