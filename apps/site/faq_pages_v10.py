@@ -239,15 +239,20 @@ def build_faq_pages(public, source, page):
             ET.SubElement(node, f"{{{NS}}}lastmod").text = modified
     for name, root in (("sitemap.xml", sitemap), ("sitemap-answers.xml", answers_sitemap)):
         write(public, name, '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(root, encoding="unicode"))
-    discovery = "- [常见问题与官方参考](" + SITE + "/answers/)：按工具和主题阅读答案与官方来源。"
-    for name in ("llms.txt", "ai/index.md", "index.md"):
+    discovery = {
+        "llms.txt": "- [常见问题与官方参考](" + SITE + "/answers/)：按软件与设备分类的中文答案，每页附官方来源、核对日期和 Markdown 阅读版本。",
+        "ai/index.md": "- [常见问题与官方参考](" + SITE + "/answers/)：按软件与设备阅读答案及官方参考资料。",
+        "index.md": "## 翻墙与科学上网常见问题\n\n[按软件、设备和需求阅读答案](" + SITE + "/answers/)；每页保留官方参考资料和相关问题。",
+    }
+    for name, entry in discovery.items():
         previous = (public / name).read_text(encoding="utf-8")
         if SITE + "/answers/" not in previous:
-            write(public, name, previous.rstrip() + "\n\n" + discovery)
+            write(public, name, previous.rstrip() + "\n\n" + entry)
     write(public, "llms-full.txt", (public / "ai/index.md").read_text(encoding="utf-8"))
     home = (public / "index.html").read_text(encoding="utf-8")
-    if 'href="/answers/"' not in home:
-        home = home.replace("</main>", '<section class="wrap"><h2><a href="/answers/">常见问题与官方参考</a></h2><p>按工具和主题查阅答案，沿来源阅读官方资料。</p></section></main>', 1)
+    if 'id="faq-discovery"' not in home:
+        discovery_html = '<section class="section wrap faq-discovery" id="faq-discovery" aria-labelledby="faq-discovery-title"><div class="faq-discovery-inner"><div><p class="mini-label">公开问答 / 官方参考</p><h2 id="faq-discovery-title">翻墙与科学上网<span class="faq-title-tail">常见问题</span></h2><p>按工具和主题查答案，沿出处核对官方资料。</p></div><a class="button button-primary" href="/answers/">浏览全部问答 ↗</a></div></section>'
+        home = home.replace("</main>", discovery_html + "</main>", 1)
         write(public, "index.html", home)
     catalog = public / ".well-known/ai-catalog.json"
     obj = json.loads(catalog.read_text(encoding="utf-8"))
@@ -280,7 +285,7 @@ def main():
         if target.is_file() and target.suffix != ".gz":
             relative = target.relative_to(directory / "public").as_posix()
             manifest[relative] = hashlib.sha256(target.read_bytes()).hexdigest()
-            if relative != "sitemap.xml" and (target.suffix in (".html", ".md", ".json", ".txt", ".xml") or target.with_name(target.name + ".gz").exists()):
+            if target.suffix in (".html", ".md", ".json", ".txt", ".xml") or target.with_name(target.name + ".gz").exists():
                 target.with_name(target.name + ".gz").write_bytes(gzip.compress(target.read_bytes(), mtime=0))
     (directory / "release-manifest-v1.4-2026-09-13.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))

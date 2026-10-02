@@ -12,6 +12,8 @@ DATE = '2026-09-19'
 GA4_MEASUREMENT_ID = 'G-V0RLGGS7FB'
 GSC_VERIFICATION_FILE = 'google35643466072986f6.html'
 GSC_VERIFICATION_SOURCE = B / 'verification' / GSC_VERIFICATION_FILE
+THEME_LINK = '<link rel="stylesheet" href="/assets/site-theme-v2.0-2026-10-02.css">'
+THEME_SCRIPT = '<script defer src="/assets/site-theme-v2.0-2026-10-02.js"></script>'
 e = html.escape
 
 GA4_SNIPPET = f'''<!-- Google tag (gtag.js) -->
@@ -45,9 +47,14 @@ def inject_ga4_into_final_html():
             continue
         raw = path.read_text(encoding='utf-8')
         raw = GA4_BLOCK.sub('', raw)
+        raw = raw.replace('<meta name="theme-color" content="#f7f8fa">', '<meta name="theme-color" content="#f5f2eb">')
         if raw.count('<head>') != 1:
             raise ValueError(f'Expected exactly one <head> in {path.relative_to(P)}')
         rendered = raw.replace('<head>', '<head>\n' + GA4_SNIPPET + '\n', 1)
+        if THEME_LINK not in rendered:
+            rendered = rendered.replace('</head>', THEME_LINK + '</head>', 1)
+        if THEME_SCRIPT not in rendered:
+            rendered = rendered.replace('</head>', THEME_SCRIPT + '</head>', 1)
         if (
             rendered.count('<!-- Google tag (gtag.js) -->') != 1
             or rendered.count(f'googletagmanager.com/gtag/js?id={GA4_MEASUREMENT_ID}') != 1
@@ -70,15 +77,15 @@ def srcs(sources):
     return '<p class="sources">来源：' + ' · '.join(f'<a href="{e(s["url"], quote=True)}">{e(s["label"])}</a>' for s in sources) + '</p>' if sources else ''
 
 def header():
-    return f'''<a class="skip-link" href="#main">跳到主要内容</a><header class="site-header"><div class="wrap header-inner"><a class="brand" href="/" aria-label="翻墙指南首页"><img src="/favicon.svg" alt="" width="34" height="34"><span>翻墙指南<small>FANQIANG.GUIDE</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/#topics">工具指南</a><a href="/guides/asus-merlin.html">华硕梅林</a><a href="{ARCHIVE}">免费节点来源</a><a class="nav-repo" href="{REPO}">GitHub ↗</a></nav></div></header>'''
+    return f'''<a class="skip-link" href="#main">跳到主要内容</a><header class="site-header"><div class="wrap header-inner"><a class="brand" href="/" aria-label="翻墙指南首页"><img src="/favicon.svg" alt="" width="34" height="34"><span>翻墙指南<small>FANQIANG.GUIDE</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/#topics">工具指南</a><a href="/answers/">常见问题</a><a href="/guides/asus-merlin.html">华硕梅林</a><a href="{ARCHIVE}">免费节点来源</a><a class="nav-repo" href="{REPO}">GitHub ↗</a></nav><details class="mobile-nav"><summary>浏览<span aria-hidden="true">＋</span></summary><nav aria-label="手机导航"><a href="/guides/library.html">资料检索</a><a href="/#topics">工具指南</a><a href="/answers/">常见问题</a><a href="/guides/asus-merlin.html">华硕梅林</a><a href="{ARCHIVE}">免费节点来源</a><a href="{REPO}">GitHub 仓库 ↗</a></nav></details></div></header>'''
 
 def footer():
-    return f'''<footer class="site-footer"><div class="wrap footer-main"><div><a class="footer-brand" href="/">翻墙指南 <span>FANQIANG.GUIDE</span></a><p>按设备找工具，按问题找答案，沿来源继续阅读。</p></div><nav aria-label="页脚导航"><a href="/guides/index.html">全部指南</a><a href="/ai/">AI 资料入口</a><a href="{ARCHIVE}">按日期查来源</a><a href="{REPO}">GitHub</a></nav></div><div class="wrap footer-bottom"><span>提供公开资料与 I-Lang 工程书。</span><a href="{REPO}/issues">反馈资料问题 ↗</a></div></footer>'''
+    return f'''<footer class="site-footer"><div class="wrap footer-main"><div><a class="footer-brand" href="/">翻墙指南 <span>FANQIANG.GUIDE</span></a><p>按设备找工具，按问题找答案，沿来源继续阅读。</p></div><nav aria-label="页脚导航"><a href="/guides/index.html">全部指南</a><a href="/answers/">常见问题</a><a href="/ai/">AI 资料入口</a><a href="{ARCHIVE}">按日期查来源</a><a href="{REPO}">GitHub</a></nav></div><div class="wrap footer-bottom"><span>提供公开资料与 I-Lang 工程书。</span><a href="{REPO}/issues">反馈资料问题 ↗</a></div></footer>'''
 
 def page(title, description, path, body, schemas, md=None):
     alt = f'<link rel="alternate" type="text/markdown" href="{SITE}{md}">' if md else ''
     structured = json.dumps({'@context': 'https://schema.org', '@graph': schemas}, ensure_ascii=False).replace('</', '<\\/')
-    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{e(title)}</title><meta name="description" content="{e(description, quote=True)}"><meta name="robots" content="index,follow"><meta name="theme-color" content="#f7f8fa"><link rel="canonical" href="{SITE}{path}">{alt}<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/site-v1.3.css"><link rel="ai-catalog" href="/.well-known/ai-catalog.json"><meta property="og:type" content="website"><meta property="og:title" content="{e(title, quote=True)}"><meta property="og:description" content="{e(description, quote=True)}"><meta property="og:url" content="{SITE}{path}"><script type="application/ld+json">{structured}</script><script defer src="/assets/webmcp-v1.1.js"></script></head><body>{header()}{body}{footer()}</body></html>'''
+    return f'''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{e(title)}</title><meta name="description" content="{e(description, quote=True)}"><meta name="robots" content="index,follow"><meta name="theme-color" content="#f5f2eb"><link rel="canonical" href="{SITE}{path}">{alt}<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/site-v1.3.css"><link rel="ai-catalog" href="/.well-known/ai-catalog.json"><meta property="og:type" content="website"><meta property="og:title" content="{e(title, quote=True)}"><meta property="og:description" content="{e(description, quote=True)}"><meta property="og:url" content="{SITE}{path}"><script type="application/ld+json">{structured}</script><script defer src="/assets/webmcp-v1.1.js"></script></head><body>{header()}{body}{footer()}</body></html>'''
 
 def faq_schema(faqs, ident):
     return {'@type': 'FAQPage', '@id': ident, 'mainEntity': [{'@type': 'Question', 'name': f['question'], **({'url':f['url']} if f.get('url') else {}), 'acceptedAnswer': {'@type': 'Answer', 'text': f['answer']}} for f in faqs]}
@@ -94,6 +101,9 @@ css += '''
 @media(max-width:900px){.guide-layout{grid-template-columns:1fr;gap:20px}.guide-aside{position:static;grid-row:1}.guide-aside nav{display:flex;flex-wrap:wrap;gap:0 20px}.guide-aside .aside-formats{display:flex;gap:20px}.guide-aside a{padding-block:5px}}@media(max-width:760px){.hero h1{font-size:clamp(31px,7.8vw,45px)}.topic-grid,.quick-answers{grid-template-columns:1fr}.answer-card{padding:22px}.guide-main{padding-top:25px}.guide-body section{padding:22px 20px}.guide-body h2{font-size:21px}.guide-summary{font-size:15px}.guide-body p,.guide-body li{font-size:14px}.guide-header{margin-bottom:25px}.topic-index h1{font-size:29px}.guide-header .hero-actions .button{font-size:12px}.hero-keywords{font-size:11px}.quick-answer{padding:22px}}
 '''
 write('assets/site-v1.3.css', css)
+write('assets/site-theme-v2.0-2026-10-02.css', (B / 'content/site-theme-v2.0-2026-10-02.css').read_text(encoding='utf-8'))
+write('assets/site-theme-v2.0-2026-10-02.js', (B / 'content/site-theme-v2.0-2026-10-02.js').read_text(encoding='utf-8'))
+write('assets/home-v2.0-2026-10-02.css', (B / 'content/home-v2.0-2026-10-02.css').read_text(encoding='utf-8'))
 
 order = ['client-downloads','ladder-vpn-proxy','airport-subscription-nodes','free-nodes','subscription-conversion','shadowrocket-platforms','shadowrocket-qr','router-guide','openwrt-tools','asus-merlin','v2rayn-guide','proxy-cores','clash-projects']
 guides = [by_slug[k] for k in order]
@@ -125,7 +135,11 @@ for g in guides:
     aside = ''.join(f'<a href="#section-{i}">{e(s["heading"])}</a>' for i,s in enumerate(g['sections'],1))
     base = '/guides/' + g['slug']
     related = ''.join(f'<a href="{href(by_slug[slug])}">{e(by_slug[slug]["short_title"])}</a>' for slug in related_slugs[g['slug']])
-    body = f'''<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/guides/index.html">工具指南</a><span>/</span><span>{e(g['short_title'])}</span></nav><div class="guide-header"><p class="eyebrow">FANQIANG GUIDE / 工具与问题</p><h1>{e(g['title'])}</h1><p class="guide-summary">{e(g['summary'])}</p><p class="guide-meta">整理于 {DATE} · 具体版本、平台与型号以所引来源为准</p></div><div class="guide-layout"><div class="guide-body">{''.join(sections)}<section id="questions"><h2>常见问题</h2>{faqs}</section><section class="handoff" id="engineering-book"><h2>交给自己的 AI 继续处理</h2><p>工程书包含本专题资料、需要确认的设备信息、检查项和交付要求。下载后交给你自己的 AI，并告诉它你的具体需求。</p><a class="button button-primary" href="{base}.ilang" download="{g['slug']}-v1.4-{DATE}.ilang">下载 I-Lang 工程书 ↓</a></section><section id="related"><h2>继续阅读</h2><div class="related-links">{related}</div></section></div><aside class="guide-aside" aria-label="本页目录"><h2>本页内容</h2><nav>{aside}<a href="#questions">常见问题</a><a href="#engineering-book">I-Lang 工程书</a></nav><div class="aside-formats"><a href="{base}.md">Markdown 全文</a><a href="/ai/">完整 AI 资料</a></div></aside></div></main>'''
+    title_html = e(g['title'])
+    if g['slug'] == 'ladder-vpn-proxy':
+        title_html = title_html.replace('有什么区别？', '<span class="guide-title-question">有什么区别？</span>', 1)
+        title_html = title_html.replace('科学上网新手选择指南', '<span class="guide-title-followup"><span class="guide-title-term">科学上网</span><span class="guide-title-tail">新手选择指南</span></span>', 1)
+    body = f'''<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/guides/index.html">工具指南</a><span>/</span><span>{e(g['short_title'])}</span></nav><div class="guide-header"><p class="eyebrow">FANQIANG GUIDE / 工具与问题</p><h1>{title_html}</h1><p class="guide-summary">{e(g['summary'])}</p><p class="guide-meta">整理于 {DATE} · 具体版本、平台与型号以所引来源为准</p></div><div class="guide-layout"><div class="guide-body">{''.join(sections)}<section id="questions"><h2>常见问题</h2>{faqs}</section><section class="handoff" id="engineering-book"><h2>交给自己的 AI 继续处理</h2><p>工程书包含本专题资料、需要确认的设备信息、检查项和交付要求。下载后交给你自己的 AI，并告诉它你的具体需求。</p><a class="button button-primary" href="{base}.ilang" download="{g['slug']}-v1.4-{DATE}.ilang">下载 I-Lang 工程书 ↓</a></section><section id="related"><h2>继续阅读</h2><div class="related-links">{related}</div></section></div><aside class="guide-aside" aria-label="本页目录"><h2>本页内容</h2><nav>{aside}<a href="#questions">常见问题</a><a href="#engineering-book">I-Lang 工程书</a></nav><div class="aside-formats"><a href="{base}.md">Markdown 全文</a><a href="/ai/">完整 AI 资料</a></div></aside></div></main>'''
     schemas = [{'@type':'Article','@id':url(g)+'#article','headline':g['title'],'description':g['summary'],'url':url(g),'inLanguage':'zh-CN','datePublished':DATE,'dateModified':DATE,'keywords':g['keywords'],'mainEntityOfPage':url(g)},
                {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'翻墙指南','item':SITE+'/'},{'@type':'ListItem','position':2,'name':'工具指南','item':SITE+'/guides/index.html'},{'@type':'ListItem','position':3,'name':g['short_title'],'item':url(g)}]}, faq_schema(g['faq'],url(g)+'#questions')]
     write('guides/'+g['slug']+'.html', page(g['title']+' | Fanqiang Guide',g['summary'],base+'.html',body,schemas,base+'.md'))
@@ -153,6 +167,10 @@ schemas = [{'@type':'WebSite','@id':SITE+'/#website','name':TITLE,'alternateName
            {'@type':'CollectionPage','@id':SITE+'/#page','name':TITLE,'description':home_desc,'url':SITE+'/','isPartOf':{'@id':SITE+'/#website'},'about':[{'@type':'Thing','name':'翻墙'},{'@type':'Thing','name':'科学上网'},{'@type':'Thing','name':'梯子'},{'@type':'Thing','name':'VPN'},{'@type':'Thing','name':'代理'},{'@type':'Thing','name':'节点'},{'@type':'Thing','name':'订阅'},{'@type':'Thing','name':'路由器'}]},
            {'@type':'ItemList','name':'工具与问题指南','itemListElement':[{'@type':'ListItem','position':i,'name':g['title'],'url':url(g)} for i,g in enumerate(guides,1)]},faq_schema(home_faqs,SITE+'/#answers')]
 write('index.html',page(TITLE+' | Fanqiang Guide',home_desc,'/',body,schemas,'/index.md'))
+home = (P / 'index.html').read_text(encoding='utf-8')
+home = home.replace('</head>', '<link rel="stylesheet" href="/assets/home-v2.0-2026-10-02.css"></head>', 1)
+home = home.replace('<body>', '<body class="home-v2">', 1)
+write('index.html', home)
 home_md = ['# '+TITLE,'',home_desc,'','## 按设备选择',''] + [f'- {n}：{note}。[阅读指南]({url(by_slug[s])})' for n,note,s in platforms]
 home_md += ['','## 工具与问题','']
 for g in guides: home_md += [f'### [{g["short_title"]}]({url(g)})','',g['summary'],'']

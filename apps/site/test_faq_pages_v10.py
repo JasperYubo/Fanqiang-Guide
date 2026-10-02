@@ -97,6 +97,14 @@ class FaqPageTests(unittest.TestCase):
             self.assertEqual(gzip.decompress(target.read_bytes()), target.with_suffix("").read_bytes())
             self.assertEqual(target.read_bytes()[4:8], bytes(4))
 
+    def test_navigation_link_does_not_replace_home_answer_discovery(self):
+        (self.public / "index.html").write_text('<html><head></head><body><nav><a href="/answers/">常见问题</a></nav><main>原有首页</main></body></html>', encoding="utf-8")
+        self.build(fixture())
+        self.build(fixture())
+        home = (self.public / "index.html").read_text(encoding="utf-8")
+        self.assertEqual(home.count('id="faq-discovery"'), 1)
+        self.assertIn('<a class="button button-primary" href="/answers/">浏览全部问答', home)
+
     def test_unapproved_private_sources_and_path_injection_fail_before_publication(self):
         for mutate in (lambda d: d["entries"][0].update(review_state="unreviewed"), lambda d: d["entries"][0].update(faq_id="../escape"), lambda d: d["sources"][0].update(url="https://user:password@example.com/"), lambda d: d["sources"][0].update(verification_status="reference_only")):
             data = fixture(); mutate(data)

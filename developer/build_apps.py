@@ -26,7 +26,7 @@ def verify_final_site(site: Path) -> None:
     ):
         if home.count(marker) != 1:
             raise RuntimeError(f"Final site is missing its chat UI or browser guard: {marker}")
-    for relative in ("index.html", "assets/chat-v1.2.js", "assets/chat-v1.2.css",
+    for relative in ("index.html", "sitemap.xml", "assets/chat-v1.2.js", "assets/chat-v1.2.css",
                      "assets/external-browser-v1.0.js", "assets/external-browser-v1.0.css"):
         file = site / relative
         if not file.is_file() or gzip.decompress(file.with_name(file.name + ".gz").read_bytes()) != file.read_bytes():

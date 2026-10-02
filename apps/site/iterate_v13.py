@@ -69,7 +69,7 @@ def iterate(P,page,guides,date):
         s=s.replace('全部工具目录 ↗','代理工具与开源项目资料库 →')
         if p==P/'index.html':
             form=f'<form class="site-search" role="search" action="{LIB}" method="get"><label for="site-query">查工具名称或关键词</label><div class="site-search-row"><input id="site-query" name="q" type="search" placeholder="例如 v2rayN、Hiddify、OpenClash" maxlength="120"><button class="button button-primary" type="submit">搜索资料</button></div><p><a href="{LIB}">浏览 310 条工具资料</a> · <a href="{MODELS}">查华硕梅林型号</a></p></form>'
-            s=s.replace('<div class="hero-facts">',form+'<div class="hero-facts">',1)
+            s=s.replace('<p class="hero-keywords">',form+'<p class="hero-keywords">',1)
         if p==P/'guides/index.html':
             s=s.replace('<div class="topic-grid">',f'<div class="directory-entry"><a href="{LIB}">代理工具与开源项目资料库（310条）→</a><a href="{MODELS}">查询58条梅林型号记录 →</a></div><div class="topic-grid">',1)
         # Keep structured authorship consistent with the visible project identity.
@@ -115,5 +115,5 @@ def iterate(P,page,guides,date):
     robots='User-agent: *\nAllow: /\nDisallow: /agent-auth/\n\nUser-agent: Google-Extended\nAllow: /\nDisallow: /agent-auth/\n\n'
     for bot in ['GPTBot','ClaudeBot','Applebot-Extended','Bytespider','CCBot','meta-externalagent','Amazonbot']:
         robots+='User-agent: '+bot+'\nDisallow: /\n\n'
-    robots+='Sitemap: '+SITE+'/sitemap.xml\nAgentmap: '+SITE+'/.well-known/ai-catalog.json\n';put(P,'robots.txt',robots)
+    robots+='Sitemap: '+SITE+'/sitemap.xml\nSitemap: '+SITE+'/sitemap-answers.xml\nAgentmap: '+SITE+'/.well-known/ai-catalog.json\n';put(P,'robots.txt',robots)
     put(P.parent,'verification/integration-summary-v1.3.json',json.dumps({'catalog':results,'comparison_rows':len(rows),'merlin_examples':len(picks),'new_html_routes':routes},ensure_ascii=False,indent=2))
