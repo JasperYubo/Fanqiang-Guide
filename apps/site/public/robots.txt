@@ -30,4 +30,5 @@ User-agent: Amazonbot
 Disallow: /
 
 Sitemap: https://fanqiang.guide/sitemap.xml
+Sitemap: https://fanqiang.guide/sitemap-answers.xml
 Agentmap: https://fanqiang.guide/.well-known/ai-catalog.json

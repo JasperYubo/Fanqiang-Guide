@@ -60,6 +60,7 @@ function aiStatus(text,canUseShort) {
   if(canUseShort&&shortYes.test(text))return {value:true,tool};
   const explicitYes=clauses.some(s=>aiPattern.test(s)&&!unavailable.test(s)&&!/(?:没有|还没有|不可以|不能|没法|无法|未|没)/.test(s)&&(
     /(?:能正常|可以正常|已经能|现在能|已经可以|现在可以|可以用|能用|可用|能发消息|可以发消息|正常发送|正常使用)/.test(s)
+    ||(/(?:可以|能够|能)\s*使用/.test(s)&&!/[?？]|(?:能不能|可不可以|是否|能否|不确定|不知道)/.test(s))
     ||(canUseShort&&/(?:我有|我在用|我用|正在用|已经有|有一个|用的是)/.test(s))
   ));
   return {value:explicitYes?true:null,tool};

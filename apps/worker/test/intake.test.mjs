@@ -44,6 +44,21 @@ test('known device and need are not asked again after AI confirmation',()=>{
  assert.equal(r.generate,true);assert.doesNotMatch(r.reply,/什么设备|什么系统|具体想/);
 });
 
+for(const answer of ['我可以使用DeepSeek','我能够使用豆包','元宝能使用'])test('ordinary usable-AI statement passes the AI gate: '+answer,()=>{
+ const r=step(started(),answer);assert.equal(r.state.aiReady,true);
+});
+
+test('combined usable AI and device completes the retained original question',()=>{
+ let r=step(createIntake(),'v2rayN是什么');
+ r=step(r.state,'我可以使用DeepSeek，设备是Windows 11电脑');
+ assert.equal(r.generate,true);assert.equal(r.state.aiTool,'DeepSeek');
+ assert.equal(r.state.device,'Windows 11电脑');assert.equal(r.state.need,'v2rayN是什么');
+});
+
+for(const answer of ['我不能使用DeepSeek','我可以使用DeepSeek吗？','不知道是否能使用豆包','DeepSeek无法使用'])test('unavailable or unconfirmed AI never passes the new wording: '+answer,()=>{
+ const r=step(started(),answer);assert.equal(r.state.aiReady,false);assert.equal(r.generate,false);
+});
+
 test('first message with explicitly working AI, concrete device and specific need skips only known fields',()=>{
  const r=step(createIntake(),'我有能正常使用的 DeepSeek，设备是 Windows 11 电脑，想下载 v2rayN');
  assert.equal(r.generate,true);assert.equal(r.state.aiReady,true);assert.equal(r.state.aiTool,'DeepSeek');assert.match(r.state.device,/Windows 11/);
