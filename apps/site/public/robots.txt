@@ -1,8 +1,10 @@
 User-agent: *
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /
 Disallow: /agent-auth/
 
 User-agent: Google-Extended
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /
 Disallow: /agent-auth/
 

@@ -233,6 +233,8 @@ def repo_observation(row, detailed=False):
         prefix = "信息更新于 " + date_text(row.get("checked_at")) if detailed else ""
     elif status == "unavailable":
         prefix = "暂时无法查看项目（未确认是否删除）；查询于 " + date_text(row.get("checked_at"))
+        if row.get("error_code") == "repository_not_found":
+            prefix += "；原仓库返回 404，当前下载来源不可核实；保留资料作参考，暂不作为可用下载入口"
     else:
         prefix = "本次未能取得项目信息；查询于 " + date_text(row.get("checked_at"))
     if isinstance(data, dict):
