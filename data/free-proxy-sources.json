@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "last_run": {
-    "checked_at": "2026-10-12T01:21:33Z",
+    "checked_at": "2026-10-13T03:04:27Z",
     "feed_count": 4,
     "ok_count": 4,
     "error_count": 0
@@ -11,84 +11,85 @@
       "source_id": "free-nodes",
       "url": "https://raw.githubusercontent.com/free-nodes/v2rayfree/main/sub",
       "format": "base64_uri",
-      "checked_at": "2026-10-12T01:21:33Z",
+      "checked_at": "2026-10-13T03:04:27Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-10-12T01:21:33Z",
-      "content_changed_at": "2026-10-12T01:21:33Z",
-      "sha256": "dfd6aba26fb6c9dbb61c6be57c07e7900022e8cb0155eccbcbdc18e76055ea64",
-      "byte_count": 232212,
-      "valid_count": 596,
-      "unique_count": 489,
+      "last_success_at": "2026-10-13T03:04:27Z",
+      "content_changed_at": "2026-10-13T03:04:27Z",
+      "sha256": "b95ab048cef64f2f9b690d1a9f74dcc0be3247bec83e1a88cf292106a68db748",
+      "byte_count": 235124,
+      "valid_count": 597,
+      "unique_count": 490,
       "duplicate_count": 107,
-      "rejected_count": 12,
+      "rejected_count": 13,
       "protocol_counts": {
-        "ss": 109,
-        "trojan": 59,
-        "vless": 187,
-        "vmess": 134
+        "ss": 111,
+        "trojan": 53,
+        "vless": 186,
+        "vmess": 140
       }
     },
     "monosans-all": {
       "source_id": "monosans",
       "url": "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/all.txt",
       "format": "plain_uri",
-      "checked_at": "2026-10-12T01:21:33Z",
+      "checked_at": "2026-10-13T03:04:27Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-10-12T01:21:33Z",
-      "content_changed_at": "2026-10-12T01:21:33Z",
-      "sha256": "a57ee2e1915f38ffed6ad9184b507b00f9c2b751b0cdf070c69f66904910f516",
-      "byte_count": 36675,
-      "valid_count": 1372,
-      "unique_count": 1372,
+      "last_success_at": "2026-10-13T03:04:27Z",
+      "content_changed_at": "2026-10-13T03:04:27Z",
+      "sha256": "40ace0c3445f8f070086f279104a017a0eaab76ac7ecd10ee4c34c217c8691cf",
+      "byte_count": 26905,
+      "valid_count": 1003,
+      "unique_count": 1003,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "http": 351,
-        "socks4": 139,
-        "socks5": 882
+        "http": 287,
+        "socks4": 103,
+        "socks5": 613
       }
     },
     "pawdroid-sub": {
       "source_id": "pawdroid",
       "url": "https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub",
       "format": "base64_uri",
-      "checked_at": "2026-10-12T01:21:33Z",
+      "checked_at": "2026-10-13T03:04:27Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-10-12T01:21:33Z",
-      "content_changed_at": "2026-10-12T01:21:33Z",
-      "sha256": "022a8f2fee416b8bc8cfaad9528df41296baf81c14648e3477e5ce8150814ac2",
-      "byte_count": 5444,
-      "valid_count": 16,
-      "unique_count": 16,
+      "last_success_at": "2026-10-13T03:04:27Z",
+      "content_changed_at": "2026-10-13T03:04:27Z",
+      "sha256": "1a1b6c6b7754efecfd0ab8472957d3d8273f24e408c1517c0e51623d17f6b1e7",
+      "byte_count": 6864,
+      "valid_count": 20,
+      "unique_count": 20,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
+        "hysteria2": 2,
         "trojan": 2,
-        "vless": 14
+        "vless": 16
       }
     },
     "v2ray-aggregator-eternity": {
       "source_id": "v2ray-aggregator",
       "url": "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/Eternity",
       "format": "base64_uri",
-      "checked_at": "2026-10-12T01:21:33Z",
+      "checked_at": "2026-10-13T03:04:27Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-10-12T01:21:33Z",
-      "content_changed_at": "2026-10-12T01:21:33Z",
-      "sha256": "2e37dc0f519a72958081cd1551934608d7c127af9232b62e53997a0fc7253f1d",
-      "byte_count": 44328,
+      "last_success_at": "2026-10-13T03:04:27Z",
+      "content_changed_at": "2026-10-13T03:04:27Z",
+      "sha256": "ad3b7f8fd71ab4020ede74f899bac391eceef28648cac0ee2190ba58d51f1c6a",
+      "byte_count": 45700,
       "valid_count": 200,
       "unique_count": 200,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "ss": 118,
+        "ss": 115,
         "trojan": 61,
-        "vmess": 21
+        "vmess": 24
       }
     }
   }
