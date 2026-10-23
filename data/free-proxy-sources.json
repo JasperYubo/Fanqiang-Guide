@@ -1,20 +1,20 @@
 {
   "schema_version": 1,
   "last_run": {
-    "checked_at": "2026-10-22T00:42:40Z",
+    "checked_at": "2026-10-23T00:42:24Z",
     "feed_count": 4,
-    "ok_count": 3,
-    "error_count": 1
+    "ok_count": 4,
+    "error_count": 0
   },
   "feeds": {
     "free-nodes-sub": {
       "source_id": "free-nodes",
       "url": "https://raw.githubusercontent.com/free-nodes/v2rayfree/main/sub",
       "format": "base64_uri",
-      "checked_at": "2026-10-22T00:42:40Z",
-      "status": "error",
-      "error_code": "empty_content",
-      "last_success_at": "2026-10-20T01:06:24Z",
+      "checked_at": "2026-10-23T00:42:24Z",
+      "status": "ok",
+      "error_code": null,
+      "last_success_at": "2026-10-23T00:42:24Z",
       "content_changed_at": "2026-10-19T00:14:01Z",
       "sha256": "700cfe59325f8d6e61ef3f9057ebb62d88bef5ed6a68b18a94a993f43ec3d78c",
       "byte_count": 32776,
@@ -30,61 +30,63 @@
       "source_id": "monosans",
       "url": "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/all.txt",
       "format": "plain_uri",
-      "checked_at": "2026-10-22T00:42:40Z",
+      "checked_at": "2026-10-23T00:42:24Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-10-22T00:42:40Z",
-      "content_changed_at": "2026-10-22T00:42:40Z",
-      "sha256": "3982eb011ad829d2ee003e0e68741200cf515a1891174527bbd4e1bde4cee9d2",
-      "byte_count": 39931,
-      "valid_count": 1496,
-      "unique_count": 1496,
+      "last_success_at": "2026-10-23T00:42:24Z",
+      "content_changed_at": "2026-10-23T00:42:24Z",
+      "sha256": "943a2bdaa0c9fb474b38b36ca4dd74851f170b6e4f4c455dddb692edd0a51294",
+      "byte_count": 44075,
+      "valid_count": 1655,
+      "unique_count": 1655,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "http": 345,
-        "socks4": 142,
-        "socks5": 1009
+        "http": 442,
+        "socks4": 144,
+        "socks5": 1069
       }
     },
     "pawdroid-sub": {
       "source_id": "pawdroid",
       "url": "https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub",
       "format": "base64_uri",
-      "checked_at": "2026-10-22T00:42:40Z",
+      "checked_at": "2026-10-23T00:42:24Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-10-22T00:42:40Z",
-      "content_changed_at": "2026-10-22T00:42:40Z",
-      "sha256": "7bf7ddf469a67370a89d42bda52407c203b6cced569a9fb7d861d675260b356e",
-      "byte_count": 6272,
-      "valid_count": 19,
-      "unique_count": 19,
+      "last_success_at": "2026-10-23T00:42:24Z",
+      "content_changed_at": "2026-10-23T00:42:24Z",
+      "sha256": "fd1d1e64d28f969fd623c98a942335e32af91dc72e3fbf62ae216bf7dfffc55c",
+      "byte_count": 6160,
+      "valid_count": 20,
+      "unique_count": 20,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "vless": 19
+        "ss": 2,
+        "trojan": 1,
+        "vless": 17
       }
     },
     "v2ray-aggregator-eternity": {
       "source_id": "v2ray-aggregator",
       "url": "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/Eternity",
       "format": "base64_uri",
-      "checked_at": "2026-10-22T00:42:40Z",
+      "checked_at": "2026-10-23T00:42:24Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-10-22T00:42:40Z",
-      "content_changed_at": "2026-10-22T00:42:40Z",
-      "sha256": "53dc856b8c00535273706284d28eabd115eca10e8f3917f191361b3a5afa905c",
-      "byte_count": 53936,
+      "last_success_at": "2026-10-23T00:42:24Z",
+      "content_changed_at": "2026-10-23T00:42:24Z",
+      "sha256": "40ba4cd99f06d0a70a4bfac7e8438baf3453d74f42f1462bf88fa9527a51751b",
+      "byte_count": 43312,
       "valid_count": 200,
       "unique_count": 200,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "ss": 137,
-        "trojan": 17,
-        "vmess": 46
+        "ss": 156,
+        "trojan": 22,
+        "vmess": 22
       }
     }
   }
