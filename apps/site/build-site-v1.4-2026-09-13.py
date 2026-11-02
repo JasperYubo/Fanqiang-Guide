@@ -270,6 +270,9 @@ with tempfile.TemporaryDirectory(prefix='site-frontend-', dir=B) as temporary:
 if 'id="chat-panel"' not in (P / 'index.html').read_text(encoding='utf-8'):
     raise RuntimeError('Site release is missing the chat entry')
 
+from sitemap_dates import normalize_sitemaps
+normalize_sitemaps(P)
+
 manifest={}
 for p in P.rglob('*'):
     if p.is_file() and p.suffix!='.gz':

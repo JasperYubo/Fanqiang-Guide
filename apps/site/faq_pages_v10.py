@@ -15,6 +15,8 @@ import sys
 from urllib.parse import urlsplit
 import xml.etree.ElementTree as ET
 
+from sitemap_dates import normalize_sitemaps
+
 SITE = "https://fanqiang.guide"
 NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 ID = re.compile(r"faq-[a-z0-9-]+\Z")
@@ -134,7 +136,7 @@ def structured_html(rendered):
 
 
 def related(entry, entries):
-    candidates = [e for e in entries if e["faq_id"] != entry["faq_id"] and set(e["entities"]) & set(entry["entities"]) and e["representative"] != entry["representative"]]
+    candidates = [e for e in canonical_entries(entries) if e["faq_id"] != entry["faq_id"] and set(e["entities"]) & set(entry["entities"]) and e["representative"] != entry["representative"]]
     candidates.sort(key=lambda e: (e["intent"] != entry["intent"], -len(set(e["facets"]) & set(entry["facets"])), e["faq_id"]))
     result, seen = [], set()
     for candidate in candidates:
@@ -152,7 +154,7 @@ def render_answer(entry, entries, page):
     sources = "<ul>" + "".join(f'<li><a href="{esc(s["url"], quote=True)}">{esc(s["title"])}</a> · 核对：{esc(s["checked_at"][:10])}</li>' for s in entry["sources"]) + "</ul>"
     sections = "".join(("<h2>" + esc(s["title"]) + "</h2>" if s["title"] else "") + '<p style="white-space:pre-wrap">' + esc(s["content"]) + "</p>" for s in entry["sections"])
     related_entries = related(entry, entries)
-    links = "<ul>" + "".join(f'<li><a href="{route(e)}">{esc(title(e))}</a></li>' for e in related_entries) + "</ul>"
+    links = "<ul>" + "".join(f'<li><a href="{canonical_route(e)}">{esc(title(e))}</a></li>' for e in related_entries) + "</ul>"
     body = f'<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/answers/">常见问题</a></nav><article><header class="guide-header"><h1>{esc(heading)}</h1><p class="guide-meta">资料核对：<time datetime="{esc(entry["checked_at_utc"], quote=True)}">{esc(entry["checked_at_utc"][:10])}</time> · <a href="{path}index.md">Markdown</a></p></header><div class="guide-body"><p style="white-space:pre-wrap">{esc(entry["short_answer"])}</p>{sections}<section><h2>来源与核对日期</h2>{sources}</section>' + (f'<section><h2>相关问题</h2>{links}</section>' if related_entries else "") + '<p>需要按自己的设备继续整理？<a href="/">回首页</a>说明可用的 AI、设备和需求，获取 I-Lang 工程书。</p><p><a href="/answers/">浏览全部常见问题</a></p></div></article></main>'
     schemas = [{"@type": "Article", "@id": canonical + "#article", "url": canonical, "headline": heading, "description": entry["short_answer"], "inLanguage": "zh-CN", "dateModified": entry["checked_at_utc"], "mainEntityOfPage": canonical, "author": {"@type": "Organization", "name": "Fanqiang Guide", "url": SITE + "/"}, "citation": [s["url"] for s in entry["sources"]]}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "翻墙指南", "item": SITE + "/"}, {"@type": "ListItem", "position": 2, "name": "常见问题", "item": SITE + "/answers/"}, {"@type": "ListItem", "position": 3, "name": heading, "item": canonical}]}]
     rendered = page(heading + " | Fanqiang Guide", entry["short_answer"], canonical[len(SITE):], body, schemas, path + "index.md").replace('content="website"', 'content="article"', 1)
@@ -161,9 +163,203 @@ def render_answer(entry, entries, page):
         markdown += ("\n## " + mdtext(section["title"]) + "\n" if section["title"] else "") + "\n" + mdtext(section["content"]) + "\n"
     markdown += "\n## 来源与核对日期\n\n" + "\n".join(f'- [{mdtext(s["title"])}]({s["url"]}) · 核对：{s["checked_at"][:10]}' for s in entry["sources"])
     if related_entries:
-        markdown += "\n\n## 相关问题\n\n" + "\n".join(f'- [{mdtext(title(e))}]({SITE}{route(e)})' for e in related_entries)
+        markdown += "\n\n## 相关问题\n\n" + "\n".join(f'- [{mdtext(title(e))}]({SITE}{canonical_route(e)})' for e in related_entries)
     markdown += "\n\n需要按自己的设备继续整理？[回首页](" + SITE + "/)说明可用的 AI、设备和需求，获取 I-Lang 工程书。\n\n[浏览全部常见问题](" + SITE + "/answers/)\n"
     return structured_html(rendered), markdown
+
+
+# These routes are reader-facing links; artifact filenames keep their stable IDs.
+def canonical_route(entry):
+    return "/answers/" + entry.get("representative", entry["faq_id"]) + "/"
+
+
+def canonical_entries(entries):
+    by_id = {entry["faq_id"]: entry for entry in entries}
+    result, seen = [], set()
+    for entry in entries:
+        ident = entry.get("representative", entry["faq_id"])
+        if ident not in seen:
+            result.append(by_id.get(ident, entry))
+            seen.add(ident)
+    return result
+
+
+def source_links(entry):
+    return "<ul>" + "".join(
+        f'<li><a href="{html.escape(s["url"], quote=True)}">{html.escape(s["title"])}</a>'
+        f' · 核对：{html.escape(s["checked_at"][:10])}</li>'
+        for s in entry["sources"]
+    ) + "</ul>"
+
+
+def category_answer(entry):
+    sections = "".join(
+        ("<h3>" + html.escape(section["title"]) + "</h3>" if section["title"] else "")
+        + '<p style="white-space:pre-wrap">' + html.escape(section["content"]) + "</p>"
+        for section in entry["sections"]
+    )
+    return (
+        f'<section id="{entry["representative"]}"><h2>'
+        f'<a href="{canonical_route(entry)}">{html.escape(title(entry))}</a></h2>'
+        f'<p style="white-space:pre-wrap">{html.escape(entry["short_answer"])}</p>{sections}'
+        f'<p class="guide-meta">资料核对：<time datetime="{html.escape(entry["checked_at_utc"], quote=True)}">'
+        f'{html.escape(entry["checked_at_utc"][:10])}</time></p>'
+        '<h3>来源与核对日期</h3>' + source_links(entry) + "</section>"
+    )
+
+
+def category_markdown(entry):
+    result = f'## [{mdtext(title(entry))}]({SITE}{canonical_route(entry)})\n\n'
+    result += mdtext(entry["short_answer"]) + "\n"
+    for section in entry["sections"]:
+        if section["title"]:
+            result += "\n### " + mdtext(section["title"]) + "\n"
+        result += "\n" + mdtext(section["content"]) + "\n"
+    result += "\n资料核对：" + entry["checked_at_utc"][:10] + "\n\n"
+    result += "\n".join(
+        f'- [{mdtext(s["title"])}]({s["url"]}) · 核对：{s["checked_at"][:10]}'
+        for s in entry["sources"]
+    )
+    return result
+
+
+def update_discovery_html(public, relative, key, fragment, after_heading=False):
+    target = public / relative
+    if not target.is_file():
+        return
+    raw = target.read_text(encoding="utf-8")
+    start, end = f"<!-- {key}:start -->", f"<!-- {key}:end -->"
+    if not fragment and start not in raw:
+        return
+    block = start + fragment + end if fragment else ""
+    pattern = re.escape(start) + r".*?" + re.escape(end)
+    if start in raw:
+        rendered, count = re.subn(pattern, lambda match: block, raw, flags=re.S)
+        if count != 1:
+            raise ValueError("Invalid discovery marker in " + relative)
+    elif key == "faq-home-discovery" and 'id="faq-discovery"' in raw:
+        rendered, count = re.subn(r'<section\b[^>]*\bid="faq-discovery"[^>]*>.*?</section>',
+                                  lambda match: block, raw, count=1, flags=re.S)
+        if count != 1:
+            raise ValueError("Missing home discovery section")
+    elif after_heading:
+        rendered, count = re.subn(r"</h1>", lambda match: match[0] + block, raw, count=1)
+        if not count:
+            raise ValueError("Missing page heading in " + relative)
+    else:
+        if "</main>" not in raw:
+            raise ValueError("Missing page main in " + relative)
+        rendered = raw.replace("</main>", block + "</main>", 1)
+    write(public, relative, rendered)
+
+
+def update_discovery_markdown(public, relative, key, content):
+    target = public / relative
+    if not target.is_file():
+        return
+    raw = target.read_text(encoding="utf-8")
+    start, end = f"<!-- {key}:start -->", f"<!-- {key}:end -->"
+    if not content and start not in raw:
+        return
+    block = start + "\n" + content.rstrip() + "\n" + end if content else ""
+    if start in raw:
+        raw, count = re.subn(re.escape(start) + r".*?" + re.escape(end),
+                            lambda match: block, raw, flags=re.S)
+        if count != 1:
+            raise ValueError("Invalid Markdown discovery marker in " + relative)
+    else:
+        raw = raw.rstrip() + "\n\n" + block
+    write(public, relative, raw)
+
+
+GUIDE_ENTITIES = {
+    "client-downloads": ("v2rayn", "v2rayng", "shadowrocket", "clash-verge-rev", "hiddify"),
+    "ladder-vpn-proxy": ("network-access", "vpn", "proxy"),
+    "airport-subscription-nodes": ("subscription", "proxy"),
+    "free-nodes": ("subscription",),
+    "subscription-conversion": ("subconverter", "sub-store", "subscription"),
+    "shadowrocket-platforms": ("shadowrocket",),
+    "shadowrocket-qr": ("shadowrocket",),
+    "router-guide": ("router", "openwrt", "asuswrt-merlin"),
+    "openwrt-tools": ("openwrt", "openclash", "passwall", "passwall2"),
+    "asus-merlin": ("asuswrt-merlin", "asuswrt-merlin-gnuton", "fancyss"),
+    "v2rayn-guide": ("v2rayn",),
+    "proxy-cores": ("mihomo", "xray-core", "sing-box", "v2ray-core"),
+    "clash-projects": ("clash", "clash-verge-rev", "clash-meta"),
+    "merlin-models": ("asuswrt-merlin", "asuswrt-merlin-gnuton"),
+}
+
+
+def guide_answers(entries, entities):
+    candidates = [entry for entry in canonical_entries(entries)
+                  if set(entry["entities"]) & set(entities)]
+    # Prefer a range of existing question intents over many versions of one intent.
+    candidates.sort(key=lambda entry: (len(entry["facets"]), title(entry), entry["faq_id"]))
+    chosen, seen_intents = [], set()
+    for entry in candidates:
+        if entry["intent"] not in seen_intents:
+            chosen.append(entry)
+            seen_intents.add(entry["intent"])
+        if len(chosen) == 6:
+            return chosen
+    chosen_ids = {entry["faq_id"] for entry in chosen}
+    return (chosen + [entry for entry in candidates if entry["faq_id"] not in chosen_ids])[:6]
+
+
+def add_answer_discovery(public, entries, categories, names):
+    preferred = ("openwrt", "openclash", "shadowrocket", "v2rayn",
+                 "clash-verge-rev", "sing-box", "asuswrt-merlin", "subscription")
+    featured = [entity for entity in preferred if entity in categories]
+    featured += [entity for entity in sorted(categories, key=lambda value: names[value].casefold())
+                 if entity not in featured]
+    featured = featured[:8]
+    topics = '<ul class="related-links">' + "".join(
+        f'<li><a href="/answers/entity/{entity}/">{html.escape(names[entity])}常见问题</a></li>'
+        for entity in featured
+    ) + "</ul>"
+    topic_md = "\n".join(
+        f'- [{mdtext(names[entity])}常见问题]({SITE}/answers/entity/{entity}/)'
+        for entity in featured
+    )
+    home = (
+        '<section class="section wrap faq-discovery" id="faq-discovery" aria-labelledby="faq-discovery-title">'
+        '<div class="faq-discovery-inner"><div><p class="mini-label">公开问答 / 官方参考</p>'
+        '<h2 id="faq-discovery-title">翻墙与科学上网<span class="faq-title-tail">常见问题</span></h2>'
+        '<p>按工具和主题查答案，沿出处核对官方资料。</p></div>'
+        '<a class="button button-primary" href="/answers/">浏览全部问答 ↗</a></div>'
+        + topics + '</section>'
+    )
+    update_discovery_html(public, "index.html", "faq-home-discovery", home)
+    update_discovery_markdown(public, "index.md", "faq-topic-discovery",
+                              "## 按工具阅读常见问题\n\n" + topic_md)
+    ai = ('<section class="guide-body" id="faq-ai-discovery"><h2>常见问题与官方参考</h2>'
+          '<p>按工具阅读已审核的答案、来源和资料核对日期。'
+          '<a href="/answers/">浏览全部常见问题</a></p>' + topics + '</section>')
+    update_discovery_html(public, "ai/index.html", "faq-ai-discovery", ai, after_heading=True)
+    update_discovery_markdown(public, "ai/index.md", "faq-topic-discovery",
+                              "## 按工具阅读常见问题\n\n" + topic_md)
+    for slug, entities in GUIDE_ENTITIES.items():
+        chosen = guide_answers(entries, entities)
+        if not chosen:
+            update_discovery_html(public, "guides/" + slug + ".html", "faq-guide-discovery", "")
+            update_discovery_markdown(public, "guides/" + slug + ".md", "faq-guide-discovery", "")
+            continue
+        links = '<ul>' + "".join(
+            f'<li><a href="{canonical_route(entry)}">{html.escape(title(entry))}</a>'
+            f'<p>{html.escape(entry["short_answer"])}</p></li>' for entry in chosen
+        ) + '</ul>'
+        block = ('<section class="guide-body" id="faq-guide-discovery">'
+                 '<h2>相关问题与官方参考</h2>' + links + '</section>')
+        update_discovery_html(public, "guides/" + slug + ".html", "faq-guide-discovery", block)
+        markdown = "## 相关问题与官方参考\n\n" + "\n\n".join(
+            f'### [{mdtext(title(entry))}]({SITE}{canonical_route(entry)})\n\n'
+            + mdtext(entry["short_answer"]) for entry in chosen
+        )
+        update_discovery_markdown(public, "guides/" + slug + ".md", "faq-guide-discovery", markdown)
+    return [relative for relative in ("index.html", "ai/index.html",
+            *("guides/" + slug + ".html" for slug, entities in GUIDE_ENTITIES.items()
+              if guide_answers(entries, entities)))
+            if (public / relative).is_file()]
 
 
 def build_faq_pages(public, source, page):
@@ -206,6 +402,7 @@ def build_faq_pages(public, source, page):
         write(public, "answers/" + entry["faq_id"] + "/index.md", markdown)
         for entity in entry["entities"] or ["general"]:
             categories[entity].append(entry)
+    categories = {entity: canonical_entries(items) for entity, items in categories.items()}
     dates = {SITE + route(e): e["checked_at_utc"] for e in entries if e["faq_id"] == e["representative"]}
     newest = max((e["checked_at_utc"] for e in entries), default=None)
     names = {entity: GENERIC_NAMES.get(entity) or (aliases.get(entity) or [entity])[0] for entity in categories}
@@ -213,10 +410,10 @@ def build_faq_pages(public, source, page):
         path = "/answers/entity/" + entity + "/"
         heading = names[entity] + "常见问题"
         items = sorted(categories[entity], key=lambda e: (e["intent"], title(e), e["faq_id"]))
-        cards = "<ul>" + "".join(f'<li><a href="{route(e)}">{html.escape(title(e))}</a></li>' for e in items) + "</ul>"
-        body = f'<main id="main" class="wrap guide-main"><nav class="breadcrumbs"><a href="/answers/">常见问题</a></nav><h1>{html.escape(heading)}</h1>{cards}</main>'
+        cards = "".join(category_answer(entry) for entry in items)
+        body = f'<main id="main" class="wrap guide-main"><nav class="breadcrumbs"><a href="/answers/">常见问题</a></nav><h1>{html.escape(heading)}</h1><p class="guide-summary">直接阅读相关问题的审核答案，沿每条来源核对资料；问题标题链接到独立答案。</p><div class="guide-body">{cards}</div></main>'
         write(public, path.strip("/") + "/index.html", structured_html(page(heading + " | Fanqiang Guide", heading, path, body, [{"@type": "CollectionPage", "name": heading, "url": SITE + path}], path + "index.md")))
-        write(public, path.strip("/") + "/index.md", "# " + mdtext(heading) + "\n\n" + "\n".join(f'- [{mdtext(title(e))}]({SITE}{route(e)})' for e in items) + "\n\n[全部常见问题](" + SITE + "/answers/)")
+        write(public, path.strip("/") + "/index.md", "# " + mdtext(heading) + "\n\n" + "\n\n".join(category_markdown(entry) for entry in items) + "\n\n[全部常见问题](" + SITE + "/answers/)")
         dates[SITE + path] = max(e["checked_at_utc"] for e in items)
     links = "<ul>" + "".join(f'<li><a href="/answers/entity/{entity}/">{html.escape(names[entity])}</a>（{len(categories[entity])}）</li>' for entity in sorted(categories, key=lambda e: names[e].casefold())) + "</ul>"
     heading = "常见问题与官方参考"
@@ -248,17 +445,17 @@ def build_faq_pages(public, source, page):
         previous = (public / name).read_text(encoding="utf-8")
         if SITE + "/answers/" not in previous:
             write(public, name, previous.rstrip() + "\n\n" + entry)
+    changed_paths = add_answer_discovery(public, entries, categories, names)
     write(public, "llms-full.txt", (public / "ai/index.md").read_text(encoding="utf-8"))
-    home = (public / "index.html").read_text(encoding="utf-8")
-    if 'id="faq-discovery"' not in home:
-        discovery_html = '<section class="section wrap faq-discovery" id="faq-discovery" aria-labelledby="faq-discovery-title"><div class="faq-discovery-inner"><div><p class="mini-label">公开问答 / 官方参考</p><h2 id="faq-discovery-title">翻墙与科学上网<span class="faq-title-tail">常见问题</span></h2><p>按工具和主题查答案，沿出处核对官方资料。</p></div><a class="button button-primary" href="/answers/">浏览全部问答 ↗</a></div></section>'
-        home = home.replace("</main>", discovery_html + "</main>", 1)
-        write(public, "index.html", home)
     catalog = public / ".well-known/ai-catalog.json"
     obj = json.loads(catalog.read_text(encoding="utf-8"))
     identifier = "urn:air:fanqiang.guide:resource:answers"
     obj["entries"] = [e for e in obj["entries"] if e.get("identifier") != identifier] + [{"identifier": identifier, "displayName": heading, "type": "text/html", "url": SITE + "/answers/"}]
     write(public, ".well-known/ai-catalog.json", json.dumps(obj, ensure_ascii=False, indent=2))
+    changed_paths += ["answers/index.html"] + [
+        "answers/entity/" + entity + "/index.html" for entity in sorted(categories)
+    ]
+    normalize_sitemaps(public, changed_paths=changed_paths)
     result = {"version": "1.0", "pages": len(entries), "canonical_pages": len(representatives), "entity_directories": len(categories), "sitemap_urls": len(dates), "source_sha256": hashlib.sha256(Path(source).read_bytes()).hexdigest()}
     write(public, "data/faq-pages.json", json.dumps({**result, "entity_ids": sorted(current_entities), "entries": [{"faq_id": e["faq_id"], "title": title(e), "url": SITE + route(e), "canonical": SITE + "/answers/" + e["representative"] + "/"} for e in entries]}, ensure_ascii=False, indent=2))
     return result
