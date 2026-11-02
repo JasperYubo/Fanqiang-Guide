@@ -104,6 +104,37 @@ def validate_generated_knowledge(source: Path, generated: Path, public: Path) ->
     except (OSError, ValueError, KeyError, TypeError):
         return ["worker/src/knowledge.mjs:invalid_generated_contract"]
 
+def validate_autosetup_release(source: Path, release: Path) -> list[str]:
+    """Prevent a deployable build from serving a stale or mismatched setup book."""
+    import runpy
+    failures = []
+    try:
+        contract = runpy.run_path(str(source / "apps/lookup/runtime/setup_book.py"))
+        canonical = contract["BOOK_PATH"].read_bytes()
+        expected = contract["setup_book_manifest"]()
+        for relative in ("lookup/books/fanqiang-autosetup-v1.1.ilang.md",
+                         "site/ai/books/fanqiang-autosetup-v1.1.ilang.md"):
+            if (release / relative).read_bytes() != canonical:
+                failures.append(relative + ":canonical_book_mismatch")
+        actual = json.loads((release / "site/ai/books/autosetup.json").read_text(encoding="utf-8"))
+        if actual != expected:
+            failures.append("site/ai/books/autosetup.json:contract_mismatch")
+        for relative in ("site/ai/index.html", "site/ai/index.md", "site/ai/index.ilang",
+                         "site/ai/skills/library-lookup/SKILL.md", "site/llms.txt"):
+            text = (release / relative).read_text(encoding="utf-8")
+            if "get_setup_book" not in text or "fanqiang-autosetup-v1.1.ilang.md" not in text:
+                failures.append(relative + ":setup_discovery_missing")
+        for relative in ("lookup/server-card.json", "site/.well-known/mcp/server-card.json"):
+            card = json.loads((release / relative).read_text(encoding="utf-8"))
+            if (card["serverInfo"]["version"] != "1.2.0"
+                    or not {"tools", "resources", "prompts"} <= set(card["capabilities"])
+                    or card.get("setupBook") != expected):
+                failures.append(relative + ":setup_capabilities_missing")
+    except (OSError, ValueError, KeyError, TypeError):
+        failures.append("autosetup:invalid_release_contract")
+    return failures
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path)
@@ -160,6 +191,7 @@ def main():
     else:
         release = output / "release"
         failures = []
+        failures.extend(validate_autosetup_release(ROOT, release))
         public_library = json.loads(
             (ROOT / "export/library-v0.1-2026-09-11.json").read_text(encoding="utf-8-sig")
         )

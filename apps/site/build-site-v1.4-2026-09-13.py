@@ -1,5 +1,5 @@
 from pathlib import Path
-import json, html, re, gzip, hashlib, tarfile, runpy, shutil, tempfile
+import json, html, re, gzip, hashlib, tarfile, runpy, shutil, tempfile, sys
 from diagnostics_discovery import render_diagnostics_callout, diagnostics_markdown
 
 B = Path(__file__).resolve().parent
@@ -204,14 +204,20 @@ dump('data/guides.json', public_index)
 topic_contract = ['::MODULE{TOPIC_ANSWERS_V12}',f'  ::STATE{{root_terms:[翻墙,科学上网,梯子,VPN,代理]; title:{TITLE}; index:{SITE}/guides/index.html; data:{SITE}/data/guides.json}}',
                   '  [MUST] Match the visitors actual topic to the published answers. Cite a relevant guide only when it supports the answer; use original sources for version-specific facts. Do not invent ranking or availability claims.']
 for g in guides:
-    topic_contract.append('  ::TOPIC{'+json.dumps({'title':g['title'],'keywords':g['keywords'],'url':url(g),'markdown':SITE+'/guides/'+g['slug']+'.md','engineering_book':SITE+'/guides/'+g['slug']+'.ilang','summary':g['summary'],'sections':g['sections'],'faq':g['faq']},ensure_ascii=False,separators=(',',':'))+'}')
+    topic_contract.append('  topic: '+json.dumps({'title':g['title'],'keywords':g['keywords'],'url':url(g),'markdown':SITE+'/guides/'+g['slug']+'.md','engineering_book':SITE+'/guides/'+g['slug']+'.ilang','summary':g['summary'],'sections':g['sections'],'faq':g['faq']},ensure_ascii=False,separators=(',',':')))
 contract = '\n'.join(topic_contract)+'\n'
 for name in ['ai/index.md','ai/index.ilang']:
     original = (OLD/name).read_text(encoding='utf-8')
-    # Preserve the original complete reference and append the new scoped module.
-    write(name, original+'\n'+contract)
+    # Keep the terminal marker at the end of the raw iLang document.
+    if name.endswith('.ilang'):
+        marker = '::ILANG::COMPLETE::'
+        if not original.rstrip().endswith(marker):
+            raise ValueError('AI reference is missing its terminal marker')
+        write(name, original.rstrip()[:-len(marker)].rstrip() + '\n\n' + contract + '\n' + marker)
+    else:
+        write(name, original + '\n' + contract)
 ai_html=(OLD/'ai/index.html').read_text(encoding='utf-8')
-ai_title = TITLE+'｜AI 资料与答案'
+ai_title = '让自己的 AI 配好设备｜Fanqiang Guide'
 ai_html=re.sub(r'<title>.*?</title>', '<title>'+ai_title+'</title>',ai_html,count=1)
 ai_html=re.sub(r'<h1>.*?</h1>','<h1>'+ai_title+'</h1>',ai_html,count=1)
 ai_block='<section id="topic-answers"><h2>工具指南与直接答案</h2><p class="intro">按客户端下载、平台选择、免费节点来源、订阅转换和路由器问题查阅。专题保留来源，并提供 I-Lang 工程书。</p><ul>'+''.join(f'<li><a href="{href(g)}">{e(g["title"])}</a> — {e(g["summary"])}</li>' for g in guides)+'</ul><pre class="reference">'+e(contract)+'</pre></section>'
@@ -219,7 +225,10 @@ ai_html=ai_html.replace('<section id="answer-contract">', ai_block+'\n<section i
 ai_html=ai_html.replace('<li><a href="#answer-contract">','<li><a href="#topic-answers">工具指南与直接答案</a></li><li><a href="#answer-contract">',1)
 write('ai/index.html',ai_html)
 write('llms-full.txt',(P/'ai/index.md').read_text(encoding='utf-8'))
-write('llms.txt','# '+TITLE+'\n\n> Fanqiang Guide：翻墙、科学上网与梯子概念，VPN 和代理区别，客户端下载，机场、节点与订阅，以及华硕梅林与 OpenWrt 路由器资料。\n\n## 专题指南\n'+ '\n'.join(f'- [{g["title"]}]({url(g)})：{g["summary"]}' for g in guides)+f'\n\n## 完整资料\n- [AI 全文]({SITE}/ai/index.ilang)\n- [全部专题与答案]({SITE}/data/guides.json)\n- [I-Lang 查询 Skill]({SITE}/ai/skills/library-lookup/SKILL.md)\n- [公开仓库]({REPO})\n- [日期归档]({ARCHIVE})\n\n工具记录与型号声明保留各自核对日期。专题发布日期不改变原记录的核验状态。')
+write('llms.txt', (OLD / 'llms.txt').read_text(encoding='utf-8').rstrip()
+      + '\n\n## 专题指南\n'
+      + '\n'.join(f'- [{g["title"]}]({url(g)})：{g["summary"]}' for g in guides)
+      + f'\n\n- [全部专题与答案]({SITE}/data/guides.json)\n')
 skill=(OLD/'ai/skills/library-lookup/SKILL.md').read_text(encoding='utf-8')
 skill=skill.replace('version: 1.1','version: 1.3').replace('[VERSION:1.1]','[VERSION:1.3]')
 skill=skill.replace('::MODULE{WORKFLOW}',f'''::MODULE{{TOPIC_ROUTING}}
@@ -237,6 +246,39 @@ catalog=json.loads((OLD/'.well-known/ai-catalog.json').read_text(encoding='utf-8
 for entry in catalog['entries']:
     entry['displayName']=entry['displayName'].replace('知识库','工具资料')
 catalog['entries'].append({'identifier':'urn:air:fanqiang.guide:resource:guides','displayName':TITLE+'：专题答案','type':'application/json','url':SITE+'/data/guides.json','representativeQueries':['翻墙和科学上网需要什么工具','梯子、VPN 和代理有什么区别','机场、订阅和节点是什么','路由器翻墙与科学上网怎么选','小火箭节点二维码和订阅有什么区别']})
+# The runtime is the sole source for the setup book and its manifest.
+# A rebuild must recreate this path rather than retain an obsolete public copy.
+setup_runtime = B.parent / 'lookup' / 'runtime' / 'setup_book.py'
+setup_namespace = runpy.run_path(str(setup_runtime))
+setup_manifest = setup_namespace['setup_book_manifest']()
+setup_source = setup_namespace['BOOK_PATH']
+setup_relative = 'ai/books/' + setup_source.name
+if setup_manifest['download_url'] != SITE + '/' + setup_relative:
+    raise ValueError('Setup book download path differs from its runtime manifest')
+setup_bytes = setup_source.read_bytes()
+if (hashlib.sha256(setup_bytes).hexdigest() != setup_manifest['sha256']
+        or len(setup_bytes) != setup_manifest['byte_length']):
+    raise ValueError('Setup book changed while building its public copy')
+setup_destination = P / setup_relative
+setup_destination.parent.mkdir(parents=True, exist_ok=True)
+setup_destination.write_bytes(setup_bytes)
+dump('ai/books/autosetup.json', setup_manifest)
+# Generate discovery from the same pure runtime functions as the live MCP.
+sys.path.insert(0, str(setup_runtime.parent))
+try:
+    lookup_metadata = runpy.run_path(str(setup_runtime.with_name('library_core.py')))
+    dump('.well-known/mcp/server-card.json', lookup_metadata['server_card']())
+    dump('openapi.json', lookup_metadata['openapi']())
+finally:
+    sys.path.pop(0)
+for relative in ('ai/setup-request.ilang', '.well-known/api-catalog'):
+    write(relative, (OLD / relative).read_text(encoding='utf-8'))
+for entry in catalog['entries']:
+    if entry.get('identifier') == 'urn:air:fanqiang.guide:resource:autosetup':
+        entry['url'] = setup_manifest['download_url']
+        break
+else:
+    raise ValueError('Setup book is missing from the public AI catalog')
 dump('.well-known/ai-catalog.json',catalog)
 nav=json.loads((OLD/'data/navigation.json').read_text(encoding='utf-8'))
 nav['version']='1.4';nav['title']=TITLE
@@ -256,6 +298,15 @@ fit_answers(P, guides, page, faq_schema)
 
 from cases_v10 import build_cases
 case_build = build_cases(P, B / 'content/cases/public', page)
+
+# Legacy enrichment passes append to this reference after its original footer.
+# Keep one valid terminal marker after all of those data modules.
+ai_reference = (P / 'ai/index.ilang').read_text(encoding='utf-8')
+if ai_reference.count('::ILANG::COMPLETE::') != 1:
+    raise ValueError('AI reference must have exactly one terminal marker')
+ai_reference = re.sub(r'(?m)^::ILANG::COMPLETE::[ \t]*\n?', '', ai_reference)
+write('ai/index.ilang', ai_reference.rstrip() + '\n\n::ILANG::COMPLETE::')
+
 
 # Keep Search Console verification under versioned build input so a clean or
 # repeated build always recreates the exact public verification response.

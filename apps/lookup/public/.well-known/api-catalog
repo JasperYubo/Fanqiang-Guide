@@ -20,6 +20,25 @@
           "type": "application/json"
         }
       ]
+    },
+    {
+      "anchor": "https://fanqiang.guide/api/agent/setup-book",
+      "service-desc": [
+        {
+          "href": "https://fanqiang.guide/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md",
+          "type": "text/markdown"
+        },
+        {
+          "href": "https://fanqiang.guide/ai/books/autosetup.json",
+          "type": "application/json"
+        }
+      ]
     }
   ]
 }

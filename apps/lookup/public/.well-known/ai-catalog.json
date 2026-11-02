@@ -32,6 +32,17 @@
       "displayName": "完整公开资料参考",
       "type": "text/markdown",
       "url": "https://fanqiang.guide/ai/index.md"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:autosetup",
+      "displayName": "让自己的 AI 完成设备配置与修复",
+      "type": "text/markdown",
+      "url": "https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md",
+      "representativeQueries": [
+        "帮我在这台设备配置代理客户端",
+        "让 AI 安装配置并验证重连",
+        "连接失败，让 AI 诊断修复"
+      ]
     }
   ]
 }

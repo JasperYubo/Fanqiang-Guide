@@ -6,11 +6,19 @@
 ::STATE{@SERVICE_INDEX, url:https://fanqiang.guide/ai/index.ilang}
 ::STATE{@LOOKUP_SKILL, url:https://fanqiang.guide/ai/skills/library-lookup/SKILL.md}
 ::STATE{@QUERY_API, url:https://fanqiang.guide/openapi.json}
-::STATE{@MCP, url:https://fanqiang.guide/mcp, tools:search|get}
+::STATE{@MCP, name:guide.fanqiang/library-lookup, version:1.2.0, url:https://fanqiang.guide/mcp, tools:search|get|get_setup_book, resource:fanqiang://books/autosetup, prompt:setup_device}
 ::STATE{@PUBLIC_LIBRARY, url:https://fanqiang.guide/data/library.json}
 ::STATE{@MODEL_CLAIMS, url:https://fanqiang.guide/data/merlin-models.json}
 ::STATE{@SOURCE, repository:https://github.com/JasperYubo/Fanqiang-Guide, revision:fe895e2be9ce8da0fd4f0003faab7303b3bda9bd, snapshot_date:2026-09-12}
 ::STATE{@COVERAGE, library_records:310, categories:20, primary_reviewed:206, reference_only:103, historical_reference:1, merlin_support_records:58}
+
+::STATE{@SETUP_BOOK, id:fanqiang-autosetup, version:1.1, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, tool:get_setup_book, prompt:setup_device, arguments:none, executor:user_agent, execution_status:not_run}
+::MODULE{DEVICE_SETUP_FIRST}
+  [STEP] When the user asks their AI to configure or repair their device, retrieve the complete setup book before choosing or installing a client. Use get_setup_book with no arguments, resource fanqiang://books/autosetup, prompt setup_device with no arguments, or GET https://fanqiang.guide/api/agent/setup-book.
+  [STEP] Bind the task to the actual target device and current authorization. The user's AI operates its own available device tools; this public MCP supplies knowledge and does not operate the device.
+  [STEP] Use search and get for matching platform, client and redacted-error records, then verify current official instructions. Follow the book through installation, configuration, diagnosis, repair, target access and reconnection checks.
+  [STEP] Keep review requests as document review. Missing target access or required private inputs remain explicit dependencies; do not substitute a remote server test, mandatory diagnostics installation or report submission for working user access.
+  [STEP] Keep credentials and subscription URLs out of public lookup calls. Preserve evidence qualifiers and claim completion only from observed target-device results.
 
 ::OBJECTIVE{use_recorded_knowledge_to_answer_the_visitors_actual_question}
   scope: All 310 compact public library records and all 58 recorded Merlin firmware support claims are included below. No JavaScript, pagination or extra data request is needed to read this snapshot.
@@ -588,4 +596,4 @@
   model_record: {"id":"asuswrt-merlin-gnuton-rt-axe95q","vendor":"ASUS","model_exact":"RT-AXE95Q","hardware_revision":null,"firmware_entity_id":"asuswrt-merlin-gnuton","support_claim":"current_listed","source_url":"https://github.com/gnuton/asuswrt-merlin.ng","checked_at":"2026-09-11","notes":"原文整组：ZenWifi ET8 / RT-AXE95Q；保留并列名称，位于 Version 3004 分组。 仅表示所阅来源的支持列表列有此名称；具体发布包、插件兼容与刷机结果未核验。","tested":false}
   model_record: {"id":"asuswrt-merlin-gnuton-dsl-ac68u","vendor":"ASUS","model_exact":"DSL-AC68U","hardware_revision":null,"firmware_entity_id":"asuswrt-merlin-gnuton","support_claim":"current_listed","source_url":"https://github.com/gnuton/asuswrt-merlin.ng","checked_at":"2026-09-11","notes":"位于独立的 DSL-AC68U / Version 386 分组；不是 RT-AC68U。 仅表示所阅来源的支持列表列有此名称；具体发布包、插件兼容与刷机结果未核验。","tested":false}
 
-::END
+::ILANG::COMPLETE::

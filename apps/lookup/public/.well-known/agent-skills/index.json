@@ -4,9 +4,9 @@
     {
       "name": "library-lookup",
       "type": "skill-md",
-      "description": "Read the public Fanqiang Guide library and retrieve exact source records.",
+      "description": "Public lookup and setup-book retrieval; the user's authorized AI operates the target device through installation, repair and verification.",
       "url": "https://fanqiang.guide/ai/skills/library-lookup/SKILL.md",
-      "digest": "sha256:8b4405db6659cb9e6eca81760c568897fd522cc4f0418e500383263d8229b33c"
+      "digest": "sha256:bcd67cb15af0439117a91a305d71cb3154064641c975c5af1af85c21ecc399f9"
     }
   ]
 }

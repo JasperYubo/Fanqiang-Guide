@@ -1,13 +1,23 @@
 # Fanqiang Guide
 
-> 公开中文翻墙工具与网络知识库；310条工具与知识记录，58条华硕梅林机型支持声明。目录快照日期2026-09-12；各条记录核对日期见原文。
+> 公共网络工具知识源与设备配置工程书。用户自己的 AI 操作目标设备，本站 MCP 提供检索、原始资料和执行规范。
+
+## 设备配置与修复：先取得工程书
+- [设备配置工程书 v1.1](https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md)：先识别实际目标设备，再选择、安装配置、诊断修复，并验证访问与重连；取得文件不代表已经执行。
+- [工程书版本与校验信息](https://fanqiang.guide/ai/books/autosetup.json)
+- [给自己的 AI 的请求示例](https://fanqiang.guide/ai/setup-request.ilang)
+- [MCP 接入与角色说明](https://fanqiang.guide/ai/#setup-access)
+- [知识 MCP](https://fanqiang.guide/mcp)：guide.fanqiang/library-lookup 1.2.0；get_setup_book 无参数，resource fanqiang://books/autosetup，prompt setup_device 无参数；原 search/get 保持可用。
+- [HTTP 工程书接口](https://fanqiang.guide/api/agent/setup-book)
+
+设备配置任务先取书；公开知识问答继续使用 search/get。订阅、凭据、私人日志不进入公共 MCP。设备配置以实际访问和重连验证为目标，无需安装诊断软件或提交报告。
 
 ## 资料
-- [完整 I-Lang 参考页](https://fanqiang.guide/ai/index.md)
+- [完整 I-Lang 参考页](https://fanqiang.guide/ai/index.ilang)
 - [查询 Skill](https://fanqiang.guide/ai/skills/library-lookup/SKILL.md)
 - [OpenAPI](https://fanqiang.guide/openapi.json)
 - [MCP 服务卡](https://fanqiang.guide/.well-known/mcp/server-card.json)
 - [公开 GitHub 知识库](https://github.com/JasperYubo/Fanqiang-Guide)
 - [每日代理资料文件夹](https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies)
 
-具体适用性与核验状态以每条记录的来源和限定说明为准。
+资料中的核对日期和限定说明决定其适用范围，不能代替当前官方资料核验或目标设备实测。

@@ -39,6 +39,24 @@ def run(script: Path, *args: object) -> None:
     if completed.returncode:
         raise RuntimeError(f"Build failed: {script.name}\n{completed.stdout}\n{completed.stderr}")
 
+def source_inputs() -> dict:
+    """Fingerprint the actual build inputs so a release cannot outlive its source."""
+    ignored = {"__pycache__", ".venv", "venv", "node_modules"}
+    paths = [ROOT / "tools/ilang_grammar_validator.py", ROOT / "data/faq-cache.json",
+             ROOT / "developer/build_apps.py"]
+    for name in ("site", "worker", "lookup"):
+        for path in (ROOT / "apps" / name).rglob("*"):
+            relative = path.relative_to(ROOT)
+            if any(part in ignored or part == ".env" or part.startswith(".env.") for part in relative.parts):
+                continue
+            if path.is_file() and path.suffix != ".pyc":
+                paths.append(path)
+    result = {}
+    for path in sorted(paths):
+        raw = path.read_bytes()
+        result[path.relative_to(ROOT).as_posix()] = {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+    return result
+
 def build(output: Path) -> dict:
     output = output.resolve()
     if output == ROOT or output in ROOT.parents or output.exists():
@@ -46,6 +64,7 @@ def build(output: Path) -> dict:
     for relative in ("apps/site", "apps/worker", "apps/lookup", "tools/ilang_grammar_validator.py"):
         if not (ROOT / relative).exists():
             raise FileNotFoundError(relative)
+    inputs = source_inputs()
     output.parent.mkdir(parents=True, exist_ok=True)
     scratch_parent = ROOT / ".build"
     scratch_parent.mkdir(exist_ok=True)
@@ -101,7 +120,9 @@ def build(output: Path) -> dict:
         if file.is_file():
             payload = file.read_bytes()
             files[file.relative_to(output).as_posix()] = {"bytes": len(payload), "sha256": hashlib.sha256(payload).hexdigest()}
-    manifest = {"version": "1.0", "source_repository": "https://github.com/JasperYubo/Fanqiang-Guide",
+    if source_inputs() != inputs:
+        raise RuntimeError("Source inputs changed during build; rebuild the final source state.")
+    manifest = {"version": "1.0", "source_inputs": inputs, "source_repository": "https://github.com/JasperYubo/Fanqiang-Guide",
                 "created_at": datetime.now(timezone.utc).isoformat(), "files": files}
     (output / "release-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return {"ok": True, "output": str(output), "files": len(files),

@@ -3,6 +3,7 @@
 from __future__ import annotations
 import argparse
 import asyncio
+import json
 import re
 from pathlib import Path
 from typing import Annotated, Any
@@ -15,6 +16,10 @@ from pydantic import Field
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 import uvicorn
+
+from setup_book import (BOOK_RESOURCE_URI, BOOK_TITLE, NO_ARGUMENTS_SCHEMA,
+    SETUP_BOOK_DESCRIPTION, SETUP_PROMPT_DESCRIPTION, setup_book_manifest, setup_book_payload,
+    setup_book_prompt_intro)
 
 from library_core import (Library, LookupError, VERSION, ORIGIN, MAX_BODY, MAX_RESPONSE,
     MAX_PATH, SOURCE_REVISION, SEARCH_DESCRIPTION, GET_DESCRIPTION, INSTRUCTIONS,
@@ -85,9 +90,110 @@ class Guard:
             self.active -= 1
 
 
+class SetupBookInputGuard:
+    """Reject private input to the two no-argument interfaces before SDK logging.
+
+    This narrow preflight does not execute JSON-RPC or validate legacy tools.
+    The enclosing Guard supplies the deadline and concurrency/response bounds.
+    Valid and unrelated requests are replayed unchanged to the official SDK.
+    """
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope.get("path") != "/mcp" or scope["method"] != "POST":
+            return await self.app(scope, receive, send)
+        chunks, size = [], 0
+        while True:
+            message = await receive()
+            if message["type"] == "http.disconnect":
+                return
+            chunk = message.get("body", b"")
+            size += len(chunk)
+            if size > MAX_BODY:
+                return await JSONResponse({"error": "request_too_large"}, status_code=413)(scope, receive, send)
+            chunks.append(chunk)
+            if not message.get("more_body", False):
+                break
+        body = b"".join(chunks)
+        try:
+            request = json.loads(body)
+        except (ValueError, UnicodeError):
+            request = None
+        if isinstance(request, dict):
+            params = request.get("params")
+            if isinstance(params, dict) and (
+                    (request.get("method") == "tools/call" and params.get("name") == "get_setup_book") or
+                    (request.get("method") == "prompts/get" and params.get("name") == "setup_device")):
+                # Validate only the recognized new request envelopes. Invalid
+                # protocol values must not reach SDK error formatting, and an
+                # invalid id must never be reflected as the error response id.
+                valid_id = type(request.get("id")) in (str, int)
+                if (request.get("jsonrpc") != "2.0" or not valid_id or
+                        set(request) - {"jsonrpc", "id", "method", "params"}):
+                    return await JSONResponse({
+                        "jsonrpc": "2.0", "id": request.get("id") if valid_id else None,
+                        "error": {"code": -32600,
+                            "message": "Invalid setup-book request envelope"},
+                    })(scope, receive, send)
+                arguments = params.get("arguments")
+                metadata = params.get("_meta")
+                # Standard progress metadata may be present, but malformed values
+                # must not reach SDK validation logs either.
+                bad_metadata = metadata is not None and (
+                    type(metadata) is not dict or
+                    (metadata.get("progressToken") is not None and
+                     type(metadata["progressToken"]) not in (str, int)))
+                if (set(params) - {"name", "arguments", "_meta"} or bad_metadata or
+                        (arguments is not None and (type(arguments) is not dict or arguments))):
+                    return await JSONResponse({
+                        "jsonrpc": "2.0", "id": request.get("id"),
+                        "error": {"code": -32602,
+                            "message": "This setup-book interface accepts no arguments; do not send private data"},
+                    })(scope, receive, send)
+        replayed = False
+        async def replay():
+            nonlocal replayed
+            if not replayed:
+                replayed = True
+                return {"type": "http.request", "body": body, "more_body": False}
+            return await receive()
+        return await self.app(scope, replay, send)
+
+
+class SetupBookMCP(FastMCP):
+    """Strict empty arguments only for the new public book interfaces.
+
+    FastMCP's compatibility conversion permits extra tool arguments by default.
+    Public SDK handlers are overridden here so rejected values never reach
+    Pydantic error formatting or the prompt manager's exception logger.
+    """
+    @staticmethod
+    def _no_arguments(arguments):
+        if arguments is not None and arguments != {}:
+            raise ValueError("This setup-book interface accepts no arguments; do not send private data")
+
+    async def list_tools(self):
+        tools = await super().list_tools()
+        for tool in tools:
+            if tool.name == "get_setup_book":
+                tool.inputSchema = {**NO_ARGUMENTS_SCHEMA, "properties": {}}
+        return tools
+
+    async def call_tool(self, name, arguments):
+        if name == "get_setup_book":
+            self._no_arguments(arguments)
+        return await super().call_tool(name, arguments)
+
+    async def get_prompt(self, name, arguments=None):
+        if name == "setup_device":
+            self._no_arguments(arguments)
+        return await super().get_prompt(name, arguments)
+
+
 def create_app(library, allowed_origins=()):
     origins = [ORIGIN, "https://www.fanqiang.guide", *allowed_origins]
-    mcp = FastMCP("guide.fanqiang/library-lookup", instructions=INSTRUCTIONS, website_url=ORIGIN,
+    mcp = SetupBookMCP("guide.fanqiang/library-lookup", instructions=INSTRUCTIONS, website_url=ORIGIN,
         stateless_http=True, json_response=True, streamable_http_path="/mcp",
         max_request_body_size=MAX_BODY, log_level="ERROR",
         transport_security=TransportSecuritySettings(enable_dns_rebinding_protection=True,
@@ -112,6 +218,27 @@ def create_app(library, allowed_origins=()):
     def get(id: Annotated[str, Field(min_length=1, max_length=128, pattern=r"^[a-z0-9][a-z0-9._-]*$")]) -> dict[str, Any]:
         return library.get({"id": id})
 
+    @mcp.tool(name="get_setup_book", description=SETUP_BOOK_DESCRIPTION,
+              annotations=annotations, structured_output=True)
+    def get_setup_book() -> dict[str, Any]:
+        return setup_book_payload()
+
+    @mcp.resource(BOOK_RESOURCE_URI, name="fanqiang-autosetup",
+                  title=BOOK_TITLE, description=SETUP_PROMPT_DESCRIPTION,
+                  mime_type="application/json", meta=setup_book_manifest())
+    def setup_book_resource() -> str:
+        return encode(setup_book_payload()).decode("utf-8")
+
+    @mcp.prompt(name="setup_device", title=BOOK_TITLE, description=SETUP_PROMPT_DESCRIPTION)
+    def setup_device() -> list[dict[str, Any]]:
+        payload = setup_book_payload()
+        metadata = {key: value for key, value in payload.items() if key != "content"}
+        introduction = setup_book_prompt_intro(metadata)
+        return [
+            {"role": "user", "content": {"type": "text", "text": introduction}},
+            {"role": "user", "content": {"type": "text", "text": payload["content"]}},
+        ]
+
     def query(request):
         try:
             parsed = parse_qs(request.url.query, keep_blank_values=True, strict_parsing=True,
@@ -132,6 +259,20 @@ def create_app(library, allowed_origins=()):
     mcp.custom_route("/api/agent/search", methods=["GET", "HEAD"])(lookup_route)
     mcp.custom_route("/api/agent/item", methods=["GET", "HEAD"])(lookup_route)
 
+    @mcp.custom_route("/api/agent/setup-book", methods=["GET", "HEAD"])
+    async def setup_book_route(request: Request):
+        # Reject all query/body inputs, with fixed messages that cannot echo secrets.
+        if (request.scope.get("query_string") or
+                request.headers.get("content-length", "0") != "0" or
+                request.headers.get("transfer-encoding")):
+            return JSONResponse({"error": "invalid_parameter",
+                "message": "Setup book accepts no query parameters or request body"}, status_code=400)
+        async for chunk in request.stream():
+            if chunk:
+                return JSONResponse({"error": "invalid_parameter",
+                    "message": "Setup book accepts no request body"}, status_code=400)
+        return JSONResponse(setup_book_payload())
+
     @mcp.custom_route("/api/agent/health", methods=["GET", "HEAD"])
     async def health(request):
         return JSONResponse({"status": "ok", "version": VERSION, "snapshot": library.snapshot, "filters": library.filters})
@@ -144,7 +285,7 @@ def create_app(library, allowed_origins=()):
     async def card(request):
         return JSONResponse(server_card())
 
-    app = Guard(mcp.streamable_http_app(), origins)
+    app = Guard(SetupBookInputGuard(mcp.streamable_http_app()), origins)
     app.mcp = mcp
     return app
 

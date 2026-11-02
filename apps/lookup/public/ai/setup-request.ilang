@@ -1,0 +1,9 @@
+::ILANG::v5.0
+[TYPE:request][LANG:zh]
+
+::OBJECTIVE{id:setup_device_request|owner:user|trust:trusted|version:1|status:proposed}
+  target: 在我授权的目标设备上完成代理客户端识别、选择、安装配置、诊断修复和访问及重连验证。
+  DONE_WHEN: 目标访问、预期路由及重新连接有实际证据，并给出使用和恢复方法。
+
+::RULE{BOOK_FIRST|value:先从 https://fanqiang.guide/mcp 调用无参数 get_setup_book，或读取 fanqiang://books/autosetup；再按工程书和当前授权执行。}
+::RULE{ROLES|value:你是操作设备的 AI；MCP 只提供公共资料。先确认工具确实连接我的目标设备，订阅和凭据仅在本机安全输入。}
