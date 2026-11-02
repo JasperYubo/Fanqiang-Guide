@@ -3,7 +3,10 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
+import textwrap
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,3 +51,37 @@ class GeneratedKnowledgeTests(unittest.TestCase):
         self.values["KNOWLEDGE_META"]["sha256"]["library"] = "fake"
         self.write(self.generated, self.values)
         self.assertIn("worker/src/knowledge.mjs:library:published_input_hash_mismatch", self.validate())
+
+
+class GeneratedAnswerImportTests(unittest.TestCase):
+    def test_validator_loads_faq_renderer_from_outside_checkout(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            public = Path(tmp)
+            (public / "data").mkdir()
+            source = public / "faq.json"
+            source.write_text(json.dumps({"schema_version": 1, "entries": []}), encoding="utf-8")
+            mapping = {"entries": [], "pages": 0, "canonical_pages": 0, "sitemap_urls": 0,
+                       "source_sha256": hashlib.sha256(source.read_bytes()).hexdigest()}
+            (public / "data/faq-pages.json").write_text(json.dumps(mapping), encoding="utf-8")
+            (public / "sitemap-answers.xml").write_text(
+                '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>', encoding="utf-8")
+            script = textwrap.dedent("""
+                import importlib.util
+                import json
+                from pathlib import Path
+                import sys
+
+                original_path = list(sys.path)
+                spec = importlib.util.spec_from_file_location("isolated_checks", sys.argv[1])
+                checks = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(checks)
+                report = checks.validate_generated_answers(Path("faq.json"), Path.cwd())
+                assert sys.path == original_path, "Validator changed the module search path"
+                print(json.dumps(report))
+            """)
+            result = subprocess.run(
+                [sys.executable, "-I", "-c", script, str(ROOT / "developer/check_apps.py")],
+                cwd=public, capture_output=True, text=True, timeout=30)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertEqual(json.loads(result.stdout), {
+                "pages": 0, "canonical_pages": 0, "sitemap_urls": 0, "failures": []})

@@ -15,7 +15,10 @@ import sys
 from urllib.parse import urlsplit
 import xml.etree.ElementTree as ET
 
-from sitemap_dates import normalize_sitemaps
+# The release validator loads this file directly from outside the checkout.
+normalize_sitemaps = runpy.run_path(
+    str(Path(__file__).resolve().with_name("sitemap_dates.py"))
+)["normalize_sitemaps"]
 
 SITE = "https://fanqiang.guide"
 NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
