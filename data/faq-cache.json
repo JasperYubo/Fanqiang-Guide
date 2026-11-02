@@ -10942,23 +10942,28 @@
       "faq_id": "faq-52331c4c5840607744639d8f",
       "generation_key": "e589e99ef7bacaf1f614f2b1f69383ae388a97ff0c4d2100c8d62592a4a86dce",
       "forbidden_mismatch": [],
-      "short_answer": "连接问题时，应整理：DNS配置是否正确（nameserver、enhanced-mode）、TUN设置是否匹配系统（auto_route、address）、以及内核路由规则是否命中预期节点。对照官方DNS和TUN文档逐一核对。",
+      "short_answer": "先记录实际客户端、内核版本、操作系统和原始报错，再按对应内核核对配置。使用 Mihomo 时，DNS 可核对 nameserver、enhanced-mode，TUN 可核对 auto-route、auto-detect-interface、dns-hijack。sing-box TUN 入站使用 auto_route、address 等字段，不能直接当作 Mihomo 配置；两者也不能仅靠替换连字符与下划线转换。这里列的是核对项，并非要求一律开启。本条依据官方文档核对，未进行设备或网络实测。",
       "answer_sections": [],
       "source_ids": [
-        "source-fa761496f8771fb9",
-        "source-14eb360b5f8ff965",
-        "source-9120052fb9a23a31"
+        "source-f5a5963516eb931b",
+        "source-7f177137d2af539b",
+        "source-1760139595b3bcd1"
       ],
       "source_claim_map": {
-        "short_answer": [
-          "source-fa761496f8771fb9",
-          "source-14eb360b5f8ff965",
-          "source-9120052fb9a23a31"
+        "Mihomo DNS 字段": [
+          "source-f5a5963516eb931b"
+        ],
+        "Mihomo TUN 字段": [
+          "source-7f177137d2af539b"
+        ],
+        "sing-box TUN 字段与层级差异": [
+          "source-7f177137d2af539b",
+          "source-1760139595b3bcd1"
         ]
       },
       "engineering_template_ref": null,
       "generated_at_utc": "2026-09-27T02:41:49.698974+00:00",
-      "checked_at_utc": "2026-09-27T02:32:49.864744+00:00",
+      "checked_at_utc": "2026-11-02T19:23:15.578381+00:00",
       "expires_at_utc_or_null": null,
       "model_provider": "deepseek_official",
       "model_alias": "deepseek-v4-pro",
@@ -25912,27 +25917,27 @@
       "faq_id": "faq-b66e1a79855b59489f27c237",
       "generation_key": "8822b1cdb4e92955a758dffc527efc4792542c759aaa4b82dfd2231dbf8f2c86",
       "forbidden_mismatch": [],
-      "short_answer": "Clash Verge Rev 中 DNS 负责域名解析，TUN 用于创建虚拟网络接口接管系统流量；核对时应分别参考 sing-box TUN 文档和 Mihomo DNS 文档，并确认平台支持。",
+      "short_answer": "Clash Verge Rev 内置 Mihomo（Clash.Meta）内核。DNS 用于域名解析，TUN 用于将系统流量按配置导入虚拟网络接口；这两部分应分别核对 Mihomo 官方 DNS 与 TUN 文档。核对时记录实际客户端、内核版本和操作系统，不要把 sing-box 的 TUN 配置直接套用到 Mihomo。本条为官方资料核对，未进行设备或网络实测。",
       "answer_sections": [],
       "source_ids": [
-        "source-669231e2bbcff448",
-        "source-14eb360b5f8ff965",
-        "source-9120052fb9a23a31"
+        "source-384960ffdfc0f55e",
+        "source-f5a5963516eb931b",
+        "source-7f177137d2af539b"
       ],
       "source_claim_map": {
-        "Clash Verge Rev 背景": [
-          "source-669231e2bbcff448"
+        "Clash Verge Rev 的内核": [
+          "source-384960ffdfc0f55e"
         ],
-        "TUN 用途": [
-          "source-14eb360b5f8ff965"
+        "DNS 配置": [
+          "source-f5a5963516eb931b"
         ],
-        "DNS 用途": [
-          "source-9120052fb9a23a31"
+        "Mihomo TUN 配置与核对范围": [
+          "source-7f177137d2af539b"
         ]
       },
       "engineering_template_ref": null,
       "generated_at_utc": "2026-09-27T02:42:25.698506+00:00",
-      "checked_at_utc": "2026-09-27T02:32:49.864744+00:00",
+      "checked_at_utc": "2026-11-02T19:23:15.578381+00:00",
       "expires_at_utc_or_null": null,
       "model_provider": "deepseek_official",
       "model_alias": "deepseek-v4-pro",
@@ -38235,6 +38240,72 @@
         "XHTTP是Xray项目的HTTP传输方案，维护者文章解释上下行模式与配置关系。",
         "核对XHTTP实际行为需要查看客户端日志与HTTP版本、模式等信息，不能仅凭节点名称判断。"
       ],
+      "review_basis": "body_read_and_stable_claims_checked_no_install_speed_security_test"
+    },
+    {
+      "source_id": "source-384960ffdfc0f55e",
+      "title": "Clash Verge Rev 官方项目",
+      "entities": [
+        "clash-verge-rev"
+      ],
+      "verified_claims": [
+        "Clash Verge Rev 官方项目说明内置 Clash.Meta（Mihomo）内核。"
+      ],
+      "url": "https://github.com/clash-verge-rev/clash-verge-rev",
+      "checked_at_utc": "2026-11-02T19:22:12.252199+00:00",
+      "content_sha256": "45c4fc26ad2951ee0a07792f795742c953bcae80b4c2dd4a0ed1738d31d67be6",
+      "verification_status": "verified",
+      "review_basis": "body_read_and_stable_claims_checked_no_install_speed_security_test"
+    },
+    {
+      "source_id": "source-f5a5963516eb931b",
+      "title": "Mihomo 官方 DNS 配置",
+      "entities": [
+        "mihomo",
+        "dns-tun",
+        "dns"
+      ],
+      "verified_claims": [
+        "Mihomo 官方 DNS 配置列出 nameserver、enhanced-mode 等字段；具体取值需结合实际版本和配置。"
+      ],
+      "url": "https://wiki.metacubex.one/config/dns/",
+      "checked_at_utc": "2026-11-02T19:22:12.385083+00:00",
+      "content_sha256": "88f9186188eefa4226e059c0aaafb87f4dd525100a72cfc39211006b608aa7f0",
+      "verification_status": "verified",
+      "review_basis": "body_read_and_stable_claims_checked_no_install_speed_security_test"
+    },
+    {
+      "source_id": "source-7f177137d2af539b",
+      "title": "Mihomo 官方 TUN 配置",
+      "entities": [
+        "mihomo",
+        "dns-tun",
+        "tun"
+      ],
+      "verified_claims": [
+        "Mihomo 的 tun 配置使用 auto-route、auto-detect-interface、dns-hijack 等字段，字段说明与适用条件应按 Mihomo 文档核对。"
+      ],
+      "url": "https://wiki.metacubex.one/config/inbound/tun/",
+      "checked_at_utc": "2026-11-02T19:22:12.483717+00:00",
+      "content_sha256": "42b07c69167221442508c42613e85764ef08647e234d17ba32f03a1f452629ff",
+      "verification_status": "verified",
+      "review_basis": "body_read_and_stable_claims_checked_no_install_speed_security_test"
+    },
+    {
+      "source_id": "source-1760139595b3bcd1",
+      "title": "sing-box 官方 TUN 入站配置",
+      "entities": [
+        "sing-box",
+        "dns-tun",
+        "tun"
+      ],
+      "verified_claims": [
+        "sing-box 的 TUN 入站列出 auto_route、address；出口接口自动检测引用 route.auto_detect_interface，字段名及层级与 Mihomo 不同。"
+      ],
+      "url": "https://sing-box.sagernet.org/configuration/inbound/tun/",
+      "checked_at_utc": "2026-11-02T19:22:12.635080+00:00",
+      "content_sha256": "e530e199b26b3cf1138d3379349ca87af44753c87aee3fc427a6fcce7a18c192",
+      "verification_status": "verified",
       "review_basis": "body_read_and_stable_claims_checked_no_install_speed_security_test"
     }
   ]
