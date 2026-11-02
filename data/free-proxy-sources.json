@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "last_run": {
-    "checked_at": "2026-11-01T01:13:33Z",
+    "checked_at": "2026-11-02T01:32:12Z",
     "feed_count": 4,
     "ok_count": 3,
     "error_count": 1
@@ -11,7 +11,7 @@
       "source_id": "free-nodes",
       "url": "https://raw.githubusercontent.com/free-nodes/v2rayfree/main/sub",
       "format": "base64_uri",
-      "checked_at": "2026-11-01T01:13:33Z",
+      "checked_at": "2026-11-02T01:32:12Z",
       "status": "error",
       "error_code": "empty_content",
       "last_success_at": "2026-10-30T01:59:11Z",
@@ -30,41 +30,41 @@
       "source_id": "monosans",
       "url": "https://raw.githubusercontent.com/monosans/proxy-list/main/proxies/all.txt",
       "format": "plain_uri",
-      "checked_at": "2026-11-01T01:13:33Z",
+      "checked_at": "2026-11-02T01:32:12Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-11-01T01:13:33Z",
-      "content_changed_at": "2026-11-01T01:13:33Z",
-      "sha256": "fead295f96a4689362fc8d8304e41f853dc90ed8d63d065b8307cd925cd7d450",
-      "byte_count": 62157,
-      "valid_count": 2341,
-      "unique_count": 2341,
+      "last_success_at": "2026-11-02T01:32:12Z",
+      "content_changed_at": "2026-11-02T01:32:12Z",
+      "sha256": "b7353fd60c7120e571c3a2abcd7ed2cf4028262707642c937aae9af8396ca1dd",
+      "byte_count": 69145,
+      "valid_count": 2575,
+      "unique_count": 2575,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "http": 967,
-        "socks4": 228,
-        "socks5": 1146
+        "http": 660,
+        "socks4": 381,
+        "socks5": 1534
       }
     },
     "pawdroid-sub": {
       "source_id": "pawdroid",
       "url": "https://raw.githubusercontent.com/Pawdroid/Free-servers/main/sub",
       "format": "base64_uri",
-      "checked_at": "2026-11-01T01:13:33Z",
+      "checked_at": "2026-11-02T01:32:12Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-11-01T01:13:33Z",
-      "content_changed_at": "2026-11-01T01:13:33Z",
-      "sha256": "9f07a636f9f254a9b834cb113f0ed62b4e304fab9ea3f8f25b2ecebb4752b686",
-      "byte_count": 2688,
+      "last_success_at": "2026-11-02T01:32:12Z",
+      "content_changed_at": "2026-11-02T01:32:12Z",
+      "sha256": "7bf106d6450402ae2dcb842d365492bff79a965802982bcb3c715b634fa8bd03",
+      "byte_count": 2860,
       "valid_count": 10,
       "unique_count": 10,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "ss": 3,
-        "trojan": 1,
+        "hysteria2": 2,
+        "ss": 2,
         "vless": 6
       }
     },
@@ -72,22 +72,22 @@
       "source_id": "v2ray-aggregator",
       "url": "https://raw.githubusercontent.com/mahdibland/V2RayAggregator/master/Eternity",
       "format": "base64_uri",
-      "checked_at": "2026-11-01T01:13:33Z",
+      "checked_at": "2026-11-02T01:32:12Z",
       "status": "ok",
       "error_code": null,
-      "last_success_at": "2026-11-01T01:13:33Z",
-      "content_changed_at": "2026-11-01T01:13:33Z",
-      "sha256": "d3e1393784f1c3253c2506e22867544ca3000a6916ab16bf1d59d070b8b7ed79",
-      "byte_count": 59900,
+      "last_success_at": "2026-11-02T01:32:12Z",
+      "content_changed_at": "2026-11-02T01:32:12Z",
+      "sha256": "7bddc5d4a0f638ae9e22371f4200463e777251d696d530cf0617cc1413caf7a9",
+      "byte_count": 56108,
       "valid_count": 200,
       "unique_count": 200,
       "duplicate_count": 0,
       "rejected_count": 0,
       "protocol_counts": {
-        "ss": 116,
-        "ssr": 2,
-        "trojan": 29,
-        "vmess": 53
+        "ss": 118,
+        "ssr": 1,
+        "trojan": 37,
+        "vmess": 44
       }
     }
   }
