@@ -20,6 +20,11 @@ normalize_sitemaps = runpy.run_path(
     str(Path(__file__).resolve().with_name("sitemap_dates.py"))
 )["normalize_sitemaps"]
 
+_diagnostics = runpy.run_path(str(Path(__file__).resolve().with_name("diagnostics_discovery.py")))
+diagnostic_context = _diagnostics["diagnostic_context"]
+render_diagnostics_callout = _diagnostics["render_diagnostics_callout"]
+diagnostics_markdown = _diagnostics["diagnostics_markdown"]
+
 SITE = "https://fanqiang.guide"
 NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 ID = re.compile(r"faq-[a-z0-9-]+\Z")
@@ -154,16 +159,20 @@ def render_answer(entry, entries, page):
     esc = html.escape
     path, canonical = route(entry), SITE + "/answers/" + entry["representative"] + "/"
     heading = title(entry)
+    diagnostics_context = diagnostic_context(entry)
+    diagnostics_html = render_diagnostics_callout(diagnostics_context) if diagnostics_context else ""
     sources = "<ul>" + "".join(f'<li><a href="{esc(s["url"], quote=True)}">{esc(s["title"])}</a> · 核对：{esc(s["checked_at"][:10])}</li>' for s in entry["sources"]) + "</ul>"
     sections = "".join(("<h2>" + esc(s["title"]) + "</h2>" if s["title"] else "") + '<p style="white-space:pre-wrap">' + esc(s["content"]) + "</p>" for s in entry["sections"])
     related_entries = related(entry, entries)
     links = "<ul>" + "".join(f'<li><a href="{canonical_route(e)}">{esc(title(e))}</a></li>' for e in related_entries) + "</ul>"
-    body = f'<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/answers/">常见问题</a></nav><article><header class="guide-header"><h1>{esc(heading)}</h1><p class="guide-meta">资料核对：<time datetime="{esc(entry["checked_at_utc"], quote=True)}">{esc(entry["checked_at_utc"][:10])}</time> · <a href="{path}index.md">Markdown</a></p></header><div class="guide-body"><p style="white-space:pre-wrap">{esc(entry["short_answer"])}</p>{sections}<section><h2>来源与核对日期</h2>{sources}</section>' + (f'<section><h2>相关问题</h2>{links}</section>' if related_entries else "") + '<p>需要按自己的设备继续整理？<a href="/">回首页</a>说明可用的 AI、设备和需求，获取 I-Lang 工程书。</p><p><a href="/answers/">浏览全部常见问题</a></p></div></article></main>'
+    body = f'<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/answers/">常见问题</a></nav><article><header class="guide-header"><h1>{esc(heading)}</h1><p class="guide-meta">资料核对：<time datetime="{esc(entry["checked_at_utc"], quote=True)}">{esc(entry["checked_at_utc"][:10])}</time> · <a href="{path}index.md">Markdown</a></p></header><div class="guide-body"><p style="white-space:pre-wrap">{esc(entry["short_answer"])}</p>{sections}{diagnostics_html}<section><h2>来源与核对日期</h2>{sources}</section>' + (f'<section><h2>相关问题</h2>{links}</section>' if related_entries else "") + '<p>需要按自己的设备继续整理？<a href="/">回首页</a>说明可用的 AI、设备和需求，获取 I-Lang 工程书。</p><p><a href="/answers/">浏览全部常见问题</a></p></div></article></main>'
     schemas = [{"@type": "Article", "@id": canonical + "#article", "url": canonical, "headline": heading, "description": entry["short_answer"], "inLanguage": "zh-CN", "dateModified": entry["checked_at_utc"], "mainEntityOfPage": canonical, "author": {"@type": "Organization", "name": "Fanqiang Guide", "url": SITE + "/"}, "citation": [s["url"] for s in entry["sources"]]}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "翻墙指南", "item": SITE + "/"}, {"@type": "ListItem", "position": 2, "name": "常见问题", "item": SITE + "/answers/"}, {"@type": "ListItem", "position": 3, "name": heading, "item": canonical}]}]
     rendered = page(heading + " | Fanqiang Guide", entry["short_answer"], canonical[len(SITE):], body, schemas, path + "index.md").replace('content="website"', 'content="article"', 1)
     markdown = "# " + mdtext(heading) + "\n\n" + mdtext(entry["short_answer"]) + "\n\n资料核对：" + entry["checked_at_utc"][:10] + "\n"
     for section in entry["sections"]:
         markdown += ("\n## " + mdtext(section["title"]) + "\n" if section["title"] else "") + "\n" + mdtext(section["content"]) + "\n"
+    if diagnostics_context:
+        markdown += diagnostics_markdown(diagnostics_context)
     markdown += "\n## 来源与核对日期\n\n" + "\n".join(f'- [{mdtext(s["title"])}]({s["url"]}) · 核对：{s["checked_at"][:10]}' for s in entry["sources"])
     if related_entries:
         markdown += "\n\n## 相关问题\n\n" + "\n".join(f'- [{mdtext(title(e))}]({SITE}{canonical_route(e)})' for e in related_entries)
