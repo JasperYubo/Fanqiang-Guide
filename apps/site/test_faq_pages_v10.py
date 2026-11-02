@@ -57,10 +57,10 @@ class FaqPageTests(unittest.TestCase):
         self.assertTrue(any(s["@type"] == "BreadcrumbList" for s in graph))
         self.assertNotIn("FAQPage", raw)
         self.assertNotIn("model", raw)
-        for content in ("需要按自己的设备继续整理？", "说明可用的 AI、设备和需求，获取 I-Lang 工程书。"):
+        for content in ("需要继续配置自己的设备？", "让自己的 AI 获取工程书", "完成安装、排错与验证。"):
             self.assertIn(content, raw)
             self.assertIn(content, md)
-        self.assertIn('href="/">回首页</a>', raw)
+        self.assertIn('href="/ai/#device-setup"', raw)
 
     def test_directories_prevent_orphans_and_sitemap_preserves_existing_urls(self):
         self.build(fixture())

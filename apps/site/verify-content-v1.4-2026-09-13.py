@@ -31,7 +31,8 @@ check('unique_question_intents_as_text',len(seen)==len(set(seen)))
 home=(P/'index.html').read_text(encoding='utf-8');home_md=(P/'index.md').read_text(encoding='utf-8')
 home_faq=faq_from_html(home)
 check('eight_visible_home_answers',len(home_faq)==8 and all(html.escape(f['name']) in home and html.escape(f['acceptedAnswer']['text']) in home and f['name'] in home_md for f in home_faq))
-check('homepage_topic_identity', '翻墙与科学上网工具指南 | Fanqiang Guide' in home and 'id="hero-title">翻墙与科学上网' in home)
+check('homepage_topic_identity', '翻墙与科学上网工具指南 | Fanqiang Guide' in home and '翻墙工具下载、免费节点与路由器指南' in home)
+check('homepage_device_setup_entry', 'id="hero-title">让自己的 AI' in home and 'id="autosetup-home"' in home and 'data-copy-mcp' in home and 'data-copy-setup-request' in home and 'href="/ai/#device-setup"' in home)
 check('homepage_ladder_term', '梯子' in home and '梯子' in home_md)
 for slug in ('ladder-vpn-proxy','airport-subscription-nodes','router-guide'):
     relative='/guides/'+slug+'.html'

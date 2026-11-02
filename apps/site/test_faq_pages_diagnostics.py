@@ -1,4 +1,4 @@
-"""The diagnostics CTA stays scoped and preserves the equivalent-page contract."""
+"""Setup entry scope, equivalent URLs, device boundaries and legacy compatibility."""
 import copy
 from pathlib import Path
 import unittest
@@ -8,7 +8,7 @@ class DiagnosticsEntryTests(unittest.TestCase):
     setUp = fixtures.FaqPageTests.setUp
     build = fixtures.FaqPageTests.build
 
-    def test_equivalent_answer_urls_get_one_cta_in_html_and_markdown(self):
+    def test_equivalent_answer_urls_get_one_setup_entry_in_html_and_markdown(self):
         data = fixtures.fixture()
         selected = data["entries"][0]
         selected["faq_id"] = "faq-4c2d5493d990a3ea50245dd1"
@@ -23,25 +23,41 @@ class DiagnosticsEntryTests(unittest.TestCase):
             directory = self.public / "answers" / entry["faq_id"]
             raw = (directory / "index.html").read_text()
             markdown = (directory / "index.md").read_text()
-            self.assertEqual(raw.count('id="diagnostics-next-step"'), 1)
-            self.assertIn('/diagnostics/#install', raw)
-            self.assertIn('/diagnostics/#submit-report', markdown)
-            self.assertIn("不支持手机本机采样", raw)
-            self.assertIn("固定诊断目标", markdown)
+            self.assertEqual(raw.count('id="autosetup-next-step"'), 1)
+            self.assertEqual(raw.count('data-copy-mcp'), 1)
+            self.assertEqual(raw.count('data-copy-setup-request'), 1)
+            self.assertIn('/ai/#device-setup', raw)
+            self.assertIn('https://fanqiang.guide/mcp', markdown)
+            self.assertIn('/ai/setup-request.ilang', markdown)
+            self.assertIn('断开后重连', markdown)
+            self.assertNotIn('id="diagnostics-next-step"', raw)
+            self.assertNotIn('/diagnostics/#submit-report', markdown)
         raw = (self.public / "answers/faq-ios-installation/index.html").read_text()
-        self.assertNotIn('id="diagnostics-next-step"', raw)
+        self.assertNotIn('id="autosetup-next-step"', raw)
 
-    def test_router_context_asks_for_a_connected_computer_not_router_install(self):
+    def test_router_requires_target_control_and_downstream_verification(self):
         data = fixtures.fixture()
         data["entries"][0]["faq_id"] = "faq-c77f1b4e6050233d09cc7090"
         self.build(data)
         directory = self.public / "answers" / data["entries"][0]["faq_id"]
         for filename in ("index.html", "index.md"):
             content = (directory / filename).read_text()
-            self.assertIn("在连接这台路由器的 Windows 或 Linux 电脑上运行", content)
-            self.assertIn("不会读取路由器插件配置或日志", content)
+            self.assertIn("型号、固件和实际控制权限", content)
+            self.assertIn("路由器本机与下游设备要分别验收", content)
+            self.assertIn("保留恢复方式", content)
 
-    def test_installation_page_has_both_real_destinations_and_no_auto_start(self):
+    def test_mobile_does_not_treat_desktop_checks_as_phone_success(self):
+        data = fixtures.fixture()
+        data["entries"][0]["faq_id"] = "faq-33d46f18184a41076fbe00f5"
+        self.build(data)
+        directory = self.public / "answers" / data["entries"][0]["faq_id"]
+        for filename in ("index.html", "index.md"):
+            content = (directory / filename).read_text()
+            self.assertIn("只在电脑上测通，不能证明手机已配置", content)
+            self.assertIn("手机的系统 VPN 授权", content)
+            self.assertIn("不得声称已经完成", content)
+
+    def test_legacy_diagnostics_page_still_has_destinations_without_auto_start(self):
         page = Path(__file__).resolve().parents[1] / "diagnostics/site/index.html"
         raw = page.read_text(encoding="utf-8")
         self.assertEqual(raw.count('id="install"'), 1)
