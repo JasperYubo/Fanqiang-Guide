@@ -1,0 +1,39 @@
+[Unit]
+Description=Fanqiang private diagnostics collector
+After=network.target
+
+[Service]
+Type=simple
+User=fanqiang-diag
+Group=fanqiang-diag
+WorkingDirectory=/opt/fanqiang-diagnostics/current
+ExecStart=/opt/fanqiang-diagnostics/runtime/node-v24.18.1-linux-x64/bin/node --max-old-space-size=128 /opt/fanqiang-diagnostics/current/collector.mjs
+Environment=NODE_ENV=production
+Environment=FQDIAG_HOST=127.0.0.1
+Environment=FQDIAG_PORT=8792
+Environment=FQDIAG_DATA_DIR=/var/lib/fanqiang-diagnostics
+StateDirectory=fanqiang-diagnostics
+StateDirectoryMode=0700
+UMask=0077
+Restart=on-failure
+RestartSec=3
+TimeoutStopSec=10
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/fanqiang-diagnostics
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+CapabilityBoundingSet=
+LockPersonality=true
+MemoryMax=256M
+TasksMax=64
+LimitNOFILE=1024
+
+[Install]
+WantedBy=multi-user.target

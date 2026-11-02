@@ -1,0 +1,36 @@
+name: Check Diagnostics MCP
+on:
+  push:
+    paths: ['apps/diagnostics/**', '.github/workflows/check-diagnostics.yml']
+  pull_request:
+    paths: ['apps/diagnostics/**', '.github/workflows/check-diagnostics.yml']
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: apps/diagnostics
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: apps/diagnostics/package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm test
+      - run: npm run build
+      - run: FQDIAG_TEST_BUNDLE=1 node --test test/mcp.test.mjs
+      - run: npx playwright install --with-deps chromium
+      - run: node scripts/browser-check.mjs
+      - name: Verify self-contained npm package
+        run: |
+          package_test=$(mktemp -d)
+          archive=$(npm pack --pack-destination "$package_test" --silent)
+          tar -xzf "$package_test/$archive" -C "$package_test"
+          FQDIAG_TEST_ENTRY="$package_test/package/dist/client.mjs" node --test test/mcp.test.mjs

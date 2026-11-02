@@ -1,0 +1,88 @@
+{
+  "version": "0.1.0",
+  "report_schema": "0.1",
+  "public_base": "https://fanqiang.guide/diagnostics-api",
+  "report": {
+    "schema_version": "0.1",
+    "report_id": "UUID",
+    "created_at": "ISO date-time",
+    "collector": {
+      "name": "fanqiang-diagnostics",
+      "version": "0.1.0",
+      "execution_location": "user_device OR linux_lab",
+      "platform": "linux OR win32 OR darwin OR other",
+      "routing_mode": "os_direct_socket",
+      "proxy_note": "explicit OS/HTTP proxies are not used; TUN may affect routing"
+    },
+    "problem_category": "connectivity OR slow OR dns OR application OR other",
+    "measurements": {
+      "dns": [],
+      "tcp": [],
+      "tls": [],
+      "http": [],
+      "throughput": []
+    },
+    "summary": {
+      "tcp_median_ms": "number|null",
+      "http_median_ms": "number|null",
+      "tcp_failure_ratio": "number|null",
+      "download_mbps": "number|null"
+    },
+    "budget": {
+      "max_payload_bytes": 10485760,
+      "used_payload_bytes": "integer",
+      "max_duration_ms": 15000
+    },
+    "redaction": {
+      "raw_logs_included": false,
+      "removed_categories": [
+        "enum category names"
+      ]
+    },
+    "limitations": [
+      "bounded known enum codes"
+    ]
+  },
+  "sample": {
+    "started_at": "ISO date",
+    "duration_ms": "number|null",
+    "status": "ok OR error OR timeout OR cancelled",
+    "error_code": "enum safe code|null",
+    "bytes": "integer optional throughput",
+    "mbps": "number optional throughput"
+  },
+  "exports": {
+    "report.mjs": [
+      "VERSION",
+      "PUBLIC_BASE",
+      "validateReport(report) -> {ok,errors}",
+      "canonicalJson(value) -> string",
+      "reportDigest(report) -> hex",
+      "redactText(text) -> {text,categories}"
+    ],
+    "measure.mjs": [
+      "runDiagnostics({throughput=false,problemCategory=\"other\",executionLocation=\"user_device\",signal,onProgress,transport?}) -> report"
+    ],
+    "collector.mjs": [
+      "createCollector({dataDir,host,port,...testOverrides}) -> {server,close,...}"
+    ],
+    "ui.mjs": [
+      "startLocalUi({runDiagnostics,publicBase?,dataDir?,executionLocation?}) -> {url,close,getStatus,preview,stop}"
+    ]
+  },
+  "backend": {
+    "GET /health": "health",
+    "GET /v1/ping": "small no-store response",
+    "GET /v1/download?bytes=N": "no-store incompressible <=10MiB bounded payload",
+    "POST /v1/reports": "{report,idempotency_key,consent:{version:\"1\",preview_sha256,action:\"submit\"}} -> {receipt_id,received_at,expires_at,delete_token}",
+    "DELETE /v1/reports/:id": "Authorization: Bearer delete_token"
+  },
+  "notes": [
+    "Never upload raw logs, URLs/IPs/node config, hostname, serial IDs, usernames or arbitrary free text. Redacted log preview is LOCAL ONLY and excluded from submitted report.",
+    "No automatic submission, no MCP upload tool. Human clicks local preview submit; server acknowledges format not truth/authenticity.",
+    "Default throughput OFF; at most 10MiB/15s per run; each local session at most20MiB; abort support; do not count failed/null as0.",
+    "Measure sockets use OS route and TUN if enabled, do not claim application-level proxy or ICMP packet loss. Fixed allowlisted HTTPS target, no arbitrary hosts/private DNS addresses/redirects.",
+    "MCP stdio via official SDK; CLI web UI users click test/review/submit; persist report and delete receipt locally in private data dir.",
+    "Client cross-platform JS no native addon; all dev/build/test Linux. Backend Node24 sqlite built-in only and loopback, nginx /diagnostics-api prefix strips to backend root."
+  ]
+}

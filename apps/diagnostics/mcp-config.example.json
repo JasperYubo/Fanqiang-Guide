@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "fanqiang-diagnostics": {
+      "command": "node",
+      "args": [
+        "/ABSOLUTE/PATH/TO/client.mjs",
+        "--stdio"
+      ]
+    }
+  }
+}

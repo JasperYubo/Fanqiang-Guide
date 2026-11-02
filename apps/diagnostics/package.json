@@ -1,0 +1,31 @@
+{
+  "name": "@fanqiang/diagnostics-mcp",
+  "version": "0.1.0",
+  "description": "Local network diagnostics with private preview and explicit report submission",
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.19"
+  },
+  "bin": {
+    "fanqiang-diagnostics": "dist/client.mjs"
+  },
+  "files": [
+    "dist/client.mjs",
+    "README.md",
+    "mcp-config.example.json",
+    "LICENSE.txt",
+    "licenses/"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build": "node scripts/build.mjs",
+    "start": "node src/client.mjs"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "@playwright/test": "1.64.1",
+    "esbuild": "0.27.4"
+  }
+}
