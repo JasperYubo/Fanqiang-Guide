@@ -30,7 +30,7 @@ ERROR_CODES = {"command_timeout", "command_unavailable", "missing_or_invalid_out
                "both_update_lines_failed", "publish_worktree_not_clean", "cannot_check_staged_changes",
                "source_checkout_not_clean", "push_failed_without_non_fast_forward", "publish_retry_limit",
                "main_did_not_advance"}
-VERSION_PATHS = ("data/upstream.json", "CATALOG.md", "UPDATES.md")
+VERSION_PATHS = ("data/upstream.json", "CATALOG.md", "UPDATES.md", "data/source-freshness.json")
 BOT_CONFIG = ("-c", "user.name=github-actions[bot]", "-c", "user.email=41898282+github-actions[bot]@users.noreply.github.com", "-c", "commit.gpgSign=false")
 
 
@@ -181,7 +181,10 @@ class Pipeline:
                     self.python(source, "update_upstream.py", "--output", state, api=True, timeout=19 * 60)
                     self.python(source, "build_catalog.py", "--state", state,
                                 "--catalog-output", directory / "CATALOG.md", "--updates-output", directory / "UPDATES.md")
-                    produced = dict(zip(VERSION_PATHS, (state, directory / "CATALOG.md", directory / "UPDATES.md")))
+                    freshness = directory / "source-freshness.json"
+                    self.command([sys.executable, str(Path(source) / "developer/refresh_knowledge_sources.py"),
+                                  "--state", str(state), "--output", str(freshness)], cwd=source, timeout=120)
+                    produced = dict(zip(VERSION_PATHS, (state, directory / "CATALOG.md", directory / "UPDATES.md", freshness)))
                 else:
                     state, pages = directory / "free-proxy-sources.json", directory / "free-proxies"
                     previous = Path(source) / "data/free-proxy-sources.json"

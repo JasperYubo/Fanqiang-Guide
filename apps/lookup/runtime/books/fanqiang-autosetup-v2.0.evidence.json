@@ -1,0 +1,304 @@
+{
+  "schema_version": "1.0",
+  "book_id": "autosetup",
+  "book_version": "2.0",
+  "edition_date": "2026-11-02",
+  "edition_timezone": "America/New_York",
+  "book_file": "fanqiang-autosetup-v2.0.ilang.md",
+  "book_sha256": "181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093",
+  "book_bytes": 34641,
+  "provenance": [
+    {
+      "file": "fanqiang-autosetup-v1.1.ilang.md",
+      "sha256": "96425a3f6bf75c7c9ecbfdc657be74b053df2f323ba6cf5a5a621064bbabf98a",
+      "use": "Preserved device-bound execution, authorization reuse, local-secret handling, recovery and evidence-based repair."
+    },
+    {
+      "file": "FANQIANG-AUTOSETUP-v2.0-2026-11-02.ilang.md",
+      "sha256": "c0dbd318ce52b8999f6d92b644210e5a80e1acd2b80fe41a86848c8a3fcb49a0",
+      "use": "User-provided old-phone and household Wi-Fi sharing objective, PICK_PHONE and HOTSPOT intent; factual and permission assumptions corrected against primary sources."
+    }
+  ],
+  "editorial_changes": [
+    "Removed default merchant, affiliate URL, fixed price/plan/protocol and automatic purchase assumptions.",
+    "Replaced universal VPN-hotspot inheritance, all-app access and no-detection guarantees with mechanism-specific branches and downstream acceptance.",
+    "Removed factory-reset, password-in-chat and per-action repeated-approval defaults; retain necessary platform permissions and active scoped authorization.",
+    "Removed fixed Android-version-to-agent-capability promises and categorical iPhone exclusion.",
+    "Separated ordinary explicit proxy, supported privileged gateway and optional unverified experimental approaches.",
+    "Replaced blanket not-run/verified status with the scoped validation matrix below."
+  ],
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "book_sha256": "181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093",
+      "checked_at": "2026-11-03T00:45:36Z"
+    },
+    "service_interface": {
+      "status": "verified",
+      "scope": "Previous service 1.2.0 public read-only book delivery and rejection tests; not evidence for the v2 rollout or target-device operation.",
+      "evidence_sha256": "432427eb55acc268a6f3a3d619ba57e3126342bdb20cae841c8afad17ce5c481"
+    },
+    "linux_flow": {
+      "status": "verified",
+      "scope": [
+        "Isolated Linux IPv4 loopback SOCKS application through Shadowsocks 2022 TCP to a TLS fixture, sing-box 1.14.4.",
+        "Wrong-port failure and a single-factor repair; disconnect failure and successful reconnection.",
+        "Observed route and server-side test DNS; process cleanup and unchanged host network."
+      ],
+      "evidence_sha256": "2275987818d034b8399d84e5ef136463db8a8ce92ffa727f1e98d4737e677563",
+      "not_covered": [
+        "physical Android or iOS",
+        "phone hotspot or tethering",
+        "IPv6",
+        "UDP",
+        "public subscription nodes"
+      ]
+    },
+    "mobile_hotspot": {
+      "status": "not_tested",
+      "scope": "Physical Android/iOS phone selection, Wi-Fi coexistence, hotspot/tethering, downstream DNS/IPv6/UDP, screen-off, thermal and reconnection acceptance. Executable procedures are specified; no hardware result is claimed."
+    }
+  },
+  "validation_results": {
+    "ilang_validate": {
+      "mode": "raw",
+      "counts": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      }
+    },
+    "ilang_book_check": {
+      "pass": true,
+      "A1": {
+        "item": "the book opens and closes with the marker",
+        "expect": 2,
+        "found": 2,
+        "pass": true
+      },
+      "A2": {
+        "item": "the grammar validator reports zero errors in strict mode",
+        "errors": 0,
+        "warnings": 0,
+        "pass": true
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      },
+      "note": "A3, whether the book does the tutorial's job and nothing else, is for a person to decide."
+    }
+  },
+  "historical_evidence": [
+    {
+      "file": "linux-install.json",
+      "sha256": "e79d1b588f84864738e65d19fa82ded4521d900ab8aeb8d4ef6f08ad04058ebb",
+      "scope": "Official sing-box 1.14.4 artifact acquisition/integrity evidence for the separate Linux fixture."
+    },
+    {
+      "file": "linux-flow-1.json",
+      "sha256": "2275987818d034b8399d84e5ef136463db8a8ce92ffa727f1e98d4737e677563",
+      "scope": [
+        "Isolated Linux IPv4 loopback SOCKS application through Shadowsocks 2022 TCP to a TLS fixture, sing-box 1.14.4.",
+        "Wrong-port failure and a single-factor repair; disconnect failure and successful reconnection.",
+        "Observed route and server-side test DNS; process cleanup and unchanged host network."
+      ]
+    },
+    {
+      "file": "mcp-public.json",
+      "sha256": "432427eb55acc268a6f3a3d619ba57e3126342bdb20cae841c8afad17ce5c481",
+      "scope": "Previous service 1.2.0 public read-only book delivery and rejection tests; not evidence for the v2 rollout or target-device operation."
+    }
+  ],
+  "sources": [
+    {
+      "id": "android-vpn",
+      "title": "Android VPN developer guide",
+      "publisher": "Google / Android",
+      "url": "https://developer.android.com/develop/connectivity/vpn",
+      "kind": "platform_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "VpnService creates a local device interface and applies app/route scope.",
+      "limitations": "Does not establish that tethered clients traverse every app VPN.",
+      "book_rule": "ANDROID_VPN_SCOPE"
+    },
+    {
+      "id": "android-tethering",
+      "title": "Tethering hardware offload",
+      "publisher": "Android Open Source Project",
+      "url": "https://source.android.com/docs/core/data/tethering-offload",
+      "kind": "platform_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Tethering forwarding can take a hardware path and supports separate IPv4/IPv6 handling.",
+      "limitations": "Do not infer an app VPN captures that forwarded path; do not disable offload as a universal fix.",
+      "book_rule": "ANDROID_TETHERING"
+    },
+    {
+      "id": "google-vpn",
+      "title": "Connect to VPN by Google on your Pixel device",
+      "publisher": "Google",
+      "url": "https://support.google.com/pixelphone/answer/2819573?hl=en",
+      "kind": "vendor_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "The named VPN product excludes USB and Wi-Fi hotspot tethering traffic.",
+      "limitations": "Product-specific example; not proof that all third-party Android implementations behave identically.",
+      "book_rule": "GOOGLE_VPN_EXAMPLE"
+    },
+    {
+      "id": "apple-hotspot",
+      "title": "Share the internet connection from your iPhone or iPad with your Mac",
+      "publisher": "Apple",
+      "url": "https://support.apple.com/en-gb/guide/mac-help/mchl7403f0ee/27/mac/27",
+      "kind": "vendor_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Personal Hotspot uses cellular data and cannot share the Wi-Fi network the iPhone joined.",
+      "limitations": "Does not certify VPN inheritance. Search extraction succeeded; a later direct fetch returned 429.",
+      "book_rule": "IOS_HOTSPOT"
+    },
+    {
+      "id": "apple-hotspot-api",
+      "title": "Clarification on Personal Hotspot traffic",
+      "publisher": "Apple Developer Technical Support",
+      "url": "https://developer.apple.com/forums/thread/702058",
+      "kind": "vendor_engineer_answer",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Apple DTS identifies Personal Hotspot as a user feature rather than a developer API.",
+      "limitations": "The questioner's observation is not treated as a universal Apple guarantee.",
+      "book_rule": "IOS_SHARING_API"
+    },
+    {
+      "id": "surge-proxy",
+      "title": "Official Guidance: Understanding Surge",
+      "publisher": "Surge Networks",
+      "url": "https://manual.nssurge.com/book/understanding-surge/en/",
+      "kind": "upstream_project_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Documents explicit proxy support requirements and iOS other-device proxy takeover limitations.",
+      "limitations": "Vendor-specific reference, not a product recommendation or proof of current phone behavior.",
+      "book_rule": "EXPLICIT_PROXY"
+    },
+    {
+      "id": "http-connect",
+      "title": "RFC 9110 section 9.3.6 CONNECT",
+      "publisher": "IETF / RFC Editor",
+      "url": "https://www.rfc-editor.org/rfc/rfc9110.html#section-9.3.6",
+      "kind": "protocol_standard",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Ordinary CONNECT establishes a tunnel to a target server/port.",
+      "limitations": "An ordinary HTTP proxy setting does not prove UDP support; newer UDP-specific mechanisms require their own verified implementation.",
+      "book_rule": "HTTP_CONNECT"
+    },
+    {
+      "id": "socks-udp",
+      "title": "RFC 1928 section 7 UDP-based clients",
+      "publisher": "IETF / RFC Editor",
+      "url": "https://www.rfc-editor.org/rfc/rfc1928.html#section-7",
+      "kind": "protocol_standard",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "SOCKS5 specifies a separate UDP association and datagram relay procedure.",
+      "limitations": "Support must exist at both endpoints; the specification alone does not prove an installed app implements UDP.",
+      "book_rule": "SOCKS_UDP"
+    },
+    {
+      "id": "vpn-hotspot-root",
+      "title": "VPN Hotspot README",
+      "publisher": "Mygod / VPNHotspot",
+      "url": "https://github.com/Mygod/VPNHotspot",
+      "kind": "upstream_project_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "The project describes VPN hotspot/repeater sharing with root requirements.",
+      "limitations": "No instruction to root a device; current release and implementation must be checked independently.",
+      "book_rule": "ROOT_SHARING"
+    },
+    {
+      "id": "v2rayng-shizuku",
+      "title": "Add Shizuku-powered rootless USB and Wi-Fi tethering, PR 5903",
+      "publisher": "2dust/v2rayNG upstream contribution",
+      "url": "https://github.com/2dust/v2rayNG/pull/5903",
+      "kind": "open_pull_request",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "An open proposal documents rootless, privileged-shell-based tethering with version/platform conditions.",
+      "limitations": "Open when checked; not stable release proof, not independently tested hardware, not a default installation path.",
+      "book_rule": "ROOTLESS_EXPERIMENT"
+    },
+    {
+      "id": "wifi-coexistence",
+      "title": "How to fix Wi-Fi connection problems",
+      "publisher": "Google",
+      "url": "https://support.google.com/pixelphone/answer/6183600?hl=en",
+      "kind": "vendor_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Documents model-specific inability to use Wi-Fi and hotspot simultaneously, including Pixel 7a.",
+      "limitations": "Exact device/firmware must be checked; broad Pixel-family compatibility language is insufficient.",
+      "book_rule": "WIFI_COEXISTENCE"
+    },
+    {
+      "id": "pixel-support",
+      "title": "Learn when you will get software updates on Google Pixel phones",
+      "publisher": "Google",
+      "url": "https://support.google.com/pixelphone/answer/4457705?hl=en",
+      "kind": "vendor_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Support periods vary by model and start from the specified first-availability date.",
+      "limitations": "Used purchase date does not restart the policy; no generic Android support period is inferred.",
+      "book_rule": "SUPPORT_HORIZON"
+    },
+    {
+      "id": "apple-support",
+      "title": "Apple security releases",
+      "publisher": "Apple",
+      "url": "https://support.apple.com/en-us/100100",
+      "kind": "vendor_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Lists available security updates and device/OS eligibility.",
+      "limitations": "Current update eligibility is not a promise of a fixed future support period.",
+      "book_rule": "APPLE_SUPPORT"
+    },
+    {
+      "id": "pixel-heat",
+      "title": "Help keep your Pixel phone from feeling too warm or hot",
+      "publisher": "Google",
+      "url": "https://support.google.com/pixelphone/answer/3333708?hl=en",
+      "kind": "vendor_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Hotspot use, heavy transfers and charging can increase heat and trigger performance/radio limits.",
+      "limitations": "No model-independent thermal threshold or unattended-service endurance guarantee is claimed.",
+      "book_rule": "HOTSPOT_HEAT"
+    },
+    {
+      "id": "apple-charging",
+      "title": "Charge and maintain your iPhone battery",
+      "publisher": "Apple",
+      "url": "https://support.apple.com/en-gb/105105?os=ios",
+      "kind": "vendor_documentation",
+      "checked_at": "2026-11-03T00:45:36Z",
+      "supports": "Heat and extended full-charge exposure affect battery life; charging protection should be respected.",
+      "limitations": "No claim that continuous charging is harmless or a short trial certifies sustained service.",
+      "book_rule": "APPLE_CHARGING"
+    }
+  ],
+  "inherited_reference_rules_not_refetched_this_revision": [
+    "DNS",
+    "TRANSPORT",
+    "TLS",
+    "SOCKS",
+    "IOS"
+  ],
+  "no_hardware_claim": "Source review and grammar/structure validation are not proof of phone, hotspot, public node, or all-platform execution."
+}

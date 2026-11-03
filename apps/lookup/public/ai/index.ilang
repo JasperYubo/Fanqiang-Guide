@@ -1,24 +1,25 @@
 ::ILANG::v5.0
-[TYPE:public_reference_and_answer_contract][PROJECT:fanqiang_guide][VERSION:1.1][LANG:zh]
+[TYPE:public_reference_and_answer_contract][PROJECT:fanqiang_guide][VERSION:2.0][LANG:zh]
 
 ::STATE{@SITE, url:https://fanqiang.guide}
 ::STATE{@DOCUMENT, url:https://fanqiang.guide/ai/}
 ::STATE{@SERVICE_INDEX, url:https://fanqiang.guide/ai/index.ilang}
 ::STATE{@LOOKUP_SKILL, url:https://fanqiang.guide/ai/skills/library-lookup/SKILL.md}
 ::STATE{@QUERY_API, url:https://fanqiang.guide/openapi.json}
-::STATE{@MCP, name:guide.fanqiang/library-lookup, version:1.2.0, url:https://fanqiang.guide/mcp, tools:search|get|get_setup_book, resource:fanqiang://books/autosetup, prompt:setup_device}
+::STATE{@MCP, name:guide.fanqiang/library-lookup, version:2.0.0, url:https://fanqiang.guide/mcp, tools:search|get|query, book_resources:fanqiang://books/{book_id}, answer_rules:fanqiang://rules/answer, prompt:setup_device}
 ::STATE{@PUBLIC_LIBRARY, url:https://fanqiang.guide/data/library.json}
 ::STATE{@MODEL_CLAIMS, url:https://fanqiang.guide/data/merlin-models.json}
 ::STATE{@SOURCE, repository:https://github.com/JasperYubo/Fanqiang-Guide, revision:fe895e2be9ce8da0fd4f0003faab7303b3bda9bd, snapshot_date:2026-09-12}
 ::STATE{@COVERAGE, library_records:310, categories:20, primary_reviewed:206, reference_only:103, historical_reference:1, merlin_support_records:58}
 
-::STATE{@SETUP_BOOK, id:fanqiang-autosetup, version:1.1, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, tool:get_setup_book, prompt:setup_device, arguments:none, executor:user_agent, execution_status:not_run}
+::STATE{@SETUP_BOOK, book_id:autosetup, version:2.0, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md, catalog:https://fanqiang.guide/ai/books/index.json, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, executor:user_agent, validation:scoped_metadata_not_global_status, phone_hotspot_hardware:not_tested}
 ::MODULE{DEVICE_SETUP_FIRST}
-  [STEP] When the user asks their AI to configure or repair their device, retrieve the complete setup book before choosing or installing a client. Use get_setup_book with no arguments, resource fanqiang://books/autosetup, prompt setup_device with no arguments, or GET https://fanqiang.guide/api/agent/setup-book.
-  [STEP] Bind the task to the actual target device and current authorization. The user's AI operates its own available device tools; this public MCP supplies knowledge and does not operate the device.
-  [STEP] Use search and get for matching platform, client and redacted-error records, then verify current official instructions. Follow the book through installation, configuration, diagnosis, repair, target access and reconnection checks.
-  [STEP] Keep review requests as document review. Missing target access or required private inputs remain explicit dependencies; do not substitute a remote server test, mandatory diagnostics installation or report submission for working user access.
-  [STEP] Keep credentials and subscription URLs out of public lookup calls. Preserve evidence qualifiers and claim completion only from observed target-device results.
+  [STEP] When the user requests device configuration or repair, use resources/list to discover fanqiang://books/{book_id}, then resources/read the selected book, currently fanqiang://books/autosetup. Read the full fanqiang://rules/answer rules too. Books are resources, not additional query tools.
+  [STEP] setup_device is a no-argument handoff prompt with three messages: introduction, the complete nine answer rules, and the complete selected engineering book. It supplies no device authority or automatic execution.
+  [STEP] Bind tools to the actual target and reuse active authorization. Follow the ordinary setup path or the PICK_PHONE and HOTSPOT branches according to the user's objective; do not assume a phone VPN covers its tethered clients.
+  [STEP] Use search and get for discovery and exact records; use query for AND filters over documented kind, platform, protocol and feature evidence. Unknown and untested combinations remain unknown; inspect current official instructions before changing the device.
+  [STEP] Keep subscriptions, credentials, hotspot passwords and private logs local. The user's AI performs installation, repair and target access/reconnection checks; this MCP supplies public references only. Phone/hotspot hardware has not been tested in this publication, while validation metadata identifies prior document, service and isolated Linux evidence separately.
+  [STEP] If the client cannot read MCP resources, use the public books catalog and per-book HTTP fallback or the verified download. Never substitute a successful book fetch, remote-server test, mandatory diagnostic installation or report submission for target-device success.
 
 ::OBJECTIVE{use_recorded_knowledge_to_answer_the_visitors_actual_question}
   scope: All 310 compact public library records and all 58 recorded Merlin firmware support claims are included below. No JavaScript, pagination or extra data request is needed to read this snapshot.
@@ -36,6 +37,15 @@
   [MUST] Keep the product boundary: explain the available material and provide an I-Lang handoff when requested. Do not claim that this site or its API has configured a device, created a working connection or tested a proxy.
   [MUST] If no record matches, say that the current library has no matching record and identify an appropriate existing category or known official source. Do not invent tools, repositories, support claims or a fabricated search result.
   [MUST] Do not request passwords, tokens, subscription secrets or device credentials merely to look up a public record.
+
+::MODULE{SOURCE_FRESHNESS}
+  knowledge_checked_at: 2026-09-11
+  snapshot_date: 2026-09-12
+  live_state: https://fanqiang.guide/api/agent/freshness
+  build_snapshot: https://fanqiang.guide/data/source-freshness.json
+  [MUST] Preserve original knowledge dates and source qualifiers. Repository and release metadata checks are separate; they do not update compatibility knowledge or certify a tested device.
+  [MUST] The origin synchronizes freshness state hourly. Read last_attempt_at, source_checked_at, expires_at and per-record status; synchronization is not a promise that every upstream check succeeded or is current.
+  [MUST] A static build snapshot can lag the live state. Use the live freshness interface for recent check status, and actual official documentation and target-device evidence for setup decisions.
 
 ::MODULE{VERIFICATION_RULES}
   [MUST] primary_reviewed means the source material was read for verification.reviewed_fields only. It does not certify every field, a release, a download, installation, security or performance.
@@ -73,9 +83,16 @@
   filtered_search_example: https://fanqiang.guide/api/agent/search?query=&platform=Android&kind=client&verification=primary_reviewed&limit=10&offset=0
   item_method: GET
   item_url: https://fanqiang.guide/api/agent/item?id=v2rayn
+  query_url: https://fanqiang.guide/api/agent/query
+  query_parameters: kind, platform, protocol, feature, os_version, include_unknown, limit, offset
+  query_example: GET https://fanqiang.guide/api/agent/query?kind=client&platform=android&protocol=vless-reality&os_version=14&include_unknown=true
+  query_limit: AND evidence filter; unknown candidates are not certified Android 14 combinations; combination_status remains not_tested.
+  books_catalog: https://fanqiang.guide/api/agent/books
+  book_example: https://fanqiang.guide/api/agent/books/autosetup
+  answer_rules: fanqiang://rules/answer
   health_url: https://fanqiang.guide/api/agent/health
   mcp_url: https://fanqiang.guide/mcp
-  mcp_tools: search, get
+  mcp_tools: search, get, query
   [MUST] Read the current OpenAPI or MCP tools/list schema before making a call. Use defined inputs and bounded pagination. An error, empty result or unknown id is not a successful match.
   [MUST] The interfaces retrieve the site's public records. They do not search arbitrary URLs, operate devices, validate nodes or perform a live compatibility test.
 

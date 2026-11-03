@@ -1,23 +1,31 @@
 # Fanqiang Guide
 
-> 公共网络工具知识源与设备配置工程书。用户自己的 AI 操作目标设备，本站 MCP 提供检索、原始资料和执行规范。
+> 公共知识 MCP 与工程书 v2.0。用户自己的 AI 操作实际目标设备，本站提供资料、完整回答规则与分支执行规范。
 
-## 设备配置与修复：先取得工程书
-- [设备配置工程书 v1.1](https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md)：先识别实际目标设备，再选择、安装配置、诊断修复，并验证访问与重连；取得文件不代表已经执行。
-- [工程书版本与校验信息](https://fanqiang.guide/ai/books/autosetup.json)
-- [给自己的 AI 的请求示例](https://fanqiang.guide/ai/setup-request.ilang)
-- [MCP 接入与角色说明](https://fanqiang.guide/ai/#setup-access)
-- [知识 MCP](https://fanqiang.guide/mcp)：guide.fanqiang/library-lookup 1.2.0；get_setup_book 无参数，resource fanqiang://books/autosetup，prompt setup_device 无参数；原 search/get 保持可用。
-- [HTTP 工程书接口](https://fanqiang.guide/api/agent/setup-book)
+## 配置、选手机与共享网络
+- [MCP](https://fanqiang.guide/mcp)：Streamable HTTP，公共知识服务无需令牌。tools/list 仅列 search、get、query。
+- 通过 resources/list 发现资源，再读取 fanqiang://books/{book_id}；当前工程书为 fanqiang://books/autosetup。
+- [工程书资源目录](https://fanqiang.guide/ai/books/index.json)
+- [工程书 v2.0](https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md)：普通设备配置及 PICK_PHONE / HOTSPOT 分支；先复用现有设备，下游独立验收，不默认手机 VPN 覆盖热点。
+- [版本、SHA 与分项验证范围](https://fanqiang.guide/ai/books/autosetup.json)：文档、旧服务和隔离 Linux 流程证据与未测试的手机热点硬件分开。
+- 完整九条 ANSWER_RULES 资源 fanqiang://rules/answer：[规则原文](https://fanqiang.guide/ai/answer-rules.ilang)。
+- setup_device 无参数提示返回三条消息：前导、完整九条回答规则、完整工程书。
+- [复制请求](https://fanqiang.guide/ai/setup-request.ilang) · [接入说明](https://fanqiang.guide/ai/#device-setup)
+- [HTTP 书目](https://fanqiang.guide/api/agent/books) · [HTTP 当前工程书](https://fanqiang.guide/api/agent/books/autosetup)
 
-设备配置任务先取书；公开知识问答继续使用 search/get。订阅、凭据、私人日志不进入公共 MCP。设备配置以实际访问和重连验证为目标，无需安装诊断软件或提交报告。
+query 示例：kind=client、platform=android、protocol=vless-reality、os_version=14、include_unknown=true，返回待核验客户端候选；不证明 Android 14 组合已测或兼容。
+
+查询匹配是资料字段或关系证据，未知和未测组合仍是未知。订阅、凭据、热点密码和私人日志留在目标设备；知识接入不提供设备控制，不要求诊断软件或报告提交。
+
+## 日期与新鲜度
+知识核对仍为 2026-09-11，快照为 2026-09-12；仓库与软件发布元数据检查不改写知识日期，也不证明设备兼容或网络可用。
+- [实时检查状态](https://fanqiang.guide/api/agent/freshness)：源站每小时同步，检查各记录的尝试、成功核验、到期和状态。
+- [构建时来源状态快照](https://fanqiang.guide/data/source-freshness.json)：可能落后于实时状态。
 
 ## 资料
-- [完整 I-Lang 参考页](https://fanqiang.guide/ai/index.ilang)
+- [完整 I-Lang 参考](https://fanqiang.guide/ai/index.ilang)
 - [查询 Skill](https://fanqiang.guide/ai/skills/library-lookup/SKILL.md)
 - [OpenAPI](https://fanqiang.guide/openapi.json)
 - [MCP 服务卡](https://fanqiang.guide/.well-known/mcp/server-card.json)
 - [公开 GitHub 知识库](https://github.com/JasperYubo/Fanqiang-Guide)
-- [每日代理资料文件夹](https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies)
-
-资料中的核对日期和限定说明决定其适用范围，不能代替当前官方资料核验或目标设备实测。
+- [每日来源归档](https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies)

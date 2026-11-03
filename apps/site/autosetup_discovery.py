@@ -1,13 +1,17 @@
 """Discovery for a user's AI executing the pinned device setup book."""
 from __future__ import annotations
 import html
+import runpy
+from pathlib import Path
 
 SITE = "https://fanqiang.guide"
 MCP_URL = SITE + "/mcp"
 REQUEST_PATH = "/ai/setup-request.ilang"
-BOOK_PATH = "/ai/books/fanqiang-autosetup-v1.1.ilang.md"
-CSS_PATH = "assets/autosetup-entry-v1.0-2026-11-02.css"
-SCRIPT_PATH = "assets/autosetup-entry-v1.0-2026-11-02.js"
+_BOOK = runpy.run_path(str(Path(__file__).resolve().parent.parent / "lookup/runtime/setup_book.py"))["book_manifest"]("autosetup")
+BOOK_PATH = "/ai/books/" + Path(_BOOK["download_url"]).name
+BOOK_VERSION = _BOOK["version"]
+CSS_PATH = "assets/autosetup-entry-v2.0-2026-11-02.css"
+SCRIPT_PATH = "assets/autosetup-entry-v2.0-2026-11-02.js"
 
 # Explicit reviewed canonical groups; equivalent URLs inherit the representative.
 DESKTOP_GROUPS = frozenset({
@@ -91,6 +95,9 @@ def copy_for(context):
         note += " 路由器本机与下游设备要分别验收；路由变更前要保留恢复方式，刷固件不包含在默认配置范围内。"
     else:
         note += " 缺少目标设备控制时，AI 应说明必要的连接或手动步骤，不得声称已经完成。"
+    if context in {"home", "mobile", "router"}:
+        intros[context] += " 工程书 v" + BOOK_VERSION + " 也包含 PICK_PHONE 选手机与 HOTSPOT 旧手机共享家庭网络分支，先考虑复用现有设备。"
+        note += " 手机自身 VPN 连通不等于热点下设备走代理；共享路径、DNS、IPv6、UDP 和重连须在下游分别验收，本站尚未完成手机热点硬件实测。"
     return titles[context], intros[context], note
 
 
@@ -112,7 +119,7 @@ def render_autosetup_callout(context="home"):
         '<li><h3>完成配置与实际验收</h3><p>AI 使用它自己的设备工具安装、配置和排错，并验证目标访问、预期路由及断开后重连。未完成的检查要明确说明。</p></li>'
         '</ol>'
         '<div class="autosetup-actions"><a class="button button-secondary" href="/ai/#device-setup">查看接入与执行说明 →</a>'
-        f'<a href="{BOOK_PATH}" download>下载完整工程书</a></div>'
+        f'<a href="{BOOK_PATH}" download>下载 v{BOOK_VERSION} 完整工程书</a></div>'
         '<p class="autosetup-status" data-copy-status role="status" aria-live="polite" aria-atomic="true">复制后粘贴到自己的 AI；打开本页不会自动连接或执行配置。</p>'
         '<details class="autosetup-fallback" data-setup-fallback><summary>查看请求或手动复制</summary>'
         f'<label for="{ident}-mcp">MCP 地址</label>'

@@ -15,6 +15,7 @@ on:
       - 'scripts/free_proxy_sources.py'
       - 'scripts/build_free_proxy_pages.py'
       - 'scripts/run_update_pipeline.py'
+      - 'developer/refresh_knowledge_sources.py'
       - 'tools/**'
       - 'tests/**'
   pull_request:
@@ -26,6 +27,7 @@ on:
       - 'scripts/free_proxy_sources.py'
       - 'scripts/build_free_proxy_pages.py'
       - 'scripts/run_update_pipeline.py'
+      - 'developer/refresh_knowledge_sources.py'
       - 'tools/**'
       - 'tests/**'
 

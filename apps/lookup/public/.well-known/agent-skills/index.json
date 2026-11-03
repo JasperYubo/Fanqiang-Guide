@@ -4,9 +4,9 @@
     {
       "name": "library-lookup",
       "type": "skill-md",
-      "description": "Public lookup and setup-book retrieval; the user's authorized AI operates the target device through installation, repair and verification.",
+      "description": "Public search/get/query, resource-based engineering books and complete answer rules; the user's authorized AI executes against the actual device.",
       "url": "https://fanqiang.guide/ai/skills/library-lookup/SKILL.md",
-      "digest": "sha256:bcd67cb15af0439117a91a305d71cb3154064641c975c5af1af85c21ecc399f9"
+      "digest": "sha256:62c16700f302e5886058080a8b9d6fadaf0f628e465c5a87d9e0df73d47a41c3"
     }
   ]
 }

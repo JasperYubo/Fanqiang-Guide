@@ -178,6 +178,9 @@ def repository_payload(value, slug, allow_redirect=False):
     required = {"full_name", "html_url", "archived", "disabled", "pushed_at", "default_branch"}
     if not required.issubset(value):
         raise ValidationError("invalid_repository_response")
+    if ("private" in value and (type(value["private"]) is not bool or value["private"])) or (
+            "visibility" in value and value["visibility"] != "public"):
+        raise ValidationError("repository_not_public")
     name = valid_slug(value["full_name"])
     if name.lower() != slug.lower() and not allow_redirect:
         raise ValidationError("repository_identity_mismatch")

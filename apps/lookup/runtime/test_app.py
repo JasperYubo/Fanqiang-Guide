@@ -140,7 +140,7 @@ class LookupTests(unittest.TestCase):
     def test_mcp_ping_tools_and_descriptions(self):
         self.assertEqual(self.rpc("ping").json()["result"], {})
         tools = self.rpc("tools/list").json()["result"]["tools"]
-        self.assertEqual({x["name"] for x in tools}, {"search", "get", "get_setup_book"})
+        self.assertEqual({x["name"] for x in tools}, {"search", "get", "query"})
         self.assertTrue(all(x["description"].startswith("::ILANG::v5.0") and x["annotations"]["readOnlyHint"] for x in tools))
 
     def test_mcp_get_and_search(self):
@@ -182,16 +182,17 @@ class LookupTests(unittest.TestCase):
     def test_setup_book_manifest_and_integrity(self):
         payload = setup_book.setup_book_payload()
         self.assertEqual(payload["id"], "fanqiang-autosetup")
-        self.assertEqual(payload["version"], "1.1")
-        self.assertEqual(payload["execution_status"], "not_run")
+        self.assertEqual(payload["version"], "2.0")
+        self.assertNotIn("execution_status", payload)
+        self.assertEqual(payload["validation"]["mobile_hotspot"]["status"], "not_tested")
         self.assertEqual(payload["executor"], "user_agent")
-        self.assertEqual(payload["sha256"], "96425a3f6bf75c7c9ecbfdc657be74b053df2f323ba6cf5a5a621064bbabf98a")
+        self.assertEqual(payload["sha256"], "181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093")
         raw = payload["content"].encode("utf-8")
         self.assertEqual(hashlib.sha256(raw).hexdigest(), payload["sha256"])
         self.assertEqual(len(raw), payload["byte_length"])
         self.assertEqual(raw, setup_book.BOOK_PATH.read_bytes())
         self.assertTrue(payload["content"].rstrip().endswith("::ILANG::v5.0::ENGINEERING_BOOK"))
-        self.assertEqual(payload["download_url"], app.ORIGIN + "/ai/books/fanqiang-autosetup-v1.1.ilang.md")
+        self.assertEqual(payload["download_url"], app.ORIGIN + "/ai/books/fanqiang-autosetup-v2.0.ilang.md")
         self.assertEqual({k: v for k, v in payload.items() if k != "content"}, setup_book.setup_book_manifest())
         jsonschema.validate(payload, setup_book.setup_book_response_schema())
         payload["capability_boundaries"].clear()
@@ -204,18 +205,18 @@ class LookupTests(unittest.TestCase):
             for data in cases:
                 if data is not None:
                     source.write_bytes(data)
-                with mock.patch.object(setup_book, "BOOK_PATH", source):
-                    with self.assertRaisesRegex(ValueError, "^Setup book integrity check failed$"):
+                with mock.patch.dict(setup_book.BOOK_REGISTRY, {"autosetup": {**setup_book.BOOK_REGISTRY["autosetup"], "path": source}}):
+                    with self.assertRaisesRegex(ValueError, "^Public reference integrity check failed$"):
                         setup_book.setup_book_payload()
             source.write_bytes(b"\xff")
-            with mock.patch.object(setup_book, "BOOK_PATH", source), mock.patch.object(
+            with mock.patch.dict(setup_book.BOOK_REGISTRY, {"autosetup": {**setup_book.BOOK_REGISTRY["autosetup"], "path": source}}), mock.patch.object(
                     setup_book, "BOOK_SHA256", hashlib.sha256(b"\xff").hexdigest()):
-                with self.assertRaisesRegex(ValueError, "^Setup book integrity check failed$"):
+                with self.assertRaisesRegex(ValueError, "^Public reference integrity check failed$"):
                     setup_book.setup_book_manifest()
             link = Path(folder) / "link.md"
             link.symlink_to(setup_book.BOOK_PATH)
-            with mock.patch.object(setup_book, "BOOK_PATH", link):
-                with self.assertRaisesRegex(ValueError, "^Setup book integrity check failed$"):
+            with mock.patch.dict(setup_book.BOOK_REGISTRY, {"autosetup": {**setup_book.BOOK_REGISTRY["autosetup"], "path": link}}):
+                with self.assertRaisesRegex(ValueError, "^Public reference integrity check failed$"):
                     setup_book.setup_book_payload()
 
     def test_setup_book_rest_mcp_resource_same_complete_body(self):
@@ -246,19 +247,19 @@ class LookupTests(unittest.TestCase):
     def test_setup_book_discovery_and_version(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25",
             "capabilities": {}, "clientInfo": {"name": "book-test", "version": "1"}}).json()["result"]
-        self.assertEqual(result["serverInfo"]["version"], "1.2.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.0.0")
         self.assertTrue({"tools", "resources", "prompts"} <= set(result["capabilities"]))
-        self.assertIn("get_setup_book", result["instructions"])
+        self.assertIn("fanqiang://books/autosetup", result["instructions"])
         self.assertIn("grants no extra authorization", result["instructions"])
-        tool = next(t for t in self.rpc("tools/list").json()["result"]["tools"] if t["name"] == "get_setup_book")
-        self.assertEqual(tool["inputSchema"], setup_book.NO_ARGUMENTS_SCHEMA)
+        tool = next(t for t in self.rpc("tools/list").json()["result"]["tools"] if t["name"] == "query")
+        self.assertFalse(tool["inputSchema"]["additionalProperties"])
         for key, value in {"readOnlyHint": True, "idempotentHint": True,
                            "destructiveHint": False, "openWorldHint": False}.items():
             self.assertEqual(tool["annotations"][key], value)
         resources = self.rpc("resources/list").json()["result"]["resources"]
-        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI])
+        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI, setup_book.RULES_RESOURCE_URI])
         self.assertEqual(resources[0]["_meta"], setup_book.setup_book_manifest())
-        self.assertEqual(self.rpc("resources/templates/list").json()["result"]["resourceTemplates"], [])
+        self.assertEqual(self.rpc("resources/templates/list").json()["result"]["resourceTemplates"][0]["uriTemplate"], setup_book.BOOK_RESOURCE_TEMPLATE)
         prompts = self.rpc("prompts/list").json()["result"]["prompts"]
         self.assertEqual([p["name"] for p in prompts], ["setup_device"])
         self.assertEqual(prompts[0].get("arguments", []), [])
@@ -272,15 +273,16 @@ class LookupTests(unittest.TestCase):
             response = self.rpc("prompts/get", params)
             self.assertLess(len(response.content), MAX_RESPONSE)
             messages = response.json()["result"]["messages"]
-            self.assertEqual(len(messages), 2)
-            self.assertEqual(messages[1]["content"]["text"], expected["content"])
+            self.assertEqual(len(messages), 3)
+            self.assertEqual(messages[1]["content"]["text"], setup_book.answer_rules_text())
+            self.assertEqual(messages[2]["content"]["text"], expected["content"])
             intro = messages[0]["content"]["text"]
             self.assertTrue(intro.startswith("::ILANG::v5.0"))
             self.assertIn(expected["sha256"], intro)
             self.assertIn(expected["download_url"], intro)
-            self.assertIn("not additional authorization", intro)
-            self.assertIn("otherwise review only", intro)
-            self.assertIn("execution_status:not_run", intro)
+            self.assertIn("not extra authorization", intro)
+            self.assertIn("active user", intro)
+            self.assertNotIn("execution_status:not_run", intro)
 
     def test_setup_book_rest_accepts_no_private_inputs(self):
         secret = "synthetic-secret"
@@ -385,14 +387,14 @@ class LookupTests(unittest.TestCase):
             result = self.rpc("resources/read", {"uri": uri}).json()
             self.assertIn("error", result)
         tools = self.rpc("tools/list").json()["result"]["tools"]
-        self.assertEqual({t["name"] for t in tools}, {"search", "get", "get_setup_book"})
+        self.assertEqual({t["name"] for t in tools}, {"search", "get", "query"})
 
     def test_setup_metadata_exports_match_dynamic_and_do_not_change_records(self):
         spec = self.client.get("/openapi.json").json()
         card = self.client.get("/.well-known/mcp/server-card.json").json()
         health = self.client.get("/api/agent/health").json()
         for metadata in (spec["info"], card["serverInfo"], health):
-            self.assertEqual(metadata["version"], "1.2.0")
+            self.assertEqual(metadata["version"], "2.0.0")
         self.assertEqual(card["version"], "1.0")
         self.assertEqual(card["setupBook"], setup_book.setup_book_manifest())
         self.assertEqual(spec["paths"]["/api/agent/setup-book"]["get"]["parameters"], [])
@@ -424,7 +426,7 @@ class OfficialClientTest(unittest.TestCase):
                         init = await session.initialize()
                         self.assertEqual(init.serverInfo.version, app.VERSION)
                         tools = await session.list_tools()
-                        self.assertEqual({t.name for t in tools.tools}, {"search", "get", "get_setup_book"})
+                        self.assertEqual({t.name for t in tools.tools}, {"search", "get", "query"})
                         found = await session.call_tool("search", {"query":"v2rayN", "limit":1})
                         self.assertFalse(found.isError)
                         self.assertEqual(found.structuredContent["items"][0]["id"], "v2rayn")
@@ -435,13 +437,13 @@ class OfficialClientTest(unittest.TestCase):
                         self.assertFalse(book.isError)
                         self.assertEqual(book.structuredContent, setup_book.setup_book_payload())
                         resource_list = await session.list_resources()
-                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI])
+                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI, setup_book.RULES_RESOURCE_URI])
                         resource = await session.read_resource(setup_book.BOOK_RESOURCE_URI)
                         self.assertEqual(json.loads(resource.contents[0].text), book.structuredContent)
                         prompt_list = await session.list_prompts()
                         self.assertEqual([p.name for p in prompt_list.prompts], ["setup_device"])
                         prompt = await session.get_prompt("setup_device")
-                        self.assertEqual(prompt.messages[1].content.text, book.structuredContent["content"])
+                        self.assertEqual(prompt.messages[2].content.text, book.structuredContent["content"])
                         with self.assertRaises(McpError) as caught:
                             await session.call_tool("get_setup_book", {"subscription": "synthetic-secret"})
                         self.assertEqual(caught.exception.error.code, -32602)

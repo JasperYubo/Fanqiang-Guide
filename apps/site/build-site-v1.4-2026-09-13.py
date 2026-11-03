@@ -17,6 +17,24 @@ THEME_LINK = '<link rel="stylesheet" href="/assets/site-theme-v2.0-2026-10-02.cs
 THEME_SCRIPT = '<script defer src="/assets/site-theme-v2.0-2026-10-02.js"></script>'
 e = html.escape
 
+# Canonical runtime rules and book metadata are the only build sources.
+SETUP_RUNTIME = B.parent / 'lookup' / 'runtime' / 'setup_book.py'
+SETUP_NAMESPACE = runpy.run_path(str(SETUP_RUNTIME))
+ANSWER_RULES = SETUP_NAMESPACE['answer_rules_text']()
+ANSWER_RULES_BLOCK = ANSWER_RULES[ANSWER_RULES.index('::MODULE{ANSWER_RULES}'):ANSWER_RULES.index('::ILANG::COMPLETE::')].rstrip()
+
+def sync_answer_rules(text, is_html=False):
+    if is_html:
+        pattern = r'::MODULE\{ANSWER_RULES\}.*?(?=\n::MODULE\{)'
+        replacement = e(ANSWER_RULES_BLOCK) + '\n'
+    else:
+        pattern = r'::MODULE\{ANSWER_RULES\}.*?(?=\n::MODULE\{)'
+        replacement = ANSWER_RULES_BLOCK + '\n'
+    text, count = re.subn(pattern, lambda _: replacement, text, count=1, flags=re.S)
+    if count != 1:
+        raise ValueError('Public AI document must include the full canonical answer rules')
+    return text
+
 GA4_SNIPPET = f'''<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id={GA4_MEASUREMENT_ID}"></script>
 <script>
@@ -104,6 +122,9 @@ css += '''
 write('assets/diagnostics-entry-v0.1-2026-11-02.css', "\n/* Shared reader-facing entry for the optional local diagnostics application. */\n.diagnostics-callout,.guide-body .diagnostics-callout{background:linear-gradient(115deg,#f0f5e8,#fffefa);border:1px solid #cbdcc4;border-radius:20px;padding:30px 34px;color:#203e34;overflow-wrap:anywhere}\n.home-v2 .diagnostics-callout{margin-top:32px;margin-bottom:0}\n.diagnostics-callout .diagnostics-kicker{font-size:11px;font-weight:750;letter-spacing:.12em;color:#4e7658;margin:0 0 10px}\n.diagnostics-callout h2{font-size:clamp(23px,2.6vw,31px);line-height:1.4;letter-spacing:-.025em;margin:0 0 12px;color:#183f34}\n.diagnostics-callout>p{font-size:14px;line-height:1.85;color:#4f695d;max-width:930px}\n.diagnostics-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;list-style:none;padding:0!important;margin:22px 0;counter-reset:diagnostics-step}\n.diagnostics-steps>li{counter-increment:diagnostics-step;min-width:0;margin:0!important;padding:17px 18px;border:1px solid #dae4d3;border-radius:13px;background:rgba(255,254,250,.8);font-size:13px;line-height:1.8;color:#526d5e}\n.diagnostics-steps>li::before{content:counter(diagnostics-step,decimal-leading-zero);display:block;margin-bottom:7px;font-size:11px;font-weight:750;letter-spacing:.1em;color:#4c7959}\n.diagnostics-steps strong{display:block;color:#244b39;font-size:15px;margin-bottom:4px}\n.diagnostics-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin-top:20px}\n.diagnostics-actions .button{min-height:45px;border-radius:100px;padding:10px 20px;gap:10px}\n.diagnostics-callout .diagnostics-note{font-size:12px;line-height:1.85;color:#607467;margin-top:16px;margin-bottom:0;max-width:100%}\n@media(max-width:760px){.diagnostics-callout,.guide-body .diagnostics-callout{padding:24px 20px;border-radius:17px}.home-v2 .diagnostics-callout{margin-top:24px}.diagnostics-steps{grid-template-columns:1fr;gap:10px;margin:18px 0}.diagnostics-steps>li{padding:15px 16px}.diagnostics-actions{align-items:stretch;flex-direction:column;gap:10px}.diagnostics-actions .button{width:100%;white-space:normal;text-align:center}.diagnostics-callout h2{font-size:24px}}\n")
 write(CSS_PATH, (B / 'content' / Path(CSS_PATH).name).read_text(encoding='utf-8'))
 write(SCRIPT_PATH, (B / 'content' / Path(SCRIPT_PATH).name).read_text(encoding='utf-8'))
+# Old cached pages still request the previous entry assets.
+for legacy_asset in ('autosetup-entry-v1.0-2026-11-02.css', 'autosetup-entry-v1.0-2026-11-02.js'):
+    write('assets/' + legacy_asset, (B / 'content' / legacy_asset).read_text(encoding='utf-8'))
 write('assets/site-v1.3.css', css)
 write('assets/site-theme-v2.0-2026-10-02.css', (B / 'content/site-theme-v2.0-2026-10-02.css').read_text(encoding='utf-8'))
 write('assets/site-theme-v2.0-2026-10-02.js', (B / 'content/site-theme-v2.0-2026-10-02.js').read_text(encoding='utf-8'))
@@ -209,7 +230,7 @@ for g in guides:
     topic_contract.append('  topic: '+json.dumps({'title':g['title'],'keywords':g['keywords'],'url':url(g),'markdown':SITE+'/guides/'+g['slug']+'.md','engineering_book':SITE+'/guides/'+g['slug']+'.ilang','summary':g['summary'],'sections':g['sections'],'faq':g['faq']},ensure_ascii=False,separators=(',',':')))
 contract = '\n'.join(topic_contract)+'\n'
 for name in ['ai/index.md','ai/index.ilang']:
-    original = (OLD/name).read_text(encoding='utf-8')
+    original = sync_answer_rules((OLD/name).read_text(encoding='utf-8'))
     # Keep the terminal marker at the end of the raw iLang document.
     if name.endswith('.ilang'):
         marker = '::ILANG::COMPLETE::'
@@ -218,7 +239,9 @@ for name in ['ai/index.md','ai/index.ilang']:
         write(name, original.rstrip()[:-len(marker)].rstrip() + '\n\n' + contract + '\n' + marker)
     else:
         write(name, original + '\n' + contract)
-ai_html=(OLD/'ai/index.html').read_text(encoding='utf-8')
+ai_html=sync_answer_rules((OLD/'ai/index.html').read_text(encoding='utf-8'), is_html=True)
+setup_request=(OLD/'ai/setup-request.ilang').read_text(encoding='utf-8')
+ai_html=re.sub(r'(<textarea\b[^>]*\bid="setup-request"[^>]*>).*?(</textarea>)', lambda m: m[1]+e(setup_request)+m[2], ai_html, count=1, flags=re.S)
 ai_title = '让自己的 AI 配好设备｜Fanqiang Guide'
 ai_html=re.sub(r'<title>.*?</title>', '<title>'+ai_title+'</title>',ai_html,count=1)
 ai_html=re.sub(r'<h1>.*?</h1>','<h1>'+ai_title+'</h1>',ai_html,count=1)
@@ -231,8 +254,7 @@ write('llms.txt', (OLD / 'llms.txt').read_text(encoding='utf-8').rstrip()
       + '\n\n## 专题指南\n'
       + '\n'.join(f'- [{g["title"]}]({url(g)})：{g["summary"]}' for g in guides)
       + f'\n\n- [全部专题与答案]({SITE}/data/guides.json)\n')
-skill=(OLD/'ai/skills/library-lookup/SKILL.md').read_text(encoding='utf-8')
-skill=skill.replace('version: 1.1','version: 1.3').replace('[VERSION:1.1]','[VERSION:1.3]')
+skill=sync_answer_rules((OLD/'ai/skills/library-lookup/SKILL.md').read_text(encoding='utf-8'))
 skill=skill.replace('::MODULE{WORKFLOW}',f'''::MODULE{{TOPIC_ROUTING}}
   roots:翻墙;科学上网
   topic_index:{SITE}/data/guides.json
@@ -248,23 +270,38 @@ catalog=json.loads((OLD/'.well-known/ai-catalog.json').read_text(encoding='utf-8
 for entry in catalog['entries']:
     entry['displayName']=entry['displayName'].replace('知识库','工具资料')
 catalog['entries'].append({'identifier':'urn:air:fanqiang.guide:resource:guides','displayName':TITLE+'：专题答案','type':'application/json','url':SITE+'/data/guides.json','representativeQueries':['翻墙和科学上网需要什么工具','梯子、VPN 和代理有什么区别','机场、订阅和节点是什么','路由器翻墙与科学上网怎么选','小火箭节点二维码和订阅有什么区别']})
-# The runtime is the sole source for the setup book and its manifest.
-# A rebuild must recreate this path rather than retain an obsolete public copy.
-setup_runtime = B.parent / 'lookup' / 'runtime' / 'setup_book.py'
-setup_namespace = runpy.run_path(str(setup_runtime))
-setup_manifest = setup_namespace['setup_book_manifest']()
-setup_source = setup_namespace['BOOK_PATH']
-setup_relative = 'ai/books/' + setup_source.name
-if setup_manifest['download_url'] != SITE + '/' + setup_relative:
-    raise ValueError('Setup book download path differs from its runtime manifest')
-setup_bytes = setup_source.read_bytes()
-if (hashlib.sha256(setup_bytes).hexdigest() != setup_manifest['sha256']
-        or len(setup_bytes) != setup_manifest['byte_length']):
-    raise ValueError('Setup book changed while building its public copy')
-setup_destination = P / setup_relative
-setup_destination.parent.mkdir(parents=True, exist_ok=True)
-setup_destination.write_bytes(setup_bytes)
-dump('ai/books/autosetup.json', setup_manifest)
+# Copy every registered book and its public evidence from the runtime registry.
+setup_runtime = SETUP_RUNTIME
+setup_namespace = SETUP_NAMESPACE
+setup_manifest = setup_namespace['book_manifest']('autosetup')
+book_catalog = setup_namespace['book_catalog']()
+for registered in book_catalog['books']:
+    book_id = registered['book_id']
+    spec = setup_namespace['BOOK_REGISTRY'][book_id]
+    book_source = spec['path']
+    relative = 'ai/books/' + book_source.name
+    if registered['download_url'] != SITE + '/' + relative:
+        raise ValueError('Book download path differs from its runtime manifest')
+    content = book_source.read_bytes()
+    if hashlib.sha256(content).hexdigest() != registered['sha256'] or len(content) != registered['byte_length']:
+        raise ValueError('Book changed while building its public copy')
+    destination = P / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_bytes(content)
+    dump('ai/books/' + book_id + '.json', registered)
+    evidence = spec.get('evidence_path')
+    if evidence:
+        (P / 'ai/books' / evidence.name).write_bytes(evidence.read_bytes())
+dump('ai/books/index.json', book_catalog)
+# Preserve the formerly published download byte-for-byte for existing handoffs.
+legacy_source = setup_runtime.parent / 'books/fanqiang-autosetup-v1.1.ilang.md'
+legacy_bytes = legacy_source.read_bytes()
+if hashlib.sha256(legacy_bytes).hexdigest() != '96425a3f6bf75c7c9ecbfdc657be74b053df2f323ba6cf5a5a621064bbabf98a':
+    raise ValueError('Legacy v1.1 book integrity changed')
+(P / 'ai/books' / legacy_source.name).write_bytes(legacy_bytes)
+(P / 'ai/answer-rules.ilang').write_bytes(setup_namespace['RULES_PATH'].read_bytes())
+freshness_source = B.parent.parent / 'data/source-freshness.json'
+(P / 'data/source-freshness.json').write_bytes(freshness_source.read_bytes())
 # Generate discovery from the same pure runtime functions as the live MCP.
 sys.path.insert(0, str(setup_runtime.parent))
 try:

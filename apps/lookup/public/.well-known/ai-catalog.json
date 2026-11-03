@@ -35,14 +35,32 @@
     },
     {
       "identifier": "urn:air:fanqiang.guide:resource:autosetup",
-      "displayName": "让自己的 AI 完成设备配置与修复",
+      "displayName": "设备配置工程书 v2.0：选机与共享网络分支",
       "type": "text/markdown",
-      "url": "https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md",
+      "url": "https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md",
       "representativeQueries": [
         "帮我在这台设备配置代理客户端",
         "让 AI 安装配置并验证重连",
         "连接失败，让 AI 诊断修复"
       ]
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:books",
+      "displayName": "工程书资源目录",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/ai/books/index.json"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:answer-rules",
+      "displayName": "完整九条回答规则",
+      "type": "text/plain",
+      "url": "https://fanqiang.guide/ai/answer-rules.ilang"
+    },
+    {
+      "identifier": "urn:air:fanqiang.guide:resource:freshness",
+      "displayName": "实时来源元数据检查状态",
+      "type": "application/json",
+      "url": "https://fanqiang.guide/api/agent/freshness"
     }
   ]
 }

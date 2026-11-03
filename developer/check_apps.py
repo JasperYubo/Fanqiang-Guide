@@ -105,31 +105,59 @@ def validate_generated_knowledge(source: Path, generated: Path, public: Path) ->
         return ["worker/src/knowledge.mjs:invalid_generated_contract"]
 
 def validate_autosetup_release(source: Path, release: Path) -> list[str]:
-    """Prevent a deployable build from serving a stale or mismatched setup book."""
+    """One registry, complete rules and truthful freshness across all transports."""
+    import html
     import runpy
     failures = []
     try:
         contract = runpy.run_path(str(source / "apps/lookup/runtime/setup_book.py"))
-        canonical = contract["BOOK_PATH"].read_bytes()
         expected = contract["setup_book_manifest"]()
-        for relative in ("lookup/books/fanqiang-autosetup-v1.1.ilang.md",
-                         "site/ai/books/fanqiang-autosetup-v1.1.ilang.md"):
-            if (release / relative).read_bytes() != canonical:
-                failures.append(relative + ":canonical_book_mismatch")
-        actual = json.loads((release / "site/ai/books/autosetup.json").read_text(encoding="utf-8"))
-        if actual != expected:
-            failures.append("site/ai/books/autosetup.json:contract_mismatch")
+        for book_id, entry in contract["BOOK_REGISTRY"].items():
+            canonical = entry["path"].read_bytes()
+            for relative in ("lookup/books/" + entry["path"].name,
+                             "site/ai/books/" + entry["path"].name):
+                if (release / relative).read_bytes() != canonical:
+                    failures.append(relative + ":canonical_book_mismatch")
+            if json.loads((release / ("site/ai/books/" + book_id + ".json")).read_text()) != contract["book_manifest"](book_id):
+                failures.append("site/ai/books/" + book_id + ".json:contract_mismatch")
+            for prefix in ("lookup/books/", "site/ai/books/"):
+                if (release / (prefix + entry["evidence_path"].name)).read_bytes() != entry["evidence_path"].read_bytes():
+                    failures.append(prefix + entry["evidence_path"].name + ":evidence_mismatch")
+        # Previously distributed versioned links must keep their exact content.
+        old = source / "apps/lookup/runtime/books/fanqiang-autosetup-v1.1.ilang.md"
+        if (release / ("site/ai/books/" + old.name)).read_bytes() != old.read_bytes():
+            failures.append("autosetup:legacy_download_mismatch")
+        if json.loads((release / "site/ai/books/index.json").read_text()) != contract["book_catalog"]():
+            failures.append("autosetup:catalog_mismatch")
+        rules = contract["answer_rules_text"]()
+        block = rules[rules.index("::MODULE{ANSWER_RULES}"):rules.rindex("::ILANG::COMPLETE::")].rstrip()
+        for relative in ("lookup/answer-rules.ilang", "site/ai/answer-rules.ilang"):
+            if (release / relative).read_text() != rules:
+                failures.append(relative + ":answer_rules_mismatch")
         for relative in ("site/ai/index.html", "site/ai/index.md", "site/ai/index.ilang",
                          "site/ai/skills/library-lookup/SKILL.md", "site/llms.txt"):
             text = (release / relative).read_text(encoding="utf-8")
-            if "get_setup_book" not in text or "fanqiang-autosetup-v1.1.ilang.md" not in text:
+            if "fanqiang://books/autosetup" not in text or contract["BOOK_PATH"].name not in text:
                 failures.append(relative + ":setup_discovery_missing")
+            if relative.startswith("site/ai/index.") and block not in html.unescape(text):
+                failures.append(relative + ":answer_rules_incomplete")
         for relative in ("lookup/server-card.json", "site/.well-known/mcp/server-card.json"):
             card = json.loads((release / relative).read_text(encoding="utf-8"))
-            if (card["serverInfo"]["version"] != "1.2.0"
+            if (card["serverInfo"]["version"] != "2.0.0"
                     or not {"tools", "resources", "prompts"} <= set(card["capabilities"])
-                    or card.get("setupBook") != expected):
+                    or card.get("setupBook") != expected
+                    or card.get("books") != contract["book_catalog"]()
+                    or card.get("answerRules") != contract["answer_rules_manifest"]()):
                 failures.append(relative + ":setup_capabilities_missing")
+        copies = {
+            "lookup/source-freshness.json": "data/source-freshness.json",
+            "site/data/source-freshness.json": "data/source-freshness.json",
+            "lookup/client-comparison.json": "apps/site/content/client-comparison-v1.3-2026-09-12.json",
+            "lookup/sync_source_freshness.py": "developer/sync_source_freshness.py",
+        }
+        for target, original in copies.items():
+            if (release / target).read_bytes() != (source / original).read_bytes():
+                failures.append(target + ":source_input_mismatch")
     except (OSError, ValueError, KeyError, TypeError):
         failures.append("autosetup:invalid_release_contract")
     return failures
@@ -166,7 +194,7 @@ def main():
                              str(ROOT / "CLAUDE.md"), str(ROOT / "developer/MAINTENANCE-v1.0-2026-09-17.ilang.md"), "--strict", "--json"], ROOT),
         ("knowledge-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests"), "-v"], ROOT),
         ("worker-tests", [node, "--test", "--test-reporter=tap", *[str(ROOT / "apps/worker/test" / name) for name in NODE_TESTS]], ROOT / "apps/worker"),
-        ("lookup-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/lookup/runtime"), "-p", "test_app.py", "-v"], ROOT / "apps/lookup/runtime"),
+        ("lookup-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/lookup/runtime"), "-p", "test_*.py", "-v"], ROOT / "apps/lookup/runtime"),
         ("case-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_cases*.py", "-v"], ROOT / "apps/site"),
         ("faq-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_faq_pages*.py", "-v"], ROOT / "apps/site"),
         ("case-pipeline-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/case-pipeline"), "-p", "test_*.py", "-v"], ROOT / "apps/case-pipeline"),

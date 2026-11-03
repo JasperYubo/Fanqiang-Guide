@@ -19,11 +19,14 @@ import uvicorn
 
 from setup_book import (BOOK_RESOURCE_URI, BOOK_TITLE, NO_ARGUMENTS_SCHEMA,
     SETUP_BOOK_DESCRIPTION, SETUP_PROMPT_DESCRIPTION, setup_book_manifest, setup_book_payload,
-    setup_book_prompt_intro)
+    setup_book_prompt_intro, BOOK_REGISTRY, BOOK_RESOURCE_TEMPLATE,
+    RULES_RESOURCE_URI, answer_rules_text, answer_rules_manifest, book_catalog, book_payload)
+
+from library_query import normalize_query, QueryValidationError, QUERY_INPUT_SCHEMA
 
 from library_core import (Library, LookupError, VERSION, ORIGIN, MAX_BODY, MAX_RESPONSE,
     MAX_PATH, SOURCE_REVISION, SEARCH_DESCRIPTION, GET_DESCRIPTION, INSTRUCTIONS,
-    encode, openapi, server_card)
+    encode, openapi, server_card, QUERY_DESCRIPTION)
 
 
 class Guard:
@@ -122,6 +125,44 @@ class SetupBookInputGuard:
             request = None
         if isinstance(request, dict):
             params = request.get("params")
+            if not isinstance(request.get("method"), str):
+                valid_id = type(request.get("id")) in (str, int)
+                return await JSONResponse({"jsonrpc": "2.0", "id": request.get("id") if valid_id else None,
+                    "error": {"code": -32600, "message": "Invalid public lookup request envelope"}})(scope, receive, send)
+            if request.get("method") in {"resources/read", "tools/call", "prompts/get"} and not isinstance(params, dict):
+                valid_id = type(request.get("id")) in (str, int)
+                return await JSONResponse({"jsonrpc": "2.0", "id": request.get("id") if valid_id else None,
+                    "error": {"code": -32602, "message": "Invalid public lookup parameters"}})(scope, receive, send)
+            # Resource identifiers and structured query fields are public selectors.
+            # Reject malformed values before SDK error formatting can reflect them.
+            if isinstance(params, dict) and (
+                    request.get("method") == "resources/read" or
+                    (request.get("method") == "tools/call" and params.get("name") == "query")):
+                valid_id = type(request.get("id")) in (str, int)
+                code, message = -32602, "Invalid public lookup parameters; do not send private data"
+                valid = (request.get("jsonrpc") == "2.0" and valid_id and
+                         not set(request) - {"jsonrpc", "id", "method", "params"})
+                if not valid:
+                    code, message = -32600, "Invalid public lookup request envelope"
+                elif request.get("method") == "resources/read":
+                    valid = (not set(params) - {"uri", "_meta"} and
+                        isinstance(params.get("uri"), str) and params.get("uri") in {RULES_RESOURCE_URI, *("fanqiang://books/" + key for key in BOOK_REGISTRY)})
+                else:
+                    valid = not set(params) - {"name", "arguments", "_meta"}
+                    if valid:
+                        try:
+                            normalize_query(params.get("arguments", {}))
+                        except QueryValidationError:
+                            valid = False
+                metadata = params.get("_meta")
+                if metadata is not None and (type(metadata) is not dict or
+                        (metadata.get("progressToken") is not None and
+                        type(metadata["progressToken"]) not in (str, int))):
+                    valid = False
+                if not valid:
+                    return await JSONResponse({"jsonrpc": "2.0",
+                        "id": request.get("id") if valid_id else None,
+                        "error": {"code": code, "message": message}})(scope, receive, send)
             if isinstance(params, dict) and (
                     (request.get("method") == "tools/call" and params.get("name") == "get_setup_book") or
                     (request.get("method") == "prompts/get" and params.get("name") == "setup_device")):
@@ -174,15 +215,17 @@ class SetupBookMCP(FastMCP):
             raise ValueError("This setup-book interface accepts no arguments; do not send private data")
 
     async def list_tools(self):
-        tools = await super().list_tools()
+        tools = [tool for tool in await super().list_tools() if tool.name != "get_setup_book"]
         for tool in tools:
-            if tool.name == "get_setup_book":
-                tool.inputSchema = {**NO_ARGUMENTS_SCHEMA, "properties": {}}
+            if tool.name == "query":
+                tool.inputSchema = QUERY_INPUT_SCHEMA
         return tools
 
     async def call_tool(self, name, arguments):
         if name == "get_setup_book":
             self._no_arguments(arguments)
+        elif name == "query":
+            normalize_query(arguments)
         return await super().call_tool(name, arguments)
 
     async def get_prompt(self, name, arguments=None):
@@ -218,16 +261,45 @@ def create_app(library, allowed_origins=()):
     def get(id: Annotated[str, Field(min_length=1, max_length=128, pattern=r"^[a-z0-9][a-z0-9._-]*$")]) -> dict[str, Any]:
         return library.get({"id": id})
 
+    @mcp.tool(name="query", description=QUERY_DESCRIPTION, annotations=annotations, structured_output=True)
+    def structured_query(platform: Annotated[str | None, Field(max_length=32)] = None,
+            kind: Annotated[str | None, Field(max_length=32)] = None,
+            protocol: Annotated[str | None, Field(max_length=32)] = None,
+            feature: Annotated[str | None, Field(max_length=32)] = None,
+            os_version: Annotated[str | None, Field(max_length=32)] = None,
+            include_unknown: bool = False,
+            limit: Annotated[int, Field(strict=True, ge=1, le=20)] = 10,
+            offset: Annotated[int, Field(strict=True, ge=0, le=10000)] = 0) -> dict[str, Any]:
+        return library.query({"platform": platform, "kind": kind, "protocol": protocol, "feature": feature,
+            "os_version": os_version, "include_unknown": include_unknown, "limit": limit, "offset": offset})
+
+    # Hidden compatibility adapter for already copied v1 requests.
     @mcp.tool(name="get_setup_book", description=SETUP_BOOK_DESCRIPTION,
               annotations=annotations, structured_output=True)
     def get_setup_book() -> dict[str, Any]:
         return setup_book_payload()
 
-    @mcp.resource(BOOK_RESOURCE_URI, name="fanqiang-autosetup",
-                  title=BOOK_TITLE, description=SETUP_PROMPT_DESCRIPTION,
-                  mime_type="application/json", meta=setup_book_manifest())
-    def setup_book_resource() -> str:
-        return encode(setup_book_payload()).decode("utf-8")
+    def resource_reader(book_id):
+        def read() -> str:
+            return encode(book_payload(book_id)).decode("utf-8")
+        return read
+    for book_id in sorted(BOOK_REGISTRY):
+        metadata = book_payload(book_id)
+        mcp.resource("fanqiang://books/" + book_id, name="book-" + book_id,
+            title=metadata["title"], description=SETUP_PROMPT_DESCRIPTION,
+            mime_type="application/json", meta={k: v for k, v in metadata.items() if k != "content"})(
+                resource_reader(book_id))
+
+    @mcp.resource(BOOK_RESOURCE_TEMPLATE, name="engineering-book",
+                  description="Read a registered book_id from resources/list. No arbitrary path or URL.",
+                  mime_type="application/json")
+    def engineering_book(book_id: str) -> str:
+        return encode(book_payload(book_id)).decode("utf-8")
+
+    @mcp.resource(RULES_RESOURCE_URI, name="answer-rules", title="Complete public answer rules",
+                  mime_type="text/plain", meta=answer_rules_manifest())
+    def answer_rules() -> str:
+        return answer_rules_text()
 
     @mcp.prompt(name="setup_device", title=BOOK_TITLE, description=SETUP_PROMPT_DESCRIPTION)
     def setup_device() -> list[dict[str, Any]]:
@@ -236,10 +308,11 @@ def create_app(library, allowed_origins=()):
         introduction = setup_book_prompt_intro(metadata)
         return [
             {"role": "user", "content": {"type": "text", "text": introduction}},
+            {"role": "user", "content": {"type": "text", "text": answer_rules_text()}},
             {"role": "user", "content": {"type": "text", "text": payload["content"]}},
         ]
 
-    def query(request):
+    def parse_query(request):
         try:
             parsed = parse_qs(request.url.query, keep_blank_values=True, strict_parsing=True,
                 encoding="utf-8", errors="strict", max_num_fields=10)
@@ -251,14 +324,23 @@ def create_app(library, allowed_origins=()):
 
     async def lookup_route(request: Request):
         try:
-            result = library.search(query(request), http=True) if request.url.path.endswith("/search") else library.get(query(request))
+            params = parse_query(request)
+            if request.url.path.endswith("/query"):
+                result = library.query(params, http=True)
+            elif request.url.path.endswith("/search"):
+                result = library.search(params, http=True)
+            else:
+                result = library.get(params)
             return JSONResponse(result)
-        except LookupError as exc:
+        except (LookupError, QueryValidationError) as exc:
             return JSONResponse({"error": exc.code, "message": exc.message}, status_code=exc.status)
 
     mcp.custom_route("/api/agent/search", methods=["GET", "HEAD"])(lookup_route)
     mcp.custom_route("/api/agent/item", methods=["GET", "HEAD"])(lookup_route)
+    mcp.custom_route("/api/agent/query", methods=["GET", "HEAD"])(lookup_route)
 
+    @mcp.custom_route("/api/agent/books", methods=["GET", "HEAD"])
+    @mcp.custom_route("/api/agent/books/{book_id}", methods=["GET", "HEAD"])
     @mcp.custom_route("/api/agent/setup-book", methods=["GET", "HEAD"])
     async def setup_book_route(request: Request):
         # Reject all query/body inputs, with fixed messages that cannot echo secrets.
@@ -271,11 +353,24 @@ def create_app(library, allowed_origins=()):
             if chunk:
                 return JSONResponse({"error": "invalid_parameter",
                     "message": "Setup book accepts no request body"}, status_code=400)
-        return JSONResponse(setup_book_payload())
+        if request.url.path == "/api/agent/books":
+            return JSONResponse(book_catalog())
+        try:
+            result = book_payload(request.path_params.get("book_id", "autosetup"))
+        except ValueError:
+            return JSONResponse({"error": "not_found", "message": "Unknown book id"}, status_code=404)
+        return JSONResponse(result)
+
+    @mcp.custom_route("/api/agent/freshness", methods=["GET", "HEAD"])
+    async def freshness(request):
+        if request.scope.get("query_string"):
+            return JSONResponse({"error": "invalid_parameter", "message": "Freshness accepts no parameters"}, status_code=400)
+        return JSONResponse(library.freshness.public_snapshot())
 
     @mcp.custom_route("/api/agent/health", methods=["GET", "HEAD"])
     async def health(request):
-        return JSONResponse({"status": "ok", "version": VERSION, "snapshot": library.snapshot, "filters": library.filters})
+        return JSONResponse({"status": "ok", "version": VERSION, "snapshot": library.snapshot, "filters": library.filters,
+            "source_freshness": library.freshness.summary()})
 
     @mcp.custom_route("/openapi.json", methods=["GET", "HEAD"])
     async def spec(request):
@@ -295,10 +390,11 @@ def main():
     parser.add_argument("--data", type=Path, default=Path(__file__).with_name("library.json"))
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--source-revision", default=SOURCE_REVISION)
+    parser.add_argument("--freshness-file", type=Path)
     parser.add_argument("--allow-origin", action="append", default=[])
     parser.add_argument("--export-metadata", type=Path)
     args = parser.parse_args()
-    library = Library(args.data, args.source_revision)
+    library = Library(args.data, args.source_revision, args.freshness_file)
     if args.export_metadata:
         args.export_metadata.mkdir(parents=True, exist_ok=True)
         for name, data in [("openapi.json", openapi()), ("server-card.json", server_card())]:

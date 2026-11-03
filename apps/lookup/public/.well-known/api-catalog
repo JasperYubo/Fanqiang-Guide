@@ -22,7 +22,7 @@
       ]
     },
     {
-      "anchor": "https://fanqiang.guide/api/agent/setup-book",
+      "anchor": "https://fanqiang.guide/api/agent/books",
       "service-desc": [
         {
           "href": "https://fanqiang.guide/openapi.json",
@@ -31,12 +31,53 @@
       ],
       "service-doc": [
         {
-          "href": "https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md",
+          "href": "https://fanqiang.guide/ai/index.md",
           "type": "text/markdown"
-        },
+        }
+      ]
+    },
+    {
+      "anchor": "https://fanqiang.guide/api/agent/books/autosetup",
+      "service-desc": [
         {
-          "href": "https://fanqiang.guide/ai/books/autosetup.json",
+          "href": "https://fanqiang.guide/openapi.json",
           "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://fanqiang.guide/ai/index.md",
+          "type": "text/markdown"
+        }
+      ]
+    },
+    {
+      "anchor": "https://fanqiang.guide/api/agent/query",
+      "service-desc": [
+        {
+          "href": "https://fanqiang.guide/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://fanqiang.guide/ai/index.md",
+          "type": "text/markdown"
+        }
+      ]
+    },
+    {
+      "anchor": "https://fanqiang.guide/api/agent/freshness",
+      "service-desc": [
+        {
+          "href": "https://fanqiang.guide/openapi.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://fanqiang.guide/ai/index.md",
+          "type": "text/markdown"
         }
       ]
     }

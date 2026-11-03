@@ -1,9 +1,12 @@
 ::ILANG::v5.0
-[TYPE:request][LANG:zh]
+[TYPE:request][LANG:zh][VERSION:2.0]
 
-::OBJECTIVE{id:setup_device_request|owner:user|trust:trusted|version:1|status:proposed}
-  target: 在我授权的目标设备上完成代理客户端识别、选择、安装配置、诊断修复和访问及重连验证。
-  DONE_WHEN: 目标访问、预期路由及重新连接有实际证据，并给出使用和恢复方法。
+::OBJECTIVE{id:setup_device_request|owner:user|trust:trusted|version:2|status:proposed}
+  target: 在我授权的目标设备上完成客户端识别、选择、安装配置、诊断修复和访问及重连验证；按我的实际目标处理选手机或旧手机共享网络。
+  DONE_WHEN: 目标设备及需要的下游设备都有实际访问、预期路由和重新连接的证据，并给出使用与恢复方法；未完成的检查明确保留。
 
-::RULE{BOOK_FIRST|value:先从 https://fanqiang.guide/mcp 调用无参数 get_setup_book，或读取 fanqiang://books/autosetup；再按工程书和当前授权执行。}
-::RULE{ROLES|value:你是操作设备的 AI；MCP 只提供公共资料。先确认工具确实连接我的目标设备，订阅和凭据仅在本机安全输入。}
+::RULE{BOOK_FIRST|value:连接 https://fanqiang.guide/mcp，通过 resources/list 发现资源，再用 resources/read 读取 fanqiang://books/autosetup；同时读取 fanqiang://rules/answer 的完整回答规则。}
+::RULE{MODE|value:先复用现有设备；按我的目标选择工程书的普通配置、PICK_PHONE 选机或 HOTSPOT 共享分支。手机自身 VPN 连通不证明热点下设备已经走代理，必须分别验收。}
+::RULE{ROLES|value:你使用自己的工具操作我的实际目标设备；MCP 只提供公共资料，不授予额外权限。复用当前授权，缺少能力时只请求必要连接或操作，不重复逐步审批。}
+::RULE{SECRETS|value:订阅、凭据与热点密码仅在目标设备安全输入，不发到聊天、公共知识查询或报告中；不默认购买服务、恢复出厂或获取 root。}
+::ILANG::COMPLETE::

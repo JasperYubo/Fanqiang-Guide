@@ -1,5 +1,5 @@
 from pathlib import Path
-import json, re, html, hashlib, gzip, subprocess, sys
+import json, re, html, hashlib, gzip, subprocess, sys, runpy
 
 B=Path(__file__).resolve().parent; P=B/'public'
 OLD=B.parent/'fanqiang-ar100-v1.1-2026-09-12/public'
@@ -33,6 +33,28 @@ home_faq=faq_from_html(home)
 check('eight_visible_home_answers',len(home_faq)==8 and all(html.escape(f['name']) in home and html.escape(f['acceptedAnswer']['text']) in home and f['name'] in home_md for f in home_faq))
 check('homepage_topic_identity', '翻墙与科学上网工具指南 | Fanqiang Guide' in home and '翻墙工具下载、免费节点与路由器指南' in home)
 check('homepage_device_setup_entry', 'id="hero-title">让自己的 AI' in home and 'id="autosetup-home"' in home and 'data-copy-mcp' in home and 'data-copy-setup-request' in home and 'href="/ai/#device-setup"' in home)
+
+setup_namespace=runpy.run_path(str(B.parent/'lookup/runtime/setup_book.py'))
+rules=setup_namespace['answer_rules_text']()
+rules_block=rules[rules.index('::MODULE{ANSWER_RULES}'):rules.index('::ILANG::COMPLETE::')].rstrip()
+check('canonical_answer_rules_bytes',(P/'ai/answer-rules.ilang').read_bytes()==setup_namespace['RULES_PATH'].read_bytes())
+for rel in ('ai/index.html','ai/index.md','ai/index.ilang','ai/skills/library-lookup/SKILL.md'):
+    text=(P/rel).read_text(encoding='utf-8')
+    check(rel+': full_rules',rules_block in html.unescape(text))
+    check(rel+': resource_first','fanqiang://books/{book_id}' in text and 'fanqiang://books/autosetup' in text and 'get_setup_book' not in text)
+for book in setup_namespace['book_catalog']()['books']:
+    source=setup_namespace['BOOK_REGISTRY'][book['book_id']]
+    check('registered_book:'+book['book_id'],(P/'ai/books'/source['path'].name).read_bytes()==source['path'].read_bytes())
+check('book_catalog_matches',json.loads((P/'ai/books/index.json').read_text())==setup_namespace['book_catalog']())
+request=(P/'ai/setup-request.ilang').read_text(encoding='utf-8')
+ai_html=(P/'ai/index.html').read_text(encoding='utf-8')
+request_match=re.search(r'<textarea\b[^>]*\bid="setup-request"[^>]*>(.*?)</textarea>',ai_html,re.S)
+check('request_matches_visible_fallback',request_match is not None and html.unescape(request_match[1])==request)
+for version in ('v1.0','v2.0'):
+    for ext in ('js','css'):
+        check('entry_asset:'+version+ext,(P/f'assets/autosetup-entry-{version}-2026-11-02.{ext}').exists())
+check('new_copy_script_resource_validation','fanqiang://books/autosetup' in (P/'assets/autosetup-entry-v2.0-2026-11-02.js').read_text())
+check('freshness_snapshot_exact',(P/'data/source-freshness.json').read_bytes()==(B.parents[1]/'data/source-freshness.json').read_bytes())
 check('homepage_ladder_term', '梯子' in home and '梯子' in home_md)
 for slug in ('ladder-vpn-proxy','airport-subscription-nodes','router-guide'):
     relative='/guides/'+slug+'.html'

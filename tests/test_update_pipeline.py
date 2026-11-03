@@ -74,6 +74,11 @@ class FakeRunner:
                 return pipeline.CommandResult(1)
             write(option("--updates-output").parent, option("--updates-output").name, "updates-" + marker)
             return pipeline.CommandResult()
+        if script == "refresh_knowledge_sources.py":
+            failed = "freshness_build" in self.failures
+            write(option("--output").parent, option("--output").name,
+                  "FAILED-FRESHNESS-PARTIAL" if failed else "freshness-" + marker)
+            return pipeline.CommandResult(1 if failed else 0)
         if script == "free_proxy_sources.py":
             write(option("--output").parent, option("--output").name,
                   "FAILED-FREE-PARTIAL" if "free_collect" in self.failures else "free-state-" + marker)
@@ -145,7 +150,7 @@ class PipelineTests(unittest.TestCase):
         self.source = self.base / "source"
         self.source.mkdir()
         files = {"README.md": "initial reader home", "config/marker.txt": "v1", "data/upstream.json": "old-version-state",
-                 "CATALOG.md": "old-catalog", "UPDATES.md": "old-updates", "data/free-proxy-sources.json": "old-free-state",
+                 "CATALOG.md": "old-catalog", "UPDATES.md": "old-updates", "data/source-freshness.json": "old-freshness", "data/free-proxy-sources.json": "old-free-state",
                  "free-proxies/2026-09-10.md": "day10", "free-proxies/README.md": "2026-09-10.md",
                  "export/authored.txt": "authored snapshot"}
         for relative, content in files.items():
@@ -207,16 +212,34 @@ class PipelineTests(unittest.TestCase):
         self.assert_clean_source_and_no_failed_artifacts(runner)
 
     def test_partial_renderer_output_is_excluded_for_either_line(self):
-        for failure in ("version_build", "free_build"):
+        for failure in ("version_build", "freshness_build", "free_build"):
             with self.subTest(failure=failure):
                 item, runner = self.make(failures={failure})
                 result = item.execute()
                 self.assertEqual(result["status"], "published")
                 self.assert_clean_source_and_no_failed_artifacts(runner)
-                if failure == "version_build":
+                if failure in ("version_build", "freshness_build"):
                     self.assertEqual(runner.pushed[-1]["data/upstream.json"], "old-version-state")
                 else:
                     self.assertNotIn("free-proxies/2026-09-12.md", runner.pushed[-1])
+
+    def test_freshness_is_published_with_versions_without_api_credentials(self):
+        item, runner = self.make()
+        self.assertEqual(item.execute()["lines"]["versions"], "success")
+        self.assertEqual(runner.pushed[-1]["data/source-freshness.json"], "freshness-v1")
+        calls = [call for call in runner.calls if len(call["command"]) > 1
+                 and Path(call["command"][1]).name == "refresh_knowledge_sources.py"]
+        self.assertEqual(len(calls), 1)
+        self.assertNotIn("GITHUB_TOKEN", calls[0]["env"])
+        self.assertNotIn("GH_TOKEN", calls[0]["env"])
+        self.assertIn("data/source-freshness.json", runner.commits[-1]["added"])
+
+    def test_failed_freshness_keeps_previous_version_and_freshness_together(self):
+        item, runner = self.make(failures={"freshness_build"})
+        self.assertEqual(item.execute()["lines"]["versions"], "failure")
+        self.assertEqual(runner.pushed[-1]["data/upstream.json"], "old-version-state")
+        self.assertEqual(runner.pushed[-1]["data/source-freshness.json"], "old-freshness")
+        self.assert_clean_source_and_no_failed_artifacts(runner)
 
     def test_readme_only_advance_uses_plain_rebase_without_recollection(self):
         self.revisions[B]["README.md"] = "human changed reader home"

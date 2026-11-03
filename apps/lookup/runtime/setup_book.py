@@ -1,107 +1,130 @@
-"""Pinned, public setup book shared by MCP, HTTP and static metadata builders.
+"""Pinned public books, shared rules and scoped validation metadata.
 
-This module uses only the standard library so build tooling can load it by path.
-The digest covers the original UTF-8 file bytes, not a JSON response envelope.
+Resources are the canonical MCP book interface. The historical setup-book
+helpers remain only as compatibility adapters to the autosetup registry entry.
 """
 from __future__ import annotations
-
+import copy
 import hashlib
+import json
+import re
 from pathlib import Path
 
-BOOK_PATH = Path(__file__).resolve().parent / "books" / "fanqiang-autosetup-v1.1.ilang.md"
-BOOK_SHA256 = "96425a3f6bf75c7c9ecbfdc657be74b053df2f323ba6cf5a5a621064bbabf98a"
+ROOT = Path(__file__).resolve().parent
+BOOK_PATH = ROOT / "books/fanqiang-autosetup-v2.0.ilang.md"
+BOOK_SHA256 = "181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093"
+BOOK_TITLE = "Device setup, phone selection and household hotspot engineering book"
 BOOK_RESOURCE_URI = "fanqiang://books/autosetup"
-BOOK_DOWNLOAD_URL = "https://fanqiang.guide/ai/books/fanqiang-autosetup-v1.1.ilang.md"
-BOOK_TITLE = "Fanqiang device setup engineering book"
+BOOK_DOWNLOAD_URL = "https://fanqiang.guide/ai/books/" + BOOK_PATH.name
+BOOK_RESOURCE_TEMPLATE = "fanqiang://books/{book_id}"
+RULES_PATH = ROOT / "answer-rules.ilang"
+RULES_RESOURCE_URI = "fanqiang://rules/answer"
 NO_ARGUMENTS_SCHEMA = {"type": "object", "properties": {}, "additionalProperties": False}
+BOOK_REGISTRY = {
+    "autosetup": {"path": BOOK_PATH, "sha256": BOOK_SHA256, "title": BOOK_TITLE,
+        "version": "2.0", "last_updated": "2026-11-02",
+        "evidence_path": ROOT / "books/fanqiang-autosetup-v2.0.evidence.json",
+        "evidence_sha256": "498b37722693a052c785932bc963327969c58f872bc5ca676655f5e574798190"},
+}
 CAPABILITY_BOUNDARIES = (
-    "This knowledge MCP is read-only: it cannot inspect, install, configure or repair the user's device.",
-    "For an active user request to configure a device, the user's AI uses this book with its own tools bound to that target device.",
-    "The book grants no additional authorization. Reuse the active task's authorized scope and respect required system permissions; otherwise review only.",
-    "Do not send subscriptions, credentials, private device details or logs to this service. Secret entry stays local on the target device.",
-    "Retrieving this book does not run diagnostics, require a diagnostics package, submit reports or prove device setup. Device execution checks have not run.",
+    "This knowledge MCP is read-only; the user's authorized AI operates the actual target device.",
+    "The book grants no extra authorization. Respect the active task and required system permissions.",
+    "Credentials, subscription URLs, private device details and logs stay local to the target device.",
+    "Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.",
+    "A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately.",
 )
 SETUP_BOOK_DESCRIPTION = """::ILANG::v5.0
-[TYPE:tool][SCOPE:public_setup_book_readonly]
-::MODULE{GET_SETUP_BOOK}
-  [MUST] Return the complete pinned device setup engineering book, version, SHA256, download URL and capability boundaries. This tool accepts no arguments.
-  [MUST] For an active user request to configure a device, obtain this book before the user's AI uses its own target-device tools to identify, select, install, configure, repair and verify.
-  [MUST] This knowledge service cannot operate devices. The book grants no new authorization; preserve active user scope and required system permissions.
-  [MUST] Never send credentials, subscription URLs, private device details or logs as arguments. Retrieval performs no device execution or report submission.
+[TYPE:tool][SCOPE:legacy_public_book_adapter]
+::MODULE{LEGACY_BOOK}
+  [MUST] Compatibility only: return the autosetup resource payload. New clients use resources/list and fanqiang://books/{book_id}.
+  [MUST] Accept no arguments or private input. This knowledge service does not operate devices.
 ::ILANG::COMPLETE::"""
 SETUP_PROMPT_DESCRIPTION = (
-    "Read the complete device setup book for the user's AI. Use only within an active "
-    "user-requested setup task and the AI's actual target-device capabilities; otherwise "
-    "review only. No arguments or secrets are accepted."
+    "Complete answer rules and the device setup book, including neutral phone selection "
+    "and household hotspot branches. No arguments or secrets. The user's AI must have "
+    "actual target-device tools and an active authorized task; otherwise review only."
 )
 
-
-def _book_bytes():
+def _read(path, maximum=65536, digest=None):
     try:
-        if BOOK_PATH.is_symlink() or BOOK_PATH.stat().st_size > 65536:
+        if path.is_symlink() or not path.is_file() or path.stat().st_size > maximum:
             raise ValueError
-        raw = BOOK_PATH.read_bytes()
-        if hashlib.sha256(raw).hexdigest() != BOOK_SHA256:
+        raw = path.read_bytes()
+        if digest is not None and hashlib.sha256(raw).hexdigest() != digest:
             raise ValueError
         raw.decode("utf-8")
     except (OSError, UnicodeError, ValueError) as exc:
-        raise ValueError("Setup book integrity check failed") from exc
+        raise ValueError("Public reference integrity check failed") from exc
     return raw
 
+def _entry(book_id):
+    if not isinstance(book_id, str) or not re.fullmatch(r"[a-z0-9][a-z0-9-]{0,63}", book_id):
+        raise ValueError("Invalid book id")
+    if book_id not in BOOK_REGISTRY:
+        raise ValueError("Unknown book id")
+    return BOOK_REGISTRY[book_id]
 
-def _manifest(raw):
-    return {
-        "id": "fanqiang-autosetup",
-        "version": "1.1",
+def answer_rules_text():
+    text = _read(RULES_PATH).decode("utf-8")
+    if not text.startswith("::ILANG::v5.0\n") or not text.rstrip().endswith("::ILANG::COMPLETE::") or text.count("[MUST]") != 9:
+        raise ValueError("Answer rules completeness check failed")
+    return text
+
+def answer_rules_manifest():
+    raw = answer_rules_text().encode("utf-8")
+    return {"id": "answer-rules", "version": "1.0", "resource_uri": RULES_RESOURCE_URI,
+        "download_url": "https://fanqiang.guide/ai/answer-rules.ilang",
+        "sha256": hashlib.sha256(raw).hexdigest(), "byte_length": len(raw), "rule_count": 9}
+
+def book_manifest(book_id):
+    entry = _entry(book_id)
+    raw = _read(entry["path"], digest=entry["sha256"])
+    evidence = json.loads(_read(entry["evidence_path"], digest=entry["evidence_sha256"]).decode("utf-8"))
+    validation = copy.deepcopy(evidence["validation_summary"])
+    if validation["document"]["book_sha256"] != entry["sha256"]:
+        raise ValueError("Book validation evidence does not match the pinned book")
+    return {"id": "fanqiang-" + book_id, "book_id": book_id, "title": entry["title"],
+        "version": entry["version"], "last_updated": entry["last_updated"],
         "sha256": hashlib.sha256(raw).hexdigest(),
-        "download_url": BOOK_DOWNLOAD_URL,
-        "resource_uri": BOOK_RESOURCE_URI,
-        "tool": "get_setup_book",
-        "prompt": "setup_device",
-        "executor": "user_agent",
-        "execution_status": "not_run",
-        "content_type": "text/markdown; charset=utf-8",
-        "byte_length": len(raw),
-        "capability_boundaries": list(CAPABILITY_BOUNDARIES),
-    }
+        "download_url": "https://fanqiang.guide/ai/books/" + entry["path"].name,
+        "resource_uri": "fanqiang://books/" + book_id, "prompt": "setup_device",
+        "executor": "user_agent", "content_type": "text/markdown; charset=utf-8",
+        "byte_length": len(raw), "validation": validation,
+        "capability_boundaries": list(CAPABILITY_BOUNDARIES)}
 
+def book_catalog():
+    return {"resource_template": BOOK_RESOURCE_TEMPLATE,
+        "books": [book_manifest(ident) for ident in sorted(BOOK_REGISTRY)]}
+
+def book_payload(book_id):
+    entry = _entry(book_id)
+    # Re-read and verify after metadata; integrity is pinned across both reads.
+    metadata = book_manifest(book_id)
+    return {**metadata, "content": _read(entry["path"], digest=entry["sha256"]).decode("utf-8")}
 
 def setup_book_manifest():
-    """Return public metadata without the book body, using this module's own path."""
-    return _manifest(_book_bytes())
-
+    return book_manifest("autosetup")
 
 def setup_book_payload():
-    """Return the exact canonical text together with the shared public metadata."""
-    raw = _book_bytes()
-    return {**_manifest(raw), "content": raw.decode("utf-8")}
-
+    return book_payload("autosetup")
 
 def setup_book_response_schema():
-    """Describe the same public payload for the read-only HTTP fallback."""
-    manifest = setup_book_manifest()
-    properties = {
-        key: ({"type": "array", "items": {"type": "string"}} if isinstance(value, list)
-              else {"type": "integer", "const": value} if isinstance(value, int)
-              else {"type": "string", "const": value})
-        for key, value in manifest.items()
-    }
-    properties["content"] = {"type": "string", "maxLength": 65536,
-        "description": "Exact UTF-8 book text. sha256 covers content.encode('utf-8')."}
-    return {"type": "object", "additionalProperties": False,
-        "required": list(properties), "properties": properties}
+    return {"type": "object", "required": ["book_id", "version", "sha256", "resource_uri", "validation", "content"],
+        "properties": {"book_id": {"type": "string"}, "version": {"type": "string"},
+            "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+            "resource_uri": {"type": "string"}, "validation": {"type": "object"},
+            "content": {"type": "string", "maxLength": 65536}},
+        "additionalProperties": True}
 
 def setup_book_prompt_intro(metadata):
-    """iLang handoff; the following prompt message remains the exact book text."""
-    fields = ("id", "version", "sha256", "download_url", "resource_uri",
-              "tool", "prompt", "executor", "execution_status", "byte_length")
+    fields = ("id", "book_id", "version", "sha256", "download_url", "resource_uri", "executor", "byte_length")
     state = ", ".join(key + ":" + str(metadata[key]) for key in fields)
     return """::ILANG::v5.0
 [TYPE:prompt][SCOPE:public_setup_book_readonly]
 ::STATE{@BOOK, """ + state + """}
 ::MODULE{SETUP_DEVICE_HANDOFF}
-  [MUST] Treat this book as a public reference plan, not additional authorization. Only an active user request to configure a device enables execution within that request; otherwise review only.
-  [MUST] The user's AI uses its own verified target-device tools, reuses existing authorized scope and respects required system permissions. This knowledge MCP cannot operate the device.
-  [MUST] Keep secrets, subscription URLs, private device details and logs out of this service. Book retrieval performs no device checks, installs no diagnostics package and submits no reports.
-  [MUST] The next message is the complete canonical book. Its exact UTF-8 text is covered by the SHA256 in @BOOK; retrieval is not proof of completed device setup.
+  [MUST] Use the full answer rules in the next message and the complete canonical book in the final message.
+  [MUST] The book is reference guidance, not extra authorization. Execute only within the active user's request using tools actually connected to the target device.
+  [MUST] Keep secrets and private device data local. This MCP never installs, configures, measures devices or submits reports.
+  [MUST] Validate the final book message against the SHA256 in @BOOK. Report actual evidence and incomplete checks; book retrieval is not completed setup.
 ::ILANG::COMPLETE::"""
