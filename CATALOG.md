@@ -4,7 +4,11 @@
 
 版本号可直接打开发布页面。“来源待核实”的资料目前只有其他目录的介绍，尚未确认对应项目；“已查阅官方资料”也不代表已经实测安装或兼容性。
 
-[返回首页](README.md) · [查看版本与项目更新](UPDATES.md)
+[返回首页](README.md) · [查看版本与项目更新](UPDATES.md) · [在线浏览](https://fanqiang.guide/) · [AI 接入](https://fanqiang.guide/ai/)
+
+## 按类型浏览
+
+[客户端](#clients) · [代理核心](#cores) · [协议](#protocols) · [传输与外层方案](#transport) · [基础概念](#concepts) · [路由器固件](#router-firmware) · [路由器插件](#router-plugins) · [软件包生态](#package-ecosystem) · [部署工具](#deployment) · [管理面板](#panel) · [规则集](#rules) · [DNS 工具](#dns) · [订阅管理](#subscription) · [浏览器扩展](#browser-extension) · [VPN](#vpn) · [组网工具](#mesh) · [诊断工具](#diagnostic) · [开发库](#library) · [资料目录](#directory) · [历史项目](#historical)
 
 <a id="clients"></a>
 

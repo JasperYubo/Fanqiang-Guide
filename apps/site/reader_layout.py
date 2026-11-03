@@ -1,7 +1,9 @@
 """Reader layout for the final HTML build; canonical machine sources stay intact."""
 import re
+import gzip
 from pathlib import Path
 from reading_ui import enhance_code_blocks, READING_CSS_PATH, READING_SCRIPT_PATH
+from design_refresh import DESIGN_CSS, refresh_home
 
 LAYOUT_CSS = "assets/reader-layout-v1.0-2026-11-02.css"
 ICON = '<svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>'
@@ -58,13 +60,17 @@ def ai_layout(raw, header, footer):
 def apply_reader_layout(public, header, footer):
     public=Path(public)
     assets=Path(__file__).resolve().parent/'content'
-    for asset in (READING_CSS_PATH, READING_SCRIPT_PATH, LAYOUT_CSS):
+    for asset in (READING_CSS_PATH, READING_SCRIPT_PATH, LAYOUT_CSS, DESIGN_CSS):
         (public/asset).write_bytes((assets/Path(asset).name).read_bytes())
+    design_path=public/DESIGN_CSS
+    design_path.with_name(design_path.name+".gz").write_bytes(gzip.compress(design_path.read_bytes(),mtime=0))
     changed=[]
     for path in sorted(public.rglob('*.html')):
         if path.name.startswith('google') and '<head>' not in path.read_text(encoding='utf-8'):
             continue
         raw=path.read_text(encoding='utf-8')
+        if path == public/'index.html':
+            raw=refresh_home(raw)
         if path == public/'ai/index.html':
             raw=ai_layout(raw, header, footer)
         # All lengthy limitations remain readable on demand beside the action.
@@ -76,6 +82,7 @@ def apply_reader_layout(public, header, footer):
         raw=enhance_code_blocks(raw, collapse_long=path == public/'ai/index.html')
         additions=(f'<link rel="stylesheet" href="/{READING_CSS_PATH}">'
                    f'<link rel="stylesheet" href="/{LAYOUT_CSS}">'
+                   f'<link rel="stylesheet" href="/{DESIGN_CSS}">'
                    f'<script defer src="/{READING_SCRIPT_PATH}"></script>')
         raw=raw.replace('</head>', additions+'</head>', 1)
         path.write_text(raw,encoding='utf-8')

@@ -1,0 +1,69 @@
+name: Router upstream observations
+
+on:
+  schedule:
+    # 22:41 UTC = 06:41 next day in Beijing; independent of the daily catalog.
+    - cron: '41 22 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/check-router-upstream.yml'
+      - 'scripts/check_router_upstream.py'
+      - 'developer/update_router_compatibility.py'
+      - 'data/router-compatibility.json'
+      - 'tests/test_router_upstream_watch.py'
+  pull_request:
+    paths:
+      - '.github/workflows/check-router-upstream.yml'
+      - 'scripts/check_router_upstream.py'
+      - 'developer/update_router_compatibility.py'
+      - 'data/router-compatibility.json'
+      - 'tests/test_router_upstream_watch.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: router-upstream-${{ github.event.pull_request.number || 'main' }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Offline observation and cache tests
+        run: python -m unittest discover -s tests -p test_router_upstream_watch.py -v
+
+  observe:
+    needs: verify
+    if: github.repository == 'JasperYubo/Fanqiang-Guide' && github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Observe changes against the reviewed matrix
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python scripts/check_router_upstream.py --output-dir "${{ runner.temp }}/router-upstream-review"
+      - name: Retain observations including partial failures
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: router-upstream-review
+          path: ${{ runner.temp }}/router-upstream-review/
+          if-no-files-found: warn
+          retention-days: 30

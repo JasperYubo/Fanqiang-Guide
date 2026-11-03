@@ -309,8 +309,11 @@ def render(library, manifest, state):
     observations = {key.casefold(): value for key, value in state["repositories"].items()}
     catalog = ["# 工具与知识目录", "", "共 " + str(len(library)) + " 条资料。先按类型和平台找工具，点击名称查看用途、使用提示和相关来源。", "",
                "版本号可直接打开发布页面。“来源待核实”的资料目前只有其他目录的介绍，尚未确认对应项目；“已查阅官方资料”也不代表已经实测安装或兼容性。", "",
-               "[返回首页](README.md) · [查看版本与项目更新](UPDATES.md)", ""]
+               "[返回首页](README.md) · [查看版本与项目更新](UPDATES.md) · [在线浏览](https://fanqiang.guide/) · [AI 接入](https://fanqiang.guide/ai/)", ""]
     kinds = sorted({item["kind"] for item in library}, key=lambda kind: (list(KINDS).index(kind) if kind in KINDS else len(KINDS), kind))
+    catalog.extend(["## 按类型浏览", "", " · ".join(
+        "[" + cell(KINDS.get(kind, kind)) + "](#" + CATEGORY_ANCHORS.get(kind, re.sub(r"[^a-z0-9-]", "-", kind.lower())) + ")"
+        for kind in kinds), ""])
     for kind in kinds:
         group = sorted((item for item in library if item["kind"] == kind), key=lambda item: (item["name"].casefold(), item["id"]))
         anchor = CATEGORY_ANCHORS.get(kind, re.sub(r"[^a-z0-9-]", "-", kind.lower()))
@@ -327,7 +330,7 @@ def render(library, manifest, state):
             catalog.append("| " + " | ".join([card_link(entity), platforms, release_text, review, repo_text]) + " |")
         catalog.append("")
     updates = ["# 版本与项目更新", "", "查看工具最近发布的版本，点击版本号前往下载与更新说明。", "",
-               "[返回工具目录](CATALOG.md) · [返回首页](README.md)", "", run_summary(state), "",
+               "[返回工具目录](CATALOG.md) · [返回首页](README.md) · [来源时效](https://fanqiang.guide/api/agent/freshness)", "", run_summary(state), "",
                "这里列出 " + str(len(manifest["repositories"])) + " 个 GitHub 项目的信息。其他资料的版本或来源见[本页下方](#other-sources)。", "",
                "版本取自 GitHub 正式发布页（Release），不含草稿、预发布或仅有版本标签的记录，可能与应用商店版本不同。“暂无版本记录”不代表工具没有发布过版本。", "",
                "“旧信息”表示本次未能取得新信息，请留意旁边的日期。“已归档”表示作者将项目设为只读；未归档或近期提交过代码，并不保证仍在维护。选择版本时仍需查看设备要求。", "",

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Collect pinned primary evidence and hash archives without executing or extracting them.
 
-Only this offline evidence builder accesses the network. Runtime matching never does.
+This evidence builder accesses the network only in online mode. Runtime matching never does.
 A new upstream install.sh requires an explicit review of INSTALL_SHA before publication.
 KoolCenter release bodies are used transiently; the published matrix stores facts/hashes,
 not forum text, account data or firmware binaries.
@@ -76,7 +76,9 @@ class Collector:
         legacy=self.cache/("kool-"+key[:16]+".txt")
         if not p.exists() and legacy.exists():
             p.write_bytes(legacy.read_bytes())
-        if p.exists():
+        # Online checks must not silently reuse old mutable publisher evidence.
+        # Offline mode alone reuses the cache, preserving its original timestamp.
+        if self.offline and p.exists():
             content=p.read_bytes()
             if len(content)>limit:raise ValueError("Cached source exceeds size limit")
             OBSERVED_AT[url]=datetime.fromtimestamp(p.stat().st_mtime,timezone.utc).isoformat(timespec="seconds").replace("+00:00","Z")

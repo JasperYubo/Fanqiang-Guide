@@ -1,25 +1,68 @@
-# 翻墙指南 · 科学上网工具与路由器知识库
+# 翻墙指南 · 工具、路由器与 AI 配置参考
 
-[fanqiang.guide](https://fanqiang.guide) ｜ [全部工具](CATALOG.md) ｜ [软件版本与项目动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
+按设备找工具、核对官方资料，也可以把工程书交给自己的 AI，继续完成安装、配置与排错。
 
-按你的设备查找翻墙与科学上网工具，分清常说的“梯子”、VPN、代理、机场、订阅和节点，再查看客户端、华硕梅林与 OpenWrt 的中文说明和官方资料。
+**310 条工具与知识记录 · MCP 2.1.0 · 两本设备工程书**
 
-**[Windows](#windows) · [Android 安卓](#android) · [iPhone / iPad](#ios) · [macOS](#macos) · [Linux](#linux) · [华硕梅林](#merlin) · [OpenWrt](#openwrt)**
+[打开官网](https://fanqiang.guide/) ｜ [完整目录](CATALOG.md) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
+
+## 你想做什么
+
+| 现在的任务 | 从这里开始 |
+| --- | --- |
+| 为手机、电脑选择客户端 | [按设备浏览](#devices) · [全部工具](CATALOG.md) |
+| 让自己的 AI 配置或排错 | [接入 MCP](#ai) · [设备工程书](#books) |
+| 核对路由器型号、固件与插件 | [华硕与梅林](#merlin) · [OpenWrt](#openwrt) |
+| 查看项目的新版本和来源 | [版本与项目动态](UPDATES.md) |
+| 检查本机网络情况 | [本地网络诊断](https://fanqiang.guide/diagnostics/) |
+
+<a id="start"></a>
+## 新手从这里开始
+
+1. **选设备**：找到对应的手机、电脑或路由器，查看工具用途与配置格式。
+2. **查来源**：打开资料卡和官方页面，核对版本与设备要求；路由器还需确认完整型号、硬件版本和固件。
+3. **继续操作**：按教程使用，或让已接入目标设备的 AI 阅读工程书，在你的授权范围内配置和验证。
+
+<a id="ai"></a>
+## 让 AI 使用这份知识库
+
+远程 MCP 地址：**`https://fanqiang.guide/mcp`**。支持远程 MCP 的客户端可直接添加这个地址；使用 `mcpServers` JSON 配置的客户端可参考：
+
+```json
+{
+  "mcpServers": {
+    "fanqiang-guide": {
+      "url": "https://fanqiang.guide/mcp"
+    }
+  }
+}
+```
+
+`search` 查找条目，`get` 读取详情，`query` 按平台、协议、功能或路由器条件筛选。工程书通过 MCP 资源读取，完整接入方式见 [AI 入口](https://fanqiang.guide/ai/)。
+
+<a id="books"></a>
+### 设备工程书
+
+| 工程书 | 用途 | MCP 资源 |
+| --- | --- | --- |
+| [设备配置 v2.1](apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) | 手机、电脑配置，手机共享与路由器流程入口 | `fanqiang://books/autosetup` |
+| [梅林路由器 v1.0](apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) | 梅林兼容固件、fancyss 选包、安装前检查与恢复流程 | `fanqiang://books/merlin` |
+
+工程书提供流程，实际操作由你的 AI 通过目标设备工具执行；本站 MCP 提供只读资料。文档和接口验证、隔离 Linux 流程验证、真实手机与路由器测试的范围分别记录在[工程书元数据](https://fanqiang.guide/api/agent/books)中。
 
 ## 新手概念与教程
+
+客户端提供操作界面，核心处理连接，协议约定通信方式。先分清这些概念，再选工具：
 
 - [梯子、VPN 和代理有什么区别？](apps/site/public/guides/ladder-vpn-proxy.md)
 - [机场、订阅和节点是什么？](apps/site/public/guides/airport-subscription-nodes.md)
 - [路由器翻墙与科学上网怎么选？](apps/site/public/guides/router-guide.md)
 - [工具与教程专题目录](https://fanqiang.guide/guides/index.html)
 
-<a id="start"></a>
-## 新手从这里开始
+<a id="devices"></a>
+## 按设备找工具
 
-- **在手机或电脑上使用**：先找到下面对应的系统，再看工具介绍与支持的配置格式。
-- **想让家中设备通过路由器连接**：先确认路由器型号和固件，再查看梅林或 OpenWrt 的插件资料。
-- **不清楚客户端、核心和协议的关系**：客户端提供操作界面，核心处理连接，协议约定通信方式；同一种核心可以出现在多个客户端中。
-- **已经找到工具，想了解更新**：查看[软件版本与项目动态](UPDATES.md)，点击版本号进入项目发布页面。
+**[Windows](#windows) · [Android 安卓](#android) · [iPhone / iPad](#ios) · [macOS](#macos) · [Linux](#linux) · [华硕梅林](#merlin) · [OpenWrt](#openwrt)**
 
 <a id="windows"></a>
 ## Windows 电脑翻墙工具
@@ -51,25 +94,17 @@
 <a id="macos"></a>
 ## macOS 苹果电脑翻墙工具
 
-- [Clash Verge Rev](export/cards/clash-verge-rev-v0.1-2026-09-11.md)
-- [v2rayN](export/cards/v2rayn-v0.1-2026-09-11.md)
-- [Surge](export/cards/surge-v0.1-2026-09-11.md)
-- [FlClash](export/cards/flclash-v0.1-2026-09-11.md)
-- [Hiddify](export/cards/hiddify-v0.1-2026-09-11.md)
+[Clash Verge Rev](export/cards/clash-verge-rev-v0.1-2026-09-11.md) · [v2rayN](export/cards/v2rayn-v0.1-2026-09-11.md) · [Surge](export/cards/surge-v0.1-2026-09-11.md) · [FlClash](export/cards/flclash-v0.1-2026-09-11.md) · [Hiddify](export/cards/hiddify-v0.1-2026-09-11.md)
 
 <a id="linux"></a>
 ## Linux 翻墙工具
 
-- [v2rayN](export/cards/v2rayn-v0.1-2026-09-11.md)
-- [Clash Verge Rev](export/cards/clash-verge-rev-v0.1-2026-09-11.md)
-- [FlClash](export/cards/flclash-v0.1-2026-09-11.md)
-- [Hiddify](export/cards/hiddify-v0.1-2026-09-11.md)
-- [Karing](export/cards/karing-v0.1-2026-09-11.md)
+[v2rayN](export/cards/v2rayn-v0.1-2026-09-11.md) · [Clash Verge Rev](export/cards/clash-verge-rev-v0.1-2026-09-11.md) · [FlClash](export/cards/flclash-v0.1-2026-09-11.md) · [Hiddify](export/cards/hiddify-v0.1-2026-09-11.md) · [Karing](export/cards/karing-v0.1-2026-09-11.md)
 
 <a id="merlin"></a>
 ## 华硕路由器与梅林固件
 
-先看[华硕与梅林生态说明](knowledge/merlin-guide-v0.1-2026-09-11.md)，再按完整型号和硬件版本查询[固件支持情况](knowledge/merlin-model-matrix-v0.1-2026-09-11.md)。
+先看[华硕与梅林生态说明](knowledge/merlin-guide-v0.1-2026-09-11.md)，再按完整型号和硬件版本查阅[历史固件支持声明](knowledge/merlin-model-matrix-v0.1-2026-09-11.md)。当前选包与安装前检查见[梅林工程书](apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md)和[兼容资料](data/router-compatibility.json)。
 
 - [Asuswrt-Merlin 原版梅林](export/cards/asuswrt-merlin-v0.1-2026-09-11.md)：在 ASUSWRT 基础上扩展功能的第三方固件。
 - [GNUton 梅林分支](export/cards/asuswrt-merlin-gnuton-v0.1-2026-09-11.md)：扩展华硕机型支持范围的独立分支。
@@ -101,3 +136,13 @@
 - **[sing-box 官方文档](https://sing-box.sagernet.org/)**：客户端、服务端、DNS、路由和配置迁移说明，适合查配置与排错；站内可切换简体中文。
 
 [查看全部 310 个工具与知识条目 →](CATALOG.md)
+
+## 资料如何更新
+
+[版本动态](UPDATES.md)记录上游仓库与正式 Release 的自动观察结果；[来源时效接口](https://fanqiang.guide/api/agent/freshness)区分当前、过期、未知和未监测状态。资料卡保留各自的人工核对日期，版本检查不会把旧教程变成新一轮实测。
+
+当前有 **310 条知识记录**、**56 行路由器兼容匹配资料**；旧型号表另保留 **58 条固件支持声明**。这三个集合用途不同。兼容资料来自发布方说明与离线包检查，真实手机和路由器操作仍需按工程书在目标设备上验证。
+
+免费代理页面自动整理来源与格式统计。[路由器上游观察](developer/ROUTER_UPSTREAM_WATCH.md)按日检查 fancyss 与已记录的 KoolCenter 来源变化，生成待人工复核报告，兼容矩阵仍由审核后更新。自动化不安装上游程序、不重写教程，也不把来源可访问或格式正确当作节点连通性结果。
+
+[开发与维护索引](developer/README.md) · [资料重建方法](tools/README.md) · [自动更新说明](.github/maintenance-v0.1-2026-09-12.md)
