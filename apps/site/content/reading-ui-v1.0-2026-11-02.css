@@ -1,0 +1,158 @@
+/* Shared, progressively enhanced code reader. */
+.reading-code {
+  --reading-ink: #244937;
+  --reading-line: #d2ddcc;
+  min-width: 0;
+  max-width: 100%;
+  margin: 22px 0;
+  overflow: hidden;
+  color: var(--reading-ink);
+  background: #fafbf6;
+  border: 1px solid var(--reading-line);
+  border-radius: 14px;
+}
+.reading-code, .reading-code * { box-sizing: border-box; }
+.reading-code .reading-code-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  min-width: 0;
+  min-height: 58px;
+  padding: 7px 12px 7px 18px;
+  border-bottom: 1px solid var(--reading-line);
+  background: #f0f4e9;
+}
+.reading-code .reading-code-language {
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.6;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.reading-code .reading-code-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 110px;
+  min-height: 44px;
+  margin: 0;
+  padding: 9px 13px;
+  border: 1px solid #a9bda3;
+  border-radius: 9px;
+  background: #fffefa;
+  color: #28513b;
+  font-weight: 600;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.reading-code .reading-code-copy[hidden] { display: none; }
+.reading-code .reading-code-copy:hover { background: #e9f0df; border-color: #718b67; }
+.reading-code .reading-code-copy:disabled { cursor: wait; opacity: .7; }
+.reading-code .reading-code-copy svg { flex: 0 0 18px; }
+.reading-code .reading-code-copy:focus-visible,
+.reading-code .reading-code-details > summary:focus-visible,
+.reading-code .reading-code-manual:focus-visible,
+.reading-code pre:focus-visible {
+  outline: 3px solid #426e36;
+  outline-offset: -4px;
+}
+.reading-code pre,
+.reading-code pre.reference {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  max-height: min(65vh, 38rem);
+  margin: 0;
+  padding: 20px;
+  border: 0;
+  border-radius: 0;
+  background: #fafbf6;
+  color: #294334;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: anywhere;
+  overflow: auto;
+  overscroll-behavior-x: contain;
+  tab-size: 2;
+}
+.reading-code pre code { font: inherit; color: inherit; background: none; padding: 0; }
+.reading-code .reading-code-details {
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.reading-code .reading-code-details > summary {
+  min-height: 48px;
+  padding: 13px 18px;
+  color: #355b3b;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.6;
+  cursor: pointer;
+  background: #fafbf6;
+}
+.reading-code .reading-code-details[open] > summary { border-bottom: 1px solid var(--reading-line); }
+.reading-code .reading-code-status,
+.reading-code .reading-code-hint {
+  margin: 0;
+  padding: 10px 18px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #446044;
+  overflow-wrap: anywhere;
+}
+.reading-code .reading-code-status:empty { padding: 0; margin: 0; }
+.reading-code .reading-code-manual {
+  display: block;
+  width: calc(100% - 36px);
+  min-width: 0;
+  min-height: 150px;
+  max-height: 360px;
+  margin: 0 18px 18px;
+  padding: 12px;
+  border: 1px solid #9eb396;
+  border-radius: 7px;
+  background: #fffefa;
+  color: #294334;
+  font: 14px/1.7 ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  white-space: pre;
+  overflow: auto;
+  resize: vertical;
+}
+@media (max-width: 600px) {
+  .reading-code { border-radius: 11px; }
+  .reading-code .reading-code-toolbar { padding-left: 14px; }
+  .reading-code pre, .reading-code pre.reference { padding: 16px 14px; }
+  .reading-code .reading-code-details > summary { padding-inline: 14px; }
+}
+@media print {
+  .reading-code { overflow: visible; break-inside: auto; background: white; }
+  .reading-code .reading-code-copy,
+  .reading-code .reading-code-status,
+  .reading-code .reading-code-manual,
+  .reading-code .reading-code-hint { display: none; }
+  .reading-code .reading-code-details::details-content { content-visibility: visible; }
+  .reading-code .reading-code-details > pre { display: block !important; }
+  .reading-code pre, .reading-code pre.reference {
+    max-height: none;
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    background: white;
+    font-size: 10pt;
+  }
+}

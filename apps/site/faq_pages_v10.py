@@ -489,6 +489,8 @@ def main():
         content = target.read_text(encoding="utf-8")
         if "external-browser-v1.0.js" not in content:
             write(directory / "public", target.relative_to(directory / "public").as_posix(), content.replace("<head>", "<head>" + guard, 1))
+    from reader_layout import apply_reader_layout
+    apply_reader_layout(directory / "public", base["header"](), base["footer"]())
     manifest = {}
     for target in sorted((directory / "public").rglob("*")):
         if target.is_file() and target.suffix != ".gz":
