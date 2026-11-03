@@ -182,17 +182,17 @@ class LookupTests(unittest.TestCase):
     def test_setup_book_manifest_and_integrity(self):
         payload = setup_book.setup_book_payload()
         self.assertEqual(payload["id"], "fanqiang-autosetup")
-        self.assertEqual(payload["version"], "2.0")
+        self.assertEqual(payload["version"], "2.1")
         self.assertNotIn("execution_status", payload)
         self.assertEqual(payload["validation"]["mobile_hotspot"]["status"], "not_tested")
         self.assertEqual(payload["executor"], "user_agent")
-        self.assertEqual(payload["sha256"], "181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093")
+        self.assertEqual(payload["sha256"], setup_book.BOOK_SHA256)
         raw = payload["content"].encode("utf-8")
         self.assertEqual(hashlib.sha256(raw).hexdigest(), payload["sha256"])
         self.assertEqual(len(raw), payload["byte_length"])
         self.assertEqual(raw, setup_book.BOOK_PATH.read_bytes())
         self.assertTrue(payload["content"].rstrip().endswith("::ILANG::v5.0::ENGINEERING_BOOK"))
-        self.assertEqual(payload["download_url"], app.ORIGIN + "/ai/books/fanqiang-autosetup-v2.0.ilang.md")
+        self.assertEqual(payload["download_url"], app.ORIGIN + "/ai/books/fanqiang-autosetup-v2.1.ilang.md")
         self.assertEqual({k: v for k, v in payload.items() if k != "content"}, setup_book.setup_book_manifest())
         jsonschema.validate(payload, setup_book.setup_book_response_schema())
         payload["capability_boundaries"].clear()
@@ -247,7 +247,7 @@ class LookupTests(unittest.TestCase):
     def test_setup_book_discovery_and_version(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25",
             "capabilities": {}, "clientInfo": {"name": "book-test", "version": "1"}}).json()["result"]
-        self.assertEqual(result["serverInfo"]["version"], "2.0.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.1.0")
         self.assertTrue({"tools", "resources", "prompts"} <= set(result["capabilities"]))
         self.assertIn("fanqiang://books/autosetup", result["instructions"])
         self.assertIn("grants no extra authorization", result["instructions"])
@@ -257,7 +257,7 @@ class LookupTests(unittest.TestCase):
                            "destructiveHint": False, "openWorldHint": False}.items():
             self.assertEqual(tool["annotations"][key], value)
         resources = self.rpc("resources/list").json()["result"]["resources"]
-        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI, setup_book.RULES_RESOURCE_URI])
+        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", setup_book.RULES_RESOURCE_URI])
         self.assertEqual(resources[0]["_meta"], setup_book.setup_book_manifest())
         self.assertEqual(self.rpc("resources/templates/list").json()["result"]["resourceTemplates"][0]["uriTemplate"], setup_book.BOOK_RESOURCE_TEMPLATE)
         prompts = self.rpc("prompts/list").json()["result"]["prompts"]
@@ -394,7 +394,7 @@ class LookupTests(unittest.TestCase):
         card = self.client.get("/.well-known/mcp/server-card.json").json()
         health = self.client.get("/api/agent/health").json()
         for metadata in (spec["info"], card["serverInfo"], health):
-            self.assertEqual(metadata["version"], "2.0.0")
+            self.assertEqual(metadata["version"], "2.1.0")
         self.assertEqual(card["version"], "1.0")
         self.assertEqual(card["setupBook"], setup_book.setup_book_manifest())
         self.assertEqual(spec["paths"]["/api/agent/setup-book"]["get"]["parameters"], [])
@@ -437,7 +437,7 @@ class OfficialClientTest(unittest.TestCase):
                         self.assertFalse(book.isError)
                         self.assertEqual(book.structuredContent, setup_book.setup_book_payload())
                         resource_list = await session.list_resources()
-                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI, setup_book.RULES_RESOURCE_URI])
+                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", setup_book.RULES_RESOURCE_URI])
                         resource = await session.read_resource(setup_book.BOOK_RESOURCE_URI)
                         self.assertEqual(json.loads(resource.contents[0].text), book.structuredContent)
                         prompt_list = await session.list_prompts()

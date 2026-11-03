@@ -43,7 +43,7 @@ def source_inputs() -> dict:
     """Fingerprint the actual build inputs so a release cannot outlive its source."""
     ignored = {"__pycache__", ".venv", "venv", "node_modules"}
     paths = [ROOT / "tools/ilang_grammar_validator.py", ROOT / "data/faq-cache.json",
-             ROOT / "developer/build_apps.py", ROOT / "data/source-freshness.json", ROOT / "developer/sync_source_freshness.py"]
+             ROOT / "developer/build_apps.py", ROOT / "data/router-compatibility.json", ROOT / "data/source-freshness.json", ROOT / "developer/sync_source_freshness.py"]
     for name in ("site", "worker", "lookup"):
         for path in (ROOT / "apps" / name).rglob("*"):
             relative = path.relative_to(ROOT)
@@ -77,6 +77,8 @@ def build(output: Path) -> dict:
             shutil.copytree(ROOT / "apps" / name, scratch / "apps" / name, ignore=ignore)
         (scratch / "data").mkdir()
         shutil.copyfile(ROOT / "data/faq-cache.json", scratch / "data/faq-cache.json")
+        shutil.copyfile(ROOT / "data/router-compatibility.json", scratch / "data/router-compatibility.json")
+        shutil.copyfile(ROOT / "data/router-compatibility.json", scratch / "apps/lookup/runtime/router-compatibility.json")
         shutil.copyfile(ROOT / "data/source-freshness.json", scratch / "data/source-freshness.json")
         shutil.copyfile(ROOT / "data/source-freshness.json", scratch / "apps/lookup/runtime/source-freshness.json")
         shutil.copyfile(ROOT / "developer/sync_source_freshness.py", scratch / "apps/lookup/runtime/sync_source_freshness.py")

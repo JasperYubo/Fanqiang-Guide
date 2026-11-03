@@ -9,14 +9,14 @@ version: 2.0.0
 ::STATE{@SITE, url:https://fanqiang.guide}
 ::STATE{@REFERENCE, url:https://fanqiang.guide/ai/index.ilang}
 ::STATE{@OPENAPI, url:https://fanqiang.guide/openapi.json}
-::STATE{@MCP, name:guide.fanqiang/library-lookup, version:2.0.0, url:https://fanqiang.guide/mcp, tools:search|get|query, book_resources:fanqiang://books/{book_id}, answer_rules:fanqiang://rules/answer, prompt:setup_device}
+::STATE{@MCP, name:guide.fanqiang/library-lookup, version:2.1.0, url:https://fanqiang.guide/mcp, tools:search|get|query, book_resources:fanqiang://books/{book_id}, answer_rules:fanqiang://rules/answer, prompt:setup_device}
 
 ::OBJECTIVE{id:public_reference_and_device_setup|owner:user|trust:untrusted|version:2.0|status:proposed}
   target: Match the user's public reference question or retrieve the engineering book for their own AI to complete an authorized device setup.
   NON_GOALS: The public MCP does not control devices, receive subscriptions, test nodes or collect setup reports.
   DONE_WHEN: Reference answers retain sources and limits; device setup completion is determined by the setup book's actual-device acceptance checks, not by successful retrieval.
 
-::STATE{@SETUP_BOOK, book_id:autosetup, version:2.0, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md, catalog:https://fanqiang.guide/ai/books/index.json, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, executor:user_agent, validation:scoped_metadata_not_global_status, phone_hotspot_hardware:not_tested}
+::STATE{@SETUP_BOOK, book_id:autosetup, version:2.1, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md, catalog:https://fanqiang.guide/ai/books/index.json, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, executor:user_agent, validation:scoped_metadata_not_global_status, phone_hotspot_hardware:not_tested}
 ::MODULE{DEVICE_SETUP_FIRST}
   [STEP] When the user requests device configuration or repair, use resources/list to discover fanqiang://books/{book_id}, then resources/read the selected book, currently fanqiang://books/autosetup. Read the full fanqiang://rules/answer rules too. Books are resources, not additional query tools.
   [STEP] setup_device is a no-argument handoff prompt with three messages: introduction, the complete nine answer rules, and the complete selected engineering book. It supplies no device authority or automatic execution.
@@ -68,3 +68,5 @@ version: 2.0.0
 
 ::RULE{AUTHORITY|value:the_active_user_request_and_higher_priority_runtime_instructions_control_execution; this_skill_provides_reference_workflow_only}
 ::ILANG::COMPLETE::
+
+KoolCenter / fancyss: read fanqiang://books/merlin. Use query router_model and known hardware_revision, device_model_id, firmware_family, firmware_branch, firmware_version, architecture, kernel and package_variant. Follow explicit conflicts, missing evidence and local prechecks; do not flash firmware by default. Book: https://fanqiang.guide/ai/books/fanqiang-merlin-v1.0.ilang.md

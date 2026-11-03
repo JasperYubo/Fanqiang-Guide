@@ -127,6 +127,12 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
         old = source / "apps/lookup/runtime/books/fanqiang-autosetup-v1.1.ilang.md"
         if (release / ("site/ai/books/" + old.name)).read_bytes() != old.read_bytes():
             failures.append("autosetup:legacy_download_mismatch")
+        old_v2 = source / "apps/lookup/runtime/books/fanqiang-autosetup-v2.0.ilang.md"
+        if (release / ("site/ai/books/" + old_v2.name)).read_bytes() != old_v2.read_bytes():
+            failures.append("autosetup:legacy_v2_download_mismatch")
+        old_v2_evidence = source / "apps/lookup/runtime/books/fanqiang-autosetup-v2.0.evidence.json"
+        if (release / ("site/ai/books/" + old_v2_evidence.name)).read_bytes() != old_v2_evidence.read_bytes():
+            failures.append("autosetup:legacy_v2_evidence_mismatch")
         if json.loads((release / "site/ai/books/index.json").read_text()) != contract["book_catalog"]():
             failures.append("autosetup:catalog_mismatch")
         rules = contract["answer_rules_text"]()
@@ -143,7 +149,7 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
                 failures.append(relative + ":answer_rules_incomplete")
         for relative in ("lookup/server-card.json", "site/.well-known/mcp/server-card.json"):
             card = json.loads((release / relative).read_text(encoding="utf-8"))
-            if (card["serverInfo"]["version"] != "2.0.0"
+            if (card["serverInfo"]["version"] != "2.1.0"
                     or not {"tools", "resources", "prompts"} <= set(card["capabilities"])
                     or card.get("setupBook") != expected
                     or card.get("books") != contract["book_catalog"]()
@@ -151,6 +157,8 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
                 failures.append(relative + ":setup_capabilities_missing")
         copies = {
             "lookup/source-freshness.json": "data/source-freshness.json",
+            "lookup/router-compatibility.json": "data/router-compatibility.json",
+            "site/data/router-compatibility.json": "data/router-compatibility.json",
             "site/data/source-freshness.json": "data/source-freshness.json",
             "lookup/client-comparison.json": "apps/site/content/client-comparison-v1.3-2026-09-12.json",
             "lookup/sync_source_freshness.py": "developer/sync_source_freshness.py",

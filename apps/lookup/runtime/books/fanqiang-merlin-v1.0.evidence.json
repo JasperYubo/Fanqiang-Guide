@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0",
+  "book_id": "merlin",
+  "book_version": "1.0",
+  "edition_date": "2026-11-02",
+  "edition_timezone": "America/New_York",
+  "book_file": "fanqiang-merlin-v1.0.ilang.md",
+  "book_sha256": "c5eaa0000454df3f39c71ed92fc5dca30b683f29d73d9e77d4a3e26ba220b07e",
+  "book_bytes": 24898,
+  "provenance": [
+    {
+      "repository": "https://github.com/hq450/fancyss",
+      "commit": "b19e82cb6a05e08990a96905353921819d44d134",
+      "branch": "3.0",
+      "packages_manifest_version": "3.5.30",
+      "not_a_github_release": true
+    }
+  ],
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "book_sha256": "c5eaa0000454df3f39c71ed92fc5dca30b683f29d73d9e77d4a3e26ba220b07e",
+      "checked_at": "2026-11-03T02:19:47.554202Z"
+    },
+    "service_interface": {
+      "status": "verified",
+      "version": "2.1.0",
+      "scope": "Isolated Linux loopback MCP SDK, HTTP, book resources, prompt, schema and static reference consistency. This is interface verification, not physical router installation or public production verification.",
+      "environment": "isolated_linux_loopback",
+      "checked_at": "2026-11-03T02:29:05.857060+00:00",
+      "evidence": {
+        "artifact": "merlin-candidate-initial.json",
+        "sha256": "b31bdc9228a3fedcb5c44cd0e7c5bd8b4cef3205ec98724a9da3c0eec6f02d67",
+        "verifier": "developer/verify_merlin_public.py",
+        "passed_checks": 347
+      }
+    },
+    "router_hardware": {
+      "status": "not_tested",
+      "scope": "No router or LAN client was operated. Firmware, software-center install, plugin operation, downstream DNS/IPv4/IPv6/UDP, reconnect and recovery require target evidence."
+    }
+  },
+  "validation_results": {
+    "ilang_validate": {
+      "mode": "raw",
+      "counts": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      }
+    },
+    "ilang_book_check": {
+      "pass": true,
+      "A1": {
+        "item": "the book opens and closes with the marker",
+        "expect": 2,
+        "found": 2,
+        "pass": true
+      },
+      "A2": {
+        "item": "the grammar validator reports zero errors in strict mode",
+        "errors": 0,
+        "warnings": 0,
+        "pass": true
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      },
+      "note": "A3, whether the book does the tutorial's job and nothing else, is for a person to decide."
+    }
+  },
+  "sources": [
+    {
+      "id": "fancyss-readme",
+      "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/README.md",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "Software-center firmware context; seven platform groups; exact table examples; full/lite summary; documented offline installation and variant migration.",
+      "limitations": "A model table and legacy firmware link are not current firmware-artifact availability or actual hardware certification."
+    },
+    {
+      "id": "fancyss-installer",
+      "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/fancyss/install.sh",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "Actual current snapshot model detection, /koolshare/httpdb/skipd prerequisites, ABI/kernel/model gates and space checks.",
+      "limitations": "Read only; not executed. Model label heuristics and installer whitelist are not a proof of current firmware provenance."
+    },
+    {
+      "id": "fancyss-build",
+      "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/build.sh",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "Actual variant removals and platform artifact construction, including shared binaries without shared package identity.",
+      "limitations": "A removed binary does not prove a protocol unsupported by all remaining cores."
+    },
+    {
+      "id": "fancyss-packages",
+      "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/packages/version.json.js",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "Observed packages-manifest version 3.5.30 and artifact checksums.",
+      "limitations": "This is a packages manifest, not a GitHub release or a signature. Package catalog evidence is independently generated by the matcher."
+    },
+    {
+      "id": "merlin-user-scripts",
+      "url": "https://github.com/RMerl/asuswrt-merlin.ng/wiki/User-scripts",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "JFFS-hosted user scripts and firmware script settings require preservation.",
+      "limitations": "No hardware-specific space threshold or automatic JFFS formatting."
+    },
+    {
+      "id": "asus-recovery",
+      "url": "https://www.asus.com/global/support/faq/1000814/",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "Official model-specific rescue/recovery guidance and return of normal network settings.",
+      "limitations": "Search extraction is available; the direct page omits much article text. Check exact current model manual before a separately authorized rescue. No rescue was run."
+    },
+    {
+      "id": "curl-dns",
+      "url": "https://curl.se/docs/manpage.html#--socks5-hostname",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "Explicit distinction between SOCKS local resolution and proxy-side hostname resolution.",
+      "limitations": "Does not prove downstream transparent proxy DNS behavior."
+    },
+    {
+      "id": "socks-udp",
+      "url": "https://www.rfc-editor.org/rfc/rfc1928.html#section-7",
+      "checked_at": "2026-11-03T02:13:44Z",
+      "supports": "Separate SOCKS5 UDP association/relay capability.",
+      "limitations": "Protocol definition does not certify installed clients, nodes or router forwarding."
+    }
+  ],
+  "editorial_limits": [
+    "The book is read-only guidance; the user AI needs real authorized target-device tools.",
+    "No firmware flash, factory reset, JFFS format or plugin execution was performed.",
+    "KoolCenter legacy /posts links were not promoted to current firmware release/version proof.",
+    "Runtime ABI and kernel are observed independently of model/CPU; package match is not hardware certification."
+  ],
+  "unresolved_source_access": [
+    {
+      "url": "https://www.koolcenter.com/t/topic/5072/1",
+      "status": "unverified_in_this_book_review",
+      "reason": "Direct web retrieval did not yield readable release content. No firmware version, package URL or login requirement inferred."
+    }
+  ],
+  "editorial_changes": [
+    "Add device_model_id only from actual odmpid/productid to resolve an explicit installer alias precheck; no guessed alias."
+  ]
+}

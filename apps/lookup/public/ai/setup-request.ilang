@@ -1,5 +1,5 @@
 ::ILANG::v5.0
-[TYPE:request][LANG:zh][VERSION:2.0]
+[TYPE:request][LANG:zh][VERSION:2.1]
 
 ::OBJECTIVE{id:setup_device_request|owner:user|trust:trusted|version:2|status:proposed}
   target: 在我授权的目标设备上完成客户端识别、选择、安装配置、诊断修复和访问及重连验证；按我的实际目标处理选手机或旧手机共享网络。
@@ -9,4 +9,5 @@
 ::RULE{MODE|value:先复用现有设备；按我的目标选择工程书的普通配置、PICK_PHONE 选机或 HOTSPOT 共享分支。手机自身 VPN 连通不证明热点下设备已经走代理，必须分别验收。}
 ::RULE{ROLES|value:你使用自己的工具操作我的实际目标设备；MCP 只提供公共资料，不授予额外权限。复用当前授权，缺少能力时只请求必要连接或操作，不重复逐步审批。}
 ::RULE{SECRETS|value:订阅、凭据与热点密码仅在目标设备安全输入，不发到聊天、公共知识查询或报告中；不默认购买服务、恢复出厂或获取 root。}
+  [MUST] 对 KoolCenter 梅林改版或华硕官改路由器，先读取 fanqiang://books/merlin，再用 query 核对完整型号、硬件版本、固件分支和 fancyss 平台及包型；完成本地预检与下游验收。默认任务不包含刷固件，不把未知兼容性当作支持。
 ::ILANG::COMPLETE::

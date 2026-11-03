@@ -152,6 +152,7 @@ AUTOSETUP_GUIDE_PLACEMENTS = {
     'v2rayn-guide': (4, 'desktop'),
     'proxy-cores': (3, 'desktop'),
     'router-guide': (4, 'router'),
+    'asus-merlin': (3, 'router'),
 }
 
 for g in guides:
@@ -299,6 +300,18 @@ legacy_bytes = legacy_source.read_bytes()
 if hashlib.sha256(legacy_bytes).hexdigest() != '96425a3f6bf75c7c9ecbfdc657be74b053df2f323ba6cf5a5a621064bbabf98a':
     raise ValueError('Legacy v1.1 book integrity changed')
 (P / 'ai/books' / legacy_source.name).write_bytes(legacy_bytes)
+legacy_v2 = setup_runtime.parent / 'books/fanqiang-autosetup-v2.0.ilang.md'
+if hashlib.sha256(legacy_v2.read_bytes()).hexdigest() != '181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093':
+    raise ValueError('Legacy v2.0 book integrity changed')
+(P / 'ai/books' / legacy_v2.name).write_bytes(legacy_v2.read_bytes())
+legacy_v2_evidence = setup_runtime.parent / 'books/fanqiang-autosetup-v2.0.evidence.json'
+if hashlib.sha256(legacy_v2_evidence.read_bytes()).hexdigest() != '498b37722693a052c785932bc963327969c58f872bc5ca676655f5e574798190':
+    raise ValueError('Legacy v2.0 evidence integrity changed')
+(P / 'ai/books' / legacy_v2_evidence.name).write_bytes(legacy_v2_evidence.read_bytes())
+
+router_source = B.parent.parent / 'data/router-compatibility.json'
+(P / 'data/router-compatibility.json').write_bytes(router_source.read_bytes())
+
 (P / 'ai/answer-rules.ilang').write_bytes(setup_namespace['RULES_PATH'].read_bytes())
 freshness_source = B.parent.parent / 'data/source-freshness.json'
 (P / 'data/source-freshness.json').write_bytes(freshness_source.read_bytes())
@@ -318,6 +331,12 @@ for entry in catalog['entries']:
         break
 else:
     raise ValueError('Setup book is missing from the public AI catalog')
+catalog['entries'].append({'identifier': 'urn:air:fanqiang.guide:resource:merlin',
+    'displayName': 'KoolCenter 与 fancyss 路由器配置工程书', 'type': 'text/markdown',
+    'url': setup_namespace['book_manifest']('merlin')['download_url']})
+catalog['entries'].append({'identifier': 'urn:air:fanqiang.guide:resource:router-compatibility',
+    'displayName': '路由器固件与插件适配证据', 'type': 'application/json',
+    'url': SITE + '/data/router-compatibility.json'})
 dump('.well-known/ai-catalog.json',catalog)
 nav=json.loads((OLD/'data/navigation.json').read_text(encoding='utf-8'))
 nav['version']='1.4';nav['title']=TITLE

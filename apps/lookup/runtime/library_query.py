@@ -13,6 +13,8 @@ import json
 from pathlib import Path
 import re
 from urllib.parse import urlsplit
+from router_matching import (ROUTER_QUERY_FIELDS, ROUTER_QUERY_PROPERTIES,
+    normalize_router_query, RouterValidationError)
 
 TOOL_KINDS = frozenset({"client", "core", "router_plugin", "vpn", "mesh", "browser_extension"})
 PLATFORMS = {
@@ -48,8 +50,9 @@ QUERY_INPUT_SCHEMA = {
 }
 
 # Public alias used by the MCP/HTTP wiring layer.
+QUERY_INPUT_SCHEMA["properties"].update(ROUTER_QUERY_PROPERTIES)
 QUERY_SCHEMA = QUERY_INPUT_SCHEMA
-QUERY_DESCRIPTION = "::ILANG::v5.0\n[TYPE:tool][SCOPE:public_knowledge_query]\n::MODULE{QUERY}\n  [MUST] Query the requested tool kind and documented platform, protocol and feature evidence with AND semantics. Use existing get with returned record IDs for full public context.\n  [MUST] Separate platform from os_version. Android support is not proof that Android 14 or a particular protocol and feature combination was tested.\n  [MUST] VLESS-Reality means VLESS AND the Reality transport; an additional feature such as TUN remains a separate AND condition.\n  [MUST] Treat unknown as unknown. include_unknown returns candidates for further checking; a core capability does not prove that every client using the core exposes it.\n  [MUST] Zero results do not establish lack of support. Inspect excluded_unknown and request include_unknown when appropriate.\n  [MUST] Preserve source URLs, review dates and combination_status. last_updated describes the knowledge record, not the latest software release.\n  [MUST] This read-only query neither operates devices nor tests connectivity. Send only public filter values; never credentials, subscription links or private logs.\n::ILANG::COMPLETE::"
+QUERY_DESCRIPTION = "::ILANG::v5.0\n[TYPE:tool][SCOPE:public_knowledge_query]\n::MODULE{QUERY}\n  [MUST] Query the requested tool kind and documented platform, protocol and feature evidence with AND semantics. Use existing get with returned record IDs for full public context.\n  [MUST] Separate platform from os_version. Android support is not proof that Android 14 or a particular protocol and feature combination was tested.\n  [MUST] VLESS-Reality means VLESS AND the Reality transport; an additional feature such as TUN remains a separate AND condition.\n  [MUST] Treat unknown as unknown. include_unknown returns candidates for further checking; a core capability does not prove that every client using the core exposes it.\n  [MUST] Zero results do not establish lack of support. Inspect excluded_unknown and request include_unknown when appropriate.\n  [MUST] Preserve source URLs, review dates and combination_status. last_updated describes the knowledge record, not the latest software release.\n  [MUST] For KoolCenter and fancyss use router_model with known hardware_revision, device_model_id, firmware_family, firmware_branch, firmware_version, architecture and kernel. package_variant is auto, full or lite. Read fanqiang://books/merlin before device changes.\n  [MUST] Router mode reports exact-model candidates, conflicts, missing evidence and local prechecks. It does not certify hardware revisions, select a flash upgrade or prove installation. include_unknown applies only to generic library filtering.\n  [MUST] This read-only query neither operates devices nor tests connectivity. Send only public filter values; never credentials, subscription links or private logs.\n::ILANG::COMPLETE::"
 
 NOTICES = [
     "筛选匹配表示资料中有相应字段或实现文档，不表示安装成功、安全认证或网络实测。",
@@ -107,7 +110,7 @@ def _key(value, field):
     return value
 
 
-def normalize_query(params):
+def _normalize_library_query(params):
     if params is None:
         params = {}
     if type(params) is not dict:
@@ -159,6 +162,32 @@ def normalize_query(params):
     result["include_unknown"] = unknown
     result["required_features"] = sorted(set(required_features))
     return result
+
+
+
+def is_router_query(params):
+    return isinstance(params, dict) and any(params.get(key) is not None for key in ROUTER_QUERY_FIELDS)
+
+def normalize_query(params):
+    if not is_router_query(params):
+        if isinstance(params, dict):
+            params = {key: value for key, value in params.items()
+                      if key not in ROUTER_QUERY_FIELDS or value is not None}
+        return _normalize_library_query(params)
+    if set(params) - (INPUT_FIELDS | set(ROUTER_QUERY_FIELDS)):
+        raise QueryValidationError("query", "unknown_field")
+    base = _normalize_library_query({key: value for key, value in params.items()
+        if key in INPUT_FIELDS and key != "protocol"})
+    if base["kind"] not in (None, "router_plugin") or base["platform"] not in (None, "router"):
+        raise QueryValidationError("query", "router_mode_requires_router_plugin_and_router")
+    if base["feature"] is not None or base["os_version"] is not None:
+        raise QueryValidationError("query", "unsupported_router_filter")
+    try:
+        router = normalize_router_query({key: value for key, value in params.items()
+            if key in set(ROUTER_QUERY_FIELDS) | {"protocol"} and value is not None})
+    except RouterValidationError:
+        raise QueryValidationError("query", "invalid_router_parameter") from None
+    return {**base, **router, "query_mode": "router"}
 
 
 def _sources(record, field):

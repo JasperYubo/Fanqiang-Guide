@@ -12,10 +12,11 @@ from pathlib import Path
 from setup_book import (NO_ARGUMENTS_SCHEMA, SETUP_BOOK_DESCRIPTION,
     setup_book_manifest, setup_book_response_schema, book_catalog, answer_rules_text, answer_rules_manifest)
 
-from library_query import LibraryQuery, QUERY_INPUT_SCHEMA, QUERY_DESCRIPTION, QueryValidationError
+from router_matching import RouterMatcher, ROUTER_QUERY_FIELDS
+from library_query import LibraryQuery, QUERY_INPUT_SCHEMA, QUERY_DESCRIPTION, QueryValidationError, normalize_query
 from freshness import SourceFreshness
 
-VERSION = "2.0.0"
+VERSION = "2.1.0"
 ORIGIN = "https://fanqiang.guide"
 PROTOCOLS = ("2025-03-26", "2025-06-18", "2025-11-25")
 MAX_BODY = 16384
@@ -145,6 +146,7 @@ class Library:
             comparison_path = Path(__file__).resolve().parents[2] / "site/content/client-comparison-v1.3-2026-09-12.json"
         comparison = json.loads(comparison_path.read_text()) if comparison_path.exists() else None
         self.structured_query = LibraryQuery(list(self.records.values()), comparison=comparison)
+        self.router_matching = RouterMatcher()
         self.last_updated = max((r.get("updated_at", "") for r in records), default="") or None
         self.snapshot["last_updated"] = self.last_updated
         self.snapshot["date_semantics"] = {"last_updated": "knowledge_record_updated_at",
@@ -163,6 +165,15 @@ class Library:
         record["lookup_url"] = ORIGIN + "/api/agent/item?id=" + ident
         record["last_updated"] = record.get("updated_at")
         record["source_freshness"] = self.freshness.for_record(ident)
+        if ident in {"fancyss", "koolcenter-merlin-mod", "koolcenter-asuswrt-mod", "koolshare-rogsoft"}:
+            record["router_setup"] = {
+                "book_resource": "fanqiang://books/merlin",
+                "query_tool": "query", "required_selector": "router_model",
+                "matrix_url": ORIGIN + "/data/router-compatibility.json",
+                "scope": "separate_model_firmware_and_package_evidence",
+                "hardware_tested": False,
+                "note": "The original record remains dated; use the separate query for exact-model evidence and local prechecks.",
+            }
         return record
 
     def get(self, params):
@@ -210,6 +221,22 @@ class Library:
                 if params["include_unknown"] not in ("true", "false"):
                     raise QueryValidationError("include_unknown")
                 params["include_unknown"] = params["include_unknown"] == "true"
+        normalized = normalize_query(params)
+        if normalized.get("query_mode") == "router":
+            result = self.router_matching.query({key: value for key, value in normalized.items()
+                if key in set(ROUTER_QUERY_FIELDS) | {"protocol"}})
+            candidates = result["candidates"]
+            offset, limit = normalized["offset"], normalized["limit"]
+            result.update({"query_mode": "router", "items": candidates[offset:offset + limit],
+                "total": len(candidates), "offset": offset, "limit": limit,
+                "next_offset": offset + limit if offset + limit < len(candidates) else None,
+                "book_resource": "fanqiang://books/merlin",
+                "notices": [*result.get("notices", []),
+                    "Router candidates retain explicit status and local prechecks; they are not device-tested.",
+                    "include_unknown applies to generic library mode; router mode always reports missing evidence.",
+                    "Never send credentials, subscription URLs, serial numbers or private logs.",
+                ]})
+            return result
         result = self.structured_query.query(params)
         for item in result["items"]:
             item["source_freshness"] = self.freshness.for_record(item["id"])
@@ -222,7 +249,7 @@ class Library:
 def server_card():
     return {"version": "1.0", "protocolVersion": PROTOCOLS[-1],
             "serverInfo": {"name": "guide.fanqiang/library-lookup", "version": VERSION, "title": "Fanqiang Guide"},
-            "description": "Read-only public tool references and a device setup book for the user\'s AI; this service cannot operate devices.",
+            "description": "Read-only public tool references and device setup engineering books for the user\'s AI; this service cannot operate devices.",
             "documentationUrl": ORIGIN + "/ai/",
             "transport": {"type": "streamable-http", "endpoint": ORIGIN + "/mcp"},
             "capabilities": {"tools": {"listChanged": False},

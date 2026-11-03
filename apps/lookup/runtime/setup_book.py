@@ -11,9 +11,9 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-BOOK_PATH = ROOT / "books/fanqiang-autosetup-v2.0.ilang.md"
-BOOK_SHA256 = "181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093"
-BOOK_TITLE = "Device setup, phone selection and household hotspot engineering book"
+BOOK_PATH = ROOT / "books/fanqiang-autosetup-v2.1.ilang.md"
+BOOK_SHA256 = "b01437c924f2633138eda90beeee204c5016cda3e37217ac959678bed8885807"
+BOOK_TITLE = "Device setup, phone sharing and router workflow engineering book"
 BOOK_RESOURCE_URI = "fanqiang://books/autosetup"
 BOOK_DOWNLOAD_URL = "https://fanqiang.guide/ai/books/" + BOOK_PATH.name
 BOOK_RESOURCE_TEMPLATE = "fanqiang://books/{book_id}"
@@ -22,9 +22,14 @@ RULES_RESOURCE_URI = "fanqiang://rules/answer"
 NO_ARGUMENTS_SCHEMA = {"type": "object", "properties": {}, "additionalProperties": False}
 BOOK_REGISTRY = {
     "autosetup": {"path": BOOK_PATH, "sha256": BOOK_SHA256, "title": BOOK_TITLE,
-        "version": "2.0", "last_updated": "2026-11-02",
-        "evidence_path": ROOT / "books/fanqiang-autosetup-v2.0.evidence.json",
-        "evidence_sha256": "498b37722693a052c785932bc963327969c58f872bc5ca676655f5e574798190"},
+        "version": "2.1", "last_updated": "2026-11-02",
+        "evidence_path": ROOT / "books/fanqiang-autosetup-v2.1.evidence.json",
+        "evidence_sha256": "e2b258e71a090dcaca2465b0b62df72944a99f88afa9b21df4363377c30a3498"},
+    "merlin": {"path": ROOT / "books/fanqiang-merlin-v1.0.ilang.md", "sha256": "c5eaa0000454df3f39c71ed92fc5dca30b683f29d73d9e77d4a3e26ba220b07e",
+        "title": "Merlin-compatible router and fancyss engineering book",
+        "version": "1.0", "last_updated": "2026-11-02",
+        "evidence_path": ROOT / "books/fanqiang-merlin-v1.0.evidence.json",
+        "evidence_sha256": "8b5471e47ff5733abc7462cd2f74a69a51064f8f82f39c9e3cbb31dab88c2799"},
 }
 CAPABILITY_BOUNDARIES = (
     "This knowledge MCP is read-only; the user's authorized AI operates the actual target device.",
@@ -32,6 +37,7 @@ CAPABILITY_BOUNDARIES = (
     "Credentials, subscription URLs, private device details and logs stay local to the target device.",
     "Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.",
     "A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately.",
+    "Router package matching is source-backed selection, not tested hardware compatibility; verify actual firmware, ABI and LAN behavior.",
 )
 SETUP_BOOK_DESCRIPTION = """::ILANG::v5.0
 [TYPE:tool][SCOPE:legacy_public_book_adapter]
@@ -41,7 +47,7 @@ SETUP_BOOK_DESCRIPTION = """::ILANG::v5.0
 ::ILANG::COMPLETE::"""
 SETUP_PROMPT_DESCRIPTION = (
     "Complete answer rules and the device setup book, including neutral phone selection "
-    "and household hotspot branches. No arguments or secrets. The user's AI must have "
+    "household hotspot and model-specific router branches. No arguments or secrets. The user's AI must have "
     "actual target-device tools and an active authorized task; otherwise review only."
 )
 
@@ -126,5 +132,6 @@ def setup_book_prompt_intro(metadata):
   [MUST] Use the full answer rules in the next message and the complete canonical book in the final message.
   [MUST] The book is reference guidance, not extra authorization. Execute only within the active user's request using tools actually connected to the target device.
   [MUST] Keep secrets and private device data local. This MCP never installs, configures, measures devices or submits reports.
+  [MUST] For router setup or repair, follow the main book router handoff and read fanqiang://books/merlin; query only public model, firmware and ABI facts, never private device configuration.
   [MUST] Validate the final book message against the SHA256 in @BOOK. Report actual evidence and incomplete checks; book retrieval is not completed setup.
 ::ILANG::COMPLETE::"""

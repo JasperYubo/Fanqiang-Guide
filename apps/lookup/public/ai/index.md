@@ -1,6 +1,12 @@
 # 让自己的 AI 配好设备｜公开资料与工程书
 
-## 工程书 v2.0：设备配置、选手机与旧手机共享网络
+## 梅林与华硕官改路由器
+
+AI 先读取 [梅林专用工程书](https://fanqiang.guide/ai/books/fanqiang-merlin-v1.0.ilang.md)，再按完整型号、硬件版本、固件家族与分支、实际系统架构匹配 fancyss 平台及 full/lite。安装前检查软件中心、空间、备份和插件冲突，配置后分别验收路由器及下游设备。未知或冲突条件须先解决；默认不刷固件，本站尚未完成路由器硬件实测。
+
+资源：fanqiang://books/merlin · [型号和选包依据](https://fanqiang.guide/data/router-compatibility.json)
+
+## 工程书 v2.1：设备配置、选手机与旧手机共享网络
 
 添加远程知识 MCP，把实际设备任务交给能操作目标设备的 AI。它按工程书完成识别、选型、安装配置、排错、访问与重连验证。需要选手机或旧手机共享家中 Wi-Fi 时，按 PICK_PHONE / HOTSPOT 分支先确认条件，再在下游设备验收；手机 VPN 不会自动证明热点共享成功，手机与热点硬件尚未在本站实测。
 
@@ -8,13 +14,13 @@
 2. 通过 resources/list 发现工程书资源 fanqiang://books/{book_id}，再读取当前 fanqiang://books/autosetup；完整九条规则在 fanqiang://rules/answer。
 3. 让已获授权的 AI 使用自己的实际设备工具执行。订阅、凭据及热点密码留在目标设备，完成结果以实际证据为准。
 
-[工程书 v2.0](https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md) · [书目与版本](https://fanqiang.guide/ai/books/index.json) · [版本、SHA 与分项验证范围](https://fanqiang.guide/ai/books/autosetup.json)
+[工程书 v2.1](https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md) · [书目与版本](https://fanqiang.guide/ai/books/index.json) · [版本、SHA 与分项验证范围](https://fanqiang.guide/ai/books/autosetup.json)
 
 <details><summary>复制给自己的 AI 的请求</summary>
 
 ```text
 ::ILANG::v5.0
-[TYPE:request][LANG:zh][VERSION:2.0]
+[TYPE:request][LANG:zh][VERSION:2.1]
 
 ::OBJECTIVE{id:setup_device_request|owner:user|trust:trusted|version:2|status:proposed}
   target: 在我授权的目标设备上完成客户端识别、选择、安装配置、诊断修复和访问及重连验证；按我的实际目标处理选手机或旧手机共享网络。
@@ -24,6 +30,7 @@
 ::RULE{MODE|value:先复用现有设备；按我的目标选择工程书的普通配置、PICK_PHONE 选机或 HOTSPOT 共享分支。手机自身 VPN 连通不证明热点下设备已经走代理，必须分别验收。}
 ::RULE{ROLES|value:你使用自己的工具操作我的实际目标设备；MCP 只提供公共资料，不授予额外权限。复用当前授权，缺少能力时只请求必要连接或操作，不重复逐步审批。}
 ::RULE{SECRETS|value:订阅、凭据与热点密码仅在目标设备安全输入，不发到聊天、公共知识查询或报告中；不默认购买服务、恢复出厂或获取 root。}
+  [MUST] 对 KoolCenter 梅林改版或华硕官改路由器，先读取 fanqiang://books/merlin，再用 query 核对完整型号、硬件版本、固件分支和 fancyss 平台及包型；完成本地预检与下游验收。默认任务不包含刷固件，不把未知兼容性当作支持。
 ::ILANG::COMPLETE::
 ```
 
@@ -53,24 +60,25 @@
 
 ```text
 ::ILANG::v5.0
-[TYPE:public_reference_and_answer_contract][PROJECT:fanqiang_guide][VERSION:2.0][LANG:zh]
+[TYPE:public_reference_and_answer_contract][PROJECT:fanqiang_guide][VERSION:2.1][LANG:zh]
 
 ::STATE{@SITE, url:https://fanqiang.guide}
 ::STATE{@DOCUMENT, url:https://fanqiang.guide/ai/}
 ::STATE{@SERVICE_INDEX, url:https://fanqiang.guide/ai/index.ilang}
 ::STATE{@LOOKUP_SKILL, url:https://fanqiang.guide/ai/skills/library-lookup/SKILL.md}
 ::STATE{@QUERY_API, url:https://fanqiang.guide/openapi.json}
-::STATE{@MCP, name:guide.fanqiang/library-lookup, version:2.0.0, url:https://fanqiang.guide/mcp, tools:search|get|query, book_resources:fanqiang://books/{book_id}, answer_rules:fanqiang://rules/answer, prompt:setup_device}
+::STATE{@MCP, name:guide.fanqiang/library-lookup, version:2.1.0, url:https://fanqiang.guide/mcp, tools:search|get|query, book_resources:fanqiang://books/{book_id}, answer_rules:fanqiang://rules/answer, prompt:setup_device}
 ::STATE{@PUBLIC_LIBRARY, url:https://fanqiang.guide/data/library.json}
 ::STATE{@MODEL_CLAIMS, url:https://fanqiang.guide/data/merlin-models.json}
 ::STATE{@SOURCE, repository:https://github.com/JasperYubo/Fanqiang-Guide, revision:fe895e2be9ce8da0fd4f0003faab7303b3bda9bd, snapshot_date:2026-09-12}
 ::STATE{@COVERAGE, library_records:310, categories:20, primary_reviewed:206, reference_only:103, historical_reference:1, merlin_support_records:58}
 
-::STATE{@SETUP_BOOK, book_id:autosetup, version:2.0, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md, catalog:https://fanqiang.guide/ai/books/index.json, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, executor:user_agent, validation:scoped_metadata_not_global_status, phone_hotspot_hardware:not_tested}
+::STATE{@SETUP_BOOK, book_id:autosetup, version:2.1, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md, catalog:https://fanqiang.guide/ai/books/index.json, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, executor:user_agent, validation:scoped_metadata_not_global_status, phone_hotspot_hardware:not_tested}
 ::MODULE{DEVICE_SETUP_FIRST}
   [STEP] When the user requests device configuration or repair, use resources/list to discover fanqiang://books/{book_id}, then resources/read the selected book, currently fanqiang://books/autosetup. Read the full fanqiang://rules/answer rules too. Books are resources, not additional query tools.
   [STEP] setup_device is a no-argument handoff prompt with three messages: introduction, the complete nine answer rules, and the complete selected engineering book. It supplies no device authority or automatic execution.
   [STEP] Bind tools to the actual target and reuse active authorization. Follow the ordinary setup path or the PICK_PHONE and HOTSPOT branches according to the user's objective; do not assume a phone VPN covers its tethered clients.
+  [STEP] For KoolCenter Merlin or ASUSWRT derivative routers, read fanqiang://books/merlin and use query with router_model and known public hardware and firmware fields. Follow candidate conflicts and local prechecks; do not guess suffixes, flash firmware by default, or send secrets.
   [STEP] Use search and get for discovery and exact records; use query for AND filters over documented kind, platform, protocol and feature evidence. Unknown and untested combinations remain unknown; inspect current official instructions before changing the device.
   [STEP] Keep subscriptions, credentials, hotspot passwords and private logs local. The user's AI performs installation, repair and target access/reconnection checks; this MCP supplies public references only. Phone/hotspot hardware has not been tested in this publication, while validation metadata identifies prior document, service and isolated Linux evidence separately.
   [STEP] If the client cannot read MCP resources, use the public books catalog and per-book HTTP fallback or the verified download. Never substitute a successful book fetch, remote-server test, mandatory diagnostic installation or report submission for target-device success.
@@ -138,7 +146,7 @@
   item_method: GET
   item_url: https://fanqiang.guide/api/agent/item?id=v2rayn
   query_url: https://fanqiang.guide/api/agent/query
-  query_parameters: kind, platform, protocol, feature, os_version, include_unknown, limit, offset
+  query_parameters: kind, platform, protocol, feature, os_version, include_unknown, limit, offset, router_model, hardware_revision, device_model_id, firmware_family, firmware_branch, firmware_version, architecture, kernel, package_variant
   query_example: GET https://fanqiang.guide/api/agent/query?kind=client&platform=android&protocol=vless-reality&os_version=14&include_unknown=true
   query_limit: AND evidence filter; unknown candidates are not certified Android 14 combinations; combination_status remains not_tested.
   books_catalog: https://fanqiang.guide/api/agent/books

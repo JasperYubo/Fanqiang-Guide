@@ -85,7 +85,7 @@ def copy_for(context):
     intros = {
         "home": "把本站知识接到自己的 AI，再交给它配置任务：识别环境、选择工具、安装配置、诊断修复，最后验证实际访问与重新连接。",
         "desktop": "把上面的资料交给能操作这台电脑的 AI。它先检查已有客户端和配置，保留可用设置，再完成必要的安装、配置、排错与验证。",
-        "router": "AI 先确认路由器型号、固件和实际控制权限，再按兼容条件配置并验证。它需要能操作目标路由器；只在电脑上测通，不能证明路由器已配置。",
+        "router": "AI 先确认完整型号、固件和实际控制权限，再核对硬件版本。KoolCenter 梅改与官改使用专用工程书，按固件分支和系统架构匹配 fancyss 平台及 full/lite，再安装、配置、排错并验证。它需要能操作目标路由器；只在电脑上测通，不能证明路由器已配置。",
         "mobile": "AI 先确认手机系统、已有客户端和实际控制能力，再完成兼容的安装、配置与验证。它需要能操作这部手机；只在电脑上测通，不能证明手机已配置。",
     }
     note = "知识 MCP 只提供公共资料，不会替 AI 获得设备权限。订阅与凭据只在目标设备安全输入；付款、账号或区域变更不包含在这份请求中。"
@@ -119,7 +119,8 @@ def render_autosetup_callout(context="home"):
         '<li><h3>完成配置与实际验收</h3><p>AI 使用它自己的设备工具安装、配置和排错，并验证目标访问、预期路由及断开后重连。未完成的检查要明确说明。</p></li>'
         '</ol>'
         '<div class="autosetup-actions"><a class="button button-secondary" href="/ai/#device-setup">查看接入与执行说明 →</a>'
-        f'<a href="{BOOK_PATH}" download>下载 v{BOOK_VERSION} 完整工程书</a></div>'
+        f'<a href="{BOOK_PATH}" download>下载 v{BOOK_VERSION} 完整工程书</a>'
+        '<a href="/ai/#merlin-setup">梅林与官改型号适配</a></div>'
         '<p class="autosetup-status" data-copy-status role="status" aria-live="polite" aria-atomic="true">复制后粘贴到自己的 AI；打开本页不会自动连接或执行配置。</p>'
         '<details class="autosetup-fallback" data-setup-fallback><summary>查看请求或手动复制</summary>'
         f'<label for="{ident}-mcp">MCP 地址</label>'

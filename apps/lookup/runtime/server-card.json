@@ -1,1 +1,237 @@
-{"version":"1.0","protocolVersion":"2025-11-25","serverInfo":{"name":"guide.fanqiang/library-lookup","version":"2.0.0","title":"Fanqiang Guide"},"description":"Read-only public tool references and a device setup book for the user's AI; this service cannot operate devices.","documentationUrl":"https://fanqiang.guide/ai/","transport":{"type":"streamable-http","endpoint":"https://fanqiang.guide/mcp"},"capabilities":{"tools":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"prompts":{"listChanged":false}},"setupBook":{"id":"fanqiang-autosetup","book_id":"autosetup","title":"Device setup, phone selection and household hotspot engineering book","version":"2.0","last_updated":"2026-11-02","sha256":"181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093","download_url":"https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md","resource_uri":"fanqiang://books/autosetup","prompt":"setup_device","executor":"user_agent","content_type":"text/markdown; charset=utf-8","byte_length":34641,"validation":{"document":{"status":"validated","checks":["ilang_validate","ilang_book_check"],"errors":0,"warnings":0,"book_sha256":"181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093","checked_at":"2026-11-03T00:45:36Z"},"service_interface":{"status":"verified","scope":"Previous service 1.2.0 public read-only book delivery and rejection tests; not evidence for the v2 rollout or target-device operation.","evidence_sha256":"432427eb55acc268a6f3a3d619ba57e3126342bdb20cae841c8afad17ce5c481"},"linux_flow":{"status":"verified","scope":["Isolated Linux IPv4 loopback SOCKS application through Shadowsocks 2022 TCP to a TLS fixture, sing-box 1.14.4.","Wrong-port failure and a single-factor repair; disconnect failure and successful reconnection.","Observed route and server-side test DNS; process cleanup and unchanged host network."],"evidence_sha256":"2275987818d034b8399d84e5ef136463db8a8ce92ffa727f1e98d4737e677563","not_covered":["physical Android or iOS","phone hotspot or tethering","IPv6","UDP","public subscription nodes"]},"mobile_hotspot":{"status":"not_tested","scope":"Physical Android/iOS phone selection, Wi-Fi coexistence, hotspot/tethering, downstream DNS/IPv6/UDP, screen-off, thermal and reconnection acceptance. Executable procedures are specified; no hardware result is claimed."}},"capability_boundaries":["This knowledge MCP is read-only; the user's authorized AI operates the actual target device.","The book grants no extra authorization. Respect the active task and required system permissions.","Credentials, subscription URLs, private device details and logs stay local to the target device.","Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.","A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately."]},"books":{"resource_template":"fanqiang://books/{book_id}","books":[{"id":"fanqiang-autosetup","book_id":"autosetup","title":"Device setup, phone selection and household hotspot engineering book","version":"2.0","last_updated":"2026-11-02","sha256":"181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093","download_url":"https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md","resource_uri":"fanqiang://books/autosetup","prompt":"setup_device","executor":"user_agent","content_type":"text/markdown; charset=utf-8","byte_length":34641,"validation":{"document":{"status":"validated","checks":["ilang_validate","ilang_book_check"],"errors":0,"warnings":0,"book_sha256":"181d28bd238f2a7d3d29a2f72ab569aec83d7e983bc3e7457a14c2ae3da51093","checked_at":"2026-11-03T00:45:36Z"},"service_interface":{"status":"verified","scope":"Previous service 1.2.0 public read-only book delivery and rejection tests; not evidence for the v2 rollout or target-device operation.","evidence_sha256":"432427eb55acc268a6f3a3d619ba57e3126342bdb20cae841c8afad17ce5c481"},"linux_flow":{"status":"verified","scope":["Isolated Linux IPv4 loopback SOCKS application through Shadowsocks 2022 TCP to a TLS fixture, sing-box 1.14.4.","Wrong-port failure and a single-factor repair; disconnect failure and successful reconnection.","Observed route and server-side test DNS; process cleanup and unchanged host network."],"evidence_sha256":"2275987818d034b8399d84e5ef136463db8a8ce92ffa727f1e98d4737e677563","not_covered":["physical Android or iOS","phone hotspot or tethering","IPv6","UDP","public subscription nodes"]},"mobile_hotspot":{"status":"not_tested","scope":"Physical Android/iOS phone selection, Wi-Fi coexistence, hotspot/tethering, downstream DNS/IPv6/UDP, screen-off, thermal and reconnection acceptance. Executable procedures are specified; no hardware result is claimed."}},"capability_boundaries":["This knowledge MCP is read-only; the user's authorized AI operates the actual target device.","The book grants no extra authorization. Respect the active task and required system permissions.","Credentials, subscription URLs, private device details and logs stay local to the target device.","Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.","A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately."]}]},"answerRules":{"id":"answer-rules","version":"1.0","resource_uri":"fanqiang://rules/answer","download_url":"https://fanqiang.guide/ai/answer-rules.ilang","sha256":"c324ca8b5127e4a82a93e6d9e3a364d6a6c265b9d5710cb0f78b8d908921e79d","byte_length":1974,"rule_count":9}}
+{
+  "version": "1.0",
+  "protocolVersion": "2025-11-25",
+  "serverInfo": {
+    "name": "guide.fanqiang/library-lookup",
+    "version": "2.1.0",
+    "title": "Fanqiang Guide"
+  },
+  "description": "Read-only public tool references and device setup engineering books for the user's AI; this service cannot operate devices.",
+  "documentationUrl": "https://fanqiang.guide/ai/",
+  "transport": {
+    "type": "streamable-http",
+    "endpoint": "https://fanqiang.guide/mcp"
+  },
+  "capabilities": {
+    "tools": {
+      "listChanged": false
+    },
+    "resources": {
+      "subscribe": false,
+      "listChanged": false
+    },
+    "prompts": {
+      "listChanged": false
+    }
+  },
+  "setupBook": {
+    "id": "fanqiang-autosetup",
+    "book_id": "autosetup",
+    "title": "Device setup, phone sharing and router workflow engineering book",
+    "version": "2.1",
+    "last_updated": "2026-11-02",
+    "sha256": "b01437c924f2633138eda90beeee204c5016cda3e37217ac959678bed8885807",
+    "download_url": "https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md",
+    "resource_uri": "fanqiang://books/autosetup",
+    "prompt": "setup_device",
+    "executor": "user_agent",
+    "content_type": "text/markdown; charset=utf-8",
+    "byte_length": 36571,
+    "validation": {
+      "document": {
+        "status": "validated",
+        "checks": [
+          "ilang_validate",
+          "ilang_book_check"
+        ],
+        "errors": 0,
+        "warnings": 0,
+        "book_sha256": "b01437c924f2633138eda90beeee204c5016cda3e37217ac959678bed8885807",
+        "checked_at": "2026-11-03T02:19:47.554202Z"
+      },
+      "service_interface": {
+        "status": "verified",
+        "version": "2.1.0",
+        "scope": "Isolated Linux loopback MCP SDK, HTTP, book resources, prompt, schema and static reference consistency. This is interface verification, not physical router installation or public production verification.",
+        "environment": "isolated_linux_loopback",
+        "checked_at": "2026-11-03T02:29:05.857060+00:00",
+        "evidence": {
+          "artifact": "merlin-candidate-initial.json",
+          "sha256": "b31bdc9228a3fedcb5c44cd0e7c5bd8b4cef3205ec98724a9da3c0eec6f02d67",
+          "verifier": "developer/verify_merlin_public.py",
+          "passed_checks": 347
+        }
+      },
+      "linux_flow": {
+        "status": "verified",
+        "scope": [
+          "Isolated Linux IPv4 loopback SOCKS application through Shadowsocks 2022 TCP to a TLS fixture, sing-box 1.14.4.",
+          "Wrong-port failure and a single-factor repair; disconnect failure and successful reconnection.",
+          "Observed route and server-side test DNS; process cleanup and unchanged host network."
+        ],
+        "evidence_sha256": "2275987818d034b8399d84e5ef136463db8a8ce92ffa727f1e98d4737e677563",
+        "not_covered": [
+          "physical Android or iOS",
+          "phone hotspot or tethering",
+          "IPv6",
+          "UDP",
+          "public subscription nodes"
+        ]
+      },
+      "mobile_hotspot": {
+        "status": "not_tested",
+        "scope": "Physical Android/iOS phone selection, Wi-Fi coexistence, hotspot/tethering, downstream DNS/IPv6/UDP, screen-off, thermal and reconnection acceptance. Executable procedures are specified; no hardware result is claimed."
+      },
+      "router_hardware": {
+        "status": "not_tested",
+        "scope": "Main book navigation to the merlin workflow; no physical router, install, downstream traffic or recovery execution."
+      }
+    },
+    "capability_boundaries": [
+      "This knowledge MCP is read-only; the user's authorized AI operates the actual target device.",
+      "The book grants no extra authorization. Respect the active task and required system permissions.",
+      "Credentials, subscription URLs, private device details and logs stay local to the target device.",
+      "Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.",
+      "A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately.",
+      "Router package matching is source-backed selection, not tested hardware compatibility; verify actual firmware, ABI and LAN behavior."
+    ]
+  },
+  "books": {
+    "resource_template": "fanqiang://books/{book_id}",
+    "books": [
+      {
+        "id": "fanqiang-autosetup",
+        "book_id": "autosetup",
+        "title": "Device setup, phone sharing and router workflow engineering book",
+        "version": "2.1",
+        "last_updated": "2026-11-02",
+        "sha256": "b01437c924f2633138eda90beeee204c5016cda3e37217ac959678bed8885807",
+        "download_url": "https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md",
+        "resource_uri": "fanqiang://books/autosetup",
+        "prompt": "setup_device",
+        "executor": "user_agent",
+        "content_type": "text/markdown; charset=utf-8",
+        "byte_length": 36571,
+        "validation": {
+          "document": {
+            "status": "validated",
+            "checks": [
+              "ilang_validate",
+              "ilang_book_check"
+            ],
+            "errors": 0,
+            "warnings": 0,
+            "book_sha256": "b01437c924f2633138eda90beeee204c5016cda3e37217ac959678bed8885807",
+            "checked_at": "2026-11-03T02:19:47.554202Z"
+          },
+          "service_interface": {
+            "status": "verified",
+            "version": "2.1.0",
+            "scope": "Isolated Linux loopback MCP SDK, HTTP, book resources, prompt, schema and static reference consistency. This is interface verification, not physical router installation or public production verification.",
+            "environment": "isolated_linux_loopback",
+            "checked_at": "2026-11-03T02:29:05.857060+00:00",
+            "evidence": {
+              "artifact": "merlin-candidate-initial.json",
+              "sha256": "b31bdc9228a3fedcb5c44cd0e7c5bd8b4cef3205ec98724a9da3c0eec6f02d67",
+              "verifier": "developer/verify_merlin_public.py",
+              "passed_checks": 347
+            }
+          },
+          "linux_flow": {
+            "status": "verified",
+            "scope": [
+              "Isolated Linux IPv4 loopback SOCKS application through Shadowsocks 2022 TCP to a TLS fixture, sing-box 1.14.4.",
+              "Wrong-port failure and a single-factor repair; disconnect failure and successful reconnection.",
+              "Observed route and server-side test DNS; process cleanup and unchanged host network."
+            ],
+            "evidence_sha256": "2275987818d034b8399d84e5ef136463db8a8ce92ffa727f1e98d4737e677563",
+            "not_covered": [
+              "physical Android or iOS",
+              "phone hotspot or tethering",
+              "IPv6",
+              "UDP",
+              "public subscription nodes"
+            ]
+          },
+          "mobile_hotspot": {
+            "status": "not_tested",
+            "scope": "Physical Android/iOS phone selection, Wi-Fi coexistence, hotspot/tethering, downstream DNS/IPv6/UDP, screen-off, thermal and reconnection acceptance. Executable procedures are specified; no hardware result is claimed."
+          },
+          "router_hardware": {
+            "status": "not_tested",
+            "scope": "Main book navigation to the merlin workflow; no physical router, install, downstream traffic or recovery execution."
+          }
+        },
+        "capability_boundaries": [
+          "This knowledge MCP is read-only; the user's authorized AI operates the actual target device.",
+          "The book grants no extra authorization. Respect the active task and required system permissions.",
+          "Credentials, subscription URLs, private device details and logs stay local to the target device.",
+          "Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.",
+          "A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately.",
+          "Router package matching is source-backed selection, not tested hardware compatibility; verify actual firmware, ABI and LAN behavior."
+        ]
+      },
+      {
+        "id": "fanqiang-merlin",
+        "book_id": "merlin",
+        "title": "Merlin-compatible router and fancyss engineering book",
+        "version": "1.0",
+        "last_updated": "2026-11-02",
+        "sha256": "c5eaa0000454df3f39c71ed92fc5dca30b683f29d73d9e77d4a3e26ba220b07e",
+        "download_url": "https://fanqiang.guide/ai/books/fanqiang-merlin-v1.0.ilang.md",
+        "resource_uri": "fanqiang://books/merlin",
+        "prompt": "setup_device",
+        "executor": "user_agent",
+        "content_type": "text/markdown; charset=utf-8",
+        "byte_length": 24898,
+        "validation": {
+          "document": {
+            "status": "validated",
+            "checks": [
+              "ilang_validate",
+              "ilang_book_check"
+            ],
+            "errors": 0,
+            "warnings": 0,
+            "book_sha256": "c5eaa0000454df3f39c71ed92fc5dca30b683f29d73d9e77d4a3e26ba220b07e",
+            "checked_at": "2026-11-03T02:19:47.554202Z"
+          },
+          "service_interface": {
+            "status": "verified",
+            "version": "2.1.0",
+            "scope": "Isolated Linux loopback MCP SDK, HTTP, book resources, prompt, schema and static reference consistency. This is interface verification, not physical router installation or public production verification.",
+            "environment": "isolated_linux_loopback",
+            "checked_at": "2026-11-03T02:29:05.857060+00:00",
+            "evidence": {
+              "artifact": "merlin-candidate-initial.json",
+              "sha256": "b31bdc9228a3fedcb5c44cd0e7c5bd8b4cef3205ec98724a9da3c0eec6f02d67",
+              "verifier": "developer/verify_merlin_public.py",
+              "passed_checks": 347
+            }
+          },
+          "router_hardware": {
+            "status": "not_tested",
+            "scope": "No router or LAN client was operated. Firmware, software-center install, plugin operation, downstream DNS/IPv4/IPv6/UDP, reconnect and recovery require target evidence."
+          }
+        },
+        "capability_boundaries": [
+          "This knowledge MCP is read-only; the user's authorized AI operates the actual target device.",
+          "The book grants no extra authorization. Respect the active task and required system permissions.",
+          "Credentials, subscription URLs, private device details and logs stay local to the target device.",
+          "Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.",
+          "A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately.",
+          "Router package matching is source-backed selection, not tested hardware compatibility; verify actual firmware, ABI and LAN behavior."
+        ]
+      }
+    ]
+  },
+  "answerRules": {
+    "id": "answer-rules",
+    "version": "1.0",
+    "resource_uri": "fanqiang://rules/answer",
+    "download_url": "https://fanqiang.guide/ai/answer-rules.ilang",
+    "sha256": "c324ca8b5127e4a82a93e6d9e3a364d6a6c265b9d5710cb0f78b8d908921e79d",
+    "byte_length": 1974,
+    "rule_count": 9
+  }
+}

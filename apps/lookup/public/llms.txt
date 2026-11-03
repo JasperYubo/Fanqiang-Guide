@@ -1,12 +1,12 @@
 # Fanqiang Guide
 
-> 公共知识 MCP 与工程书 v2.0。用户自己的 AI 操作实际目标设备，本站提供资料、完整回答规则与分支执行规范。
+> 公共知识 MCP 与工程书 v2.1。用户自己的 AI 操作实际目标设备，本站提供资料、完整回答规则与分支执行规范。
 
 ## 配置、选手机与共享网络
 - [MCP](https://fanqiang.guide/mcp)：Streamable HTTP，公共知识服务无需令牌。tools/list 仅列 search、get、query。
 - 通过 resources/list 发现资源，再读取 fanqiang://books/{book_id}；当前工程书为 fanqiang://books/autosetup。
 - [工程书资源目录](https://fanqiang.guide/ai/books/index.json)
-- [工程书 v2.0](https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md)：普通设备配置及 PICK_PHONE / HOTSPOT 分支；先复用现有设备，下游独立验收，不默认手机 VPN 覆盖热点。
+- [工程书 v2.1](https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md)：普通设备配置及 PICK_PHONE / HOTSPOT 分支；先复用现有设备，下游独立验收，不默认手机 VPN 覆盖热点。
 - [版本、SHA 与分项验证范围](https://fanqiang.guide/ai/books/autosetup.json)：文档、旧服务和隔离 Linux 流程证据与未测试的手机热点硬件分开。
 - 完整九条 ANSWER_RULES 资源 fanqiang://rules/answer：[规则原文](https://fanqiang.guide/ai/answer-rules.ilang)。
 - setup_device 无参数提示返回三条消息：前导、完整九条回答规则、完整工程书。
@@ -29,3 +29,5 @@ query 示例：kind=client、platform=android、protocol=vless-reality、os_vers
 - [MCP 服务卡](https://fanqiang.guide/.well-known/mcp/server-card.json)
 - [公开 GitHub 知识库](https://github.com/JasperYubo/Fanqiang-Guide)
 - [每日来源归档](https://github.com/JasperYubo/Fanqiang-Guide/tree/main/free-proxies)
+
+KoolCenter / fancyss: read fanqiang://books/merlin. Use query router_model and known hardware_revision, device_model_id, firmware_family, firmware_branch, firmware_version, architecture, kernel and package_variant. Follow explicit conflicts, missing evidence and local prechecks; do not flash firmware by default. Book: https://fanqiang.guide/ai/books/fanqiang-merlin-v1.0.ilang.md

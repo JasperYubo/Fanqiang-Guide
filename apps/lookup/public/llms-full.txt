@@ -1,6 +1,6 @@
 # 让自己的 AI 配好设备｜公开资料与工程书
 
-## 工程书 v2.0：设备配置、选手机与旧手机共享网络
+## 工程书 v2.1：设备配置、选手机与旧手机共享网络
 
 添加远程知识 MCP，把实际设备任务交给能操作目标设备的 AI。它按工程书完成识别、选型、安装配置、排错、访问与重连验证。需要选手机或旧手机共享家中 Wi-Fi 时，按 PICK_PHONE / HOTSPOT 分支先确认条件，再在下游设备验收；手机 VPN 不会自动证明热点共享成功，手机与热点硬件尚未在本站实测。
 
@@ -8,7 +8,7 @@
 2. 通过 resources/list 发现工程书资源 fanqiang://books/{book_id}，再读取当前 fanqiang://books/autosetup；完整九条规则在 fanqiang://rules/answer。
 3. 让已获授权的 AI 使用自己的实际设备工具执行。订阅、凭据及热点密码留在目标设备，完成结果以实际证据为准。
 
-[工程书 v2.0](https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md) · [书目与版本](https://fanqiang.guide/ai/books/index.json) · [版本、SHA 与分项验证范围](https://fanqiang.guide/ai/books/autosetup.json)
+[工程书 v2.1](https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md) · [书目与版本](https://fanqiang.guide/ai/books/index.json) · [版本、SHA 与分项验证范围](https://fanqiang.guide/ai/books/autosetup.json)
 
 <details><summary>复制给自己的 AI 的请求</summary>
 
@@ -60,13 +60,13 @@
 ::STATE{@SERVICE_INDEX, url:https://fanqiang.guide/ai/index.ilang}
 ::STATE{@LOOKUP_SKILL, url:https://fanqiang.guide/ai/skills/library-lookup/SKILL.md}
 ::STATE{@QUERY_API, url:https://fanqiang.guide/openapi.json}
-::STATE{@MCP, name:guide.fanqiang/library-lookup, version:2.0.0, url:https://fanqiang.guide/mcp, tools:search|get|query, book_resources:fanqiang://books/{book_id}, answer_rules:fanqiang://rules/answer, prompt:setup_device}
+::STATE{@MCP, name:guide.fanqiang/library-lookup, version:2.1.0, url:https://fanqiang.guide/mcp, tools:search|get|query, book_resources:fanqiang://books/{book_id}, answer_rules:fanqiang://rules/answer, prompt:setup_device}
 ::STATE{@PUBLIC_LIBRARY, url:https://fanqiang.guide/data/library.json}
 ::STATE{@MODEL_CLAIMS, url:https://fanqiang.guide/data/merlin-models.json}
 ::STATE{@SOURCE, repository:https://github.com/JasperYubo/Fanqiang-Guide, revision:fe895e2be9ce8da0fd4f0003faab7303b3bda9bd, snapshot_date:2026-09-12}
 ::STATE{@COVERAGE, library_records:310, categories:20, primary_reviewed:206, reference_only:103, historical_reference:1, merlin_support_records:58}
 
-::STATE{@SETUP_BOOK, book_id:autosetup, version:2.0, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.0.ilang.md, catalog:https://fanqiang.guide/ai/books/index.json, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, executor:user_agent, validation:scoped_metadata_not_global_status, phone_hotspot_hardware:not_tested}
+::STATE{@SETUP_BOOK, book_id:autosetup, version:2.1, url:https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md, catalog:https://fanqiang.guide/ai/books/index.json, metadata:https://fanqiang.guide/ai/books/autosetup.json, resource:fanqiang://books/autosetup, executor:user_agent, validation:scoped_metadata_not_global_status, phone_hotspot_hardware:not_tested}
 ::MODULE{DEVICE_SETUP_FIRST}
   [STEP] When the user requests device configuration or repair, use resources/list to discover fanqiang://books/{book_id}, then resources/read the selected book, currently fanqiang://books/autosetup. Read the full fanqiang://rules/answer rules too. Books are resources, not additional query tools.
   [STEP] setup_device is a no-argument handoff prompt with three messages: introduction, the complete nine answer rules, and the complete selected engineering book. It supplies no device authority or automatic execution.
@@ -669,3 +669,5 @@
 
 ::ILANG::COMPLETE::
 ```
+
+KoolCenter / fancyss: read fanqiang://books/merlin. Use query router_model and known hardware_revision, device_model_id, firmware_family, firmware_branch, firmware_version, architecture, kernel and package_variant. Follow explicit conflicts, missing evidence and local prechecks; do not flash firmware by default. Book: https://fanqiang.guide/ai/books/fanqiang-merlin-v1.0.ilang.md

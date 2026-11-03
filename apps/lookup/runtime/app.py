@@ -267,11 +267,24 @@ def create_app(library, allowed_origins=()):
             protocol: Annotated[str | None, Field(max_length=32)] = None,
             feature: Annotated[str | None, Field(max_length=32)] = None,
             os_version: Annotated[str | None, Field(max_length=32)] = None,
+            router_model: Annotated[str | None, Field(max_length=64)] = None,
+            hardware_revision: Annotated[str | None, Field(max_length=16)] = None,
+            device_model_id: Annotated[str | None, Field(max_length=64)] = None,
+            firmware_family: Annotated[str | None, Field(max_length=32)] = None,
+            firmware_branch: Annotated[str | None, Field(max_length=24)] = None,
+            firmware_version: Annotated[str | None, Field(max_length=64)] = None,
+            architecture: Annotated[str | None, Field(max_length=16)] = None,
+            kernel: Annotated[str | None, Field(max_length=48)] = None,
+            package_variant: Annotated[str | None, Field(max_length=16)] = None,
             include_unknown: bool = False,
             limit: Annotated[int, Field(strict=True, ge=1, le=20)] = 10,
             offset: Annotated[int, Field(strict=True, ge=0, le=10000)] = 0) -> dict[str, Any]:
         return library.query({"platform": platform, "kind": kind, "protocol": protocol, "feature": feature,
-            "os_version": os_version, "include_unknown": include_unknown, "limit": limit, "offset": offset})
+            "os_version": os_version, "include_unknown": include_unknown, "limit": limit, "offset": offset,
+            "router_model": router_model, "hardware_revision": hardware_revision, "device_model_id": device_model_id,
+            "firmware_family": firmware_family, "firmware_branch": firmware_branch,
+            "firmware_version": firmware_version, "architecture": architecture,
+            "kernel": kernel, "package_variant": package_variant})
 
     # Hidden compatibility adapter for already copied v1 requests.
     @mcp.tool(name="get_setup_book", description=SETUP_BOOK_DESCRIPTION,
@@ -315,7 +328,7 @@ def create_app(library, allowed_origins=()):
     def parse_query(request):
         try:
             parsed = parse_qs(request.url.query, keep_blank_values=True, strict_parsing=True,
-                encoding="utf-8", errors="strict", max_num_fields=10)
+                encoding="utf-8", errors="strict", max_num_fields=24)
         except (ValueError, UnicodeError):
             raise LookupError("Malformed query parameters")
         if any(len(v) != 1 for v in parsed.values()):
