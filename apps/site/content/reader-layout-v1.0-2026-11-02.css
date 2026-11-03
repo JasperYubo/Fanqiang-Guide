@@ -31,7 +31,7 @@
 .ai-page #faq-ai-discovery{margin:30px 0}
 .ai-page #faq-ai-discovery h2{font-size:22px;color:#234839}
 .ai-page #faq-ai-discovery ul{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;list-style:none;padding:0}
-.ai-page #faq-ai-discovery li{border:1px solid #d8dfd0;background:#fffdf8;border-radius:9px;padding:12px;font-size:13px;line-height:1.6}
+.ai-page #faq-ai-discovery li{margin:0;border:1px solid #d8dfd0;background:#fffdf8;border-radius:9px;padding:12px;font-size:13px;line-height:1.6}
 .autosetup-boundaries{border-top:1px solid #d5dfcf;margin-top:14px;padding-top:8px}
 .autosetup-boundaries>summary{min-height:44px;padding:10px 0;font-size:13px;color:#355b46;cursor:pointer}
 .autosetup-callout button svg{flex:none}
