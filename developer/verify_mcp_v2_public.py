@@ -261,12 +261,14 @@ async def verify(args, evidence):
             BOOK_URI, TEMPLATE, RULES_URI, args.book.name, "query")))
         if path in ("/ai/", "/ai/index.md", "/ai/index.ilang"):
             expect("static_complete_rules:" + path, rules_block in text)
-    card = get_json("/.well-known/mcp/server-card.json", "server_card")
+    # Published discovery documents may use the existing CDN metadata cache.
+    # Their version and manifest equality checks remain mandatory below.
+    card = get_json("/.well-known/mcp/server-card.json", "server_card", no_store=False)
     expect("server_card_v2", card["serverInfo"]["version"] == VERSION
         and {"tools", "resources", "prompts"} <= set(card["capabilities"]))
     expect("server_card_manifests", card["setupBook"] == manifest and card["books"] == catalog
         and card["answerRules"] == rules_manifest)
-    spec = get_json("/openapi.json", "openapi")
+    spec = get_json("/openapi.json", "openapi", no_store=False)
     expect("openapi_v2_paths", spec["info"]["version"] == VERSION and {
         "/api/agent/query", "/api/agent/books", "/api/agent/books/{book_id}",
         "/api/agent/freshness", "/api/agent/search", "/api/agent/item"} <= set(spec["paths"]))
