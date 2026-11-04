@@ -113,6 +113,8 @@ def card(g, n):
     return f'<a class="answer-card" href="{href(g)}"><span class="mini-label">{n:02d} / GUIDE</span><h3>{e(g["short_title"])}</h3><p>{e(g["summary"])}</p><span class="text-link">阅读指南 <span aria-hidden="true">→</span></span></a>'
 
 from engineering_v13 import render_engineering as ilang
+from guide_research_links import load_report_index, guide_sources, method_reports_html, method_reports_markdown
+METHOD_REPORTS = load_report_index(B.parents[1] / "research/publications.json")
 
 css = (OLD / 'assets/site.css').read_text(encoding='utf-8')
 css += '''
@@ -156,6 +158,10 @@ AUTOSETUP_GUIDE_PLACEMENTS = {
 }
 
 for g in guides:
+    method_sources = guide_sources(g['slug'], METHOD_REPORTS)
+    method_html = method_reports_html(method_sources, proxy_cores=g['slug'] == 'proxy-cores')
+    method_markdown = method_reports_markdown(method_sources, proxy_cores=g['slug'] == 'proxy-cores')
+    method_toc = '<a href="#method-reports">研究依据 / 方法报告</a>' if method_sources else ''
     autosetup_placement = AUTOSETUP_GUIDE_PLACEMENTS.get(g['slug'])
     for i, f in enumerate(g['faq'], 1):
         f['url'] = url(g)+'#question-'+str(i)
@@ -174,7 +180,7 @@ for g in guides:
     if g['slug'] == 'ladder-vpn-proxy':
         title_html = title_html.replace('有什么区别？', '<span class="guide-title-question">有什么区别？</span>', 1)
         title_html = title_html.replace('科学上网新手选择指南', '<span class="guide-title-followup"><span class="guide-title-term">科学上网</span><span class="guide-title-tail">新手选择指南</span></span>', 1)
-    body = f'''<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/guides/index.html">工具指南</a><span>/</span><span>{e(g['short_title'])}</span></nav><div class="guide-header"><p class="eyebrow">FANQIANG GUIDE / 工具与问题</p><h1>{title_html}</h1><p class="guide-summary">{e(g['summary'])}</p><p class="guide-meta">整理于 {DATE} · 具体版本、平台与型号以所引来源为准</p></div><div class="guide-layout"><div class="guide-body">{''.join(sections)}<section id="questions"><h2>常见问题</h2>{faqs}</section><section class="handoff" id="engineering-book"><h2>交给自己的 AI 继续处理</h2><p>工程书包含本专题资料、需要确认的设备信息、检查项和交付要求。下载后交给你自己的 AI，并告诉它你的具体需求。</p><a class="button button-primary" href="{base}.ilang" download="{g['slug']}-v1.4-{DATE}.ilang">下载 I-Lang 工程书 ↓</a></section><section id="related"><h2>继续阅读</h2><div class="related-links">{related}</div></section></div><aside class="guide-aside" aria-label="本页目录"><h2>本页内容</h2><nav>{aside}<a href="#questions">常见问题</a><a href="#engineering-book">I-Lang 工程书</a></nav><div class="aside-formats"><a href="{base}.md">Markdown 全文</a><a href="/ai/">完整 AI 资料</a></div></aside></div></main>'''
+    body = f'''<main id="main" class="wrap guide-main"><nav class="breadcrumbs" aria-label="面包屑"><a href="/">翻墙指南</a><span>/</span><a href="/guides/index.html">工具指南</a><span>/</span><span>{e(g['short_title'])}</span></nav><div class="guide-header"><p class="eyebrow">FANQIANG GUIDE / 工具与问题</p><h1>{title_html}</h1><p class="guide-summary">{e(g['summary'])}</p><p class="guide-meta">整理于 {DATE} · 具体版本、平台与型号以所引来源为准</p></div><div class="guide-layout"><div class="guide-body">{''.join(sections)}<section id="questions"><h2>常见问题</h2>{faqs}</section>{method_html}<section class="handoff" id="engineering-book"><h2>交给自己的 AI 继续处理</h2><p>工程书包含本专题资料、需要确认的设备信息、检查项和交付要求。下载后交给你自己的 AI，并告诉它你的具体需求。</p><a class="button button-primary" href="{base}.ilang" download="{g['slug']}-v1.4-{DATE}.ilang">下载 I-Lang 工程书 ↓</a></section><section id="related"><h2>继续阅读</h2><div class="related-links">{related}</div></section></div><aside class="guide-aside" aria-label="本页目录"><h2>本页内容</h2><nav>{aside}<a href="#questions">常见问题</a>{method_toc}<a href="#engineering-book">I-Lang 工程书</a></nav><div class="aside-formats"><a href="{base}.md">Markdown 全文</a><a href="/ai/">完整 AI 资料</a></div></aside></div></main>'''
     schemas = [{'@type':'Article','@id':url(g)+'#article','headline':g['title'],'description':g['summary'],'url':url(g),'inLanguage':'zh-CN','datePublished':DATE,'dateModified':DATE,'keywords':g['keywords'],'mainEntityOfPage':url(g)},
                {'@type':'BreadcrumbList','itemListElement':[{'@type':'ListItem','position':1,'name':'翻墙指南','item':SITE+'/'},{'@type':'ListItem','position':2,'name':'工具指南','item':SITE+'/guides/index.html'},{'@type':'ListItem','position':3,'name':g['short_title'],'item':url(g)}]}, faq_schema(g['faq'],url(g)+'#questions')]
     write('guides/'+g['slug']+'.html', page(g['title']+' | Fanqiang Guide',g['summary'],base+'.html',body,schemas,base+'.md'))
@@ -189,9 +195,11 @@ for g in guides:
     md += ['', '## 常见问题']
     for f in g['faq']:
         md += ['', '### '+f['question'], '', f['answer'], '', '来源：'+'；'.join(f'[{s["label"]}]({s["url"]})' for s in f['sources'])]
+    if method_markdown:
+        md += ['', method_markdown]
     md += ['', '## 交给自己的 AI 继续处理', '', '工程书包含资料、待确认设备信息、检查项和交付要求。', '', f'[I-Lang 工程书]({SITE}{base}.ilang)', '', '[返回指南目录]('+SITE+'/guides/index.html)']
     write('guides/'+g['slug']+'.md', '\n'.join(md))
-    write('guides/'+g['slug']+'.ilang', ilang(g))
+    write('guides/'+g['slug']+'.ilang', ilang(g, research_sources=method_sources))
 
 home_desc = '翻墙与科学上网工具指南：分清梯子、VPN 与代理，按设备查找客户端，理解机场、节点和订阅，并选择 OpenWrt、华硕梅林等路由器方案。'
 quick = [by_slug[k] for k in ['client-downloads','shadowrocket-qr','subscription-conversion','free-nodes','openwrt-tools','asus-merlin']]

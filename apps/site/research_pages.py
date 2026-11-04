@@ -131,7 +131,13 @@ def load_publications(path):
             validate_person(advisor)
             if advisor.get("role") != "学术顾问":
                 raise ValueError("Advisors require an explicit report-scoped role")
-        ids = {"abstract", "references", "citation", "related-publications"}
+        for material in item.get("materials", []):
+            if not isinstance(material.get("title"), str) or not material["title"].strip():
+                raise ValueError("Report materials require a title")
+            https_url(material["url"])
+            if material.get("description") is not None and not isinstance(material["description"], str):
+                raise ValueError("Report material descriptions must be text")
+        ids = {"abstract", "references", "citation", "related-publications", "materials"}
         if not item.get("sections"):
             raise ValueError("A full report body is required")
         for section in item["sections"]:
@@ -211,7 +217,7 @@ def inject_research_link(raw, *, ai=False):
     classes = "guide-body" if ai else "section wrap"
     block = (START + f'<section class="{classes}" id="research-discovery" aria-labelledby="research-discovery-title">'
              '<h2 id="research-discovery-title">研究成果与技术报告</h2>'
-             '<p>阅读本项目的知识服务架构、设备执行协议、路由器匹配方法与诊断同意机制。'
+             '<p>阅读本项目的知识服务、设备执行、配置转换、共享网络验证、路由器匹配与诊断方法。'
              '<a href="/research/">阅读全文、下载报告与引用 DOI →</a></p></section>' + END)
     if START in raw:
         raw, count = re.subn(re.escape(START) + r".*?" + re.escape(END), lambda _: block, raw, flags=re.S)
@@ -243,6 +249,11 @@ def report_markdown(item, texts):
     lines += ["## 摘要", "", item["abstract"], ""]
     if item.get("abstract_en"):
         lines += [item["abstract_en"], ""]
+    if item.get("materials"):
+        lines += ["## 复现材料", ""]
+        for material in item["materials"]:
+            lines += ["- [下载：" + material["title"] + "](" + material["url"] + ")" +
+                      (" — " + material["description"] if material.get("description") else ""), ""]
     for section in item["sections"]:
         lines += ["## " + section["title"], ""]
         for paragraph in section["paragraphs"]:
@@ -294,6 +305,13 @@ def render_report(item, page):
     if item.get("abstract_en"):
         sections += '<p lang="en">' + text_html(item["abstract_en"]) + "</p>"
     sections += "</section>"
+    if item.get("materials"):
+        sections += '<section id="materials"><h2>复现材料</h2>'
+        for material in item["materials"]:
+            if material.get("description"):
+                sections += '<p>' + esc(material["description"]) + '</p>'
+            sections += '<p><a class="button button-secondary" href="' + esc(material["url"]) + '" download>下载：' + esc(material["title"]) + '</a></p>'
+        sections += '</section>'
     for section in item["sections"]:
         sections += '<section id="' + esc(section["id"]) + '"><h2>' + esc(section["title"]) + "</h2>"
         sections += "".join("<p>" + text_html(paragraph) + "</p>" for paragraph in section["paragraphs"])
@@ -330,7 +348,7 @@ def render_report(item, page):
         '<p><a href="' + route + 'citation.bib" download>下载 BibTeX</a> · '
         '<a href="' + route + 'citation.txt" download>下载文本引用</a></p></section>'
     )
-    nav = '<a href="#abstract">摘要</a>' + "".join('<a href="#' + esc(s["id"]) + '">' + esc(s["title"]) + '</a>' for s in item["sections"])
+    nav = '<a href="#abstract">摘要</a>' + ('<a href="#materials">复现材料</a>' if item.get("materials") else "") + "".join('<a href="#' + esc(s["id"]) + '">' + esc(s["title"]) + '</a>' for s in item["sections"])
     nav += '<a href="#references">参考文献</a>'
     if item.get("related_publications"):
         nav += '<a href="#related-publications">配套技术文献</a>'
@@ -399,7 +417,7 @@ def build_research_pages(public, metadata_path, page):
                     '<a href="/' + route + '">阅读全文 →</a> · <a href="/' + route + 'paper.pdf">PDF</a> · '
                     '<a href="' + esc(texts["doi"]) + '">' + esc(item["doi"]) + '</a></p></section>')
         sitemap_entries[SITE + "/" + route] = item["publication_date"]
-    intro = "围绕公共知识服务、设备执行协议、路由器匹配和本地诊断同意机制，整理方法、规则、验证范围与可复现资料。"
+    intro = "围绕公共知识服务、设备执行、配置转换、共享网络验证、路由器匹配与本地诊断，整理方法、规则、验证范围与可复现资料。"
     body = ('<main id="main" class="wrap guide-main"><nav class="breadcrumbs"><a href="/">翻墙指南</a><span>研究成果</span></nav>'
             '<header class="guide-header"><p class="mini-label">RESEARCH / 开放技术文档</p><h1>研究成果与技术报告</h1>'
             '<p class="guide-summary">' + intro + '</p><p class="guide-meta">作者、版本、DOI、完整正文和参考文献在每篇报告中分别列出。</p></header>'

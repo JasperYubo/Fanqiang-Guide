@@ -206,6 +206,8 @@ def main():
         ("case-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_cases*.py", "-v"], ROOT / "apps/site"),
         ("faq-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_faq_pages*.py", "-v"], ROOT / "apps/site"),
         ("case-pipeline-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/case-pipeline"), "-p", "test_*.py", "-v"], ROOT / "apps/case-pipeline"),
+        ("subscription-method-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "research/subscription-semantics"), "-p", "test_*.py", "-v"], ROOT / "research/subscription-semantics"),
+        ("shared-network-method-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "research/shared-network-validation"), "-p", "test_*.py", "-v"], ROOT / "research/shared-network-validation"),
         ("build", [sys.executable, str(ROOT / "developer/build_apps.py"), "--output", str(output / "release")], output),
     ]
     report = {"version": "1.0", "checked_at": datetime.now(timezone.utc).isoformat(), "ok": False, "steps": [], "knowledge_snapshot": snapshot_check}

@@ -496,6 +496,8 @@ def main():
     from reader_layout import apply_reader_layout
     apply_reader_layout(directory / "public", base["header"](), base["footer"]())
     add_research_discovery(directory / "public")
+    from guide_research_links import add_ai_method_reports, load_report_index
+    add_ai_method_reports(directory / "public", load_report_index(directory.parents[1] / "research/publications.json"))
     manifest = {}
     for target in sorted((directory / "public").rglob("*")):
         if target.is_file() and target.suffix != ".gz":

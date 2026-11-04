@@ -148,10 +148,19 @@
 | [面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收](https://fanqiang.guide/research/device-setup-protocol/) | 设备识别、局部修复与验收 | [10.5281/zenodo.23961041](https://doi.org/10.5281/zenodo.23961041) |
 | [基于来源约束与未知状态的梅林路由器插件包匹配方法](https://fanqiang.guide/research/router-package-matching/) | 型号、固件分支及 full/lite 匹配 | [10.5281/zenodo.23961043](https://doi.org/10.5281/zenodo.23961043) |
 | [本地网络诊断的有限测量与主动提交协议](https://fanqiang.guide/research/local-diagnostics-consent/) | 有限测量、脱敏预览与主动提交 | [10.5281/zenodo.23961045](https://doi.org/10.5281/zenodo.23961045) |
+| [代理订阅转换的语义保留与差异检查方法](https://fanqiang.guide/research/subscription-semantics/) | 本地字段投影、差异与未知项检查 | [10.5281/zenodo.23963553](https://doi.org/10.5281/zenodo.23963553) |
+| [旧手机共享网络的端到端配置与验收方法](https://fanqiang.guide/research/shared-network-validation/) | 共享拓扑、下游流量与恢复验收 | [10.5281/zenodo.23963555](https://doi.org/10.5281/zenodo.23963555) |
 
-四篇 1.0 版对应 2026-11-04 的方法整理，基础实现固定为 7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250。接口检查、隔离 Linux 流程与真实硬件验收的范围在各篇中分别说明。
+首批四篇 1.0 版对应 2026-11-04 的方法整理，基础实现固定为 7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250。接口检查、隔离 Linux 流程与真实硬件验收的范围在各篇中分别说明。
 
 整体方法优先引用主报告；具体设备流程、选包或诊断方法引用对应专题，并注明使用的代码或工程书版本。GitHub 引用入口由 [CITATION.cff](CITATION.cff) 提供；出版物元数据见 [research/publications.json](research/publications.json)，维护规则见[引用与版本说明](developer/CITATION.md)。
+
+## 配套方法工具
+
+- [订阅转换差异检查器](research/subscription-semantics/README.md)：在本地比较 SIP008 与 sing-box Shadowsocks 的有限字段投影，报告保留、变化与未知项。包含合成配置、测试和重现命令。
+- [共享网络验收判定器](research/shared-network-validation/README.md)：根据已声明策略检查下游设备与应用的结构化观察结果，附脱敏模板和合成案例。合成案例通过不代表真实手机已经验收。
+
+两套工具都只处理本地文件；各篇报告页面提供 PDF、方法附件和一键引用。
 
 ## 资料如何更新
 

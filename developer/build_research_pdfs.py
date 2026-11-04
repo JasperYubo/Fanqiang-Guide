@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the four research PDFs from their canonical JSON manuscripts on Linux."""
+"""Build selected research PDFs from their canonical JSON manuscripts on Linux."""
 from pathlib import Path
 from html import escape
 import argparse,json,subprocess,tempfile
@@ -16,17 +16,21 @@ def render(d,records):
   body+="<h2>"+e(s["title"])+"</h2>"
   body+="".join("<p>"+e(x)+"</p>" for x in s["paragraphs"])
   if s.get("items"):body+="<ul>"+"".join("<li>"+e(x)+"</li>" for x in s["items"])+"</ul>"
+ if d.get("materials"):
+  body+='<h2>复现材料</h2><ul>'
+  for m in d["materials"]:body+='<li><a href="'+e(m["url"])+'">'+e(m["title"])+'</a>。'+e(m.get("description",""))+'</li>'
+  body+='</ul><p class="small">实现快照：<a href="https://github.com/JasperYubo/Fanqiang-Guide/tree/'+e(d["source_commit"])+'/research/'+e(d["slug"])+'/">'+e(d["source_commit"][:12])+'</a>。</p>'
  body+='<h2>参考文献</h2><ol class="references">'
  for n,r in enumerate(d["references"],1):
   authors=r.get("authors","");authors="; ".join(authors) if isinstance(authors,list) else authors
-  body+='<li><span class="refs-label">['+e(r.get("id",n))+"]</span> "+e(authors)+" ("+e(r.get("year",""))+"). "+e(r["title"])+'. <a href="'+e(r["url"])+'">'+e(r.get("doi",r["url"]))+"</a>."
+  body+='<li><span class="refs-label">['+e(r.get("id",n))+"]</span> "+e(authors)+" ("+e(r.get("year","n.d."))+"). "+e(r["title"])+'. <a href="'+e(r["url"])+'">'+e(r.get("doi",r["url"]))+"</a>."
   for a in r.get("author_identifiers",[]):body+='<br>引用作者 '+e(a["name"])+': <a href="https://orcid.org/'+e(a["orcid"])+'">ORCID '+e(a["orcid"])+"</a>."
   body+="</li>"
  body+="</ol>"
  if d.get("related_publications"):
   body+='<div class="related"><p class="small">配套技术文献：'
   for r in d["related_publications"]:
-   other=records[r["slug"]];body+=e({'fanqiang-guide-system':'总报告','device-setup-protocol':'设备配置协议','router-package-matching':'路由器包匹配','local-diagnostics-consent':'诊断提交协议'}[r['slug']])+' · <a href="https://doi.org/'+e(r["doi"])+'">'+e(r["doi"])+"</a>； "
+   other=records[r["slug"]];body+=e({'fanqiang-guide-system':'总报告','device-setup-protocol':'设备配置协议','router-package-matching':'路由器包匹配','local-diagnostics-consent':'诊断提交协议'}.get(r['slug'], other['title']))+' · <a href="https://doi.org/'+e(r["doi"])+'">'+e(r["doi"])+"</a>； "
   body+="</p></div>"
  body+='<p class="lic">© 2026 Long Quan Zhu. MIT License. 项目：<a href="https://fanqiang.guide/">fanqiang.guide</a>。本报告以独立技术文献发布。</p>'
  return '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>'+e(d["title"])+"</title><style>"+CSS+"</style></head><body>"+body+"</body></html>"
@@ -35,9 +39,14 @@ def main():
  parser.add_argument("--playwright-module",required=True,help="Absolute path to an installed Playwright module")
  parser.add_argument("--output",type=Path,default=ROOT/"research/pdfs")
  parser.add_argument("--work",type=Path,required=True)
+ parser.add_argument("--slug",action="append",default=[],help="Build only these publication slugs; repeat for multiple reports")
  args=parser.parse_args()
  data=json.loads((ROOT/"research/publications.json").read_text())
  rows=data["publications"];records={d["slug"]:d for d in rows}
+ if args.slug:
+  unknown=set(args.slug)-set(records)
+  if unknown:parser.error("Unknown publication slug: "+", ".join(sorted(unknown)))
+  rows=[d for d in rows if d["slug"] in set(args.slug)]
  args.work.mkdir(parents=True,exist_ok=True);args.output.mkdir(parents=True,exist_ok=True)
  jobs=[]
  for d in rows:

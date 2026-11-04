@@ -167,7 +167,7 @@ def _sources(guide: dict) -> list[dict]:
     return result
 
 
-def render_engineering(guide: dict) -> str:
+def render_engineering(guide: dict, *, research_sources=()) -> str:
     """Return one complete I-Lang v5 document. Does not mutate guide or do I/O."""
     slug = guide.get("slug", "")
     if not re.fullmatch(r"[a-z0-9]+(?:-[a-z0-9]+)*", slug):
@@ -240,5 +240,10 @@ def render_engineering(guide: dict) -> str:
     ]
     for i, source in enumerate(_sources(guide), 1):
         lines.append(_state(f"SOURCE_{i:02d}", source))
+    if research_sources:
+        lines += ["", "::MODULE{METHOD_REFERENCES}",
+                  "  [MUST] 以下报告说明检查与验证方法，不替代目标版本的官方支持资料或设备实测；不能由引用推导所有应用、热点下游或全部流量均被覆盖。"]
+        for i, source in enumerate(research_sources, 1):
+            lines.append(_state(f"METHOD_SOURCE_{i:02d}", source))
     lines += ["", "::ILANG::COMPLETE::", ""]
     return "\n".join(lines)

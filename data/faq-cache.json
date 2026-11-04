@@ -33047,7 +33047,7 @@
       "faq_id": "faq-e236421d35e1225249b20173",
       "generation_key": "daafff8100577292a6fac0d6c48e569848db43de5c9866408688749204aa26fe",
       "forbidden_mismatch": [],
-      "short_answer": "TUN是创建虚拟网卡以接管设备流量的入站方式，主要用于全局代理或按路由规则处理所有应用流量。",
+      "short_answer": "TUN 是通过虚拟网络接口接收被路由到该接口的流量，再交给代理或 VPN 程序处理的方式。实际范围取决于平台、路由、DNS 和按应用规则；开启 TUN 不等于默认覆盖所有应用，也不能证明热点下游设备已走同一出口。",
       "answer_sections": [],
       "source_ids": [
         "source-14eb360b5f8ff965",

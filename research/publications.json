@@ -742,6 +742,395 @@
           "relation": "isSupplementTo"
         }
       ]
+    },
+    {
+      "slug": "subscription-semantics",
+      "title": "代理订阅转换的语义保留与差异检查方法",
+      "title_en": "A Method for Semantic Preservation and Difference Checking in Proxy Subscription Conversion",
+      "type": "technicalnote",
+      "abstract": "代理订阅的转换结果通常以“生成文件”或“成功导入”表示，但这些事件不能证明地址、认证、插件参数和客户端策略得到保留。本文提出面向明确支持域的字段投影检查方法，将源配置、目标配置、显式节点映射和审阅规则分开处理，使用 field-preserved、transformed、changed、unsupported 与 unknown 五类结果保留差异和不确定性。实现采用 Python 标准库，在本地比较 SIP008 v1 与 sing-box Shadowsocks 出站 JSON，不下载订阅、不运行第三方转换器，也不将配置值或秘密写入报告。对人工编写的 19 个合成案例及 19 项单元测试完成 Linux 运行，分别识别保留、已知等价表示、字段改变、插件丢失、未映射节点和未知策略。所得结果验证检查器在这些样本上的行为，不构成真实转换服务的质量排名、客户端兼容认证或网络连通性证明。",
+      "abstract_en": "A generated or successfully imported proxy configuration does not establish that endpoint, authentication, plugin, or policy semantics have been preserved. This technical note introduces a bounded field-projection method that separates source and target configurations, an explicit node mapping, and reviewed comparison rules. Results distinguish field-preserved, transformed, changed, unsupported, and unknown states. A Python standard-library implementation locally compares SIP008 v1 documents with sing-box Shadowsocks outbound JSON, without fetching subscriptions, invoking a third-party converter, or exposing configuration values in reports. Linux execution covered 19 manually authored synthetic cases and 19 unit tests, including representation changes, altered fields, plugin loss, unmapped nodes, and unmodeled policies. These results establish the checker’s observed behavior on the declared fixtures, rather than conversion-service quality, full client compatibility, or network connectivity.",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "1. 问题与研究边界",
+          "paragraphs": [
+            "代理配置在分享 URI、在线服务器列表和完整客户端配置之间迁移时，格式解析成功只说明某个处理步骤接受了输入。用户真正关心的通常是服务器地址、端口、认证材料及必要插件是否仍对应原来的连接要求。全局 DNS、路由和分组策略又可能只存在于部分格式中，不能从文件扩展名或节点名称推断保留情况。",
+            "既有设备配置协议要求区分安装、配置与实际验收，并保留未知条件[1]。本文将其中“转换后逐项核对”的要求发展为一个独立、可执行的检查步骤。输入来自使用者主动指定的本地文件；本研究没有读取真实用户订阅，也没有委托第三方服务转换。目标是在既定字段范围内发现信息变化，同时明确哪些问题仍超出检查能力。"
+          ]
+        },
+        {
+          "id": "sources",
+          "title": "2. 格式依据与相关研究",
+          "paragraphs": [
+            "SIP008 v1 定义 JSON 形式的服务器数组，包含 UUID、备注、地址、端口、方法、密码以及插件字段，并允许扩展字段；无插件时，plugin 与 plugin_opts 可为空或省略；启用插件时，本实现要求显式提供字符串 plugin_opts，可为空串。它还规定了可选用量信息和在线交付要求[2]。本文只处理本地 JSON 的字段检查，不实现其 HTTPS 交付流程。sing-box Shadowsocks 出站文档提供对应的地址、端口、方法、密码、插件和插件参数字段，同时还允许网络、复用及拨号选项[3]。因此，两种格式存在可直接核对的交集，也存在不能自动归并的差异。",
+            "RFC 8259 为 JSON 语法与互操作性提供依据[4]。为避免解析器选择不同重复键值而产生含混比较，本实现采用更严格的输入策略，拒绝重复对象键以及 NaN、Infinity 等非 JSON 数值。它并不把通过本地解析当作完整客户端 schema 校验。",
+            "Jackson 与 Ladd 的 Semantic Diff 从可观察效果而非纯文本变更讨论语义差异[5]。本文借鉴区分表示变化与意义变化的思路，但不采用该文的程序分析算法，也不证明程序或网络行为等价。这里的“语义”严格指已列明配置属性的投影；对属性之外的执行效果保持未验证状态。"
+          ]
+        },
+        {
+          "id": "model",
+          "title": "3. 有限投影与状态模型",
+          "paragraphs": [
+            "设源配置为 S，目标配置为 T，显式节点映射为 M，带审阅日期的规则集合为 R。检查过程写作 A(S,T,M,R)。M 将 SIP008 UUID 对应到目标出站 tag，并要求一对一；UUID 和 tag 的对应由使用者声明，不是转换器来源证明。节点顺序不作为身份依据，未映射源节点和额外目标节点均进入未知清单。",
+            "对每个节点，投影属性包括协议、地址、端口、方法、秘密、插件名和插件参数；另外记录绑定关系与备注到 tag 的声明式重命名。字段结果为五值集合：field-preserved 表示已比较的值和存在状态一致；transformed 表示规则认可的表示变化；changed 表示值、类型或必需字段存在性发生变化；unsupported 表示超出已审阅目标插件集合或本适配器没有相应投影通道；unknown 表示语义未建模或观察不足。",
+            "unsupported 的原因进一步区分产品文档限制与检查器范围。例如，审阅的目标插件集合为 obfs-local 和 v2ray-plugin[3]；SIP008 用量信息没有被本适配器映射到目标出站，这不等于宣称整个 sing-box 产品无法处理任何统计信息。对未知扩展，即使两侧文本相同也不升级为语义保留。",
+            "仅当所有比较项属于 field-preserved 或 transformed 时，汇总为 projection-equivalent；存在 changed 或 unsupported 时为 differences-detected；否则只要存在 unknown 即为 incomplete。这里的等价始终限定于投影范围，不能推出全局 DNS、路由、客户端可运行性或连通性相等。"
+          ]
+        },
+        {
+          "id": "algorithm",
+          "title": "4. 规则、算法与保守处理",
+          "paragraphs": [
+            "算法先进行有界读取与 JSON 解析，再检查源对象、目标节点和映射约束，构造 UUID 与 tag 的索引。单文件上限为 1 MiB，源节点为 1 至 256 个，目标节点和映射各不超过 256 项。源版本、必需字段类型、端口范围、UUID 唯一性、目标 tag 唯一性及映射一对一关系不满足时，返回输入错误，而不是生成成功结论。",
+            "必需字段在目标中缺失、端口由整数变为字符串、密码或方法改变，均产生 changed。秘密只在内存中作精确字符串比较，不进行近似匹配、规范化或公开摘要。插件和插件参数仅在文档允许的缺省／空值范围内处理；插件参数字符串不被重新排序或猜测等价。",
+            "地址等价仅覆盖两种审阅规则：ASCII DNS 名称的大小写等价，以及 Python ipaddress 可以解析的无区域标识 IP 地址的数值等价。前者依据 RFC 4343 的 DNS 大小写规定[6]，后者对应 IPv6 多种合法文本表示所指向同一地址的问题[7]。检查器不发起 DNS 查询，不推断 IDNA、末尾句点或带区域标识地址的语义；这些输入保留 unknown。",
+            "遍历完成后，所有未处理源节点、目标节点、节点扩展和根级扩展都生成未知记录；目标根级 DNS、路由等内容也不会被静默忽略。报告只输出固定字段名、数组下标、状态及原因码。未知扩展键名也不回显，而以按键名排序的局部序号定位，避免把误置在键名中的秘密带入报告。"
+          ]
+        },
+        {
+          "id": "implementation",
+          "title": "5. 实现与使用示例",
+          "paragraphs": [
+            "研究实现位于 research/subscription-semantics/，由 checker.py、19 组 fixtures、test_checker.py 和 run_examples.py 组成，使用 Python 标准库。checker.py 接受 --source、--target、--mapping 三个本地路径，可选 --output 指向尚不存在的新文件；没有 URL 参数、网络请求、转换器调用或客户端写入步骤。工具拒绝覆盖输入和既有报告。",
+            "使用 fixtures/01-preserved/ 下的 source.json、target.json、mapping.json 运行检查器，可得到投影等价结果。使用 fixtures/06-plugin-loss/ 的三份文件时，源节点的 obfs-local 与参数在目标中缺失，报告分别给出两个 changed 项。使用 fixtures/09-target-dns-route/ 时，节点字段相同，但新增的全局 DNS 与路由对象没有源格式可比语义，因此汇总为 incomplete。",
+            "退出码 0 表示本次投影等价，1 表示发现差异或尚未完成判断，2 表示输入、映射或本地读写错误。退出码 1 不是检查器崩溃。使用者应按照原因码回查本地字段和转换目标，再决定改动是否符合原任务，而不能将所有 changed 都解释为故障。"
+          ]
+        },
+        {
+          "id": "evaluation",
+          "title": "6. Linux 实验与可复现证据",
+          "paragraphs": [
+            "本次运行使用 19 组人工编写的合成源、目标与映射文件。所有目标文件均为人工设定的比较对象，不是 Sub-Store、subconverter、sub-web 或 sing-box 的真实转换结果。样本使用标明 SYNTHETIC 的非真实秘密、示例域名及文档地址；运行没有对这些地址建立连接。",
+            "19 例均达到事先声明的预期：5 例汇总为 projection-equivalent，覆盖原值保留、DNS 大小写、IPv6 文本、可选空字段和节点重排；8 例为 differences-detected，覆盖密码改变、端口改变、插件丢失、未列入目标集合的插件、用量字段无投影、端口类型变化、缺少密码和协议改变；6 例为 incomplete，覆盖源策略扩展、目标 DNS／路由、未映射源节点、额外目标节点、未知扩展和非 ASCII 地址。",
+            "19 项单元测试全部通过，其中一项逐例核对上述 19 例的状态计数，其余检查重复 JSON 键、非有限数值、大小限制、版本约束、布尔端口、重复身份、多对一映射、遗漏映射、插件参数条件与启用插件时的必需参数字段、地址边界、无套接字调用以及报告不暴露输入值等行为。命令行错误输出和禁止覆盖输入／既有证据也经过实际子进程检查。",
+            "固定证据 evidence/run-2026-11-04.json 记录 Linux 与 Python 版本、执行时间、逐例结果及检查器、测试和样本文件的 SHA-256。run_examples.py 会重新调用命令行、核对预期并执行单元测试。19/19 和 19/19 表示这些已声明用例通过，不是对未知真实订阅总体的准确率、召回率或转换服务排名。"
+          ]
+        },
+        {
+          "id": "limitations",
+          "title": "7. 讨论与局限",
+          "paragraphs": [
+            "本方法的主要局限是投影范围。SIP008 不是完整路由配置，因此不能证明分组规则、DNS 策略、网络选择、复用和操作系统代理行为得到保留。配置字段字面相等也不证明密码正确、AEAD-2022 密钥长度合规、插件参数有效或目标客户端版本支持；这些需要后续 schema 校验与设备验收。",
+            "显式映射可以防止按数组位置误配，却仍可能由使用者声明错误对应关系。保守地保留未知会增加复核工作量；这是有限规则的可见代价。审阅日期固定的插件能力列表也可能随上游改变，适配器更新时必须同时更新来源、反例、测试与证据，不能仅替换日期。",
+            "后续可在独立授权范围内增加真实转换器的离线运行、更多协议适配器和客户端配置校验，但这些不属于当前结果。实际网络可用性仍应进入设备配置协议的目标访问、DNS、地址族与重连验收[1]。本文没有把语义差异检查当作安全认证或真实网络测试的替代。"
+          ]
+        },
+        {
+          "id": "conclusion",
+          "title": "8. 结论",
+          "paragraphs": [
+            "本文将订阅转换后的人工核对落实为有限支持域内的可运行检查：明确节点对应、逐字段投影、受限等价规则、未知清单与不暴露配置值的报告。其价值在于把“文件生成成功”之后尚待判断的内容转化为可复核结果。公开合成案例、测试及带哈希的运行证据，使方法可以在 Linux 上重复执行，并为后续扩大支持范围保留可比较的基线。"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "id": "1",
+          "title": "面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收",
+          "authors": "Zhu, Long Quan",
+          "year": 2026,
+          "doi": "10.5281/zenodo.23961041",
+          "url": "https://doi.org/10.5281/zenodo.23961041",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Zhu, Long Quan",
+              "orcid": "0009-0004-4540-8082"
+            }
+          ],
+          "note": "先前设备配置协议；本文将转换后逐项核对细化为独立检查器。"
+        },
+        {
+          "id": "2",
+          "title": "SIP008 Online Configuration Delivery",
+          "authors": "Shadowsocks contributors",
+          "url": "https://shadowsocks.org/doc/sip008.html",
+          "relation": "cites",
+          "note": "访问于 2026-11-04；格式章节明确规定无插件时 plugin 与 plugin_opts 可为空或从服务器对象省略。"
+        },
+        {
+          "id": "3",
+          "title": "Shadowsocks outbound configuration",
+          "authors": "SagerNet / sing-box contributors",
+          "url": "https://sing-box.sagernet.org/configuration/outbound/shadowsocks/",
+          "relation": "cites",
+          "note": "访问于 2026-11-04；目标出站字段与 obfs-local、v2ray-plugin 支持集合的审阅依据。"
+        },
+        {
+          "id": "4",
+          "title": "The JavaScript Object Notation (JSON) Data Interchange Format (RFC 8259)",
+          "authors": "Bray, T.",
+          "year": 2017,
+          "doi": "10.17487/RFC8259",
+          "url": "https://www.rfc-editor.org/info/rfc8259/",
+          "relation": "cites",
+          "note": "JSON 与重复键互操作性的规范依据；检查器另采用更严格的输入拒绝策略。"
+        },
+        {
+          "id": "5",
+          "title": "Semantic Diff: a tool for summarizing the effects of modifications",
+          "authors": "Jackson, Daniel; Ladd, David A.",
+          "year": 1994,
+          "doi": "10.1109/ICSM.1994.336770",
+          "url": "https://doi.org/10.1109/ICSM.1994.336770",
+          "relation": "cites",
+          "note": "相关工作：区分表示变化与意义变化。作者摘要 https://www.cs.cmu.edu/~Compose/paper_abstracts/dnj/semantic_diff.html；本文不声称实现其程序分析算法。"
+        },
+        {
+          "id": "6",
+          "title": "Domain Name System (DNS) Case Insensitivity Clarification (RFC 4343)",
+          "authors": "Eastlake 3rd, D.",
+          "year": 2006,
+          "doi": "10.17487/RFC4343",
+          "url": "https://www.rfc-editor.org/info/rfc4343/",
+          "relation": "cites",
+          "note": "ASCII DNS 名称大小写等价规则的依据，不用于扩大到任意 Unicode 名称。"
+        },
+        {
+          "id": "7",
+          "title": "A Recommendation for IPv6 Address Text Representation (RFC 5952)",
+          "authors": "Kawamura, S.; Kawashima, M.",
+          "year": 2010,
+          "doi": "10.17487/RFC5952",
+          "url": "https://www.rfc-editor.org/info/rfc5952/",
+          "relation": "cites",
+          "note": "IPv6 地址多种文本表示与规范表示的依据。"
+        }
+      ],
+      "version": "1.0",
+      "publication_date": "2026-11-04",
+      "doi": "10.5281/zenodo.23963553",
+      "record_url": "https://zenodo.org/records/23963553",
+      "creators": [
+        {
+          "name": "Zhu, Long Quan",
+          "orcid": "0009-0004-4540-8082",
+          "affiliation": "iLang Inc."
+        }
+      ],
+      "license": "MIT",
+      "pdf": "research/subscription-semantics/paper.pdf",
+      "source_commit": "8261a8b8e7a3189bc0eec8c23c7e7906d3f6f063",
+      "related_publications": [
+        {
+          "doi": "10.5281/zenodo.23961041",
+          "relation": "isSupplementTo",
+          "slug": "device-setup-protocol",
+          "title": "面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收"
+        }
+      ],
+      "materials": [
+        {
+          "title": "本地工具、模板与合成案例",
+          "url": "https://zenodo.org/records/23963553/files/subscription-semantics-toolkit.zip?download=1",
+          "description": "包含源码、运行说明、合成输入、单元测试与本次 Linux 执行证据。"
+        }
+      ]
+    },
+    {
+      "slug": "shared-network-validation",
+      "title": "旧手机共享网络的端到端配置与验收方法",
+      "title_en": "End-to-End Configuration and Acceptance of Networks Shared by Repurposed Smartphones",
+      "type": "technicalreport",
+      "abstract": "旧手机显示 VPN 已连接，并不能证明热点下游应用、DNS 或不同地址族已遵循预期路径。本文提出端到端配置与验收方法，将上游、共享主机、显式代理或网关机制、下游设备及应用绑定为可核对拓扑，按预先声明策略检查 IPv4/IPv6 DNS 传输、TCP 和 UDP，并在正常、断开、重连、休眠和恢复原设置五阶段保留完整矩阵。方法区分 pass、fail、not_tested、unknown 和 not_applicable，不把必需未测项算作通过，不以出口 IP 代替解析和路由证据。随附闭合字段的脱敏模板、离线 Python 判定器与 Linux 合成测试。验证限于数据结构、状态传播和策略比较，未进行真实手机、热点或宽带性能实验，不提供设备兼容性或全天稳定性认证。",
+      "abstract_en": "A connected VPN on a repurposed smartphone does not establish that downstream applications follow the intended shared-network path. This report binds the upstream network, sharing host, explicit proxy or gateway, downstream devices, and applications into an end-to-end acceptance model. DNS transport, TCP, and UDP over IPv4 and IPv6 are assessed across normal operation, disconnection, reconnection, screen-off operation, and restoration of original settings. The method distinguishes pass, fail, not_tested, unknown, and not_applicable, preventing missing required observations from becoming overall success and preventing exit-IP results from substituting for DNS or routing evidence. Accompanying artifacts provide a closed-field redacted template, an offline Python evaluator, and synthetic Linux tests. Evaluation concerns report structure and decision logic only; no physical-smartphone, hotspot-performance, or continuous-service certification is claimed.",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "1. 问题、贡献与范围",
+          "paragraphs": [
+            "“主机可以访问目标”与“下游按预期访问目标”是不同命题。下游可能继续使用自身蜂窝网络、另一 VPN、应用内 DNS 或未经过主机的代理设置。一次浏览器请求显示预期出口，不能推出其他应用、UDP、IPv6、解析路径或断线行为相同。",
+            "本文继承设备配置协议的目标绑定、授权、可恢复变更与范围化验收[1]，沿用诊断协议的本地证据、脱敏预览和主动披露原则[2]。新增贡献为共享拓扑表示、六通道五阶段矩阵、可计算的不完整状态和离线判定器，不重复通用安装步骤或另建上传服务。",
+            "方法针对明确的下游设备与应用，区分显式代理和有文档支持的网关共享。不承诺所有旧手机都支持某实现，不默认取得 root、解锁或越狱，不对商家、节点速度或服务可用性排名。"
+          ]
+        },
+        {
+          "id": "foundation",
+          "title": "2. 平台与协议依据",
+          "paragraphs": [
+            "Android VpnService 文档描述本机用户或工作资料的 VPN 服务及接口[3]，AOSP 另行描述可绕过应用处理器的共享流量硬件卸载[4]。这些资料支持区分本机与共享路径，不能证明特定型号必然转发或不转发；实际行为仍需系统、实现和现场证据。",
+            "Apple 将 Personal Hotspot 描述为共享蜂窝数据连接[5]。本文不据此推荐通用家庭 Wi-Fi 中继，也不从热点开启推定第三方 VPN 覆盖下游。显式代理可以使用可达的受信任本地网络，不一定需新建热点。",
+            "HTTP CONNECT 定义到目标的隧道语义[6]，SOCKS5 分别定义 CONNECT 与 UDP ASSOCIATE[7]。实现能力、应用行为及实际路径共同决定覆盖。DNS 隐私分析涉及解析器选择、传输和观察方[8]，因此解析证据独立于出口地址。"
+          ]
+        },
+        {
+          "id": "topology",
+          "title": "3. 拓扑绑定与配置",
+          "paragraphs": [
+            "将任务表示为 G＝〈U，H，M，D，A，P，B〉：U 为上游，H 为主机及系统/客户端/内核版本，M 为共享机制及接口，D 为下游集合，A 为应用，P 为预先声明策略，B 为原设置基线。设备、型号、应用和证据用本地假名绑定，真实地址与秘密不公开。",
+            "先确认主机自身访问，再核对官方资料对机制及版本的支持、观察实际上游和接口，并保留独立控制或恢复通路。显式代理须保存下游原设置、确认监听可达、约束受信任设备访问及使用可用认证；回环监听并不自动对另一设备可达。网关分支须有具体实现依据，不能从图标或处理器型号猜测。",
+            "开启共享后再确认上游，避免家庭 Wi-Fi 静默切换为付费蜂窝流量。支持依据、控制或必需版本不足时保持不完整。core_version=not_exposed 仅表示发行方未独立公开核心版本，须有已知客户端版本与支持依据；unknown 表示尚未核实，会阻止通过。",
+            "恢复原设置单独验收。停止监听后撤销或恢复下游手动代理，避免残留设置导致断网。基线可以是已有代理、直连或有意阻断；判定器只比较预先记录的基线，不擅自替换原配置。"
+          ]
+        },
+        {
+          "id": "matrix",
+          "title": "4. 六通道五阶段矩阵",
+          "paragraphs": [
+            "每个下游设备/应用保留 dns_ipv4、dns_ipv6、tcp_ipv4、tcp_ipv6、udp_ipv4、udp_ipv6 六通道，与 normal、disconnected、reconnected、sleep、restored 五阶段形成三十行；会话另有主机准备检查。每台声明的下游必须有应用目标，不能只测试主机。",
+            "DNS 后缀是解析连接的传输地址族，TCP/UDP 后缀是业务目标地址族。AAAA 查询可经 IPv4 DNS 完成，因此 IPv6 业务不要求 DNS 经 IPv6。至少一个 DNS 路径在范围内；受控查询须涵盖实际业务所需 A/AAAA 及应用自身解析，这些细节留在本地证据，不从出口地址推导。",
+            "业务预期为 proxy、direct、blocked；DNS 为 proxy_resolver、approved_direct_resolver、blocked。正常和重连匹配正常策略；断开可选 block 或 allow_direct；休眠可维持策略或阻断；恢复匹配基线。用户接受的直连回退不会自动被称为泄漏，要求阻断时直连则失败。",
+            "至少一个必需 TCP 地址族的正常预期必须为 proxy 或 direct，作为应用访问验收锚点；其他通道可以预期阻断，全部正常业务均阻断不能获得通过。不要求某地址族或 UDP 时可在测试前排除，但保留全部阶段行、排除理由和范围证据。能力不足或未测不能事后改成不适用。不适用也不等于该协议被阻断或代理。",
+            "DNS 需受控查询与解析路径观察，TCP/UDP 需传输探测与路由观察。非正常阶段需状态切换证据，阻断需可工作对照，区别策略阻断与目标本来不可达。exit_ip 只能辅助，不能单独满足任一通道。",
+            "conditions 记录休眠秒数、切换窗口、每格探测预算、数据预算、充电与热警告观察。缺失条件阻止通过，热警告要求停止复核。合成案例的 600 秒仅是输入参数，不是已完成手机实验。短时观察不能认证全天稳定或持续充电安全。"
+          ]
+        },
+        {
+          "id": "decision",
+          "title": "5. 状态与判定实现",
+          "paragraphs": [
+            "输入使用 observed、not_tested、unknown、not_applicable。判定器根据预期、观察和方法计算 pass/fail，不接受操作者直接填 pass。observed 必须有枚举结果、UTC 时间和证据假名；not_tested 无虚构值和证据；unknown 保留不足、冲突或不支持原因。",
+            "必需行的 not_applicable 转为 unknown；范围外行必须有预先排除依据。已观察但方法不足仍为 unknown；方法充分而结果冲突为 fail。总结果优先 fail，其次 incomplete；只有必需检查全通过、其他合法不适用才为 pass。",
+            "validate_report.py 只用 Python 标准库检查闭合字段、拓扑、矩阵、版本条件及方法，输出逐行结果。它不连接设备、不改配置、不发请求、不上传。退出码 0/1/2/3 分别表示通过/失败/未完成/无效输入。",
+            "只接收普通文件，有界读取最多 2 MB，拒绝重复 JSON 字段、非有限常量及过深结构，错误不回显输入。evidence_kind 区分 synthetic 和 device_observation；合成通过仍输出 synthetic_logic_only 与 device_acceptance=not_tested。",
+            "真实观察分支仍是操作者提供的声明；方法名和引用不能认证截图、数据包或时间真实性，也不能证明未列出的应用覆盖。判定器用于审计结构和结论的一致性，不替代现场取证。"
+          ]
+        },
+        {
+          "id": "evidence",
+          "title": "6. 证据模板与工程书衔接",
+          "paragraphs": [
+            "report-template.json 只需受限版本、UTC 时间、设备/型号/应用/证据假名、枚举策略及条件，不接收原始日志、订阅 URL、域名、IP/MAC、SSID 或口令字段。证据假名对应的截图和连接记录先遮盖秘密，原件与映射表留目标设备。",
+            "闭合字段减少误带信息，但不是任意文本脱敏器；秘密被填入允许字段仍可泄露。披露前复核字段和关联风险。是否向站点提交继续由用户依据既有主动提交协议决定[2]，本地判定不是上传授权。",
+            "HOTSPOT 对应拓扑、主机准备、策略及基线；VERIFY_SHARED 对应逐下游/应用矩阵、条件和证据；MAINTAIN_SHARED 对应启动、停止、清理代理、恢复与变更后重验。这是现有模块的实际映射，不表示只读 MCP 能操作设备。",
+            "系统、客户端、核心、上游或机制更新后另建会话重验。出现热警告、恢复失败或控制通路风险，保留失败/未完成并采取可恢复处置。"
+          ]
+        },
+        {
+          "id": "evaluation",
+          "title": "7. Linux 验证与局限",
+          "paragraphs": [
+            "本次仅在 Linux 测试逻辑，无真实手机或热点实验。案例覆盖空模板、完整合成、三十位置逐一未测、出口 IP 不足、显式代理仍需 UDP、断开冲突、允许直连、阻断对照缺失、必需项误填不适用、预先排除范围、未知、缺行和遗漏下游。",
+            "反例还覆盖所有正常业务均阻断但证据齐备时拒绝通过、IPv6 业务使用 IPv4 DNS、未公开核心版本与未知版本之别、条件缺失、热警告、敏感额外字段、CLI 退出码、超限输入、FIFO、非有限 JSON 和过深结构。Python 3.12.3 的 Linux 环境运行 python3 -B -m unittest -v test_validate_report.py，通过 23 个测试方法，部分含按通道/阶段重复的子案例。",
+            "四个合成输入分别展示逻辑全通过、断开策略冲突、休眠未测和出口 IP 不足。复现仅需标准库。结果支持结构、状态和策略比较行为，不支持型号兼容性、宽带速度或热点可靠性结论。",
+            "设备研究还须记录真实设备及版本，取得对应控制，采集逐格证据并保留失败未知。程序不能阻止操作者不诚实地声明策略、范围或方法；可追溯本地证据与人工复核仍是结论成立前提。"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "id": "1",
+          "title": "面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收",
+          "authors": "Zhu, Long Quan",
+          "year": 2026,
+          "doi": "10.5281/zenodo.23961041",
+          "url": "https://doi.org/10.5281/zenodo.23961041",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Zhu, Long Quan",
+              "orcid": "0009-0004-4540-8082",
+              "evidence_url": "https://zenodo.org/api/records/23961041",
+              "evidence_type": "publisher_deposited"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "本地网络诊断的有限测量与主动提交协议",
+          "authors": "Zhu, Long Quan",
+          "year": 2026,
+          "doi": "10.5281/zenodo.23961045",
+          "url": "https://doi.org/10.5281/zenodo.23961045",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Zhu, Long Quan",
+              "orcid": "0009-0004-4540-8082",
+              "evidence_url": "https://zenodo.org/api/records/23961045",
+              "evidence_type": "publisher_deposited"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "title": "VPN: Android VpnService developer guide",
+          "authors": "Google / Android Developers",
+          "url": "https://developer.android.com/develop/connectivity/vpn",
+          "relation": "cites",
+          "note": "官方文档，访问于 2026-11-04，不是特定手机共享实现的认证。"
+        },
+        {
+          "id": "4",
+          "title": "Tethering hardware offload",
+          "authors": "Android Open Source Project",
+          "url": "https://source.android.com/docs/core/data/tethering-offload",
+          "relation": "cites",
+          "note": "官方文档，访问于 2026-11-04。"
+        },
+        {
+          "id": "5",
+          "title": "Connect to the Personal Hotspot of an iPhone or iPad",
+          "authors": "Apple",
+          "url": "https://support.apple.com/en-us/111785",
+          "relation": "cites",
+          "note": "官方文档，访问于 2026-11-04。"
+        },
+        {
+          "id": "6",
+          "title": "HTTP Semantics (RFC 9110)",
+          "authors": "Fielding, R.; Nottingham, M.; Reschke, J.",
+          "year": 2022,
+          "doi": "10.17487/RFC9110",
+          "url": "https://www.rfc-editor.org/info/rfc9110/",
+          "relation": "cites",
+          "note": "CONNECT 见第 9.3.6 节，不据此宣称普通 HTTP 代理覆盖 UDP。"
+        },
+        {
+          "id": "7",
+          "title": "SOCKS Protocol Version 5 (RFC 1928)",
+          "authors": "Leech, M.; Ganis, M.; Lee, Y.; Kuris, R.; Koblas, D.; Jones, L.",
+          "year": 1996,
+          "doi": "10.17487/RFC1928",
+          "url": "https://www.rfc-editor.org/info/rfc1928/",
+          "relation": "cites"
+        },
+        {
+          "id": "8",
+          "title": "DNS Privacy Considerations (RFC 9076)",
+          "authors": "Wicinski, T.",
+          "year": 2021,
+          "doi": "10.17487/RFC9076",
+          "url": "https://www.rfc-editor.org/info/rfc9076/",
+          "relation": "cites"
+        }
+      ],
+      "version": "1.0",
+      "publication_date": "2026-11-04",
+      "doi": "10.5281/zenodo.23963555",
+      "record_url": "https://zenodo.org/records/23963555",
+      "creators": [
+        {
+          "name": "Zhu, Long Quan",
+          "orcid": "0009-0004-4540-8082",
+          "affiliation": "iLang Inc."
+        }
+      ],
+      "license": "MIT",
+      "pdf": "research/shared-network-validation/paper.pdf",
+      "source_commit": "8261a8b8e7a3189bc0eec8c23c7e7906d3f6f063",
+      "related_publications": [
+        {
+          "slug": "device-setup-protocol",
+          "doi": "10.5281/zenodo.23961041",
+          "relation": "isSupplementTo",
+          "title": "面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收"
+        },
+        {
+          "slug": "local-diagnostics-consent",
+          "doi": "10.5281/zenodo.23961045",
+          "relation": "isSupplementTo",
+          "title": "本地网络诊断的有限测量与主动提交协议"
+        }
+      ],
+      "materials": [
+        {
+          "title": "本地工具、模板与合成案例",
+          "url": "https://zenodo.org/records/23963555/files/shared-network-validation-toolkit.zip?download=1",
+          "description": "包含源码、运行说明、合成输入、单元测试与本次 Linux 执行证据。"
+        }
+      ]
     }
   ]
 }

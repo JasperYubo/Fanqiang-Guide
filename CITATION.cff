@@ -3,7 +3,7 @@ message: 引用整体方法请使用 preferred-citation 中的主报告；引用
 type: software
 title: 'Fanqiang Guide: MCP Knowledge Service and Device Setup Engineering Books'
 abstract: 华润（Fanqiang Guide）的知识服务、设备配置工程书、路由器匹配与本地诊断实现。仓库的首选引用是系统技术报告，各专题另有独立 DOI。
-authors:
+authors: &id001
 - family-names: Zhu
   given-names: Long Quan
   affiliation: iLang Inc.
@@ -17,6 +17,8 @@ keywords:
 - engineering books
 - router compatibility
 - local network diagnostics
+- subscription semantics
+- shared network acceptance
 preferred-citation:
   type: report
   title: 华润（Fanqiang Guide）：面向 AI 设备配置的知识组织、执行协议与诊断体系
@@ -84,6 +86,26 @@ references:
     orcid: https://orcid.org/0009-0004-4540-8082
   doi: 10.5281/zenodo.23961045
   url: https://fanqiang.guide/research/local-diagnostics-consent/
+  year: 2026
+  date-published: '2026-11-04'
+  version: '1.0'
+  institution:
+    name: iLang Inc.
+- type: report
+  title: 代理订阅转换的语义保留与差异检查方法
+  authors: *id001
+  doi: 10.5281/zenodo.23963553
+  url: https://fanqiang.guide/research/subscription-semantics/
+  year: 2026
+  date-published: '2026-11-04'
+  version: '1.0'
+  institution:
+    name: iLang Inc.
+- type: report
+  title: 旧手机共享网络的端到端配置与验收方法
+  authors: *id001
+  doi: 10.5281/zenodo.23963555
+  url: https://fanqiang.guide/research/shared-network-validation/
   year: 2026
   date-published: '2026-11-04'
   version: '1.0'
