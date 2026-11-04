@@ -1,0 +1,554 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-11-04T21:05:00.683762+00:00",
+  "environment": {
+    "system": "Linux",
+    "python": "3.12.3"
+  },
+  "scope": "Manually authored synthetic local fixtures; CLI differential checks only.",
+  "third_party_converter_executed": false,
+  "network_or_connectivity_tested": false,
+  "fixture_cases": 19,
+  "fixture_passed": 19,
+  "unit_tests": 19,
+  "unit_test_failures": 0,
+  "unit_test_errors": 0,
+  "verdict_counts": {
+    "projection-equivalent": 5,
+    "differences-detected": 8,
+    "incomplete": 6
+  },
+  "outcomes": [
+    {
+      "case": "01-preserved",
+      "exit_code": 0,
+      "verdict": "projection-equivalent",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 0
+      }
+    },
+    {
+      "case": "02-dns-case",
+      "exit_code": 0,
+      "verdict": "projection-equivalent",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 2,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 0
+      }
+    },
+    {
+      "case": "03-ipv6-text",
+      "exit_code": 0,
+      "verdict": "projection-equivalent",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 2,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 0
+      }
+    },
+    {
+      "case": "04-password-change",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 1
+      }
+    },
+    {
+      "case": "05-port-change",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 1
+      }
+    },
+    {
+      "case": "06-plugin-loss",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 6,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 2
+      }
+    },
+    {
+      "case": "07-unsupported-plugin",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 1,
+        "unknown": 0,
+        "changed": 0
+      }
+    },
+    {
+      "case": "08-source-policy",
+      "exit_code": 1,
+      "verdict": "incomplete",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 1,
+        "changed": 0
+      }
+    },
+    {
+      "case": "09-target-dns-route",
+      "exit_code": 1,
+      "verdict": "incomplete",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 2,
+        "changed": 0
+      }
+    },
+    {
+      "case": "10-usage-metadata",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 2,
+        "unknown": 0,
+        "changed": 0
+      }
+    },
+    {
+      "case": "11-unmapped-source",
+      "exit_code": 1,
+      "verdict": "incomplete",
+      "mapped_nodes": 1,
+      "source_nodes": 2,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 1,
+        "changed": 0
+      }
+    },
+    {
+      "case": "12-optional-empty",
+      "exit_code": 0,
+      "verdict": "projection-equivalent",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 6,
+        "transformed": 3,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 0
+      }
+    },
+    {
+      "case": "13-port-type",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 1
+      }
+    },
+    {
+      "case": "14-extra-target",
+      "exit_code": 1,
+      "verdict": "incomplete",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 2,
+      "statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 1,
+        "changed": 0
+      }
+    },
+    {
+      "case": "15-unknown-extension",
+      "exit_code": 1,
+      "verdict": "incomplete",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 2,
+        "changed": 0
+      }
+    },
+    {
+      "case": "16-non-ascii-host",
+      "exit_code": 1,
+      "verdict": "incomplete",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 1,
+        "changed": 0
+      }
+    },
+    {
+      "case": "17-missing-password",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 1
+      }
+    },
+    {
+      "case": "18-protocol-change",
+      "exit_code": 1,
+      "verdict": "differences-detected",
+      "mapped_nodes": 1,
+      "source_nodes": 1,
+      "target_nodes": 1,
+      "statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 1
+      }
+    },
+    {
+      "case": "19-reordered-nodes",
+      "exit_code": 0,
+      "verdict": "projection-equivalent",
+      "mapped_nodes": 2,
+      "source_nodes": 2,
+      "target_nodes": 2,
+      "statuses": {
+        "field-preserved": 16,
+        "transformed": 2,
+        "unsupported": 0,
+        "unknown": 0,
+        "changed": 0
+      }
+    }
+  ],
+  "inputs": {
+    "checker.py": {
+      "sha256": "bd7164c6a350f93a3c017ad03e9ba89f35f020c210076e20f4b62655efee091f",
+      "bytes": 12195
+    },
+    "fixtures/01-preserved/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/01-preserved/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/01-preserved/target.json": {
+      "sha256": "02a3455aef45f1c67b62680cea76d2b677be772f118086b695596a138a3c9d16",
+      "bytes": 255
+    },
+    "fixtures/02-dns-case/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/02-dns-case/source.json": {
+      "sha256": "cb4da66ad8347a15eb22452ea6db69c201815572b72ed8f7639e3b301c074d36",
+      "bytes": 296
+    },
+    "fixtures/02-dns-case/target.json": {
+      "sha256": "02a3455aef45f1c67b62680cea76d2b677be772f118086b695596a138a3c9d16",
+      "bytes": 255
+    },
+    "fixtures/03-ipv6-text/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/03-ipv6-text/source.json": {
+      "sha256": "0b245bb51859245983e727bde8db3a3631211ebf6aba22e39159fbc86e064a58",
+      "bytes": 319
+    },
+    "fixtures/03-ipv6-text/target.json": {
+      "sha256": "4dc944b6dfb23afbe3012b25ef32a49e131459603ac7b86dc2fb35bd9ebb6b15",
+      "bytes": 250
+    },
+    "fixtures/04-password-change/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/04-password-change/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/04-password-change/target.json": {
+      "sha256": "967c165a0e6e8e697ba7f16010d7a70a749925e4e027234e160a5ba4f96287e1",
+      "bytes": 254
+    },
+    "fixtures/05-port-change/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/05-port-change/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/05-port-change/target.json": {
+      "sha256": "cc410aeec9ffb69c5d63d6724b83bb5e0e60b36f570a0712b25ee70f83c4a331",
+      "bytes": 255
+    },
+    "fixtures/06-plugin-loss/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/06-plugin-loss/source.json": {
+      "sha256": "0ee0fda3dd54c0d504fdabef24bdf82984d62fb98202533f19ed9ff9fb189d0f",
+      "bytes": 360
+    },
+    "fixtures/06-plugin-loss/target.json": {
+      "sha256": "02a3455aef45f1c67b62680cea76d2b677be772f118086b695596a138a3c9d16",
+      "bytes": 255
+    },
+    "fixtures/07-unsupported-plugin/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/07-unsupported-plugin/source.json": {
+      "sha256": "0d15652a4db69479a0bb99d360ce608acd48e28361acb3b793f4d63f0322d173",
+      "bytes": 357
+    },
+    "fixtures/07-unsupported-plugin/target.json": {
+      "sha256": "8c8202c14cc8a9c0237c7da094a8d987045de5129995a742708415a95e8a9035",
+      "bytes": 316
+    },
+    "fixtures/08-source-policy/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/08-source-policy/source.json": {
+      "sha256": "0cf296148f829e6a82f569b6ae8afd54baa8eb24a154ef39b1223154962d8282",
+      "bytes": 347
+    },
+    "fixtures/08-source-policy/target.json": {
+      "sha256": "02a3455aef45f1c67b62680cea76d2b677be772f118086b695596a138a3c9d16",
+      "bytes": 255
+    },
+    "fixtures/09-target-dns-route/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/09-target-dns-route/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/09-target-dns-route/target.json": {
+      "sha256": "0b48f3845f15b64af19ad966d84756a5174f98e5deddcfec8ee5db1b36598650",
+      "bytes": 323
+    },
+    "fixtures/10-usage-metadata/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/10-usage-metadata/source.json": {
+      "sha256": "3e259501762a0eeb0740a068f4693fd879e9fa3f0a10afecd7de951f0735e80c",
+      "bytes": 342
+    },
+    "fixtures/10-usage-metadata/target.json": {
+      "sha256": "02a3455aef45f1c67b62680cea76d2b677be772f118086b695596a138a3c9d16",
+      "bytes": 255
+    },
+    "fixtures/11-unmapped-source/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/11-unmapped-source/source.json": {
+      "sha256": "a1078824bd888fbad1f987115838c25b0457553b34302b71ee8b554813c606cf",
+      "bytes": 555
+    },
+    "fixtures/11-unmapped-source/target.json": {
+      "sha256": "02a3455aef45f1c67b62680cea76d2b677be772f118086b695596a138a3c9d16",
+      "bytes": 255
+    },
+    "fixtures/12-optional-empty/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/12-optional-empty/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/12-optional-empty/target.json": {
+      "sha256": "f6c87487a430e1d328cb6b7d6054f58605f1d8c71ba31f1a5bea577763c28388",
+      "bytes": 300
+    },
+    "fixtures/13-port-type/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/13-port-type/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/13-port-type/target.json": {
+      "sha256": "12022db4ef2ee417257e0889694e89655bf5872a613a105acfeb738f16c2a601",
+      "bytes": 257
+    },
+    "fixtures/14-extra-target/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/14-extra-target/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/14-extra-target/target.json": {
+      "sha256": "ea20eaa75c945270934a8656b78a289c94fa1cb4188eb6238c5fcbf3e0cc36de",
+      "bytes": 324
+    },
+    "fixtures/15-unknown-extension/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/15-unknown-extension/source.json": {
+      "sha256": "2b679ccd1ce70396bcc331262cc07014e2ace0ace3ce9b14e24edf3109adaefc",
+      "bytes": 327
+    },
+    "fixtures/15-unknown-extension/target.json": {
+      "sha256": "f49b746f8863308312ed60a3d44868bff8a06e3a6d09a1bf5f78385bd9bd93b4",
+      "bytes": 286
+    },
+    "fixtures/16-non-ascii-host/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/16-non-ascii-host/source.json": {
+      "sha256": "2f1b672c318e96a94e64279e70f3c735eef5990800f003d2e40da762bc906ab6",
+      "bytes": 291
+    },
+    "fixtures/16-non-ascii-host/target.json": {
+      "sha256": "0b42100aeb2fc4d9a83a6fd59d8ab6c2ff98221fa5da98981f332aa66fe560f3",
+      "bytes": 250
+    },
+    "fixtures/17-missing-password/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/17-missing-password/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/17-missing-password/target.json": {
+      "sha256": "4af88b5f65f30b2f0c73982df5eaf165ad170f2a7630fc3d367f43eba75c5e50",
+      "bytes": 199
+    },
+    "fixtures/18-protocol-change/mapping.json": {
+      "sha256": "7c50ea21cfeb5096bfcdfdb45e87bd81c4c0a2e74732df48e8b9992cebf949db",
+      "bytes": 127
+    },
+    "fixtures/18-protocol-change/source.json": {
+      "sha256": "355d80ba7bd1d66548b78a6fe72691b4d6e503af0295096296da519e2c800d65",
+      "bytes": 296
+    },
+    "fixtures/18-protocol-change/target.json": {
+      "sha256": "727a29e4b89fc16a3443b7e8154008a9687fc00d4a6e6ef5d50068f0abbabf31",
+      "bytes": 250
+    },
+    "fixtures/19-reordered-nodes/mapping.json": {
+      "sha256": "7fe292fd31a2ab2a78665a49ba86ea474e9472d74d2d34ee58cf4b728ec35016",
+      "bytes": 235
+    },
+    "fixtures/19-reordered-nodes/source.json": {
+      "sha256": "730805fb385f0ab71deaa4c109256778f0e0d02a989dbe2a050a54d5d484dd10",
+      "bytes": 555
+    },
+    "fixtures/19-reordered-nodes/target.json": {
+      "sha256": "878e4a22338eb5f9b0fe58c525d21e765a21137eb7da4c8fe1b862d6de6211ba",
+      "bytes": 487
+    },
+    "fixtures/cases.json": {
+      "sha256": "39b30ea35b22d28a5910c0a94b9e9ab8fd8e1d224fed6deab638487dd52ad448",
+      "bytes": 7267
+    },
+    "run_examples.py": {
+      "sha256": "0d8c37298f6477600ec50d178e6a3b8bd458203e829eeac2b8583b7db36bcbc4",
+      "bytes": 3188
+    },
+    "test_checker.py": {
+      "sha256": "4598c060f134355683d190721088725559276e41cf43dc8b672a43c6decdd46c",
+      "bytes": 8342
+    }
+  }
+}

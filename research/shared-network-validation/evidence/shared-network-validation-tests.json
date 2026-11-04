@@ -1,0 +1,48 @@
+{
+  "scope": "synthetic_logic_only",
+  "device_measurements": false,
+  "generated_at": "2026-11-04T21:11:56.167390+00:00",
+  "python": "3.12.3",
+  "platform": "Linux",
+  "command": "python3 -B -m unittest -v test_validate_report.py",
+  "exit_code": 0,
+  "output": "test_all_normal_business_blocked_cannot_pass (test_validate_report.AcceptanceTests.test_all_normal_business_blocked_cannot_pass) ... ok\ntest_allow_direct_is_a_declared_policy_not_always_failure (test_validate_report.AcceptanceTests.test_allow_direct_is_a_declared_policy_not_always_failure) ... ok\ntest_blank_template_never_passes (test_validate_report.AcceptanceTests.test_blank_template_never_passes) ... ok\ntest_bounded_reader_rejects_oversize_nonfinite_deep_and_fifo (test_validate_report.AcceptanceTests.test_bounded_reader_rejects_oversize_nonfinite_deep_and_fifo) ... ok\ntest_cli_codes_and_no_secret_echo (test_validate_report.AcceptanceTests.test_cli_codes_and_no_secret_echo) ... ok\ntest_every_channel_phase_must_be_observed (test_validate_report.AcceptanceTests.test_every_channel_phase_must_be_observed) ... ok\ntest_exit_ip_does_not_prove_dns_or_other_coverage (test_validate_report.AcceptanceTests.test_exit_ip_does_not_prove_dns_or_other_coverage) ... ok\ntest_explicit_proxy_does_not_skip_udp (test_validate_report.AcceptanceTests.test_explicit_proxy_does_not_skip_udp) ... ok\ntest_ipv6_business_can_use_ipv4_dns_transport (test_validate_report.AcceptanceTests.test_ipv6_business_can_use_ipv4_dns_transport) ... ok\ntest_missing_control_cannot_prove_blocking (test_validate_report.AcceptanceTests.test_missing_control_cannot_prove_blocking) ... ok\ntest_missing_matrix_row_is_invalid (test_validate_report.AcceptanceTests.test_missing_matrix_row_is_invalid) ... ok\ntest_observation_conditions_cannot_be_missing (test_validate_report.AcceptanceTests.test_observation_conditions_cannot_be_missing) ... ok\ntest_policy_mismatch_fails (test_validate_report.AcceptanceTests.test_policy_mismatch_fails) ... ok\ntest_predeclared_ipv4_only_scope_can_exclude_ipv6 (test_validate_report.AcceptanceTests.test_predeclared_ipv4_only_scope_can_exclude_ipv6) ... ok\ntest_raw_log_or_url_cannot_enter_closed_schema (test_validate_report.AcceptanceTests.test_raw_log_or_url_cannot_enter_closed_schema) ... ok\ntest_required_not_applicable_never_passes (test_validate_report.AcceptanceTests.test_required_not_applicable_never_passes) ... ok\ntest_synthetic_pass_is_not_phone_acceptance (test_validate_report.AcceptanceTests.test_synthetic_pass_is_not_phone_acceptance) ... ok\ntest_thermal_warning_prevents_acceptance (test_validate_report.AcceptanceTests.test_thermal_warning_prevents_acceptance) ... ok\ntest_transport_cannot_drop_all_dns_paths (test_validate_report.AcceptanceTests.test_transport_cannot_drop_all_dns_paths) ... ok\ntest_uncovered_downstream_is_invalid (test_validate_report.AcceptanceTests.test_uncovered_downstream_is_invalid) ... ok\ntest_unknown_host_environment_prevents_pass (test_validate_report.AcceptanceTests.test_unknown_host_environment_prevents_pass) ... ok\ntest_unknown_remains_unknown (test_validate_report.AcceptanceTests.test_unknown_remains_unknown) ... ok\ntest_unpublished_core_version_differs_from_unknown (test_validate_report.AcceptanceTests.test_unpublished_core_version_differs_from_unknown) ... ok\n\n----------------------------------------------------------------------\nRan 23 tests in 0.065s\n\nOK\n",
+  "inputs": {
+    "METHOD.md": {
+      "sha256": "bb7e2e5f2ba696a5e5683f9cf810104eecfa97013ce30a66712fbf9366abad6b",
+      "bytes": 4496
+    },
+    "examples/synthetic-complete.json": {
+      "sha256": "d795185d5b2ff3c8ebbb615a0b2f426b3a2731abc86a6601224d99913c042c55",
+      "bytes": 13815
+    },
+    "examples/synthetic-disconnect_mismatch.json": {
+      "sha256": "c3132b5c49890f4865ec8e8f449871836ea22f485f29af04a75b669fb5d22e85",
+      "bytes": 13814
+    },
+    "examples/synthetic-exit_ip_insufficient.json": {
+      "sha256": "747277bea3d7298c10ddc82b3393822caa0044dfee18529ded450d87cc90049d",
+      "bytes": 13759
+    },
+    "examples/synthetic-sleep_not_tested.json": {
+      "sha256": "f42858ed6a3d87c3d95a2b9f4511a2cf72d3c845c56a54160bc92096040445ef",
+      "bytes": 13654
+    },
+    "fixtures.py": {
+      "sha256": "44d3435292463bf9ca4cbcd1e2ac2a8b28e7a2c1823425f5f17787d43f25c595",
+      "bytes": 3548
+    },
+    "report-template.json": {
+      "sha256": "5e1d8e39643b4d7271763789d72e2fd16169976554a9702858f3c2b6ead526ae",
+      "bytes": 9327
+    },
+    "test_validate_report.py": {
+      "sha256": "34e6bdf5445d1811168e0f5db9d70c630e7a537d3028a50e43527e230ff7ea37",
+      "bytes": 10766
+    },
+    "validate_report.py": {
+      "sha256": "686ac28fa66ee4b11a81278a8b58ec32dd2a2c8b97d40b610c0a8126f83985a1",
+      "bytes": 15011
+    }
+  }
+}

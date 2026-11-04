@@ -1,0 +1,229 @@
+{
+  "schema_version": 1,
+  "provenance": "Manually authored synthetic configurations; not output from any third-party converter.",
+  "cases": [
+    {
+      "id": "01-preserved",
+      "expected_verdict": "projection-equivalent",
+      "expected_statuses": {
+        "field-preserved": 8,
+        "transformed": 1
+      },
+      "source": "fixtures/01-preserved/source.json",
+      "target": "fixtures/01-preserved/target.json",
+      "mapping": "fixtures/01-preserved/mapping.json"
+    },
+    {
+      "id": "02-dns-case",
+      "expected_verdict": "projection-equivalent",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 2
+      },
+      "source": "fixtures/02-dns-case/source.json",
+      "target": "fixtures/02-dns-case/target.json",
+      "mapping": "fixtures/02-dns-case/mapping.json"
+    },
+    {
+      "id": "03-ipv6-text",
+      "expected_verdict": "projection-equivalent",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 2
+      },
+      "source": "fixtures/03-ipv6-text/source.json",
+      "target": "fixtures/03-ipv6-text/target.json",
+      "mapping": "fixtures/03-ipv6-text/mapping.json"
+    },
+    {
+      "id": "04-password-change",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "changed": 1
+      },
+      "source": "fixtures/04-password-change/source.json",
+      "target": "fixtures/04-password-change/target.json",
+      "mapping": "fixtures/04-password-change/mapping.json"
+    },
+    {
+      "id": "05-port-change",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "changed": 1
+      },
+      "source": "fixtures/05-port-change/source.json",
+      "target": "fixtures/05-port-change/target.json",
+      "mapping": "fixtures/05-port-change/mapping.json"
+    },
+    {
+      "id": "06-plugin-loss",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 6,
+        "transformed": 1,
+        "changed": 2
+      },
+      "source": "fixtures/06-plugin-loss/source.json",
+      "target": "fixtures/06-plugin-loss/target.json",
+      "mapping": "fixtures/06-plugin-loss/mapping.json"
+    },
+    {
+      "id": "07-unsupported-plugin",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unsupported": 1
+      },
+      "source": "fixtures/07-unsupported-plugin/source.json",
+      "target": "fixtures/07-unsupported-plugin/target.json",
+      "mapping": "fixtures/07-unsupported-plugin/mapping.json"
+    },
+    {
+      "id": "08-source-policy",
+      "expected_verdict": "incomplete",
+      "expected_statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unknown": 1
+      },
+      "source": "fixtures/08-source-policy/source.json",
+      "target": "fixtures/08-source-policy/target.json",
+      "mapping": "fixtures/08-source-policy/mapping.json"
+    },
+    {
+      "id": "09-target-dns-route",
+      "expected_verdict": "incomplete",
+      "expected_statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unknown": 2
+      },
+      "source": "fixtures/09-target-dns-route/source.json",
+      "target": "fixtures/09-target-dns-route/target.json",
+      "mapping": "fixtures/09-target-dns-route/mapping.json"
+    },
+    {
+      "id": "10-usage-metadata",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unsupported": 2
+      },
+      "source": "fixtures/10-usage-metadata/source.json",
+      "target": "fixtures/10-usage-metadata/target.json",
+      "mapping": "fixtures/10-usage-metadata/mapping.json"
+    },
+    {
+      "id": "11-unmapped-source",
+      "expected_verdict": "incomplete",
+      "expected_statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unknown": 1
+      },
+      "source": "fixtures/11-unmapped-source/source.json",
+      "target": "fixtures/11-unmapped-source/target.json",
+      "mapping": "fixtures/11-unmapped-source/mapping.json"
+    },
+    {
+      "id": "12-optional-empty",
+      "expected_verdict": "projection-equivalent",
+      "expected_statuses": {
+        "field-preserved": 6,
+        "transformed": 3
+      },
+      "source": "fixtures/12-optional-empty/source.json",
+      "target": "fixtures/12-optional-empty/target.json",
+      "mapping": "fixtures/12-optional-empty/mapping.json"
+    },
+    {
+      "id": "13-port-type",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "changed": 1
+      },
+      "source": "fixtures/13-port-type/source.json",
+      "target": "fixtures/13-port-type/target.json",
+      "mapping": "fixtures/13-port-type/mapping.json"
+    },
+    {
+      "id": "14-extra-target",
+      "expected_verdict": "incomplete",
+      "expected_statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unknown": 1
+      },
+      "source": "fixtures/14-extra-target/source.json",
+      "target": "fixtures/14-extra-target/target.json",
+      "mapping": "fixtures/14-extra-target/mapping.json"
+    },
+    {
+      "id": "15-unknown-extension",
+      "expected_verdict": "incomplete",
+      "expected_statuses": {
+        "field-preserved": 8,
+        "transformed": 1,
+        "unknown": 2
+      },
+      "source": "fixtures/15-unknown-extension/source.json",
+      "target": "fixtures/15-unknown-extension/target.json",
+      "mapping": "fixtures/15-unknown-extension/mapping.json"
+    },
+    {
+      "id": "16-non-ascii-host",
+      "expected_verdict": "incomplete",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "unknown": 1
+      },
+      "source": "fixtures/16-non-ascii-host/source.json",
+      "target": "fixtures/16-non-ascii-host/target.json",
+      "mapping": "fixtures/16-non-ascii-host/mapping.json"
+    },
+    {
+      "id": "17-missing-password",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "changed": 1
+      },
+      "source": "fixtures/17-missing-password/source.json",
+      "target": "fixtures/17-missing-password/target.json",
+      "mapping": "fixtures/17-missing-password/mapping.json"
+    },
+    {
+      "id": "18-protocol-change",
+      "expected_verdict": "differences-detected",
+      "expected_statuses": {
+        "field-preserved": 7,
+        "transformed": 1,
+        "changed": 1
+      },
+      "source": "fixtures/18-protocol-change/source.json",
+      "target": "fixtures/18-protocol-change/target.json",
+      "mapping": "fixtures/18-protocol-change/mapping.json"
+    },
+    {
+      "id": "19-reordered-nodes",
+      "expected_verdict": "projection-equivalent",
+      "expected_statuses": {
+        "field-preserved": 16,
+        "transformed": 2
+      },
+      "source": "fixtures/19-reordered-nodes/source.json",
+      "target": "fixtures/19-reordered-nodes/target.json",
+      "mapping": "fixtures/19-reordered-nodes/mapping.json"
+    }
+  ]
+}

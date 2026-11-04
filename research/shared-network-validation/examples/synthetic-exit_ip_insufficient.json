@@ -1,0 +1,457 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "synthetic",
+  "session_alias": "session-1",
+  "conditions": {
+    "sleep_seconds": 600,
+    "transition_window_seconds": 60,
+    "max_probes_per_cell": 3,
+    "data_budget_bytes": 1000000,
+    "charging_state": "unplugged",
+    "thermal_state": "no_warning_observed"
+  },
+  "topology": {
+    "host": "host-1",
+    "host_model_alias": "model-1",
+    "host_platform": "android",
+    "host_os_version": "0.0",
+    "client_version": "0.0",
+    "core_version": "0.0",
+    "downstream": [
+      "device-1"
+    ],
+    "upstream": "wifi",
+    "sharing_link": "wifi",
+    "mode": "gateway"
+  },
+  "host_readiness": {
+    "state": "observed",
+    "observed": "supported",
+    "methods": [
+      "official_support_review",
+      "host_interface_observation"
+    ],
+    "evidence_id": "evidence-1",
+    "observed_at": "2026-11-04T00:00:00Z",
+    "reason": "none"
+  },
+  "targets": [
+    {
+      "device": "device-1",
+      "application": "app-1",
+      "policy": {
+        "channels": {
+          "dns_ipv4": {
+            "required": true,
+            "normal": "proxy_resolver",
+            "baseline": "approved_direct_resolver",
+            "scope_reason": "required_by_user"
+          },
+          "dns_ipv6": {
+            "required": true,
+            "normal": "proxy_resolver",
+            "baseline": "approved_direct_resolver",
+            "scope_reason": "required_by_user"
+          },
+          "tcp_ipv4": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          },
+          "tcp_ipv6": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          },
+          "udp_ipv4": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          },
+          "udp_ipv6": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          }
+        },
+        "disconnect": "block",
+        "sleep": "maintain"
+      },
+      "observations": {
+        "normal": {
+          "dns_ipv4": {
+            "state": "observed",
+            "observed": "proxy_resolver",
+            "methods": [
+              "exit_ip"
+            ],
+            "evidence_id": "evidence-2",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "dns_ipv6": {
+            "state": "observed",
+            "observed": "proxy_resolver",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation"
+            ],
+            "evidence_id": "evidence-3",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv4": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-4",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv6": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-5",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv4": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-6",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv6": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-7",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          }
+        },
+        "disconnected": {
+          "dns_ipv4": {
+            "state": "observed",
+            "observed": "blocked",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation",
+              "working_control_probe"
+            ],
+            "evidence_id": "evidence-8",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "dns_ipv6": {
+            "state": "observed",
+            "observed": "blocked",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation",
+              "working_control_probe"
+            ],
+            "evidence_id": "evidence-9",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv4": {
+            "state": "observed",
+            "observed": "blocked",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe",
+              "working_control_probe"
+            ],
+            "evidence_id": "evidence-10",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv6": {
+            "state": "observed",
+            "observed": "blocked",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe",
+              "working_control_probe"
+            ],
+            "evidence_id": "evidence-11",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv4": {
+            "state": "observed",
+            "observed": "blocked",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe",
+              "working_control_probe"
+            ],
+            "evidence_id": "evidence-12",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv6": {
+            "state": "observed",
+            "observed": "blocked",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe",
+              "working_control_probe"
+            ],
+            "evidence_id": "evidence-13",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          }
+        },
+        "reconnected": {
+          "dns_ipv4": {
+            "state": "observed",
+            "observed": "proxy_resolver",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation"
+            ],
+            "evidence_id": "evidence-14",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "dns_ipv6": {
+            "state": "observed",
+            "observed": "proxy_resolver",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation"
+            ],
+            "evidence_id": "evidence-15",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv4": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-16",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv6": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-17",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv4": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-18",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv6": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-19",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          }
+        },
+        "sleep": {
+          "dns_ipv4": {
+            "state": "observed",
+            "observed": "proxy_resolver",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation"
+            ],
+            "evidence_id": "evidence-20",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "dns_ipv6": {
+            "state": "observed",
+            "observed": "proxy_resolver",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation"
+            ],
+            "evidence_id": "evidence-21",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv4": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-22",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv6": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-23",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv4": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-24",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv6": {
+            "state": "observed",
+            "observed": "proxy",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-25",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          }
+        },
+        "restored": {
+          "dns_ipv4": {
+            "state": "observed",
+            "observed": "approved_direct_resolver",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation"
+            ],
+            "evidence_id": "evidence-26",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "dns_ipv6": {
+            "state": "observed",
+            "observed": "approved_direct_resolver",
+            "methods": [
+              "controlled_dns_query",
+              "resolver_path_observation",
+              "transition_observation"
+            ],
+            "evidence_id": "evidence-27",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv4": {
+            "state": "observed",
+            "observed": "direct",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-28",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "tcp_ipv6": {
+            "state": "observed",
+            "observed": "direct",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-29",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv4": {
+            "state": "observed",
+            "observed": "direct",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-30",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          },
+          "udp_ipv6": {
+            "state": "observed",
+            "observed": "direct",
+            "methods": [
+              "route_observation",
+              "transition_observation",
+              "transport_probe"
+            ],
+            "evidence_id": "evidence-31",
+            "observed_at": "2026-11-04T00:00:00Z",
+            "reason": "none"
+          }
+        }
+      }
+    }
+  ]
+}

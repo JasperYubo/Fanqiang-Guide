@@ -1,0 +1,45 @@
+{
+  "report-template.json": {
+    "overall": "incomplete",
+    "verification_scope": "declared_device_observations",
+    "device_acceptance": "incomplete",
+    "counts": {
+      "not_tested": 31
+    }
+  },
+  "synthetic-complete.json": {
+    "overall": "pass",
+    "verification_scope": "synthetic_logic_only",
+    "device_acceptance": "not_tested",
+    "counts": {
+      "pass": 31
+    }
+  },
+  "synthetic-disconnect_mismatch.json": {
+    "overall": "fail",
+    "verification_scope": "synthetic_logic_only",
+    "device_acceptance": "not_tested",
+    "counts": {
+      "pass": 30,
+      "fail": 1
+    }
+  },
+  "synthetic-exit_ip_insufficient.json": {
+    "overall": "incomplete",
+    "verification_scope": "synthetic_logic_only",
+    "device_acceptance": "not_tested",
+    "counts": {
+      "pass": 30,
+      "unknown": 1
+    }
+  },
+  "synthetic-sleep_not_tested.json": {
+    "overall": "incomplete",
+    "verification_scope": "synthetic_logic_only",
+    "device_acceptance": "not_tested",
+    "counts": {
+      "pass": 30,
+      "not_tested": 1
+    }
+  }
+}

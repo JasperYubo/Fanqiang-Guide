@@ -1,0 +1,11 @@
+{
+  "outbounds": [
+    {
+      "type": "shadowsocks",
+      "tag": "synthetic-ss",
+      "server": "edge.example.net",
+      "server_port": 8388,
+      "method": "chacha20-ietf-poly1305"
+    }
+  ]
+}

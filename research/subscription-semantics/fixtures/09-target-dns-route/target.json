@@ -1,0 +1,18 @@
+{
+  "outbounds": [
+    {
+      "type": "shadowsocks",
+      "tag": "synthetic-ss",
+      "server": "edge.example.net",
+      "server_port": 8388,
+      "method": "chacha20-ietf-poly1305",
+      "password": "SYNTHETIC-NOT-A-REAL-CREDENTIAL-01"
+    }
+  ],
+  "dns": {
+    "servers": []
+  },
+  "route": {
+    "rules": []
+  }
+}

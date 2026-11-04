@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "servers": [
+    {
+      "id": "00000000-0000-4000-8000-000000000001",
+      "remarks": "synthetic-ss",
+      "server": "edge.example.net",
+      "server_port": 8388,
+      "method": "chacha20-ietf-poly1305",
+      "password": "SYNTHETIC-NOT-A-REAL-CREDENTIAL-01",
+      "x_vendor": "synthetic"
+    }
+  ]
+}

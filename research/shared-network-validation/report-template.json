@@ -1,0 +1,335 @@
+{
+  "schema_version": 1,
+  "evidence_kind": "device_observation",
+  "session_alias": "session-1",
+  "conditions": {
+    "sleep_seconds": 0,
+    "transition_window_seconds": 0,
+    "max_probes_per_cell": 0,
+    "data_budget_bytes": 0,
+    "charging_state": "unknown",
+    "thermal_state": "unknown"
+  },
+  "topology": {
+    "host": "host-1",
+    "host_model_alias": "model-1",
+    "host_platform": "unknown",
+    "host_os_version": "unknown",
+    "client_version": "unknown",
+    "core_version": "unknown",
+    "downstream": [
+      "device-1"
+    ],
+    "upstream": "unknown",
+    "sharing_link": "wifi",
+    "mode": "gateway"
+  },
+  "host_readiness": {
+    "state": "not_tested",
+    "observed": null,
+    "methods": [],
+    "evidence_id": null,
+    "observed_at": null,
+    "reason": "not_performed"
+  },
+  "targets": [
+    {
+      "device": "device-1",
+      "application": "app-1",
+      "policy": {
+        "channels": {
+          "dns_ipv4": {
+            "required": true,
+            "normal": "proxy_resolver",
+            "baseline": "approved_direct_resolver",
+            "scope_reason": "required_by_user"
+          },
+          "dns_ipv6": {
+            "required": true,
+            "normal": "proxy_resolver",
+            "baseline": "approved_direct_resolver",
+            "scope_reason": "required_by_user"
+          },
+          "tcp_ipv4": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          },
+          "tcp_ipv6": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          },
+          "udp_ipv4": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          },
+          "udp_ipv6": {
+            "required": true,
+            "normal": "proxy",
+            "baseline": "direct",
+            "scope_reason": "required_by_user"
+          }
+        },
+        "disconnect": "block",
+        "sleep": "maintain"
+      },
+      "observations": {
+        "normal": {
+          "dns_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "dns_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          }
+        },
+        "disconnected": {
+          "dns_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "dns_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          }
+        },
+        "reconnected": {
+          "dns_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "dns_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          }
+        },
+        "sleep": {
+          "dns_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "dns_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          }
+        },
+        "restored": {
+          "dns_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "dns_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "tcp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv4": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          },
+          "udp_ipv6": {
+            "state": "not_tested",
+            "observed": null,
+            "methods": [],
+            "evidence_id": null,
+            "observed_at": null,
+            "reason": "not_performed"
+          }
+        }
+      }
+    }
+  ]
+}
