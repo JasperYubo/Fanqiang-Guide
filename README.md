@@ -4,7 +4,7 @@
 
 **310 条工具与知识记录 · MCP 2.1.0 · 两本设备工程书**
 
-[打开官网](https://fanqiang.guide/) ｜ [完整目录](CATALOG.md) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
+[打开官网](https://fanqiang.guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
 
 ## 你想做什么
 
@@ -136,6 +136,22 @@
 - **[sing-box 官方文档](https://sing-box.sagernet.org/)**：客户端、服务端、DNS、路由和配置迁移说明，适合查配置与排错；站内可切换简体中文。
 
 [查看全部 310 个工具与知识条目 →](CATALOG.md)
+
+<a id="research"></a>
+## 研究成果与引用
+
+网站的核心方法整理为一篇系统技术报告和三篇专题技术说明。每篇都有独立正文、参考文献与 DOI；[研究入口](https://fanqiang.guide/research/)提供全文与下载。
+
+| 出版物 | 研究范围 | DOI |
+| --- | --- | --- |
+| [华润（Fanqiang Guide）：面向 AI 设备配置的知识组织、执行协议与诊断体系](https://fanqiang.guide/research/fanqiang-guide-system/) | 系统模型、证据组织与复现范围 | [10.5281/zenodo.23961021](https://doi.org/10.5281/zenodo.23961021) |
+| [面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收](https://fanqiang.guide/research/device-setup-protocol/) | 设备识别、局部修复与验收 | [10.5281/zenodo.23961041](https://doi.org/10.5281/zenodo.23961041) |
+| [基于来源约束与未知状态的梅林路由器插件包匹配方法](https://fanqiang.guide/research/router-package-matching/) | 型号、固件分支及 full/lite 匹配 | [10.5281/zenodo.23961043](https://doi.org/10.5281/zenodo.23961043) |
+| [本地网络诊断的有限测量与主动提交协议](https://fanqiang.guide/research/local-diagnostics-consent/) | 有限测量、脱敏预览与主动提交 | [10.5281/zenodo.23961045](https://doi.org/10.5281/zenodo.23961045) |
+
+四篇 1.0 版对应 2026-11-04 的方法整理，基础实现固定为 7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250。接口检查、隔离 Linux 流程与真实硬件验收的范围在各篇中分别说明。
+
+整体方法优先引用主报告；具体设备流程、选包或诊断方法引用对应专题，并注明使用的代码或工程书版本。GitHub 引用入口由 [CITATION.cff](CITATION.cff) 提供；出版物元数据见 [research/publications.json](research/publications.json)，维护规则见[引用与版本说明](developer/CITATION.md)。
 
 ## 资料如何更新
 

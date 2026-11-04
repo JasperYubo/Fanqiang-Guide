@@ -1,0 +1,91 @@
+cff-version: 1.2.0
+message: 引用整体方法请使用 preferred-citation 中的主报告；引用具体协议请使用 references 中对应的专题技术说明，并注明实现版本。
+type: software
+title: 'Fanqiang Guide: MCP Knowledge Service and Device Setup Engineering Books'
+abstract: 华润（Fanqiang Guide）的知识服务、设备配置工程书、路由器匹配与本地诊断实现。仓库的首选引用是系统技术报告，各专题另有独立 DOI。
+authors:
+- family-names: Zhu
+  given-names: Long Quan
+  affiliation: iLang Inc.
+  orcid: https://orcid.org/0009-0004-4540-8082
+license: MIT
+repository-code: https://github.com/JasperYubo/Fanqiang-Guide
+url: https://fanqiang.guide/
+keywords:
+- MCP
+- AI-assisted device configuration
+- engineering books
+- router compatibility
+- local network diagnostics
+preferred-citation:
+  type: report
+  title: 华润（Fanqiang Guide）：面向 AI 设备配置的知识组织、执行协议与诊断体系
+  authors:
+  - family-names: Zhu
+    given-names: Long Quan
+    affiliation: iLang Inc.
+    orcid: https://orcid.org/0009-0004-4540-8082
+  doi: 10.5281/zenodo.23961021
+  url: https://fanqiang.guide/research/fanqiang-guide-system/
+  year: 2026
+  date-published: '2026-11-04'
+  version: '1.0'
+  institution:
+    name: iLang Inc.
+references:
+- type: report
+  title: 华润（Fanqiang Guide）：面向 AI 设备配置的知识组织、执行协议与诊断体系
+  authors:
+  - family-names: Zhu
+    given-names: Long Quan
+    affiliation: iLang Inc.
+    orcid: https://orcid.org/0009-0004-4540-8082
+  doi: 10.5281/zenodo.23961021
+  url: https://fanqiang.guide/research/fanqiang-guide-system/
+  year: 2026
+  date-published: '2026-11-04'
+  version: '1.0'
+  institution:
+    name: iLang Inc.
+- type: report
+  title: 面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收
+  authors:
+  - family-names: Zhu
+    given-names: Long Quan
+    affiliation: iLang Inc.
+    orcid: https://orcid.org/0009-0004-4540-8082
+  doi: 10.5281/zenodo.23961041
+  url: https://fanqiang.guide/research/device-setup-protocol/
+  year: 2026
+  date-published: '2026-11-04'
+  version: '1.0'
+  institution:
+    name: iLang Inc.
+- type: report
+  title: 基于来源约束与未知状态的梅林路由器插件包匹配方法
+  authors:
+  - family-names: Zhu
+    given-names: Long Quan
+    affiliation: iLang Inc.
+    orcid: https://orcid.org/0009-0004-4540-8082
+  doi: 10.5281/zenodo.23961043
+  url: https://fanqiang.guide/research/router-package-matching/
+  year: 2026
+  date-published: '2026-11-04'
+  version: '1.0'
+  institution:
+    name: iLang Inc.
+- type: report
+  title: 本地网络诊断的有限测量与主动提交协议
+  authors:
+  - family-names: Zhu
+    given-names: Long Quan
+    affiliation: iLang Inc.
+    orcid: https://orcid.org/0009-0004-4540-8082
+  doi: 10.5281/zenodo.23961045
+  url: https://fanqiang.guide/research/local-diagnostics-consent/
+  year: 2026
+  date-published: '2026-11-04'
+  version: '1.0'
+  institution:
+    name: iLang Inc.

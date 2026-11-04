@@ -43,6 +43,7 @@ def source_inputs() -> dict:
     """Fingerprint the actual build inputs so a release cannot outlive its source."""
     ignored = {"__pycache__", ".venv", "venv", "node_modules"}
     paths = [ROOT / "tools/ilang_grammar_validator.py", ROOT / "data/faq-cache.json",
+             ROOT / "research/publications.json",
              ROOT / "developer/build_apps.py", ROOT / "data/router-compatibility.json", ROOT / "data/source-freshness.json", ROOT / "developer/sync_source_freshness.py"]
     for name in ("site", "worker", "lookup"):
         for path in (ROOT / "apps" / name).rglob("*"):
@@ -51,8 +52,9 @@ def source_inputs() -> dict:
                 continue
             if path.is_file() and path.suffix != ".pyc":
                 paths.append(path)
+    paths.extend(path for path in (ROOT / "research").rglob("*") if path.is_file() and path.suffix != ".pyc")
     result = {}
-    for path in sorted(paths):
+    for path in sorted(set(paths)):
         raw = path.read_bytes()
         result[path.relative_to(ROOT).as_posix()] = {"bytes": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
     return result
@@ -75,6 +77,7 @@ def build(output: Path) -> dict:
         ignore = shutil.ignore_patterns("__pycache__", "*.pyc", ".venv", "venv", "node_modules", ".env", ".env.*")
         for name in ("site", "worker", "lookup"):
             shutil.copytree(ROOT / "apps" / name, scratch / "apps" / name, ignore=ignore)
+        shutil.copytree(ROOT / "research", scratch / "research", ignore=ignore)
         (scratch / "data").mkdir()
         shutil.copyfile(ROOT / "data/faq-cache.json", scratch / "data/faq-cache.json")
         shutil.copyfile(ROOT / "data/router-compatibility.json", scratch / "data/router-compatibility.json")

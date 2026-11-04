@@ -1,0 +1,59 @@
+{
+  "title": "Fanqiang Guide: MCP Knowledge Service and Device Setup Engineering Books",
+  "upload_type": "software",
+  "description": "<p>华润（Fanqiang Guide）的公开知识服务与配套实现，包括 MCP 检索接口、设备配置工程书、梅林路由器插件包匹配和本地网络诊断。</p><p>本元数据描述仓库未来单独归档的软件快照。方法与协议由四篇独立技术出版物说明；软件作为其补充材料，相关 DOI 列于 related_identifiers。具体归档版本应在发布软件快照时绑定相应源码、版本与验证记录。</p>",
+  "creators": [
+    {
+      "name": "Zhu, Long Quan",
+      "orcid": "0009-0004-4540-8082",
+      "affiliation": "iLang Inc."
+    }
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "keywords": [
+    "MCP",
+    "device configuration",
+    "engineering books",
+    "router compatibility",
+    "network diagnostics",
+    "research software"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.5281/zenodo.23961021",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.23961041",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.23961043",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.23961045",
+      "relation": "isSupplementTo",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.23824138",
+      "relation": "cites",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "https://ilang.ai/source-book/",
+      "relation": "cites",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://modelcontextprotocol.io/specification/2025-11-25",
+      "relation": "cites",
+      "scheme": "url"
+    }
+  ]
+}

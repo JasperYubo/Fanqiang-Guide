@@ -1,0 +1,747 @@
+{
+  "schema_version": 1,
+  "publications": [
+    {
+      "slug": "fanqiang-guide-system",
+      "title": "华润（Fanqiang Guide）：面向 AI 设备配置的知识组织、执行协议与诊断体系",
+      "title_en": "Fanqiang Guide: Knowledge Organization, Execution Protocols, and Diagnostics for AI-Assisted Device Configuration",
+      "type": "technicalreport",
+      "abstract": "面向个人设备的网络工具配置同时涉及知识检索、设备适配、权限判断、操作执行和结果验证。将这些任务压缩为一段通用安装说明，容易混淆资料来源、软件支持声明与目标设备的实际状态。本文以华润网站 Fanqiang Guide 的公开实现为对象，提出并记录一种由证据化知识记录、只读 Model Context Protocol 服务、可执行工程书、目标设备操作和用户主动提交诊断组成的工作流。系统把资料检索与设备控制分配给不同角色，以版本、来源、适用条件和验证范围连接各阶段；对路由器匹配采用多条件候选筛选，对本地诊断采用有限预算、结构化报告和预览后提交。本文给出系统模型、信息流与复现入口，并将工程书执行协议、软件包匹配方法和诊断披露协议作为独立技术说明发布。该研究属于现有软件系统的方法说明与实现报告。",
+      "sections": [
+        {
+          "id": "introduction",
+          "title": "1 引言与研究问题",
+          "paragraphs": [
+            "个人网络配置的问题并不止于找到一个安装包。相同软件名称可能对应不同平台架构、固件分支、权限要求和流量路径；客户端显示已连接，也不必然意味着指定应用、热点下游或路由器局域网客户端已经通过预期路径访问网络。自然语言助手还需要判断自己能控制哪一台设备，以及哪些结果来自文档、哪些来自现场观察。",
+            "本文研究的问题是：如何把公开知识组织成用户 AI 可以读取、执行和核验的设备配置方法，同时保留来源与版本，并让诊断数据由用户决定是否披露。系统以华润网站 Fanqiang Guide 为实践载体，面向手机、桌面系统和华硕／梅林生态路由器。本文关注信息组织和任务协议，不把工具目录本身解释为产品性能排名。",
+            "本文的贡献包括：将知识服务、执行代理与设备现场分开的角色模型；以工程书约束设备识别、配置、修复和验收的过程表达；区分来源更新、兼容候选与设备实测的证据管理；以及连接代码版本、工程书、诊断规范与 DOI 出版物的可引用结构。"
+          ]
+        },
+        {
+          "id": "related-work",
+          "title": "2 相关工作与方法来源",
+          "paragraphs": [
+            "FAIR 原则强调数据的可发现、可访问、可互操作和可重用性[1]。本文在工程知识场景中采用持久标识、结构化元数据、来源链接和明确许可，重点处理资料何时形成、适用于何种条件以及可支持什么结论。科学计算的实践指南强调版本控制、项目组织和可重复的数据处理[2]，这些要求对应本项目的固定源码快照、独立构建、测试和发布清单。",
+            "iLang Protocol Specification 提供工程书采用的结构化表达，Source Book 2.9 提供来源到工程书的组织方法[3,4]。MCP 规定客户端与服务端之间的工具、资源和提示词接口[5]。本项目以这些规范组织知识交付，并把实际设备操作留给用户自己的 AI 及其具备权限的设备工具。",
+            "网络测量必须给出测量对象、环境、样本和统计口径，RFC 2330 为这种指标定义提供基础框架[6]。RFC 6973 的数据最小化和用户参与原则与本文的诊断披露流程相关[7]。Censored Planet 展示了面向互联网范围、长期观测的审查测量研究[8]；本项目的诊断侧重点是一次设备任务中的小样本连接观察，二者的覆盖范围与推断目标不同。"
+          ]
+        },
+        {
+          "id": "model",
+          "title": "3 系统角色与信息流模型",
+          "paragraphs": [
+            "本文将系统表示为 S＝〈K，B，A，D，R〉：K 是公共知识记录，B 是版本化工程书，A 是用户选择的 AI 操作代理，D 是目标设备与应用，R 是本地运行记录及可选诊断报告。公共服务提供 K 和 B；A 根据任务授权和实际工具能力作用于 D；设备证据进入本地 R，只有用户选定的结构化诊断内容可以提交到接收端。",
+            "一条工程知识记录可抽象为 k＝〈标识，内容，来源，适用条件，审核日期，证据等级〉。一项操作结果可抽象为 e＝〈设备别名，动作，观察，时间，验证范围，证据引用〉。两者承担不同职责：k 支持计划与解释，e 支持对本次任务是否完成的判断。资料的最后更新时间不能替代 e 的现场时间。",
+            "公共 MCP 的职责是检索和提供资料。当前服务暴露 search、get、query，并通过资源目录提供设备配置与梅林工程书；HTTP 接口为工程书和查询提供兼容入口。AI 是否可以安装软件、修改设置或观察设备，取决于其真实的设备工具与用户授予的任务范围。",
+            "凭据、订阅链接和设备秘密在目标设备本地输入或引用。工程书要求任务记录保存阶段、修改、证据和恢复信息，同时避免将秘密写进公开知识或交接内容。这一信息流设计使公共知识复用不必依赖收集用户配置。"
+          ]
+        },
+        {
+          "id": "knowledge",
+          "title": "4 证据分级与知识更新",
+          "paragraphs": [
+            "本报告对应的基础源码快照包含 310 条知识记录、56 行当前路由器兼容匹配资料，并另行保留 58 条历史固件支持声明[9]。这些集合服务于不同查询，不将历史支持声明直接并入当前安装条件。",
+            "知识库使用 primary_reviewed、reference_only、historical 等状态表达资料用途。工程书另行记录文档结构、服务接口、隔离 Linux 流程以及真实硬件的验证范围。证据类别并不是一个统一可信度分数：官方发布说明可以支持某项平台声明，而某次设备测试只能支持当时设备、软件和网络条件下的观察。",
+            "上游更新流程记录代码仓库、正式版本及来源页面的变化；路由器观察流程把 fancyss 与 KoolCenter 的变化形成待复核材料。更新时间应被理解为观察时间，不能自动升级为人工审核日期。来源不可访问、版本未知和未监测状态需要保留区别，避免用一个绿色标记覆盖全部不确定性。",
+            "对于候选软件包，知识服务返回适配依据和缺失条件。目标设备仍需完成固件分支、运行时架构、软件中心组件、存储空间和恢复路径检查。工程书把这类现场条件纳入执行流程，使来源证据与设备证据在任务阶段相遇。"
+          ]
+        },
+        {
+          "id": "workflows",
+          "title": "5 三类专题协议及其协作",
+          "paragraphs": [
+            "设备配置协议将任务组织为设备识别、需求确认、能力检查、计划、安装配置、故障修复和完成验证。手机选择与共享网络不是附带说明，而是会改变设备条件与验收对象的分支；共享场景必须检查实际下游设备，而不能仅依赖上游手机的连接状态。本专题的形式化与实施细节见《面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收》。",
+            "路由器匹配专题以具体型号、硬件版本、固件分支、平台包和 full／lite 能力为条件。匹配结果是带证据的候选建议，未知字段和安装前检查随结果返回。上游包校验、运行时条件与下游访问验证分别属于供应来源、安装环境与实际效果三个层面。详见《基于来源约束与未知状态的梅林路由器插件包匹配方法》。",
+            "诊断专题以 DNS、TCP、TLS、HTTP 和可选下载为阶段，限制目标、时长和数据预算。结构化预览与日志脱敏发生在本地；上传动作由用户在本地页面触发。报告接收、幂等重试、保留期限与删除回执形成独立数据生命周期。详见《本地网络诊断的有限测量与主动提交协议》。",
+            "三类专题共享来源、版本、任务阶段和证据引用，但不要求所有任务提交诊断数据。知识查询可以独立使用；设备配置可以在本地结束；诊断提交是用户选择的后续协作方式。"
+          ]
+        },
+        {
+          "id": "evaluation",
+          "title": "6 实现验证与复现方法",
+          "paragraphs": [
+            "本研究采用实现检查与范围化验证，而非以单次运行推断所有设备适配。基础源码标识为 7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250。公共 MCP 版本为 2.1.0，设备工程书为 2.1，梅林工程书为 1.0，本地诊断为 0.1.0。论文正文、引用元数据和补充资料通过本次 DOI 归档固定。",
+            "工程书随附的证据文件记录：两本书均通过结构校验；隔离 Linux 环境检查过 MCP／HTTP 接口、资源、提示词和静态引用一致性。已有 Linux 流程证据覆盖 IPv4 回环环境下 SOCKS 应用经过 Shadowsocks 2022 到 TLS 测试端点，并包含错误端口修复、断开重连、DNS 观察及清理。其结论限定在所记录的测试环境。",
+            "复现从固定源码开始，使用 developer/check_apps.py 运行资料、服务和构建检查；诊断测试由 apps/diagnostics 下的项目脚本执行。验证者应分别记录文档校验、接口检查、目标设备操作和网络测量结果。对手机、热点及路由器的真实硬件验收，应按工程书重新采集对应设备证据。",
+            "论文中不使用服务器实验替代用户宽带测速，也不把接口通过解释为手机或路由器安装完成。这样划定验证对象，可以使后续研究在相同结构下加入新设备、新版本与更长期的观测，而无需重写既有证据的含义。"
+          ]
+        },
+        {
+          "id": "discussion",
+          "title": "7 讨论与结论",
+          "paragraphs": [
+            "该体系的主要价值在于把知识、操作和结论之间的依赖显式化。结构化查询减少代理自行猜测平台适配的负担；工程书保留任务顺序与恢复路径；分阶段诊断为问题定位提供共同语言；持久标识让规则与实现可以被独立引用和比较。",
+            "现阶段的限制主要来自设备异质性和观察规模。系统尚不能穷尽厂商固件差异、热点转发机制或应用内部 DNS 行为；固定目标的小样本不能代表互联网整体性能。未来工作包括积累经用户许可的设备复现案例、评价不同协议分支的任务完成率，以及研究来源变更如何影响适配结论。",
+            "本文把华润网站的核心规则整理为可独立阅读和引用的技术报告，并以专题说明连接具体实现。后续版本应同时说明规则变化、来源变化和验证范围变化，以维持知识服务与设备执行之间的可追溯关系。"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "id": "1",
+          "title": "The FAIR Guiding Principles for scientific data management and stewardship",
+          "authors": "Wilkinson, Mark D., et al.",
+          "year": 2016,
+          "doi": "10.1038/sdata.2016.18",
+          "url": "https://doi.org/10.1038/sdata.2016.18",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Mark D. Wilkinson",
+              "orcid": "0000-0001-6960-357X",
+              "evidence_url": "https://api.crossref.org/works/10.1038/sdata.2016.18",
+              "evidence_type": "publisher_deposited"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "Good enough practices in scientific computing",
+          "authors": "Wilson, Greg; Bryan, Jennifer; Cranston, Karen; Kitzes, Justin; Nederbragt, Lex; Teal, Tracy K.",
+          "year": 2017,
+          "doi": "10.1371/journal.pcbi.1005510",
+          "url": "https://doi.org/10.1371/journal.pcbi.1005510",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Greg Wilson",
+              "orcid": "0000-0001-8659-8979",
+              "evidence_url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510",
+              "evidence_type": "publisher_linked"
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "title": "iLang Protocol Specification (v5.0.4)",
+          "authors": "Zhu, Long Quan",
+          "year": 2026,
+          "doi": "10.5281/zenodo.23824138",
+          "url": "https://doi.org/10.5281/zenodo.23824138",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Zhu, Long Quan",
+              "orcid": "0009-0004-4540-8082",
+              "evidence_url": "https://zenodo.org/api/records/23824138",
+              "evidence_type": "publisher_deposited"
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "title": "Source Book 2.9",
+          "authors": "Zhu, Long Quan",
+          "year": 2026,
+          "url": "https://ilang.ai/source-book/",
+          "relation": "cites"
+        },
+        {
+          "id": "5",
+          "title": "Model Context Protocol Specification (2025-11-25)",
+          "authors": "Model Context Protocol contributors",
+          "year": 2025,
+          "url": "https://modelcontextprotocol.io/specification/2025-11-25",
+          "relation": "cites"
+        },
+        {
+          "id": "6",
+          "title": "Framework for IP Performance Metrics (RFC 2330)",
+          "authors": "Paxson, V.; Almes, G.; Mahdavi, J.; Mathis, M.",
+          "year": 1998,
+          "doi": "10.17487/RFC2330",
+          "url": "https://doi.org/10.17487/RFC2330",
+          "relation": "cites"
+        },
+        {
+          "id": "7",
+          "title": "Privacy Considerations for Internet Protocols (RFC 6973)",
+          "authors": "Cooper, A.; Tschofenig, H.; Aboba, B.; Peterson, J.; Morris, J.; Hansen, M.; Smith, R.",
+          "year": 2013,
+          "doi": "10.17487/RFC6973",
+          "url": "https://doi.org/10.17487/RFC6973",
+          "relation": "cites"
+        },
+        {
+          "id": "8",
+          "title": "Censored Planet: An Internet-wide, Longitudinal Censorship Observatory",
+          "authors": "Raman, Ram Sundara; Shenoy, Prerana; Kohls, Katharina; Ensafi, Roya",
+          "year": 2020,
+          "doi": "10.1145/3372297.3417883",
+          "url": "https://doi.org/10.1145/3372297.3417883",
+          "relation": "cites"
+        },
+        {
+          "id": "9",
+          "title": "Fanqiang Guide: public source snapshot",
+          "authors": "JasperYubo / Fanqiang Guide contributors",
+          "year": 2026,
+          "url": "https://github.com/JasperYubo/Fanqiang-Guide/tree/7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250",
+          "relation": "references"
+        }
+      ],
+      "version": "1.0",
+      "publication_date": "2026-11-04",
+      "doi": "10.5281/zenodo.23961021",
+      "record_url": "https://zenodo.org/records/23961021",
+      "creators": [
+        {
+          "name": "Zhu, Long Quan",
+          "orcid": "0009-0004-4540-8082",
+          "affiliation": "iLang Inc."
+        }
+      ],
+      "license": "MIT",
+      "pdf": "research/fanqiang-guide-system/paper.pdf",
+      "source_commit": "7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250",
+      "abstract_en": "Configuring network tools on personal devices combines knowledge retrieval, compatibility assessment, authorization, execution, and outcome verification. This report documents the Fanqiang Guide system as a workflow comprising evidence-bearing knowledge records, a read-only Model Context Protocol service, executable engineering books, target-device operations, and optional user-submitted diagnostics. The architecture separates public reference services from the user's operational agent, connects stages through provenance and explicit verification scopes, and represents router compatibility as constrained candidate selection. Its diagnostic component uses bounded measurements, a closed report schema, and preview-bound submission. We describe the system model, implementation mapping, and reproducibility entry points, with three companion technical notes covering the execution protocol, package matching, and diagnostic disclosure. This is a methods and implementation report of an existing software system.",
+      "related_publications": [
+        {
+          "slug": "device-setup-protocol",
+          "doi": "10.5281/zenodo.23961041",
+          "relation": "isSupplementedBy"
+        },
+        {
+          "slug": "router-package-matching",
+          "doi": "10.5281/zenodo.23961043",
+          "relation": "isSupplementedBy"
+        },
+        {
+          "slug": "local-diagnostics-consent",
+          "doi": "10.5281/zenodo.23961045",
+          "relation": "isSupplementedBy"
+        }
+      ]
+    },
+    {
+      "slug": "device-setup-protocol",
+      "title": "面向用户自主 AI 的设备配置协议：目标绑定、局部修复与证据验收",
+      "title_en": "A Device Setup Protocol for User-Controlled AI: Target Binding, Bounded Repair, and Evidence-Based Acceptance",
+      "type": "technicalnote",
+      "abstract": "设备配置知识与设备执行能力通常由不同系统提供。知识服务能够返回正确资料，却不能由此推断用户设备已安装成功、流量路径符合要求或故障已经排除。本文以华润站设备配置工程书 v2.1 和梅林工程书 v1.0 为对象，将现有流程建模为目标绑定、来源核对、可恢复变更、局部修复和分项验收的协议。协议以用户自己的 AI 为执行主体，以只读 MCP 为知识来源，把单机成功与共享网络成功分别记录。本文给出过程状态和完成判据，说明它们与现有资源、查询和验证元数据的对应关系。该建模用于约束执行与报告的语义，不构成对任意代理、手机或路由器的通用自动控制实现。",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "1. 问题与研究对象",
+          "paragraphs": [
+            "自然语言教程常把“阅读到方法”“软件显示已连接”和“目标应用能够使用”视为同一件事。实际配置还依赖操作系统、客户端核心、可用控制工具和用户指定的路由策略。远程服务器上的成功请求也不能替代用户手机上的观测。因此，本协议把知识获取、设备操作和验收证据作为三个分别可检查的对象。",
+            "研究对象固定为源码提交 7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250 中的两本工程书及其服务注册实现。报告讨论已有客户端和已有合法配置来源的安装、配置与排错过程，不提出新的代理传输协议。运行时的真实授权来自当前用户任务，公开文档和检索结果本身不产生设备操作权限。"
+          ]
+        },
+        {
+          "id": "related",
+          "title": "2. 方法来源与相关工作",
+          "paragraphs": [
+            "工程书采用 iLang 表达，并声明 Source Book 2.9 为编写方法来源[1,2]。MCP 将资源、工具和提示词作为不同能力提供[3]；本项目用资源交付工程书，用结构化查询与检索提供参考资料，实际设备操作留给用户 AI 已具备的工具。此分工避免把知识接口的可用性解释为设备控制能力。",
+            "FAIR 原则强调机器可处理的元数据、准确关联与来源记录[4]；科学计算实践强调步骤记录和可复现项目组织[5]。本文据此将来源版本、观测时间、变更和恢复记录纳入过程描述。引用这些工作是为了定位设计依据，文档的语法有效性与目标设备的运行有效性仍采用不同验收条件。"
+          ]
+        },
+        {
+          "id": "model",
+          "title": "3. 过程状态与完成判据",
+          "paragraphs": [
+            "本文将一次配置运行抽象为 X=(T,A,C,B,K,E,r)：T 为目标设备及所需应用，A 为授权范围，C 为实际可用控制能力，B 为变更前基线与恢复动作，K 为带版本和来源的参考资料，E 为分项证据，r 为累计修复次数。这是对现有工程书的分析模型，并非公共 MCP 内部已经实现的设备状态机。",
+            "过程依次包含识别、选型、准备、安装或复用、配置、修复、验证和交付。每次状态推进都应同时满足目标绑定和范围约束。修复把观察与假设分开，以能够区分原因的检查为依据，每次只改变一个可恢复因素；工程书默认累计修复上限为三次，跨恢复继续计数。",
+            "令适用且必需的验收集合为 Q，每项状态属于通过、失败、未知或不适用。完成要求 Q 中每项均有目标设备证据且为通过；不适用必须给出范围理由，未知不能移出分母以提高完成率。已经有效的配置可直接进入验证，不要求为了统一步骤重新安装。"
+          ]
+        },
+        {
+          "id": "paths",
+          "title": "4. 单机与共享连接的分支",
+          "paragraphs": [
+            "单机路径检查用户要求的真实内容或应用功能，并结合本地路由或连接证据验证预期直连、代理与 DNS 行为；断开后重连还需重复关键检查。客户端图标、一次 HTTP 状态码或出口地址标签只能支持其本身可观察的事实，不能覆盖所有应用和地址族。",
+            "共享路径先检查已有手机的具体型号、系统支持、控制条件与实际 Wi-Fi 共存行为，再区分显式 HTTP/SOCKS 代理和有文档支持的网关转发。Android VpnService 文档描述的是设备上的 VPN 接口及其应用流量；AOSP 另行定义共享流量的硬件卸载路径[6,7]。据此，本文不从手机自身 VPN 已连接推断热点下游已经经过同一隧道。Apple 将 Personal Hotspot 定义为共享蜂窝数据连接[8]；这同样不能单独证明第三方 VPN 已接管下游流量。",
+            "Surge 官方说明区分需要下游应用支持的显式代理与网关接管方式[9]。HTTP CONNECT 建立隧道，SOCKS5 则分别定义 CONNECT 和 UDP ASSOCIATE[10,11]；代理名称本身不能证明所有应用、DNS 或 UDP 已被覆盖。因此，下游应用、DNS、IPv4、IPv6、所需 UDP 和断线行为均按实际要求独立验收。具体客户端版本和设备条件须由现场证据补全。",
+            "路由器任务转交独立梅林工程书，重新绑定实际路由器与局域网客户端。恢复基线和管理通路先于可能影响网络的变更。刷机、恢复出厂设置或取得新设备权限不是插件配置的默认步骤；配置秘密通过可信的本地输入路径进入目标客户端。"
+          ]
+        },
+        {
+          "id": "implementation",
+          "title": "5. 与现有实现的对应",
+          "paragraphs": [
+            "资源 fanqiang://books/autosetup 和 fanqiang://books/merlin 由 apps/lookup/runtime/setup_book.py 注册，正文分别位于 books/fanqiang-autosetup-v2.1.ilang.md 与 books/fanqiang-merlin-v1.0.ilang.md。query、search、get 提供参考查询；书中 ENTRY、HOW、HOTSPOT、VERIFY_SHARED 和对应 RUBRIC 承载上述过程与判据。",
+            "公开服务能够校验资源摘要并交付完整文档，不能替代目标设备执行器强制完成每个步骤。设备绑定、局部恢复和应用验收需要用户 AI 的工具能力及真实观测；控制能力不足时，协议保留待完成状态，输出最小缺失条件。报告只保留设备别名、版本、时间、证据位置和变更摘要，配置秘密及个人流量日志留在本地。"
+          ]
+        },
+        {
+          "id": "verification",
+          "title": "6. 验证范围与结论",
+          "paragraphs": [
+            "验证分为文档结构、服务接口和执行环境三层。随书证据记录语法与工程书结构检查，以及隔离 Linux 中的接口验证；既有流程实验限定为 IPv4 回环环境中的 SOCKS、Shadowsocks 2022 与 TLS 测试端点，包含单故障修复、重连和清理。它不覆盖真实手机、热点、公共订阅节点、IPv6 或 UDP。",
+            "本说明通过源码、工程书和已附证据核对过程对应关系，未新增物理设备实验。后续复现应先记录设备、系统、客户端和拓扑，再逐项保存适用验收证据。协议的主要贡献是明确“何时可以宣称完成”：参考资料、文档有效性和设备成功各自具有可追踪的证据边界；其实际可靠性仍需跨设备执行研究检验。"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "id": "1",
+          "title": "iLang Protocol Specification (v5.0.4)",
+          "authors": "Zhu, Long Quan",
+          "year": 2026,
+          "doi": "10.5281/zenodo.23824138",
+          "url": "https://doi.org/10.5281/zenodo.23824138",
+          "relation": "cites",
+          "note": "引用固定版本归档；其中包含 Source Book，非独立的硬件验证成果。",
+          "author_identifiers": [
+            {
+              "name": "Zhu, Long Quan",
+              "orcid": "0009-0004-4540-8082",
+              "evidence_url": "https://zenodo.org/api/records/23824138",
+              "evidence_type": "publisher_deposited"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "Source Book 2.9",
+          "authors": "iLang",
+          "year": 2026,
+          "url": "https://ilang.ai/source-book/",
+          "relation": "cites",
+          "note": "具体方法文档；其页面所列 DOI 属于 iLang Protocol Specification 归档。"
+        },
+        {
+          "id": "3",
+          "title": "Model Context Protocol Specification (2025-11-25)",
+          "authors": "Model Context Protocol contributors",
+          "year": 2025,
+          "url": "https://modelcontextprotocol.io/specification/2025-11-25",
+          "relation": "cites"
+        },
+        {
+          "id": "4",
+          "title": "The FAIR Guiding Principles for scientific data management and stewardship",
+          "authors": "Wilkinson, Mark D.; Dumontier, Michel; Aalbersberg, IJsbrand Jan; et al.",
+          "year": 2016,
+          "doi": "10.1038/sdata.2016.18",
+          "url": "https://doi.org/10.1038/sdata.2016.18",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Mark D. Wilkinson",
+              "orcid": "0000-0001-6960-357X",
+              "evidence_url": "https://api.crossref.org/works/10.1038/sdata.2016.18",
+              "evidence_type": "publisher_deposited"
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "title": "Good enough practices in scientific computing",
+          "authors": "Wilson, Greg; Bryan, Jennifer; Cranston, Karen; Kitzes, Justin; Nederbragt, Lex; Teal, Tracy K.",
+          "year": 2017,
+          "doi": "10.1371/journal.pcbi.1005510",
+          "url": "https://doi.org/10.1371/journal.pcbi.1005510",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Greg Wilson",
+              "orcid": "0000-0001-8659-8979",
+              "evidence_url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510",
+              "evidence_type": "publisher_linked"
+            }
+          ]
+        },
+        {
+          "id": "6",
+          "relation": "cites",
+          "title": "VPN: Android VpnService developer guide",
+          "authors": "Google / Android Developers",
+          "year": 2026,
+          "url": "https://developer.android.com/develop/connectivity/vpn",
+          "note": "平台文档，访问于 2026-11-04；用于说明本机 VPN 接口与应用流量范围。"
+        },
+        {
+          "id": "7",
+          "relation": "cites",
+          "title": "Tethering hardware offload",
+          "authors": "Android Open Source Project",
+          "year": 2026,
+          "url": "https://source.android.com/docs/core/data/tethering-offload",
+          "note": "平台文档，访问于 2026-11-04；用于说明共享流量可能采用独立的硬件转发路径。"
+        },
+        {
+          "id": "8",
+          "relation": "cites",
+          "title": "Connect to the Personal Hotspot of an iPhone or iPad",
+          "authors": "Apple",
+          "year": 2026,
+          "url": "https://support.apple.com/en-us/111785",
+          "note": "平台文档，访问于 2026-11-04；官方将 Personal Hotspot 定义为共享蜂窝数据连接。"
+        },
+        {
+          "id": "9",
+          "relation": "cites",
+          "title": "Official Guidance: Understanding Surge",
+          "authors": "Surge Networks Inc.",
+          "year": 2020,
+          "url": "https://manual.nssurge.com/book/understanding-surge/en/",
+          "note": "2020-08-27；用于区分显式代理与网关接管，具体产品版本仍需现场核对。"
+        },
+        {
+          "id": "10",
+          "relation": "cites",
+          "title": "SOCKS Protocol Version 5 (RFC 1928)",
+          "authors": "Leech, M.; Ganis, M.; Lee, Y.; Kuris, R.; Koblas, D.; Jones, L.",
+          "year": 1996,
+          "doi": "10.17487/RFC1928",
+          "url": "https://www.rfc-editor.org/info/rfc1928/",
+          "note": "CONNECT、UDP ASSOCIATE 与协议覆盖范围的直接依据。"
+        },
+        {
+          "id": "11",
+          "relation": "cites",
+          "title": "HTTP Semantics (RFC 9110)",
+          "authors": "Fielding, R.; Nottingham, M.; Reschke, J.",
+          "year": 2022,
+          "doi": "10.17487/RFC9110",
+          "url": "https://www.rfc-editor.org/info/rfc9110/",
+          "note": "第 9.3.6 节定义 CONNECT 隧道；本文用来界定显式 HTTP 代理的验收范围。"
+        }
+      ],
+      "version": "1.0",
+      "publication_date": "2026-11-04",
+      "doi": "10.5281/zenodo.23961041",
+      "record_url": "https://zenodo.org/records/23961041",
+      "creators": [
+        {
+          "name": "Zhu, Long Quan",
+          "orcid": "0009-0004-4540-8082",
+          "affiliation": "iLang Inc."
+        }
+      ],
+      "license": "MIT",
+      "pdf": "research/device-setup-protocol/paper.pdf",
+      "source_commit": "7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250",
+      "abstract_en": "This note formalizes the existing Fanqiang Guide engineering-book workflow around target-device binding, scoped authorization, recoverable changes, bounded repair, and evidence-based acceptance. The user's AI operates the target device, while a read-only MCP service supplies versioned reference material. The model distinguishes document validity, interface behavior, and observed device outcomes, including separate acceptance for shared connections. It specifies completion predicates and maps them to the current engineering books without treating the public MCP as a universal device controller.",
+      "related_publications": [
+        {
+          "slug": "fanqiang-guide-system",
+          "doi": "10.5281/zenodo.23961021",
+          "relation": "isSupplementTo"
+        }
+      ]
+    },
+    {
+      "slug": "router-package-matching",
+      "title": "基于来源约束与未知状态的梅林路由器插件包匹配方法",
+      "title_en": "Evidence-Constrained Package Matching for Merlin Routers with Explicit Unknown States",
+      "type": "technicalnote",
+      "abstract": "路由器插件选包不能仅依据商品型号或处理器位数。相同型号可能运行不同固件分支、内核和用户态，而不同 full/lite 包也具有不同组件范围。本文描述华润站的 fancyss 包匹配方法：把型号、硬件版本、固件与运行环境分别表示，将发行方资料和离线包检查绑定到固定来源快照，并显式返回候选、冲突和未知项。本文给出匹配状态的形式化解释、变体选择与安装前检查的衔接，以及已实现查询与物理设备验证的边界。该方法输出可追溯的安装候选，不把目录命中转换为实机兼容认证。",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "1. 问题与数据边界",
+          "paragraphs": [
+            "“某型号使用某架构包”的简化规则遗漏了至少三类差异：商品型号与安装器读取的设备标识不同，处理器能力与正在运行的用户态不同，固件品牌与软件中心条件不同。把 PRO、V2 或地区后缀省略，也可能把一台设备的来源证据套到另一台设备。",
+            "本文研究固定源码提交 7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250 中的 router_matching.py 与 data/router-compatibility.json。数据区分插件 README、安装脚本、包清单、固件型号目录及其检查时间。fancyss 参考固定提交 b19e82cb6a05e08990a96905353921819d44d134[1,2]，其包清单版本不等同于一个 GitHub Release 标签。"
+          ]
+        },
+        {
+          "id": "sources",
+          "title": "2. 来源分层与相关工作",
+          "paragraphs": [
+            "插件文档说明支持范围，安装脚本提供实际平台门槛，固件发行方的型号目录说明已经观察到的分支与构建；三者不能相互替代。例如 RT-AX86U 与 RT-AX86U Pro 使用不同型号目录[3,4]。KoolCenter 公共镜像还提示部分最新固件隐藏，因此公开历史目录不能被描述为最新版本清单[5]。",
+            "方法采用 FAIR 所强调的相关元数据和来源记录[6]，并沿用可复现计算中的固定版本与处理记录原则[7]。每个证据条目关联来源标识、检查时间及内容摘要。本文将此结构用于可解释选包，不声称现有 JSON 已实现完整的通用 provenance 本体或所有发行方的固件证书校验。"
+          ]
+        },
+        {
+          "id": "formal",
+          "title": "3. 输入约束与多状态判断",
+          "paragraphs": [
+            "令观测输入 O=(m,h,f,b,v,a,k,p,q)，依次表示型号、硬件版本、固件家族、分支、构建、运行架构、内核、变体与协议。型号只匹配明确记录的名称或别名；字符串大小写与部分硬件版本记法可以规范化，但不执行相似型号推断。调用方报告的本地值仍需在设备上核实。",
+            "对每个型号行 r，计算冲突集合 C(r,O) 与未知集合 U(r,O)。明确不符的 ABI、安装器内核门槛、已排除硬件版本或构建所属分支进入冲突集合；未提供或来源未独立确认的事实进入未知集合。缺少整个型号返回 insufficient_evidence，未找到准确型号返回 no_record，后者不等于已经证明不兼容。",
+            "行级结果在有冲突时为 conflict；未解决的安装器型号别名使其为 insufficient_evidence，并不给出可安装包。其余关键未知项存在时为 candidate，关键约束具备时为 matched。实现保留一个明确例外：来源未限定硬件版本时，版本未知仍展示，但不独自阻断候选。因而 matched 的含义必须连同行内 unknowns 和本地预检查读取。"
+          ]
+        },
+        {
+          "id": "variant",
+          "title": "4. 平台包与 full/lite 决策",
+          "paragraphs": [
+            "平台决策依据正在运行的架构和内核，而非芯片宣传参数。当前资料把 RT-AX89X 的特定固件环境记录为 32 位用户态的 qca 路径[1,8]。对于相同内核系列，安装器还可能要求准确设备标识；不能仅凭内核相同就互换 mtk、ipq32 与 ipq64 包。",
+            "full/lite 表示包内容差异，不是性能或安全等级；差异应回到固定版本的构建脚本核对[9]。auto 模式在资料明确为 full 专属的协议上选择 full，在已记录的共同协议上优先给出 lite；未有充分组合证据时保留未知与候选选择。VLESS 的记录不自动证明 VLESS-REALITY 组合，删除某个二进制也不足以证明其他核心没有相关功能。",
+            "每个候选绑定文件名、平台、变体、固定下载来源和摘要，上游版本清单提供发布方包信息[10]。发行方 MD5 可用于发现传输或保存造成的字节不匹配，不能承担需要抗碰撞性的真实性证明；RFC 6151 明确区分这种错误检测用途与数字签名等安全用途[11]。自算 SHA-256 固定本次观察内容，但摘要本身不构成发行方数字签名。运行时对数据结构和包证据格式的检查，也不能把未经信任来源提供的摘要变成真实性证明。"
+          ]
+        },
+        {
+          "id": "workflow",
+          "title": "5. 查询与安装流程的连接",
+          "paragraphs": [
+            "RouterMatcher.query 返回候选、来源、冲突、未知项、快照日期和 local_prechecks；combination_status 保留 not_tested，grants_device_authorization 为 false。服务仅进行离线匹配，不读取路由器、刷写固件或执行包。顶层汇总便于导航，具体安装决定仍需检查所选候选的全部约束。",
+            "梅林工程书继续要求目标设备确认软件中心、JFFS 与临时空间、端口或路由冲突、备份及管理恢复通路。准确候选确定后，才在已经兼容的固件上使用官方离线安装流程。安装器拒绝平台、内核或空间时，应解决已观察的不符条件，不能通过改包名、删平台检查或清空 JFFS 来强行通过。"
+          ]
+        },
+        {
+          "id": "evaluation",
+          "title": "6. 验证方法、限制与结论",
+          "paragraphs": [
+            "查询验证可以离线复现：覆盖准确型号及别名、相似型号隔离、ABI 与内核冲突、固件构建归属、硬件排除、full/lite 协议限制和未知项传播。仓库中的 test_router_matching.py 与 test_mcp_router.py 分别对应匹配逻辑和接口行为；资料更新应重新检查固定来源和包内容后执行相关测试。",
+            "这些检查说明候选生成是否遵守记录的约束，不代表路由器已安装或局域网流量已转发。随书证据明确未进行实体路由器安装、DNS、IPv4、IPv6、UDP 与恢复实验。实际验收应从所需局域网客户端发起，并独立记录断线重连。本文方法通过保留冲突和未知提高可追溯性，其覆盖范围仍取决于已审核来源及目标设备证据。"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "id": "1",
+          "title": "fancyss README at commit b19e82cb6a05e08990a96905353921819d44d134",
+          "authors": "hq450/fancyss contributors",
+          "year": 2026,
+          "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/README.md",
+          "relation": "cites",
+          "note": "固定源码快照；年份表示本报告采用该快照的年份，不推断项目首次发表时间。"
+        },
+        {
+          "id": "2",
+          "title": "fancyss installation script at commit b19e82cb6a05e08990a96905353921819d44d134",
+          "authors": "hq450/fancyss contributors",
+          "year": 2026,
+          "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/fancyss/install.sh",
+          "relation": "cites",
+          "note": "仅作为安装器平台门槛来源。"
+        },
+        {
+          "id": "3",
+          "title": "KoolCenter ASUS Official Mod: RT-AX86U firmware directory",
+          "authors": "KoolCenter",
+          "year": 2026,
+          "url": "https://fw20.koolcenter.com/KoolCenter_ASUS_Official_Mod/RT-AX86U/",
+          "relation": "cites",
+          "note": "来源快照检查于2026-11-03；公开历史镜像，不保证当前最新固件。"
+        },
+        {
+          "id": "4",
+          "title": "KoolCenter ASUS Official Mod: RT-AX86U Pro firmware directory",
+          "authors": "KoolCenter",
+          "year": 2026,
+          "url": "https://fw20.koolcenter.com/KoolCenter_ASUS_Official_Mod/RT-AX86U_Pro/",
+          "relation": "cites",
+          "note": "来源快照检查于2026-11-03；独立型号目录。"
+        },
+        {
+          "id": "5",
+          "title": "KoolCenter firmware download server",
+          "authors": "KoolCenter",
+          "year": 2026,
+          "url": "https://fw.koolcenter.com/",
+          "relation": "cites",
+          "note": "访问年份；首页说明部分最新固件隐藏。"
+        },
+        {
+          "id": "6",
+          "title": "The FAIR Guiding Principles for scientific data management and stewardship",
+          "authors": "Wilkinson, Mark D.; Dumontier, Michel; Aalbersberg, IJsbrand Jan; et al.",
+          "year": 2016,
+          "doi": "10.1038/sdata.2016.18",
+          "url": "https://doi.org/10.1038/sdata.2016.18",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Mark D. Wilkinson",
+              "orcid": "0000-0001-6960-357X",
+              "evidence_url": "https://api.crossref.org/works/10.1038/sdata.2016.18",
+              "evidence_type": "publisher_deposited"
+            }
+          ]
+        },
+        {
+          "id": "7",
+          "title": "Good enough practices in scientific computing",
+          "authors": "Wilson, Greg; Bryan, Jennifer; Cranston, Karen; Kitzes, Justin; Nederbragt, Lex; Teal, Tracy K.",
+          "year": 2017,
+          "doi": "10.1371/journal.pcbi.1005510",
+          "url": "https://doi.org/10.1371/journal.pcbi.1005510",
+          "relation": "cites",
+          "author_identifiers": [
+            {
+              "name": "Greg Wilson",
+              "orcid": "0000-0001-8659-8979",
+              "evidence_url": "https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1005510",
+              "evidence_type": "publisher_linked"
+            }
+          ]
+        },
+        {
+          "id": "8",
+          "title": "KoolCenter ASUS Official Mod: RT-AX89X firmware directory",
+          "authors": "KoolCenter",
+          "year": 2026,
+          "url": "https://fw20.koolcenter.com/KoolCenter_ASUS_Official_Mod/RT-AX89X/",
+          "relation": "cites",
+          "note": "来源快照检查于2026-11-03；运行架构依据同时参考固定 fancyss 型号行。"
+        },
+        {
+          "id": "9",
+          "relation": "cites",
+          "title": "fancyss build script at commit b19e82cb6a05e08990a96905353921819d44d134",
+          "authors": "hq450 and fancyss contributors",
+          "year": 2026,
+          "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/build.sh",
+          "note": "固定上游源码快照，用于核对平台与 full/lite 打包内容。"
+        },
+        {
+          "id": "10",
+          "relation": "cites",
+          "title": "fancyss package version manifest at commit b19e82cb6a05e08990a96905353921819d44d134",
+          "authors": "hq450 and fancyss contributors",
+          "year": 2026,
+          "url": "https://github.com/hq450/fancyss/blob/b19e82cb6a05e08990a96905353921819d44d134/packages/version.json.js",
+          "note": "固定上游包清单，记录版本、文件和发布方摘要。"
+        },
+        {
+          "id": "11",
+          "relation": "cites",
+          "title": "Updated Security Considerations for the MD5 Message-Digest and the HMAC-MD5 Algorithms (RFC 6151)",
+          "authors": "Turner, S.; Chen, L.",
+          "year": 2011,
+          "doi": "10.17487/RFC6151",
+          "url": "https://www.rfc-editor.org/info/rfc6151/",
+          "note": "MD5 可用于非对抗性的错误检测，不能承担需要抗碰撞性的数字签名用途。"
+        }
+      ],
+      "version": "1.0",
+      "publication_date": "2026-11-04",
+      "doi": "10.5281/zenodo.23961043",
+      "record_url": "https://zenodo.org/records/23961043",
+      "creators": [
+        {
+          "name": "Zhu, Long Quan",
+          "orcid": "0009-0004-4540-8082",
+          "affiliation": "iLang Inc."
+        }
+      ],
+      "license": "MIT",
+      "pdf": "research/router-package-matching/paper.pdf",
+      "source_commit": "7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250",
+      "abstract_en": "This note describes source-constrained matching of fancyss packages for Merlin-related router environments. Model identity, hardware revision, firmware family and branch, runtime architecture, kernel, package variant, and protocol requirements are represented separately. The implementation returns candidates, conflicts, and unknowns tied to source snapshots and package evidence. We explain full/lite selection and the transition from a package candidate to local installation checks. The result is an auditable matching method rather than a claim of physical-device certification.",
+      "related_publications": [
+        {
+          "slug": "fanqiang-guide-system",
+          "doi": "10.5281/zenodo.23961021",
+          "relation": "isSupplementTo"
+        }
+      ]
+    },
+    {
+      "slug": "local-diagnostics-consent",
+      "title": "本地网络诊断的有限测量与主动提交协议",
+      "title_en": "A Protocol for Bounded Local Network Measurement and User-Initiated Report Submission",
+      "type": "technicalnote",
+      "abstract": "网络排错需要上下文证据，但完整日志常含节点配置、订阅地址和设备标识。本文描述华润站本地诊断 v0.1.0 的测量与提交协议：在固定目标和资源预算内采样，将可上传数据限制为封闭结构，使用报告摘要绑定预览与提交，并通过回执支持重试和删除。本文区分本地日志辅助脱敏、进入 AI 上下文的结构化报告和远端接收三个边界，给出状态过程及汇总指标定义。实现目的在于获得范围明确的连接观察，而非凭单次故障自动判定审查原因、证明应用代理生效或为报告真实性背书。",
+      "sections": [
+        {
+          "id": "problem",
+          "title": "1. 问题与相关工作",
+          "paragraphs": [
+            "原始日志可以帮助定位故障，也可能携带身份、网络地址和认证材料。仅对日志做字符串替换后上传，仍依赖脱敏规则识别所有敏感形式。因此本实现把辅助日志预览与报告传输分开：日志全文始终不属于上传数据结构，报告仅容纳预先定义的测量和状态字段。",
+            "RFC 6973 将数据最小化和用户参与作为隐私设计的重要考虑[1]；RFC 2330 强调网络测量的指标定义与观察条件[2]。Censored Planet 展示了多协议、基线和长期观测的审查测量研究路径[3]。本诊断器只提供固定目标的短时本地观察，与这种大规模纵向识别系统具有不同的任务和证据范围。"
+          ]
+        },
+        {
+          "id": "measurement",
+          "title": "2. 有限测量模型",
+          "paragraphs": [
+            "本说明对应源码提交 7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250 中的 apps/diagnostics。令一次测量为 M=(t,T,B,S,L)：t 为开始时间，T 为固定 HTTPS 目标，B 为预算，S 为分阶段样本，L 为限制说明。目标限定为 fanqiang.guide 的诊断接口，不接受用户提供的任意探测网址。",
+            "DNS、TCP、TLS 和 HTTP 每阶段最多三个样本，可选下载最多一个样本且默认关闭。每次 HTTP 响应体累计上限为 10 MiB，包含小型 HTTP 探测；本地会话上限为 20 MiB，一次测量总截止时间为 15 秒。该流量预算不包含 DNS、TCP、TLS 的协议开销，进程调度也可能影响取消的实际时刻。",
+            "样本状态区分 ok、error、timeout、cancelled，未启动阶段保留空数组。TCP 与 HTTP 中位数只使用成功样本；TCP 失败比例以非取消尝试为分母。没有成功下载时速率为 null，失败或缺失不能写为零。下载速率按实际接收字节与持续时间计算，有限响应体测试不等同于链路容量认证。"
+          ]
+        },
+        {
+          "id": "boundary",
+          "title": "3. 数据边界与本地脱敏",
+          "paragraphs": [
+            "report.mjs 对报告字段、枚举、样本数、数值范围、摘要一致性和整体大小进行校验，拒绝未知字段。报告可包含问题类别、采样时间、平台枚举、版本、汇总和预算；不接受任意自由文本、IP、URL、设备名称、序列号、配置或日志全文。这一封闭结构构成上传边界，强于依赖日志脱敏后的残余文本。",
+            "redactText 对常见地址、凭据、订阅、邮箱和路径进行本地辅助替换。原始及替换后的日志全文均不通过 MCP 返回，也不进入提交报告；报告只记录识别到的类别。此设计不等于所有运行环境匿名：网络连接仍会暴露必要连接信息，报告的时间等字段也可能与外部信息关联。",
+            "MCP 客户端仅暴露打开本地页面、查询状态、读取结构化预览和停止四项工具，没有上传工具。diagnostics_preview 会使结构化报告进入用户当前 AI 的上下文，后续处理由该客户端决定；它与提交到华润站是两次不同的数据流转。"
+          ]
+        },
+        {
+          "id": "consent",
+          "title": "4. 预览、提交与恢复过程",
+          "paragraphs": [
+            "本文把本地流程抽象为测量、预览、提交中、已接收、远端删除和本地清理等状态。ui.mjs 在浏览器预览时复制当前报告，按项目约定的确定性 JSON 序列化计算 SHA-256 摘要[4]，并记录报告修订号、随机预览凭证和幂等标识。报告变化会使既有预览失效，MCP 读取预览本身不会授予提交条件。",
+            "提交要求当前报告摘要、修订号和预览凭证一致；本地浏览器界面由用户触发该动作。请求携带 report、idempotency_key 与 consent，其中 consent 包含预览摘要。接收端再次验证结构和摘要，重复的相同请求返回已有回执，不相同的重用请求不能冒充同一次提交。摘要一致只能说明内容绑定，不能从数学上证明真实人类已经阅读或点击。",
+            "本地先保存待确认提交状态，再发起网络请求。连接中断或回执落盘失败时保留状态供相同报告重试。回执包含接收时间、到期时间和删除凭据；删除凭据留在本地回执，不向 AI 展示。远端删除成功后再清理相应本地数据，避免先丢失删除与重试所需信息。"
+          ]
+        },
+        {
+          "id": "implementation",
+          "title": "5. 实现与验证方法",
+          "paragraphs": [
+            "measure.mjs 使用系统路由上的直接 socket，解析结果经过公开地址检查并固定到连接，禁止重定向，保留 TLS 证书校验。它不自动采用系统显式 HTTP/SOCKS 代理，已启用的 TUN 或透明路由仍可能影响路径。DNS 使用系统配置的 DNS 服务器，结果不代表浏览器 DoH、应用内解析或 hosts/NSS 行为。",
+            "collector.mjs 对请求体和速率设限，校验报告后保存至本地数据库，提供最长三十天的保存期限及到期清理。接收确认只说明结构与接收处理完成，不证明客户端测量真实。contract.json 把字段和端点作为可检查合同；代码测试应分别覆盖预算取消、异常地址、摘要失配、重复提交、失败恢复、删除和到期行为。"
+          ]
+        },
+        {
+          "id": "limitations",
+          "title": "6. 讨论与结论",
+          "paragraphs": [
+            "TLS 时长包含新建 TCP 连接，HTTP 时长也包含连接过程；不同阶段不能直接解释为纯网络分层时延。TCP 失败比例不是 ICMP 丢包率，固定目标结果不能外推到所有站点、运营商或长期表现。单次解析或连接失败也不能排除本机设置、服务端状态和测量端限制等其他原因。",
+            "本文是对当前实现和数据合同的技术说明，未新增用户设备测量或多地区实验；Linux 实验结果必须保留 linux_lab 标记，跨平台打包不能替代原生运行验证。协议贡献在于把有限测量、最小上传结构和可恢复的主动提交连接起来。进一步研究可检验不同平台上的重复性与故障区分能力，真实案例公开还需独立的证据与发布流程。"
+          ]
+        }
+      ],
+      "references": [
+        {
+          "id": "1",
+          "title": "Privacy Considerations for Internet Protocols (RFC 6973)",
+          "authors": "Cooper, A.; Tschofenig, H.; Aboba, B.; Peterson, J.; Morris, J.; Hansen, M.; Smith, R.",
+          "year": 2013,
+          "doi": "10.17487/RFC6973",
+          "url": "https://www.rfc-editor.org/info/rfc6973/",
+          "relation": "cites"
+        },
+        {
+          "id": "2",
+          "title": "Framework for IP Performance Metrics (RFC 2330)",
+          "authors": "Paxson, V.; Almes, G.; Mahdavi, J.; Mathis, M.",
+          "year": 1998,
+          "doi": "10.17487/RFC2330",
+          "url": "https://www.rfc-editor.org/info/rfc2330/",
+          "relation": "cites"
+        },
+        {
+          "id": "3",
+          "title": "Censored Planet: An Internet-wide, Longitudinal Censorship Observatory",
+          "authors": "Raman, Ram Sundara; Shenoy, Prerana; Kohls, Katharina; Ensafi, Roya",
+          "year": 2020,
+          "doi": "10.1145/3372297.3417883",
+          "url": "https://doi.org/10.1145/3372297.3417883",
+          "relation": "cites",
+          "note": "相关研究对照；本项目未使用其数据集或实现其规模化识别方法。"
+        },
+        {
+          "id": "4",
+          "relation": "cites",
+          "title": "Secure Hash Standard (SHS), FIPS PUB 180-4",
+          "authors": "National Institute of Standards and Technology",
+          "year": 2015,
+          "doi": "10.6028/NIST.FIPS.180-4",
+          "url": "https://csrc.nist.gov/pubs/fips/180-4/upd1/final",
+          "note": "SHA-256 算法定义；引用标准不表示本实现经过 FIPS 认证。"
+        }
+      ],
+      "version": "1.0",
+      "publication_date": "2026-11-04",
+      "doi": "10.5281/zenodo.23961045",
+      "record_url": "https://zenodo.org/records/23961045",
+      "creators": [
+        {
+          "name": "Zhu, Long Quan",
+          "orcid": "0009-0004-4540-8082",
+          "affiliation": "iLang Inc."
+        }
+      ],
+      "license": "MIT",
+      "pdf": "research/local-diagnostics-consent/paper.pdf",
+      "source_commit": "7bfc3e01e3fcea3866ac1b57e69f5461a2b1b250",
+      "abstract_en": "This note describes the bounded measurement and user-initiated disclosure protocol implemented in Fanqiang local diagnostics v0.1.0. Measurements target an allowlisted endpoint under duration and payload limits. Uploads use a closed report schema, while raw and redacted log text remain local. A canonical report digest binds preview and submission; receipts support idempotent retry, expiration, and deletion. The design distinguishes local measurement, disclosure to an AI client, and submission to the collector, with explicit definitions of summary metrics and inference limits.",
+      "related_publications": [
+        {
+          "slug": "fanqiang-guide-system",
+          "doi": "10.5281/zenodo.23961021",
+          "relation": "isSupplementTo"
+        }
+      ]
+    }
+  ]
+}
