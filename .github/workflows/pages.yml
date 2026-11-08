@@ -6,6 +6,7 @@ on:
     paths:
       - 'apps/pages/**'
       - '.github/workflows/pages.yml'
+      - 'developer/check_pages_seo.py'
   workflow_dispatch:
 
 permissions:
@@ -36,6 +37,7 @@ jobs:
           test -s apps/pages/index.html
           test -s apps/pages/style.css
           node --check apps/pages/script.js
+          python3 developer/check_pages_seo.py
       - name: 配置 GitHub Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: 上传独立项目入口
