@@ -4,7 +4,7 @@
 
 **310 条工具与知识记录 · MCP 2.1.0 · 两本设备工程书**
 
-[打开官网](https://fanqiang.guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
+[打开官网](https://fanqiang.guide/) ｜ [GitHub 项目页](https://jasperyubo.github.io/Fanqiang-Guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
 
 ## 你想做什么
 
