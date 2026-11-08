@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Fanqiang Guide 开源项目入口：按设备查找工具与资料，连接知识 MCP，阅读完整 iLang 工程书和六篇研究报告。">
-  <meta name="theme-color" content="#172d4a">
+  <meta name="theme-color" content="#f5f5f7">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Fanqiang Guide · 工具、路由器与 AI 配置参考">
   <meta property="og:description" content="按设备找工具，把完整工程书交给自己的 AI，继续安装、配置与排错。">
@@ -36,12 +36,25 @@
     <section class="hero">
       <div class="wrap hero-grid">
         <div class="hero-copy">
-          <p class="eyebrow">FANQIANG GUIDE / 开源项目</p>
+          <p class="eyebrow">Fanqiang Guide</p>
           <h1>让自己的 AI<br><span>帮你配好设备</span></h1>
           <p class="hero-description">按设备查工具、核对公开来源，把完整工程书交给自己的 AI，继续安装、配置与排错。</p>
           <div class="hero-actions">
             <a class="button button-white" href="https://fanqiang.guide/ai/#device-setup">进入官网，开始配置 <span aria-hidden="true">↗</span></a>
             <a class="button button-outline" href="#devices">先找适合的工具 <span aria-hidden="true">↓</span></a>
+          </div>
+
+          <div class="device-scene" aria-hidden="true">
+            <div class="scene-glow"></div>
+            <div class="laptop">
+              <div class="laptop-lid"><div class="laptop-screen">
+                <div class="screen-top"><span class="mini-brand">F</span><span>Fanqiang Guide</span><span class="screen-menu">工具 · 工程书 · 来源</span></div>
+                <div class="screen-main"><span class="screen-eyebrow">从你的设备开始</span><strong>把复杂的配置，<br>交给自己的 AI。</strong><div class="screen-tiles"><span><i>01</i>查资料</span><span><i>02</i>读工程书</span><span><i>03</i>做验证</span></div></div>
+              </div></div>
+              <div class="laptop-base"></div>
+            </div>
+            <div class="phone"><div class="phone-camera"></div><div class="phone-screen"><span class="phone-symbol">F</span><span class="phone-caption">你的设备。<br>你的 AI。</span><div class="phone-line"></div><div class="phone-line short"></div><span class="phone-chip">连接知识 MCP</span></div><div class="phone-home"></div></div>
+            <div class="router"><div class="router-top"></div><div class="router-front"><span>GUIDE</span><i></i></div></div>
           </div>
           <dl class="project-facts">
             <div><dt>工具与知识记录</dt><dd>310<span> 条</span></dd></div>
@@ -49,7 +62,11 @@
             <div><dt>研究报告</dt><dd>6<span> 篇</span></dd></div>
           </dl>
         </div>
-        <aside class="start-guide" aria-labelledby="start-heading">
+
+      </div>
+    </section>
+
+        <section class="start-guide wrap" aria-labelledby="start-heading">
           <p class="eyebrow">从你的设备开始</p>
           <h2 id="start-heading">有资料，也有下一步</h2>
           <ol class="steps">
@@ -58,24 +75,22 @@
             <li><span class="step-number" aria-hidden="true">03</span><div><h3>在目标设备上配置与验证</h3><p>由有设备操作权限的 AI 执行，再检查实际访问与重新连接。</p></div></li>
           </ol>
           <a class="light-link" href="https://fanqiang.guide/">浏览官网的全部指南 <span aria-hidden="true">→</span></a>
-        </aside>
-      </div>
-    </section>
+        </section>
 
     <section class="section wrap" id="devices" aria-labelledby="devices-heading">
       <div class="section-heading">
-        <div><p class="eyebrow">01 / 按设备浏览</p><h2 id="devices-heading">先找到你的设备</h2></div>
+        <div><p class="eyebrow">适合你的每一台设备</p><h2 id="devices-heading">先找到你的设备</h2></div>
         <p>进入开源资料库，查看工具用途、来源与适用条件。</p>
       </div>
       <div class="device-grid">
-        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#windows"><div><h3>Windows</h3><p>v2rayN · Clash Verge Rev · Hiddify</p></div><span aria-hidden="true">↗</span></a>
-        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#android"><div><h3>Android 安卓</h3><p>v2rayNG · FlClash · Karing</p></div><span aria-hidden="true">↗</span></a>
-        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#ios"><div><h3>iPhone / iPad</h3><p>Shadowrocket · Quantumult X · Surge</p></div><span aria-hidden="true">↗</span></a>
-        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#macos"><div><h3>macOS</h3><p>Clash Verge Rev · v2rayN · Surge</p></div><span aria-hidden="true">↗</span></a>
-        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#linux"><div><h3>Linux</h3><p>v2rayN · FlClash · Hiddify</p></div><span aria-hidden="true">↗</span></a>
-        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#merlin"><div><h3>华硕与梅林路由器</h3><p>型号、固件分支、fancyss 与安装条件</p></div><span aria-hidden="true">↗</span></a>
-        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#openwrt"><div><h3>OpenWrt 路由器</h3><p>OpenClash · PassWall2 · Nikki</p></div><span aria-hidden="true">↗</span></a>
-        <a class="device-link device-link-all" href="https://github.com/JasperYubo/Fanqiang-Guide/blob/main/CATALOG.md"><div><h3>查看完整工具目录</h3><p>客户端、核心、协议、DNS 与分流规则</p></div><span aria-hidden="true">→</span></a>
+        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#windows"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="5" width="24" height="17" rx="2"/><path d="M1 26h30M12 26h8"/></svg><div><h3>Windows</h3><p>v2rayN · Clash Verge Rev · Hiddify</p></div><span aria-hidden="true">↗</span></a>
+        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#android"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="2" width="16" height="28" rx="4"/><path d="M13 6h6M14 26h4"/></svg><div><h3>Android 安卓</h3><p>v2rayNG · FlClash · Karing</p></div><span aria-hidden="true">↗</span></a>
+        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#ios"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="19" height="26" rx="3"/><rect x="20" y="12" width="10" height="18" rx="2"/></svg><div><h3>iPhone / iPad</h3><p>Shadowrocket · Quantumult X · Surge</p></div><span aria-hidden="true">↗</span></a>
+        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#macos"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="26" height="20" rx="3"/><path d="M16 23v6M10 29h12"/></svg><div><h3>macOS</h3><p>Clash Verge Rev · v2rayN · Surge</p></div><span aria-hidden="true">↗</span></a>
+        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#linux"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="26" height="24" rx="3"/><path d="m8 11 5 5-5 5M17 21h7"/></svg><div><h3>Linux</h3><p>v2rayN · FlClash · Hiddify</p></div><span aria-hidden="true">↗</span></a>
+        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#merlin"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="17" width="26" height="12" rx="3"/><path d="M8 17V5M24 17V5M8 23h1M13 23h1M18 23h6"/></svg><div><h3>华硕与梅林路由器</h3><p>型号、固件分支、fancyss 与安装条件</p></div><span aria-hidden="true">↗</span></a>
+        <a class="device-link" href="https://github.com/JasperYubo/Fanqiang-Guide#openwrt"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="17" width="26" height="12" rx="3"/><path d="M8 17V8M24 17V8M11 5a8 8 0 0 1 10 0M14 8a3 3 0 0 1 4 0M8 23h1M13 23h11"/></svg><div><h3>OpenWrt 路由器</h3><p>OpenClash · PassWall2 · Nikki</p></div><span aria-hidden="true">↗</span></a>
+        <a class="device-link device-link-all" href="https://github.com/JasperYubo/Fanqiang-Guide/blob/main/CATALOG.md"><svg class="device-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="10" height="10" rx="2"/><rect x="19" y="3" width="10" height="10" rx="2"/><rect x="3" y="19" width="10" height="10" rx="2"/><path d="M19 24h10M24 19v10"/></svg><div><h3>查看完整工具目录</h3><p>客户端、核心、协议、DNS 与分流规则</p></div><span aria-hidden="true">→</span></a>
       </div>
       <div class="related-links" aria-label="更多指南">
         <a href="https://fanqiang.guide/guides/index.html">工具与教程专题 <span aria-hidden="true">↗</span></a>
@@ -87,7 +102,7 @@
     <section class="ai-section" id="ai" aria-labelledby="ai-heading">
       <div class="wrap section ai-grid">
         <div class="ai-intro">
-          <p class="eyebrow">02 / 接入自己的 AI</p>
+          <p class="eyebrow">为你的 AI，接通知识</p>
           <h2 id="ai-heading">资料可查，<br>工程书可直接读</h2>
           <p>在支持远程 MCP 的 AI 客户端中添加下面的地址，就能检索条目、读取详情，并按设备条件筛选资料。</p>
           <p class="muted">MCP 提供只读知识；安装、配置和验证由你的 AI 在已授权的目标设备上完成。</p>
@@ -114,7 +129,7 @@
 
     <section class="section wrap" id="research" aria-labelledby="research-heading">
       <div class="section-heading">
-        <div><p class="eyebrow">03 / 研究与方法</p><h2 id="research-heading">从工具入口，读到方法依据</h2></div>
+        <div><p class="eyebrow">从实践，到方法</p><h2 id="research-heading">从工具入口，读到方法依据</h2></div>
         <p>六篇独立报告，提供全文、参考文献与 DOI 引用入口。</p>
       </div>
       <ol class="research-list">
