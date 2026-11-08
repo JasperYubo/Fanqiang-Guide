@@ -95,6 +95,7 @@ def main():
     require(p.meta.get('og:title') == p.title == p.meta.get('twitter:title'), 'Search/social titles disagree')
     require(p.meta['description'] == p.meta.get('og:description') == p.meta.get('twitter:description'), 'Search/social descriptions disagree')
     require(p.meta.get('twitter:card') == 'summary_large_image', 'Missing large share card')
+    require(bool(p.meta.get('google-site-verification')), 'Google ownership verification tag missing')
     robots = p.meta.get('robots', '').lower()
     require('noindex' not in robots and 'nofollow' not in robots and 'none' not in robots, 'Indexing/link following blocked')
     require('max-image-preview:large' in robots, 'Large image previews not enabled')
