@@ -36,6 +36,8 @@ TOP_KEYS = {"schema_version", "generated_at", "source_run_at", "freshness_ttl_ho
 ROW_KEYS = {"scope", "status", "knowledge_checked_at", "source_checked_at", "last_attempt_at", "expires_at",
             "repository_status", "release_status", "error_code", "requested_repository", "repository",
             "latest_release", "repository_resolution", "release_resolution"}
+AVAILABILITY_KEYS = {"repository_availability", "installation_source_status", "availability_checked_at", "availability_notice"}
+AVAILABILITIES = {"available", "unavailable", "unknown", "not_monitored"}
 STATUSES = {"current", "stale", "unknown", "unmonitored"}
 
 
@@ -132,7 +134,7 @@ def resolution(value, requested, repository, checked):
 
 def validate_snapshot(data, library, *, now, previous=None, library_sha256=None):
     records = library_records(library)
-    require(isinstance(data, dict) and set(data) == TOP_KEYS and type(data['schema_version']) is int and data['schema_version'] == 1)
+    require(isinstance(data, dict) and set(data) in (TOP_KEYS, TOP_KEYS | {'availability_counts'}) and type(data['schema_version']) is int and data['schema_version'] == 1)
     require(data['scope'] == 'repository_metadata_only' and type(data['freshness_ttl_hours']) is int and data['freshness_ttl_hours'] == TTL_HOURS)
     generated, source_run = timestamp(data['generated_at']), timestamp(data['source_run_at'])
     require(source_run <= generated <= now + timedelta(minutes=5), "future_snapshot")
@@ -143,14 +145,29 @@ def validate_snapshot(data, library, *, now, previous=None, library_sha256=None)
             and all(isinstance(v, str) and HEX.fullmatch(v) for v in hashes.values()))
     if library_sha256 is not None:require(hashes["library"] == library_sha256, "library_hash_mismatch")
     counts = {status: 0 for status in STATUSES};repositories = set()
+    with_availability = 'availability_counts' in data
+    availability_counts = {status: 0 for status in AVAILABILITIES}
+    expected_row_keys = ROW_KEYS | AVAILABILITY_KEYS if with_availability else ROW_KEYS
     for ident, row in data['records'].items():
-        require(isinstance(row, dict) and set(row) == ROW_KEYS and row['scope'] == 'repository_metadata_only')
+        require(isinstance(row, dict) and set(row) == expected_row_keys and row['scope'] == 'repository_metadata_only')
         require(row['status'] in STATUSES and row['knowledge_checked_at'] == records[ident]['verification']['checked_at'], "knowledge_date_changed")
         counts[row['status']] += 1
         source_at, attempt, expiry = [timestamp(row[k], True) for k in ['source_checked_at','last_attempt_at','expires_at']]
         require(all(v is None or v <= source_run for v in [source_at, attempt]), "future_observation")
         require((source_at is None and expiry is None) or (source_at is not None and expiry == source_at + timedelta(hours=TTL_HOURS)), "invalid_expiry")
         require(row['error_code'] is None or isinstance(row['error_code'], str) and ERROR.fullmatch(row['error_code']), "invalid_error_code")
+        if with_availability:
+            expected = ('not_monitored' if row['status'] == 'unmonitored' else
+                        'available' if row['repository_status'] == 'ok' else
+                        'unavailable' if row['repository_status'] == 'unavailable' and row['error_code'] == 'repository_not_found' else 'unknown')
+            installation = {'not_monitored':'not_verified', 'available':'requires_release_verification',
+                            'unavailable':'withheld', 'unknown':'not_verified'}[expected]
+            require(row['repository_availability'] == expected and row['installation_source_status'] == installation,
+                    'availability_evidence_mismatch')
+            require(row['availability_checked_at'] == row['last_attempt_at'], 'availability_time_mismatch')
+            if expected == 'unavailable':text(row['availability_notice'])
+            else:require(row['availability_notice'] is None, 'availability_evidence_mismatch')
+            availability_counts[expected] += 1
         if row['status'] == 'unmonitored':
             if previous is not None and ident in previous['records']:require(previous['records'][ident]['last_attempt_at'] is None, 'successful_evidence_lost')
             require(row['repository_status'] == 'not_monitored' and row['release_status'] == 'not_checked'
@@ -201,6 +218,7 @@ def validate_snapshot(data, library, *, now, previous=None, library_sha256=None)
                     else:
                         require(timestamp(row[key]['checked_at']) >= timestamp(old[key]['checked_at']), "observation_time_regressed")
     require(data['counts'] == counts and type(data['repository_count']) is int and data['repository_count'] == len(repositories), "snapshot_counts_mismatch")
+    if with_availability:require(data['availability_counts'] == availability_counts, 'availability_counts_mismatch')
     if previous is not None:
         require(generated >= timestamp(previous['generated_at']) and source_run >= timestamp(previous['source_run_at']), "snapshot_time_regressed")
     return data

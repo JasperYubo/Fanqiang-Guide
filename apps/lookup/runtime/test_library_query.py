@@ -66,6 +66,17 @@ class StructuredQueryTests(unittest.TestCase):
     def ids(self, params):
         return [row["id"] for row in self.query.query(params)["items"]]
 
+    def test_unavailable_repository_is_withheld_before_pagination_and_can_be_inspected(self):
+        missing = frozenset({"android-client"})
+        default = self.query.query({"kind":"client", "platform":"Android", "limit":1}, unavailable_ids=missing)
+        self.assertNotIn("android-client", [x["id"] for x in default["items"]])
+        inspected = self.query.query({"kind":"client", "platform":"Android", "include_unknown":True, "limit":20}, unavailable_ids=missing)
+        item = next(x for x in inspected["items"] if x["id"] == "android-client")
+        self.assertEqual(item["match_status"], "unknown")
+        self.assertTrue(any(c["reason"] == "original_repository_unavailable_do_not_install" for c in item["criteria"]))
+        recovered = self.query.query({"kind":"client", "platform":"Android"}, unavailable_ids=frozenset())
+        self.assertIn("android-client", [x["id"] for x in recovered["items"]])
+
     def test_scope_does_not_return_protocols_as_installable_tools(self):
         result = self.query.query({"limit": 20})
         self.assertEqual(result["total"], 6)

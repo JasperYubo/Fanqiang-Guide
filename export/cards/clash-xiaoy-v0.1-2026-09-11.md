@@ -13,7 +13,7 @@ clash-xiaoy 是面向 Windows、macOS 的代理客户端；参考目录标注使
 
 ## 核验范围
 
-仅解析参考目录公开首页，未逐一阅读项目官网或仓库，未下载、安装或测试；平台、内核和入口均为目录线索。
+仅解析参考目录公开首页，未逐一阅读项目官网或仓库，未下载、安装或测试；平台、内核和入口均为目录线索。 2026-11-08 复核：原始 GitHub 网页和 API 均返回 404，未发现官方迁移重定向；当前不作为安装或下载入口。保留历史身份与已有版本线索，不认定项目永久删除，不用镜像或同名分支冒充官方恢复。
 
 
 价格、版本、热度等来源快照保留在结构化数据的 source_claims/source_claim_sets 中，未自动提升为已核验结论。
@@ -33,3 +33,4 @@ clash-xiaoy 是面向 Windows、macOS 的代理客户端；参考目录标注使
 - [来源 2 · huarun.win](https://huarun.win/)
 - [来源 3 · huarun.win](https://huarun.win/apps/clash-xiaoy)
 - [来源 4 · github.com](https://github.com/aimy1/clash-xiaoy/releases/tag/v2.7.20)
+- [来源 5 · api.github.com](https://api.github.com/repos/aimy1/clash-xiaoy)

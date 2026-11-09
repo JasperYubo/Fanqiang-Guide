@@ -337,13 +337,16 @@ class LibraryQuery:
         reason = "core_documentation_does_not_verify_client_capability" if hints else "no_direct_capability_evidence"
         return _criterion(field, value, "unknown", reason, hints)
 
-    def query(self, params=None):
+    def query(self, params=None, *, unavailable_ids=frozenset()):
         filters = normalize_query(params)
         matches, unknown_count, not_listed_count = [], 0, 0
         for record in self.candidates:
             if filters["kind"] is not None and record["kind"] != filters["kind"]:
                 continue
             criteria = []
+            if record["id"] in unavailable_ids:
+                criteria.append(_criterion("source_availability", "repository", "unknown",
+                                           "original_repository_unavailable_do_not_install"))
             if filters["kind"]:
                 criteria.append(_criterion("kind", filters["kind"], "matched", "record_kind_classification"))
             if filters["platform"]:

@@ -296,8 +296,12 @@ def run_summary(state):
     run = state.get("last_run")
     if run is None:
         return "暂未取得版本信息。你可以先打开资料页，查看项目介绍和下载来源。"
+    unavailable = sum(row.get("repository_status") == "unavailable" and row.get("error_code") == "repository_not_found"
+                      for row in state["repositories"].values())
+    other_errors = run["error_count"] - unavailable
     return ("最近查询：" + date_text(run.get("checked_at")) + "。本次已更新 " + str(run["ok_count"])
-            + " 个项目的信息，另有 " + str(run["error_count"]) + " 个暂未更新；各项目的版本和日期见下表。")
+            + " 个项目的信息；原始仓库不可访问 " + str(unavailable) + " 个（保留历史资料，暂不作为安装下载入口）"
+            + "；其他查询失败 " + str(other_errors) + " 个。不可访问项目继续定期复查；各项目的版本和日期见下表。")
 
 
 def render(library, manifest, state):

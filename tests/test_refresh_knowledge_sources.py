@@ -98,6 +98,33 @@ class ProjectionTests(unittest.TestCase):
         self.assertIsNone(row["expires_at"])
         self.assertIsNone(row["repository"])
 
+    def test_missing_repository_withholds_installation_but_preserves_previous_release(self):
+        values = fixture(); entry = failed(values[2])
+        entry.update(repository_status="unavailable", release_status="not_checked", error_code="repository_not_found",
+                     repository_last_success_at=OLD, release_last_success_at=OLD)
+        result = self.build(values); row = result["records"]["v2rayng"]
+        self.assertEqual(row["status"], "stale")
+        self.assertEqual(row["repository_availability"], "unavailable")
+        self.assertEqual(row["installation_source_status"], "withheld")
+        self.assertEqual(row["latest_release"]["tag_name"], "2.3.14")
+        self.assertEqual(row["latest_release"]["checked_at"], OLD)
+        self.assertEqual(row["availability_checked_at"], NOW)
+        self.assertEqual(result["availability_counts"]["unavailable"], 1)
+        entry.update(repository_status="ok", release_status="ok", error_code=None,
+                     repository_last_success_at=NOW, release_last_success_at=NOW)
+        values[2]["last_run"].update(ok_count=1,error_count=0)
+        recovered = self.build(values)["records"]["v2rayng"]
+        self.assertEqual(recovered["repository_availability"], "available")
+        self.assertEqual(recovered["installation_source_status"], "requires_release_verification")
+        self.assertIsNone(recovered["availability_notice"])
+
+    def test_network_error_does_not_claim_repository_unavailable(self):
+        values = fixture(); entry = failed(values[2])
+        entry.update(repository_status="error", release_status="not_checked", error_code="network_error")
+        row = self.build(values)["records"]["v2rayng"]
+        self.assertEqual(row["repository_availability"], "unknown")
+        self.assertEqual(row["installation_source_status"], "not_verified")
+
     def test_confirmed_no_release_is_different_from_failed_release(self):
         values = fixture(); entry = values[2]["repositories"][SLUG]
         entry.update(release_status="none", release=None)

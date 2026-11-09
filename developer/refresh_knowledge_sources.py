@@ -63,7 +63,9 @@ def base_record(item):
             "source_checked_at": None, "last_attempt_at": None, "expires_at": None,
             "repository_status": "not_monitored", "release_status": "not_checked", "error_code": None,
             "requested_repository": None, "repository": None, "latest_release": None,
-            "repository_resolution": None, "release_resolution": None}
+            "repository_resolution": None, "release_resolution": None,
+            "repository_availability": "not_monitored", "installation_source_status": "not_verified",
+            "availability_checked_at": None, "availability_notice": None}
 
 
 def project_record(item, slug, entry, as_of):
@@ -98,6 +100,16 @@ def project_record(item, slug, entry, as_of):
         result["status"] = "current" if upstream.is_complete(entry) and entry["error_code"] is None and as_of < expires else "stale"
     elif repo is not None or release is not None:
         result["status"] = "stale"
+    if entry["repository_status"] == "unavailable" and entry["error_code"] == "repository_not_found":
+        result.update(repository_availability="unavailable", installation_source_status="withheld",
+                      availability_checked_at=entry["checked_at"],
+                      availability_notice="原始仓库当前返回 404；历史版本仅作参考，暂不作为安装或下载来源。未确认删除或官方迁移，不以镜像或同名分支替代。")
+    elif entry["repository_status"] == "ok":
+        result.update(repository_availability="available", installation_source_status="requires_release_verification",
+                      availability_checked_at=entry["checked_at"])
+    else:
+        result.update(repository_availability="unknown", installation_source_status="not_verified",
+                      availability_checked_at=entry["checked_at"])
     return result
 
 
@@ -128,7 +140,10 @@ def build_projection(library, manifest, state, *, as_of, input_sha256=None):
     return {"schema_version": 1, "generated_at": stamp(now), "source_run_at": state["last_run"]["checked_at"],
             "freshness_ttl_hours": TTL_HOURS, "scope": SCOPE,
             "input_sha256": input_sha256 or {}, "record_count": len(projected),
-            "repository_count": len(configured), "counts": counts, "records": projected}
+            "repository_count": len(configured), "counts": counts,
+            "availability_counts": {status: sum(row["repository_availability"] == status for row in projected.values())
+                                    for status in ("available", "unavailable", "unknown", "not_monitored")},
+            "records": projected}
 
 
 def atomic_save(path, value):

@@ -150,6 +150,10 @@ def render_record(item, categories):
     category = categories.get(kind, kind)
     fields = [FIELDS.get(k, k) for k in verification.get("reviewed_fields", [])]
     visible = []
+    availability = item.get("availability_review") or {}
+    if availability.get("status") == "unavailable":
+        visible.append(("来源可用性", "原始仓库不可访问；暂不作为安装或下载入口"))
+        visible.append(("入口复核日期", availability.get("checked_at") or "未记录"))
     if item.get("aliases"):
         visible.append(("别名", text(item["aliases"])))
     visible.append(("平台", text(item.get("platforms"))))
@@ -173,7 +177,8 @@ def render_record(item, categories):
     if maintenance.get("status"):
         extra.append(pair("维护记录", maintenance_labels.get(maintenance["status"], maintenance["status"])))
     extra.append(links_pair("项目入口（核对范围见上方）", item.get("official_urls", [])))
-    extra.append(links_pair("代码仓库", [item.get("repository")]))
+    extra.append(links_pair("历史仓库地址（当前不可访问）" if availability.get("status") == "unavailable" else "代码仓库", [item.get("repository")]))
+    extra.append(links_pair("入口复核依据", availability.get("evidence_urls", [])))
     extra.append(links_pair("第一方核对依据", verification.get("evidence_urls", [])))
     extra.append(links_pair("参考来源（不等于独立核验）", item.get("reference_sources", [])))
     extra.append(links_pair("维护记录依据", [maintenance.get("evidence_url")]))

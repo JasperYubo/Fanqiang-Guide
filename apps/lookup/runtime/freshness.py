@@ -71,6 +71,22 @@ class SourceFreshness:
         result["does_not_revalidate_compatibility"] = True
         return result
 
+    def unavailable_ids(self, reviewed_unavailable=None):
+        self.refresh()
+        unavailable = {ident for ident, row in self.records.items()
+                       if row.get("repository_availability") == "unavailable" or
+                       row.get("repository_status") == "unavailable" and row.get("error_code") == "repository_not_found"}
+        # Old successful metadata cannot overturn a later unavailable review.
+        # Date-only reviews conservatively require success after that UTC day.
+        for ident, reviewed_at in (reviewed_unavailable or {}).items():
+            row = self.records.get(ident, {})
+            repository = row.get("repository") or {}
+            success = utc(repository.get("checked_at")) if isinstance(repository, dict) else None
+            reviewed = utc(reviewed_at + "T23:59:59.999999Z" if isinstance(reviewed_at, str) and len(reviewed_at) == 10 else reviewed_at)
+            if row.get("repository_status") != "ok" or success is None or reviewed is None or success <= reviewed:
+                unavailable.add(ident)
+        return frozenset(unavailable)
+
     def public_snapshot(self):
         self.refresh()
         return {**{k: deepcopy(v) for k, v in self.snapshot.items() if k != "records"},

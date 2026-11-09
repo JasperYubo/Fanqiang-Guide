@@ -59,6 +59,7 @@ class SetupReleaseTests(unittest.TestCase):
             path.write_text(path.read_text() + "\n" + rules)
         for target, source in {
             "lookup/source-freshness.json": "data/source-freshness.json",
+            "lookup/library.json": "apps/lookup/runtime/library.json",
             "lookup/router-compatibility.json": "data/router-compatibility.json",
             "site/data/router-compatibility.json": "data/router-compatibility.json",
             "site/data/source-freshness.json": "data/source-freshness.json",
@@ -69,6 +70,12 @@ class SetupReleaseTests(unittest.TestCase):
 
     def test_consistent_package_passes(self):
         self.assertEqual(checks.validate_autosetup_release(ROOT,self.release),[])
+
+    def test_snapshot_must_bind_packaged_library_bytes(self):
+        path=self.release/"lookup/library.json"
+        path.write_bytes(path.read_bytes().replace(b"\n",b"\r\n"))
+        self.assertIn("lookup/source-freshness.json:invalid_or_wrong_library_binding",
+                      checks.validate_autosetup_release(ROOT,self.release))
 
     def test_stale_download_is_rejected(self):
         (self.release/"site/ai/books/fanqiang-autosetup-v2.1.ilang.md").write_text("old book")

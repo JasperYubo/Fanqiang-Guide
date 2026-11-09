@@ -735,7 +735,7 @@
     "verification": {
       "status": "reference_only",
       "checked_at": "2026-09-11",
-      "notes": "候选项目：本次 xtaci/kcptun 的 README 与仓库 API 均返回404，未确认当前第一方入口；不推断项目已永久停用。"
+      "notes": "候选项目：本次 xtaci/kcptun 的 README 与仓库 API 均返回404，未确认当前第一方入口；不推断项目已永久停用。 2026-11-08 复核：原始 GitHub 网页和 API 均返回 404，未发现官方迁移重定向；当前不作为安装或下载入口。保留历史身份与已有版本线索，不认定项目永久删除，不用镜像或同名分支冒充官方恢复。"
     },
     "maintenance": {
       "status": "unknown",
@@ -753,6 +753,19 @@
       "readme_url": null,
       "readme_sha256": null,
       "readme_bytes": null
+    },
+    "availability_review": {
+      "status": "unavailable",
+      "checked_at": "2026-11-08",
+      "scope": "original_repository_access_only",
+      "http_status": 404,
+      "evidence_urls": [
+        "https://github.com/xtaci/kcptun",
+        "https://api.github.com/repos/xtaci/kcptun"
+      ],
+      "replacement_repository": null,
+      "notes": "2026-11-08 复核：原始 GitHub 网页和 API 均返回 404，未发现官方迁移重定向；当前不作为安装或下载入口。保留历史身份与已有版本线索，不认定项目永久删除，不用镜像或同名分支冒充官方恢复。",
+      "observed_at": "2026-11-09T00:05:04.714312+00:00"
     }
   },
   {

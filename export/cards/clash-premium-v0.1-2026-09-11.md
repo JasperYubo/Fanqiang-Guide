@@ -13,7 +13,7 @@ Clash Nyanpasu 所列的历史 Clash Premium 核心条目；所指 Dreamacro 原
 
 ## 核验范围
 
-Nyanpasu README 将 Clash Premium 链接到 Dreamacro/clash；本次该原始 GitHub 入口返回 404，未取得原项目第一方说明。这里只保存历史身份和引用线索，没有把镜像、同名项目或现有 Clash 分支当作 Premium 官方恢复，也没有核验价格、授权、版本或当前可下载性。
+Nyanpasu README 将 Clash Premium 链接到 Dreamacro/clash；本次该原始 GitHub 入口返回 404，未取得原项目第一方说明。这里只保存历史身份和引用线索，没有把镜像、同名项目或现有 Clash 分支当作 Premium 官方恢复，也没有核验价格、授权、版本或当前可下载性。 2026-11-08 复核：原始 GitHub 网页和 API 均返回 404，未发现官方迁移重定向；当前不作为安装或下载入口。保留历史身份与已有版本线索，不认定项目永久删除，不用镜像或同名分支冒充官方恢复。
 
 
 价格、版本、热度等来源快照保留在结构化数据的 source_claims/source_claim_sets 中，未自动提升为已核验结论。
@@ -31,3 +31,4 @@ Nyanpasu README 将 Clash Premium 链接到 Dreamacro/clash；本次该原始 Gi
 
 - [来源 1 · github.com](https://github.com/Dreamacro/clash)
 - [来源 2 · raw.githubusercontent.com](https://raw.githubusercontent.com/libnyanpasu/clash-nyanpasu/HEAD/README.md)
+- [来源 3 · api.github.com](https://api.github.com/repos/Dreamacro/clash)

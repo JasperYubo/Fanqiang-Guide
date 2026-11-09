@@ -38,6 +38,51 @@ class FreshnessTests(unittest.TestCase):
         self.write(self.data)
         self.assertEqual(self.source.for_record("v2rayng")["latest_release"]["tag_name"], "example-v2")
 
+    def test_unavailable_snapshot_recovers_without_restart(self):
+        row = self.data["records"]["v2rayng"]
+        row.update(repository_availability="unavailable", installation_source_status="withheld")
+        self.write(self.data)
+        self.assertEqual(self.source.unavailable_ids(), frozenset({"v2rayng"}))
+        row.update(repository_availability="available", installation_source_status="requires_release_verification")
+        self.data["generated_at"] = "2026-11-02T11:00:00Z"
+        self.write(self.data)
+        self.assertEqual(self.source.unavailable_ids(), frozenset())
+
+    def test_failed_probe_cannot_clear_reviewed_unavailable_source(self):
+        reviewed={"v2rayng":"2026-11-01","missing":"2026-11-01"}
+        row=self.data["records"]["v2rayng"]
+        row.update(repository_status="error",error_code="network_error",repository_availability="unknown")
+        self.write(self.data)
+        self.assertEqual(self.source.unavailable_ids(reviewed),frozenset(reviewed))
+        row.update(repository_status="ok",error_code=None,repository_availability="available",repository={"checked_at":"2026-11-02T11:00:00Z"})
+        self.data["generated_at"]="2026-11-02T11:00:00Z";self.write(self.data)
+        self.assertEqual(self.source.unavailable_ids(reviewed),frozenset({"missing"}))
+
+    def test_old_success_or_missing_timestamp_cannot_override_later_unavailable_review(self):
+        reviewed={"v2rayng":"2026-11-02"}
+        row=self.data["records"]["v2rayng"]
+        row.update(repository_status="ok",repository_availability="available")
+        for checked in (None,"2026-11-01T11:00:00Z","2026-11-02T23:59:59Z"):
+            with self.subTest(checked=checked):
+                row["repository"]={"checked_at":checked};self.write(self.data)
+                self.assertEqual(self.source.unavailable_ids(reviewed),frozenset({"v2rayng"}))
+        row["repository"]={"checked_at":"2026-11-03T00:00:00Z"};self.write(self.data)
+        self.assertEqual(self.source.unavailable_ids(reviewed),frozenset())
+        precise={"v2rayng":"2026-11-03T00:00:00Z"}
+        self.assertEqual(self.source.unavailable_ids(precise),frozenset({"v2rayng"}))
+        row["repository"]={"checked_at":"2026-11-03T00:00:01Z"};self.write(self.data)
+        self.assertEqual(self.source.unavailable_ids(precise),frozenset())
+
+    def test_utc_success_must_follow_exact_review_observation_despite_local_date(self):
+        reviewed={"v2rayng":"2026-11-09T00:05:04.443766+00:00"}
+        row=self.data["records"]["v2rayng"]
+        row.update(repository_status="ok",repository_availability="available")
+        for checked in ("2026-11-09T00:01:00Z","2026-11-09T00:05:04.443766Z"):
+            row["repository"]={"checked_at":checked};self.write(self.data)
+            self.assertEqual(self.source.unavailable_ids(reviewed),frozenset({"v2rayng"}))
+        row["repository"]={"checked_at":"2026-11-09T00:05:04.443767Z"};self.write(self.data)
+        self.assertEqual(self.source.unavailable_ids(reviewed),frozenset())
+
     def test_bad_json_shapes_keep_last_success(self):
         for invalid in ([], "secret-probe", None, {}, {"schema_version": 1, "records": {}},
                 {**self.data, "records": {"v2rayng": {"status": "invented"}}}):

@@ -166,6 +166,14 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
         for target, original in copies.items():
             if (release / target).read_bytes() != (source / original).read_bytes():
                 failures.append(target + ":source_input_mismatch")
+        syncer = runpy.run_path(str(release / "lookup/sync_source_freshness.py"))
+        try:
+            library_bytes = (release / "lookup/library.json").read_bytes()
+            syncer["validate_snapshot"](json.loads((release / "lookup/source-freshness.json").read_bytes()),
+                json.loads(library_bytes), now=datetime.now(timezone.utc),
+                library_sha256=hashlib.sha256(library_bytes).hexdigest())
+        except syncer["SyncError"]:
+            failures.append("lookup/source-freshness.json:invalid_or_wrong_library_binding")
     except (OSError, ValueError, KeyError, TypeError):
         failures.append("autosetup:invalid_release_contract")
     return failures

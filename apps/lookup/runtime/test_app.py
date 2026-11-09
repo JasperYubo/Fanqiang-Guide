@@ -41,6 +41,40 @@ class LookupTests(unittest.TestCase):
     def test_record_count(self):
         self.assertEqual(len(self.library.records), 310)
 
+    def test_unavailable_source_is_withheld_from_query_but_history_and_recovery_remain(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path=Path(directory)/"source-freshness.json"
+            row={"status":"stale", "repository_status":"unavailable", "error_code":"repository_not_found",
+                 "repository_availability":"unavailable", "installation_source_status":"withheld"}
+            snapshot={"schema_version":1,"generated_at":"2026-11-08T00:00:00Z","records":{"clash-xiaoy":row}}
+            path.write_text(json.dumps(snapshot))
+            library=app.Library(Path(__file__).with_name("library.json"),freshness_path=path)
+            with TestClient(app.create_app(library),base_url="http://127.0.0.1:8765") as client:
+                def clients(include_unknown=False):
+                    items=[];offset=0
+                    while offset is not None:
+                        response=client.get("/api/agent/query",params={"kind":"client","include_unknown":str(include_unknown).lower(),"limit":20,"offset":offset})
+                        self.assertEqual(response.status_code,200,response.text)
+                        page=response.json();items.extend(page["items"]);offset=page["next_offset"]
+                    return items
+                self.assertNotIn("clash-xiaoy",[item["id"] for item in clients()])
+                candidate=next(item for item in clients(True) if item["id"]=="clash-xiaoy")
+                self.assertEqual(candidate["match_status"],"unknown")
+                self.assertEqual(candidate["source_freshness"]["installation_source_status"],"withheld")
+                history=library.get({"id":"clash-xiaoy"})["item"]
+                self.assertEqual(history["repository"],"https://github.com/aimy1/clash-xiaoy")
+                self.assertEqual(history["availability_review"]["status"],"unavailable")
+                snapshot["generated_at"]="2026-11-09T00:00:00Z"
+                row.update(repository_status="ok",error_code=None,repository_availability="available",
+                           repository={"checked_at":"2026-11-09T00:01:00Z"},
+                           installation_source_status="requires_release_verification")
+                staged=path.with_suffix(".tmp");staged.write_text(json.dumps(snapshot));staged.replace(path)
+                self.assertNotIn("clash-xiaoy",[item["id"] for item in clients()])
+                row["repository"]["checked_at"]="2026-11-09T00:06:00Z"
+                snapshot["generated_at"]="2026-11-09T00:06:00Z"
+                staged.write_text(json.dumps(snapshot));staged.replace(path)
+                self.assertIn("clash-xiaoy",[item["id"] for item in clients()])
+
     def test_exact_search_first(self):
         self.assertEqual(self.library.search({"query": "V2RAYN"})["items"][0]["id"], "v2rayn")
 

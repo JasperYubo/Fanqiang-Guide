@@ -237,7 +237,9 @@ class Library:
                     "Never send credentials, subscription URLs, serial numbers or private logs.",
                 ]})
             return result
-        result = self.structured_query.query(params)
+        unavailable = self.freshness.unavailable_ids({ident: review.get("observed_at") or review.get("checked_at_utc") or review.get("checked_at")
+            for ident, row in self.records.items() if (review := row.get("availability_review") or {}).get("status") == "unavailable"})
+        result = self.structured_query.query(params, unavailable_ids=unavailable)
         for item in result["items"]:
             item["source_freshness"] = self.freshness.for_record(item["id"])
             item["lookup_url"] = ORIGIN + "/api/agent/item?id=" + item["id"]

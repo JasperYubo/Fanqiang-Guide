@@ -27,7 +27,7 @@ def main():
         row["url"] = f'https://fanqiang.guide/guides/{row["slug"]}.html'
         row["search"] = norm(" ".join([row["title"], row["summary"], *row["keywords"], *[f["question"] for f in row["faq"]]]))
         guides.append(row)
-    fields = ("id", "name", "aliases", "kind", "summary", "platforms", "verification", "compatibility", "maintenance", "official_urls", "source_url", "source_snapshot_url")
+    fields = ("id", "name", "aliases", "kind", "summary", "platforms", "verification", "compatibility", "maintenance", "official_urls", "source_url", "source_snapshot_url", "availability_review")
     library = []
     for source in documents["library"]["items"]:
         row = {key: source.get(key) for key in fields}

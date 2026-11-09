@@ -545,9 +545,12 @@ def build_state(slugs, previous, now, client):
             raise
     results = dict(sorted(results.items()))
     ok = sum(is_complete(row) for row in results.values())
+    unavailable = sum(row["repository_status"] == "unavailable" and row["error_code"] == "repository_not_found"
+                      for row in results.values())
     return {"schema_version": 1,
             "last_run": {"checked_at": now, "repository_count": len(results),
-                         "ok_count": ok, "error_count": len(results) - ok},
+                         "ok_count": ok, "error_count": len(results) - ok,
+                         "unavailable_count": unavailable, "unexpected_error_count": len(results) - ok - unavailable},
             "repositories": results}
 
 
@@ -611,7 +614,8 @@ def main(argv=None):
         failed = [slug + ": " + (row["error_code"] or row["repository_status"])
                   for slug, row in state["repositories"].items() if not is_complete(row)]
         message = (f"Repositories: {run['repository_count']}; complete: {run['ok_count']}; "
-                   f"errors/unavailable: {run['error_count']}; repository checks succeeded: {successes}.")
+                   f"unavailable original repositories: {run['unavailable_count']}; "
+                   f"other errors: {run['unexpected_error_count']}; repository checks succeeded: {successes}.")
         if failed:
             message += "\n\n" + "\n".join("- " + item for item in failed[:10])
             if len(failed) > 10:

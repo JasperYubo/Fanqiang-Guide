@@ -49,7 +49,7 @@ class SyncTests(unittest.TestCase):
     def newer(self):
         data=deepcopy(self.data);data['generated_at']=data['source_run_at']='2026-11-03T01:00:00Z'
         row=data['records']['v2rayng'];row.update(source_checked_at=data['generated_at'],last_attempt_at=data['generated_at'],expires_at='2026-11-05T01:00:00Z')
-        row['repository']['checked_at']=row['latest_release']['checked_at']=data['generated_at']
+        row['repository']['checked_at']=row['latest_release']['checked_at']=row['availability_checked_at']=data['generated_at']
         return data
     def run_sync(self,data=None,response=None,error=None,monotonic=None):
         opener=Opener(response or Response(json.dumps(data or self.data).encode()),error)
@@ -83,13 +83,13 @@ class SyncTests(unittest.TestCase):
         data['input_sha256']['library']=hashlib.sha256(self.library_path.read_bytes()).hexdigest()
         data['records']['new-record']=deepcopy(data['records']['no-repository'])
         data['records']['new-record']['knowledge_checked_at']='2026-11-02'
-        data['record_count']+=1;data['counts']['unmonitored']+=1
+        data['record_count']+=1;data['counts']['unmonitored']+=1;data['availability_counts']['not_monitored']+=1
         result,_=self.run_sync(data);self.assertEqual(result['status'],'updated')
 
     def test_library_id_removal_keeps_time_floor_for_remaining_records(self):
         self.library=self.library[:1];self.library_path.write_text(json.dumps(self.library));data=self.newer()
         data['input_sha256']['library']=hashlib.sha256(self.library_path.read_bytes()).hexdigest()
-        del data['records']['no-repository'];data['record_count']-=1;data['counts']['unmonitored']-=1
+        del data['records']['no-repository'];data['record_count']-=1;data['counts']['unmonitored']-=1;data['availability_counts']['not_monitored']-=1
         result,_=self.run_sync(data);self.assertEqual(result['status'],'updated')
 
     def test_library_upgrade_does_not_bypass_new_hash_or_old_time_floor(self):
@@ -121,6 +121,29 @@ class SyncTests(unittest.TestCase):
 
     def test_first_valid_sync_can_initialize_absent_state(self):
         self.output.unlink();result,_=self.run_sync();self.assertEqual(result['status'],'updated')
+    def test_legacy_snapshot_upgrades_without_discarding_history(self):
+        legacy=deepcopy(self.data);legacy.pop('availability_counts')
+        for row in legacy['records'].values():
+            for key in syncer.AVAILABILITY_KEYS:row.pop(key)
+        self.output.write_text(json.dumps(legacy))
+        result,_=self.run_sync(self.newer())
+        self.assertEqual(result['status'],'updated')
+        self.assertEqual(json.loads(self.output.read_text())['availability_counts']['available'],1)
+
+    def test_availability_cannot_claim_missing_repository_is_installable(self):
+        state=deepcopy(self.state)
+        row=state['repositories']['2dust/v2rayNG']
+        row.update(repository_status='unavailable',release_status='not_checked',error_code='repository_not_found')
+        data=projection_tests.freshness.build_projection(self.library,self.manifest,state,
+            as_of=projection_tests.NOW,input_sha256=self.data['input_sha256'])
+        syncer.validate_snapshot(data,self.library,now=NOW)
+        self.assertEqual(data['records']['v2rayng']['repository_availability'],'unavailable')
+        for field,value in [('repository_availability','available'),('installation_source_status','requires_release_verification'),
+                            ('availability_checked_at',None),('availability_notice',None)]:
+            with self.subTest(field=field):
+                changed=deepcopy(data);changed['records']['v2rayng'][field]=value;self.reject(changed)
+        changed=deepcopy(data);changed['availability_counts']['unavailable']=0;self.reject(changed)
+
     def test_top_or_row_unknown_fields_are_rejected(self):
         for where in ['top','row']:
             with self.subTest(where=where):

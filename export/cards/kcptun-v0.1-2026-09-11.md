@@ -13,7 +13,7 @@
 
 ## 核验范围
 
-候选项目：本次 xtaci/kcptun 的 README 与仓库 API 均返回404，未确认当前第一方入口；不推断项目已永久停用。
+候选项目：本次 xtaci/kcptun 的 README 与仓库 API 均返回404，未确认当前第一方入口；不推断项目已永久停用。 2026-11-08 复核：原始 GitHub 网页和 API 均返回 404，未发现官方迁移重定向；当前不作为安装或下载入口。保留历史身份与已有版本线索，不认定项目永久删除，不用镜像或同名分支冒充官方恢复。
 
 
 价格、版本、热度等来源快照保留在结构化数据的 source_claims/source_claim_sets 中，未自动提升为已核验结论。
@@ -30,3 +30,4 @@
 ## 来源
 
 - [来源 1 · github.com](https://github.com/xtaci/kcptun)
+- [来源 2 · api.github.com](https://api.github.com/repos/xtaci/kcptun)
