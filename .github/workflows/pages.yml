@@ -1,19 +1,21 @@
 name: 发布项目入口到 GitHub Pages
+run-name: linux-sync:${{ inputs.sync_id }}:${{ inputs.source_sha }}
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'apps/pages/**'
-      - 'apps/pages-template/**'
-      - 'apps/site/product_contract.py'
-      - 'apps/lookup/runtime/setup_book.py'
-      - 'apps/lookup/runtime/books/**'
-      - 'developer/sync_pages_contract.py'
-      - 'developer/check_pages_live_contract.py'
-      - '.github/workflows/pages.yml'
-      - 'developer/check_pages_seo.py'
   workflow_dispatch:
+    inputs:
+      source_sha:
+        description: Linux 已验证并部署到主站的完整 Git commit SHA
+        required: true
+        type: string
+      sync_id:
+        description: Linux 持久同步事务 ID（同次重试保持不变）
+        required: true
+        type: string
+      contract_sha256:
+        description: 主站共享产品合同的规范 JSON SHA256
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -33,10 +35,15 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      SYNC_ID: ${{ inputs.sync_id }}
+      CONTRACT_SHA256: ${{ inputs.contract_sha256 }}
     steps:
-      - name: 读取已提交页面
+      - name: 读取 Linux 已验证的精确源码版本
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          ref: ${{ inputs.source_sha }}
           persist-credentials: false
       - name: 校验脚本语法与入口
         run: |
@@ -46,14 +53,18 @@ jobs:
           test -s apps/pages/style.css
           node --check apps/pages/script.js
           python3 developer/check_pages_seo.py
-      - name: 确认主站已发布同一组服务器与 MCP 事实
-        run: python3 developer/check_pages_live_contract.py
+      - name: 核对主站事务与精确版本
+        run: python3 developer/check_pages_live_contract.py --source-sha "$SOURCE_SHA" --sync-id "$SYNC_ID" --contract-sha256 "$CONTRACT_SHA256"
+      - name: 写入可公开核验的 Pages 发布收据
+        run: python3 developer/release_receipt.py pages --source-sha "$SOURCE_SHA" --sync-id "$SYNC_ID" --contract-sha256 "$CONTRACT_SHA256" --public-dir apps/pages
       - name: 配置 GitHub Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: 上传独立项目入口
         uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: apps/pages
+      - name: 发布前再次核对主站仍是同一事务
+        run: python3 developer/check_pages_live_contract.py --source-sha "$SOURCE_SHA" --sync-id "$SYNC_ID" --contract-sha256 "$CONTRACT_SHA256"
       - name: 发布页面
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

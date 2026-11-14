@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 import runpy
 import time
+import importlib.util
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
@@ -18,6 +19,7 @@ MAX_BYTES = 128 * 1024
 REQUEST_TIMEOUT = 8
 MAX_ATTEMPTS = 3
 LIVE_CONTRACT_URL = "https://fanqiang.guide/data/product-contract.json"
+LIVE_RELEASE_URL = "https://fanqiang.guide/data/site-release.json"
 
 
 def expected_contract() -> dict:
@@ -84,14 +86,56 @@ def require_live_contract(expected: dict) -> str:
                        ". Publish the matching main-site release first, then rerun this Pages job. Existing Pages remains deployed.")
 
 
+def receipt_module():
+    spec = importlib.util.spec_from_file_location("pages_release_identity", ROOT / "developer/release_receipt.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def require_live_release(expected: dict, identity: dict, installer_sha256: str) -> str:
+    """Reject stale jobs even when their visible product facts happen to match."""
+    receipt = receipt_module()
+    checked = receipt.identity(identity["source_sha"], identity["sync_id"], identity["contract_sha256"])
+    fingerprint = receipt.contract_digest(expected)
+    if fingerprint != checked["contract_sha256"]:
+        raise ValueError("Dispatch contract_sha256 differs from the requested source")
+    if expected["site_url"] != "https://fanqiang.guide/":
+        raise ValueError("Unexpected main-site origin")
+    expected_release = {**checked, "installer_sha256": installer_sha256}
+    last_error = "not checked"
+    for attempt in range(MAX_ATTEMPTS):
+        suffix = "?v=" + fingerprint + "&source=" + checked["source_sha"] + "&check=" + str(time.time_ns())
+        try:
+            product = fetch_contract(LIVE_CONTRACT_URL + suffix)
+            release = fetch_contract(LIVE_RELEASE_URL + suffix)
+            changed = differences(expected, product)
+            changed += ["release." + key for key in differences(expected_release, release)]
+            if not changed:
+                return fingerprint
+            last_error = "origin has a different release: " + ", ".join(changed[:12])
+        except (HTTPError, URLError, TimeoutError, OSError, ValueError) as error:
+            last_error = type(error).__name__ + ": " + str(error)
+        if attempt + 1 < MAX_ATTEMPTS:
+            time.sleep(1)
+    raise RuntimeError("Pages publication blocked: " + last_error +
+                       ". Continue or reconcile this exact Linux sync transaction; do not publish a stale job.")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.parse_args()
+    parser.add_argument("--source-sha", required=True)
+    parser.add_argument("--sync-id", required=True)
+    parser.add_argument("--contract-sha256", required=True)
+    args = parser.parse_args()
+    receipt = receipt_module()
     try:
-        fingerprint = require_live_contract(expected_contract())
-    except RuntimeError as error:
+        wanted = receipt.identity(args.source_sha, args.sync_id, args.contract_sha256)
+        receipt.verify_checkout(args.source_sha)
+        fingerprint = require_live_release(expected_contract(), wanted, receipt.installer_digest())
+    except (RuntimeError, ValueError) as error:
         raise SystemExit(str(error)) from None
-    print("Main site and Pages shared facts match: " + fingerprint)
+    print("Main site matches the exact Linux sync transaction: " + args.sync_id + ":" + args.source_sha + ":" + fingerprint)
 
 
 if __name__ == "__main__":

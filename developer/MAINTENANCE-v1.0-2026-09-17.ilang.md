@@ -16,7 +16,16 @@
   [MUST] apps/site/public与apps/lookup/public包含继承输入，不能先删除再构建。更换资料时先核验来源，显式更新对应输入与content-invariants-v1.0.json，不通过覆盖预期hash绕过失败。
   [MUST] 修改内容输入后重建对应HTML、Markdown、I-Lang、JSON、gzip、技能digest与Worker知识。修改知识输入时同步审查脚本中的条目数断言；不能让旧索引或旧压缩文件继续发布。
   [MUST] 原有静态资源必须保持可寻址，包含可能被旧缓存引用的历史聊天资产；删除资源属于独立产品兼容性变更。
-  [MUST] CI只运行构建验证，不发布生产，不使用生产凭据。生产发布由项目专用私有运维工具读取新仓库固定commit后完成，记录commit、产物hash、回滚点和上线验证证据。
+  [MUST] 常规CI只运行构建验证，不使用生产凭据。按用户明确授权的LINUX_PRODUCT_SYNC例外，项目专用私有Linux维护器验证固定commit并发布主站后，才可精确dispatch对应Pages工作流；Pages工作流使用自身受限GitHub权限发布该commit的公开页面。记录commit、产物hash、回滚点和上线验证证据。
+
+::MODULE{LINUX_PRODUCT_SYNC}
+  [MUST] 用户已授权服务器助手、MCP及两站关联展示变更由Linux维护器自动构建、测试与同步发布；此机制不依赖用户电脑，不把普通每日上游观测、CATALOG、UPDATES或免费代理日期变化升级为自动部署触发。
+  [MUST] 维护器以持久事务和排他锁串行处理固定source_sha，事务贯穿主站发布、Pages精确工作流及公共产物验收。重启后先恢复未完事务，不在旧Pages任务结果未确认时开始新的主站切换。
+  [MUST] Pages仅接受workflow_dispatch；source_sha、sync_id、contract_sha256必填。使用完整commit检出并核对HEAD，同次重试保留sync_id；首次接管前先核对并收尾既有Pages发布任务，不取消无关业务任务。
+  [MUST] 主站随发布目录输出data/site-release.json及gzip，包含事务身份与实际安装器installer_sha256。Pages构建后和部署前分别核对主站产品合同、事务身份与安装器hash；身份不同的旧任务不得发布。
+  [MUST] Pages输出deployment.json，记录实际source_sha、sync_id、contract_sha256、installer_sha256、run_id、run_attempt和index_sha256。不能把workflow事件head_sha当作实际检出源码；确认精确run成功后，还要读取公共Pages收据与HTML、主站安装器并核对实际字节。
+  [MUST] 发布前保存实时基线和回滚点；保留现网资料、freshness状态、定时器和未涉及内容。失败时按已有授权进行有界重试、重新生成或恢复已验证版本，不绕过检查，不擅自修改认证或扩大业务范围。
+  [MUST] 故障与恢复写入私有证据；成功通知以两站和MCP实际验收为条件。需要外部决策或凭据时明确报告具体阻塞，不声称已自动修复。
 
 ::MODULE{DATA_BOUNDARIES}
   [MUST] 每日Actions更新上游版本观测、CATALOG、UPDATES和免费代理日期页面；不自动扩大人工资料库，不自动部署网站，不自动替换Worker知识。
