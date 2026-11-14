@@ -5,6 +5,12 @@ on:
     branches: [main]
     paths:
       - 'apps/pages/**'
+      - 'apps/pages-template/**'
+      - 'apps/site/product_contract.py'
+      - 'apps/lookup/runtime/setup_book.py'
+      - 'apps/lookup/runtime/books/**'
+      - 'developer/sync_pages_contract.py'
+      - 'developer/check_pages_live_contract.py'
       - '.github/workflows/pages.yml'
       - 'developer/check_pages_seo.py'
   workflow_dispatch:
@@ -34,10 +40,14 @@ jobs:
           persist-credentials: false
       - name: 校验脚本语法与入口
         run: |
+          python3 developer/sync_pages_contract.py --write
+          python3 developer/sync_pages_contract.py --check
           test -s apps/pages/index.html
           test -s apps/pages/style.css
           node --check apps/pages/script.js
           python3 developer/check_pages_seo.py
+      - name: 确认主站已发布同一组服务器与 MCP 事实
+        run: python3 developer/check_pages_live_contract.py
       - name: 配置 GitHub Pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
       - name: 上传独立项目入口

@@ -73,12 +73,15 @@ class ServerPageTests(unittest.TestCase):
 
     def test_installer_is_exact_and_gzip_matches(self):
         self.build()
-        for relative, expected in (("server/install.sh", self.installer),
-                                   ("server/index.md", b"# Server\n")):
+        for relative, expected in (("server/install.sh", self.installer),):
             path = self.public / relative
             self.assertEqual(path.read_bytes(), expected)
             self.assertEqual(gzip.decompress(path.with_name(path.name + ".gz").read_bytes()), expected)
         self.assertTrue((self.public / CSS_PATH.lstrip("/")).is_file())
+        markdown = (self.public / "server/index.md").read_text(encoding="utf-8")
+        self.assertIn(INSTALL_COMMAND, markdown)
+        self.assertIn(ENTRY_URL, markdown)
+        self.assertNotIn("{{", markdown)
 
     def test_handoff_order_copy_text_and_no_secret_form(self):
         raw = enhance_code_blocks(self.build())

@@ -303,3 +303,18 @@ body a:focus-visible,body button:focus-visible,body summary:focus-visible,body i
  .home-v2 .hero{background:#fff;color:#000;border:1px solid #ccc}
  .home-v2 .hero h1,.home-v2 .hero h1 span,.home-v2 .hero-description{color:#000}
 }
+
+/* Keep the expanded product navigation readable before the mobile menu takes over. */
+.header-inner .main-nav{gap:18px;white-space:nowrap}
+@media(max-width:1100px){.header-inner:has(.mobile-nav) .main-nav{display:none}.header-inner:has(.mobile-nav) .mobile-nav{display:block;margin-left:auto}}
+
+@media(min-width:821px) and (max-width:1100px){
+ .header-inner .mobile-nav{position:relative}
+ .header-inner .mobile-nav summary{list-style:none;display:flex;align-items:center;gap:10px;cursor:pointer;border:1px solid var(--guide-line);border-radius:8px;padding:8px 12px;color:var(--guide-ink);font-size:12px;font-weight:600;min-height:44px;background:#fff}
+ .header-inner .mobile-nav summary::-webkit-details-marker{display:none}
+ .header-inner .mobile-nav summary span{font-size:17px;line-height:1}
+ .header-inner .mobile-nav[open] summary span{transform:rotate(45deg)}
+ .header-inner .mobile-nav nav{position:absolute;z-index:50;right:0;top:calc(100% + 8px);width:min(290px,calc(100vw - 32px));padding:9px;border:1px solid var(--guide-line);border-radius:14px;background:#fff;box-shadow:0 20px 36px #10233c20}
+ .header-inner .mobile-nav nav a{display:block;min-height:44px;padding:12px 13px;border-radius:8px;color:var(--guide-ink);font-size:14px}
+ .header-inner .mobile-nav nav a:hover,.header-inner .mobile-nav nav a:focus-visible{background:var(--guide-tint)}
+}

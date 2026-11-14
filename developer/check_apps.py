@@ -207,6 +207,7 @@ def main():
         print(json.dumps({"ok": False, "report": str(output / "report.json"), "error": report["error"]}))
         raise SystemExit(1)
     commands = [
+        ("pages-contract-sync", [sys.executable, str(ROOT / "developer/sync_pages_contract.py"), "--check"], ROOT),
         ("ilang-documents", [sys.executable, str(ROOT / "tools/ilang_grammar_validator.py"), "--lint",
                              str(ROOT / "CLAUDE.md"), str(ROOT / "developer/MAINTENANCE-v1.0-2026-09-17.ilang.md"), "--strict", "--json"], ROOT),
         ("knowledge-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "tests"), "-v"], ROOT),
@@ -240,6 +241,10 @@ def main():
         release = output / "release"
         failures = []
         failures.extend(validate_autosetup_release(ROOT, release))
+        product_spec = importlib.util.spec_from_file_location("shared_product_checks", ROOT / "developer/sync_pages_contract.py")
+        product_checks = importlib.util.module_from_spec(product_spec)
+        product_spec.loader.exec_module(product_checks)
+        failures.extend(product_checks.validate_main_site(release / "site"))
         public_library = json.loads(
             (ROOT / "export/library-v0.1-2026-09-11.json").read_text(encoding="utf-8-sig")
         )

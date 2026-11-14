@@ -1,11 +1,15 @@
 from pathlib import Path
 import json, html, re, gzip, hashlib, tarfile, runpy, shutil, tempfile, sys
+from product_contract import product_facts
 from autosetup_discovery import render_autosetup_callout, autosetup_markdown, CSS_PATH, SCRIPT_PATH
 
 B = Path(__file__).resolve().parent
 P = B / 'public'
 OLD = B.parent / 'lookup' / 'public'
-SITE = 'https://fanqiang.guide'
+PRODUCT = product_facts()
+SITE = PRODUCT['site_url'].rstrip('/')
+PAGES_URL = PRODUCT['pages_url']
+SERVER_ENTRY_URL = PRODUCT['server']['entry_url']
 REPO = 'https://github.com/JasperYubo/Fanqiang-Guide'
 ARCHIVE = REPO + '/tree/main/free-proxies'
 TITLE = '翻墙与科学上网工具指南'
@@ -96,10 +100,10 @@ def srcs(sources):
     return '<p class="sources">来源：' + ' · '.join(f'<a href="{e(s["url"], quote=True)}">{e(s["label"])}</a>' for s in sources) + '</p>' if sources else ''
 
 def header():
-    return f'''<a class="skip-link" href="#main">跳到主要内容</a><header class="site-header"><div class="wrap header-inner"><a class="brand" href="/" aria-label="翻墙指南首页"><img src="/favicon.svg" alt="" width="34" height="34"><span>翻墙指南<small>FANQIANG.GUIDE</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/#topics">工具指南</a><a href="/answers/">常见问题</a><a href="/ai/#device-setup">AI 配置设备</a><a href="/guides/asus-merlin.html">华硕梅林</a><a href="{ARCHIVE}">免费节点来源</a><a class="nav-repo" href="{REPO}">GitHub ↗</a></nav><details class="mobile-nav"><summary>浏览<span aria-hidden="true">＋</span></summary><nav aria-label="手机导航"><a href="/guides/library.html">资料检索</a><a href="/#topics">工具指南</a><a href="/answers/">常见问题</a><a href="/ai/#device-setup">AI 配置设备</a><a href="/guides/asus-merlin.html">华硕梅林</a><a href="{ARCHIVE}">免费节点来源</a><a href="{REPO}">GitHub 仓库 ↗</a></nav></details></div></header>'''
+    return f'''<a class="skip-link" href="#main">跳到主要内容</a><header class="site-header"><div class="wrap header-inner"><a class="brand" href="/" aria-label="翻墙指南首页"><img src="/favicon.svg" alt="" width="34" height="34"><span>翻墙指南<small>FANQIANG.GUIDE</small></span></a><nav class="main-nav" aria-label="主导航"><a href="/#topics">工具指南</a><a href="/answers/">常见问题</a><a href="/ai/">MCP 与工程书</a><a href="{SERVER_ENTRY_URL}">服务器助手</a><a href="/guides/asus-merlin.html">华硕梅林</a><a href="{ARCHIVE}">免费节点来源</a><a class="nav-repo" href="{PAGES_URL}">GitHub 项目页 ↗</a></nav><details class="mobile-nav"><summary>浏览<span aria-hidden="true">＋</span></summary><nav aria-label="手机导航"><a href="/guides/library.html">资料检索</a><a href="/#topics">工具指南</a><a href="/answers/">常见问题</a><a href="/ai/">MCP 与工程书</a><a href="{SERVER_ENTRY_URL}">服务器助手</a><a href="/guides/asus-merlin.html">华硕梅林</a><a href="{ARCHIVE}">免费节点来源</a><a href="{PAGES_URL}">GitHub 项目页 ↗</a><a href="{REPO}">GitHub 仓库 ↗</a></nav></details></div></header>'''
 
 def footer():
-    return f'''<footer class="site-footer"><div class="wrap footer-main"><div><a class="footer-brand" href="/">翻墙指南 <span>FANQIANG.GUIDE</span></a><p>按设备找工具，按问题找答案，沿来源继续阅读。</p></div><nav aria-label="页脚导航"><a href="/guides/index.html">全部指南</a><a href="/answers/">常见问题</a><a href="/ai/#device-setup">AI 配置设备</a><a href="/ai/">AI 资料入口</a><a href="/diagnostics/">可选网络诊断</a><a href="{ARCHIVE}">按日期查来源</a><a href="{REPO}">GitHub</a></nav></div><div class="wrap footer-bottom"><span>提供公开资料与 I-Lang 工程书。</span><a href="{REPO}/issues">反馈资料问题 ↗</a></div></footer>'''
+    return f'''<footer class="site-footer"><div class="wrap footer-main"><div><a class="footer-brand" href="/">翻墙指南 <span>FANQIANG.GUIDE</span></a><p>按设备找工具，按问题找答案，沿来源继续阅读。</p></div><nav aria-label="页脚导航"><a href="/guides/index.html">全部指南</a><a href="/answers/">常见问题</a><a href="/ai/">MCP 与工程书</a><a href="{SERVER_ENTRY_URL}">服务器助手</a><a href="/diagnostics/">可选网络诊断</a><a href="{ARCHIVE}">按日期查来源</a><a href="{PAGES_URL}">GitHub 项目页 ↗</a><a href="{REPO}">GitHub 仓库</a></nav></div><div class="wrap footer-bottom"><span>提供公开资料与 iLang 工程书。</span><a href="{REPO}/issues">反馈资料问题 ↗</a></div></footer>'''
 
 def page(title, description, path, body, schemas, md=None):
     alt = f'<link rel="alternate" type="text/markdown" href="{SITE}{md}">' if md else ''
