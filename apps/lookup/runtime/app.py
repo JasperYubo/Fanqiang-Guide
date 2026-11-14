@@ -20,7 +20,8 @@ import uvicorn
 from setup_book import (BOOK_RESOURCE_URI, BOOK_TITLE, NO_ARGUMENTS_SCHEMA,
     SETUP_BOOK_DESCRIPTION, SETUP_PROMPT_DESCRIPTION, setup_book_manifest, setup_book_payload,
     setup_book_prompt_intro, BOOK_REGISTRY, BOOK_RESOURCE_TEMPLATE,
-    RULES_RESOURCE_URI, answer_rules_text, answer_rules_manifest, book_catalog, book_payload)
+    RULES_RESOURCE_URI, answer_rules_text, answer_rules_manifest, book_catalog, book_payload,
+    SERVER_SETUP_DESCRIPTION, SERVER_PROMPT_DESCRIPTION, SERVER_TITLE, server_setup_prompt_intro)
 
 from library_query import normalize_query, QueryValidationError, QUERY_INPUT_SCHEMA
 
@@ -94,7 +95,7 @@ class Guard:
 
 
 class SetupBookInputGuard:
-    """Reject private input to the two no-argument interfaces before SDK logging.
+    """Reject private input to the no-argument book interfaces before SDK logging.
 
     This narrow preflight does not execute JSON-RPC or validate legacy tools.
     The enclosing Guard supplies the deadline and concurrency/response bounds.
@@ -164,8 +165,8 @@ class SetupBookInputGuard:
                         "id": request.get("id") if valid_id else None,
                         "error": {"code": code, "message": message}})(scope, receive, send)
             if isinstance(params, dict) and (
-                    (request.get("method") == "tools/call" and params.get("name") == "get_setup_book") or
-                    (request.get("method") == "prompts/get" and params.get("name") == "setup_device")):
+                    (request.get("method") == "tools/call" and params.get("name") in ("get_setup_book", "get_server_setup")) or
+                    (request.get("method") == "prompts/get" and params.get("name") in ("setup_device", "setup_server"))):
                 # Validate only the recognized new request envelopes. Invalid
                 # protocol values must not reach SDK error formatting, and an
                 # invalid id must never be reflected as the error response id.
@@ -219,17 +220,19 @@ class SetupBookMCP(FastMCP):
         for tool in tools:
             if tool.name == "query":
                 tool.inputSchema = QUERY_INPUT_SCHEMA
+            elif tool.name == "get_server_setup":
+                tool.inputSchema = NO_ARGUMENTS_SCHEMA
         return tools
 
     async def call_tool(self, name, arguments):
-        if name == "get_setup_book":
+        if name in ("get_setup_book", "get_server_setup"):
             self._no_arguments(arguments)
         elif name == "query":
             normalize_query(arguments)
         return await super().call_tool(name, arguments)
 
     async def get_prompt(self, name, arguments=None):
-        if name == "setup_device":
+        if name in ("setup_device", "setup_server"):
             self._no_arguments(arguments)
         return await super().get_prompt(name, arguments)
 
@@ -292,6 +295,11 @@ def create_app(library, allowed_origins=()):
     def get_setup_book() -> dict[str, Any]:
         return setup_book_payload()
 
+    @mcp.tool(name="get_server_setup", description=SERVER_SETUP_DESCRIPTION,
+              annotations=annotations, structured_output=True)
+    def get_server_setup() -> dict[str, Any]:
+        return book_payload("server")
+
     def resource_reader(book_id):
         def read() -> str:
             return encode(book_payload(book_id)).decode("utf-8")
@@ -299,7 +307,7 @@ def create_app(library, allowed_origins=()):
     for book_id in sorted(BOOK_REGISTRY):
         metadata = book_payload(book_id)
         mcp.resource("fanqiang://books/" + book_id, name="book-" + book_id,
-            title=metadata["title"], description=SETUP_PROMPT_DESCRIPTION,
+            title=metadata["title"], description=SERVER_PROMPT_DESCRIPTION if book_id == "server" else SETUP_PROMPT_DESCRIPTION,
             mime_type="application/json", meta={k: v for k, v in metadata.items() if k != "content"})(
                 resource_reader(book_id))
 
@@ -321,6 +329,15 @@ def create_app(library, allowed_origins=()):
         introduction = setup_book_prompt_intro(metadata)
         return [
             {"role": "user", "content": {"type": "text", "text": introduction}},
+            {"role": "user", "content": {"type": "text", "text": answer_rules_text()}},
+            {"role": "user", "content": {"type": "text", "text": payload["content"]}},
+        ]
+
+    @mcp.prompt(name="setup_server", title=SERVER_TITLE, description=SERVER_PROMPT_DESCRIPTION)
+    def setup_server() -> list[dict[str, Any]]:
+        payload = book_payload("server")
+        return [
+            {"role": "user", "content": {"type": "text", "text": server_setup_prompt_intro(payload)}},
             {"role": "user", "content": {"type": "text", "text": answer_rules_text()}},
             {"role": "user", "content": {"type": "text", "text": payload["content"]}},
         ]

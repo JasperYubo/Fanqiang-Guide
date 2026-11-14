@@ -3,10 +3,10 @@
   "protocolVersion": "2025-11-25",
   "serverInfo": {
     "name": "guide.fanqiang/library-lookup",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "title": "Fanqiang Guide"
   },
-  "description": "Read-only public tool references and device setup engineering books for the user's AI; this service cannot operate devices.",
+  "description": "Read-only public tool references, device setup and own-VPS server assistant engineering books for the user's AI; this service cannot operate devices.",
   "documentationUrl": "https://fanqiang.guide/ai/",
   "transport": {
     "type": "streamable-http",
@@ -95,6 +95,78 @@
       "A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately.",
       "Router package matching is source-backed selection, not tested hardware compatibility; verify actual firmware, ABI and LAN behavior."
     ]
+  },
+  "serverAssistant": {
+    "id": "fanqiang-server",
+    "book_id": "server",
+    "title": "华润服务器助手安装与使用",
+    "version": "1.0",
+    "last_updated": "2026-11-13",
+    "sha256": "90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82",
+    "download_url": "https://fanqiang.guide/ai/books/fanqiang-server-v1.0.ilang.md",
+    "resource_uri": "fanqiang://books/server",
+    "prompt": "setup_server",
+    "executor": "user_agent",
+    "content_type": "text/markdown; charset=utf-8",
+    "byte_length": 5829,
+    "validation": {
+      "document": {
+        "status": "validated",
+        "checks": [
+          "ilang_validate",
+          "ilang_book_check"
+        ],
+        "errors": 0,
+        "warnings": 0,
+        "book_sha256": "90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82",
+        "checked_at": "2026-11-14T01:20:23.085729+00:00"
+      },
+      "service_interface": {
+        "status": "verified",
+        "version": "2.2.0",
+        "scope": "Linux real ASGI JSON-RPC and HTTP transport parity, no-argument privacy guards, pinned resource/prompt/tool content, explicit server intent routing and existing phone/router regressions. Not public production deployment or a new installer run.",
+        "environment": "linux_asgi_and_sdk_loopback",
+        "checked_at": "2026-11-14T01:20:38.888837+00:00",
+        "evidence": {
+          "command": ".venv/bin/python -m unittest discover -s apps/lookup/runtime -p 'test_*.py' -q",
+          "tests": 132,
+          "failures": 0,
+          "server_regression_file": "apps/lookup/runtime/test_server_setup.py"
+        }
+      },
+      "installer_acceptance": {
+        "status": "verified",
+        "evidence": "apps/server/verification/2026-11-14.json",
+        "scope": "One isolated Debian 12 x86_64 installation, real Linux Xray client and PicoClaw/DeepSeek fault repair. Physical phones, ARM and other distributions were not tested."
+      }
+    },
+    "capability_boundaries": [
+      "This knowledge MCP is read-only; the user's authorized AI operates the actual target device.",
+      "The book grants no extra authorization. Respect the active task and required system permissions.",
+      "Credentials, subscription URLs, private device details and logs stay local to the target device.",
+      "Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.",
+      "Installation and huarun chat run on the user-owned authorized VPS over SSH; the public MCP never receives its credentials.",
+      "Server health checks are not proof of actual phone or desktop client connectivity; verify the real client separately."
+    ],
+    "entry_url": "https://fanqiang.guide/server/",
+    "installer_url": "https://fanqiang.guide/server/install.sh",
+    "install_command": "curl -fsSLo huarun-install.sh https://fanqiang.guide/server/install.sh && bash huarun-install.sh",
+    "tool": "get_server_setup",
+    "api_url": "https://platform.deepseek.com",
+    "assistant": {
+      "runtime": "PicoClaw",
+      "runtime_version": "0.3.1",
+      "provider": "DeepSeek",
+      "model": "deepseek-flash",
+      "command": "huarun chat"
+    },
+    "recommended_api_balance": {
+      "amount": 10,
+      "currency": "CNY",
+      "minimum_required": false
+    },
+    "recommended_os": "fresh Debian 12 x86_64",
+    "execution_location": "user_owned_authorized_vps"
   },
   "books": {
     "resource_template": "fanqiang://books/{book_id}",
@@ -222,6 +294,78 @@
           "A phone VPN does not by itself prove tethered clients use that VPN; verify downstream traffic separately.",
           "Router package matching is source-backed selection, not tested hardware compatibility; verify actual firmware, ABI and LAN behavior."
         ]
+      },
+      {
+        "id": "fanqiang-server",
+        "book_id": "server",
+        "title": "华润服务器助手安装与使用",
+        "version": "1.0",
+        "last_updated": "2026-11-13",
+        "sha256": "90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82",
+        "download_url": "https://fanqiang.guide/ai/books/fanqiang-server-v1.0.ilang.md",
+        "resource_uri": "fanqiang://books/server",
+        "prompt": "setup_server",
+        "executor": "user_agent",
+        "content_type": "text/markdown; charset=utf-8",
+        "byte_length": 5829,
+        "validation": {
+          "document": {
+            "status": "validated",
+            "checks": [
+              "ilang_validate",
+              "ilang_book_check"
+            ],
+            "errors": 0,
+            "warnings": 0,
+            "book_sha256": "90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82",
+            "checked_at": "2026-11-14T01:20:23.085729+00:00"
+          },
+          "service_interface": {
+            "status": "verified",
+            "version": "2.2.0",
+            "scope": "Linux real ASGI JSON-RPC and HTTP transport parity, no-argument privacy guards, pinned resource/prompt/tool content, explicit server intent routing and existing phone/router regressions. Not public production deployment or a new installer run.",
+            "environment": "linux_asgi_and_sdk_loopback",
+            "checked_at": "2026-11-14T01:20:38.888837+00:00",
+            "evidence": {
+              "command": ".venv/bin/python -m unittest discover -s apps/lookup/runtime -p 'test_*.py' -q",
+              "tests": 132,
+              "failures": 0,
+              "server_regression_file": "apps/lookup/runtime/test_server_setup.py"
+            }
+          },
+          "installer_acceptance": {
+            "status": "verified",
+            "evidence": "apps/server/verification/2026-11-14.json",
+            "scope": "One isolated Debian 12 x86_64 installation, real Linux Xray client and PicoClaw/DeepSeek fault repair. Physical phones, ARM and other distributions were not tested."
+          }
+        },
+        "capability_boundaries": [
+          "This knowledge MCP is read-only; the user's authorized AI operates the actual target device.",
+          "The book grants no extra authorization. Respect the active task and required system permissions.",
+          "Credentials, subscription URLs, private device details and logs stay local to the target device.",
+          "Retrieval is not evidence that a device was configured. Validation metadata states its exact tested scope.",
+          "Installation and huarun chat run on the user-owned authorized VPS over SSH; the public MCP never receives its credentials.",
+          "Server health checks are not proof of actual phone or desktop client connectivity; verify the real client separately."
+        ],
+        "entry_url": "https://fanqiang.guide/server/",
+        "installer_url": "https://fanqiang.guide/server/install.sh",
+        "install_command": "curl -fsSLo huarun-install.sh https://fanqiang.guide/server/install.sh && bash huarun-install.sh",
+        "tool": "get_server_setup",
+        "api_url": "https://platform.deepseek.com",
+        "assistant": {
+          "runtime": "PicoClaw",
+          "runtime_version": "0.3.1",
+          "provider": "DeepSeek",
+          "model": "deepseek-flash",
+          "command": "huarun chat"
+        },
+        "recommended_api_balance": {
+          "amount": 10,
+          "currency": "CNY",
+          "minimum_required": false
+        },
+        "recommended_os": "fresh Debian 12 x86_64",
+        "execution_location": "user_owned_authorized_vps"
       }
     ]
   },

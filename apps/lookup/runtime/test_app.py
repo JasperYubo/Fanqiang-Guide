@@ -174,7 +174,7 @@ class LookupTests(unittest.TestCase):
     def test_mcp_ping_tools_and_descriptions(self):
         self.assertEqual(self.rpc("ping").json()["result"], {})
         tools = self.rpc("tools/list").json()["result"]["tools"]
-        self.assertEqual({x["name"] for x in tools}, {"search", "get", "query"})
+        self.assertEqual({x["name"] for x in tools}, {"search", "get", "query", "get_server_setup"})
         self.assertTrue(all(x["description"].startswith("::ILANG::v5.0") and x["annotations"]["readOnlyHint"] for x in tools))
 
     def test_mcp_get_and_search(self):
@@ -281,7 +281,7 @@ class LookupTests(unittest.TestCase):
     def test_setup_book_discovery_and_version(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25",
             "capabilities": {}, "clientInfo": {"name": "book-test", "version": "1"}}).json()["result"]
-        self.assertEqual(result["serverInfo"]["version"], "2.1.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.2.0")
         self.assertTrue({"tools", "resources", "prompts"} <= set(result["capabilities"]))
         self.assertIn("fanqiang://books/autosetup", result["instructions"])
         self.assertIn("grants no extra authorization", result["instructions"])
@@ -291,11 +291,11 @@ class LookupTests(unittest.TestCase):
                            "destructiveHint": False, "openWorldHint": False}.items():
             self.assertEqual(tool["annotations"][key], value)
         resources = self.rpc("resources/list").json()["result"]["resources"]
-        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", setup_book.RULES_RESOURCE_URI])
+        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", "fanqiang://books/server", setup_book.RULES_RESOURCE_URI])
         self.assertEqual(resources[0]["_meta"], setup_book.setup_book_manifest())
         self.assertEqual(self.rpc("resources/templates/list").json()["result"]["resourceTemplates"][0]["uriTemplate"], setup_book.BOOK_RESOURCE_TEMPLATE)
         prompts = self.rpc("prompts/list").json()["result"]["prompts"]
-        self.assertEqual([p["name"] for p in prompts], ["setup_device"])
+        self.assertEqual([p["name"] for p in prompts], ["setup_device", "setup_server"])
         self.assertEqual(prompts[0].get("arguments", []), [])
 
     def test_setup_prompt_complete_and_no_execution_authorization(self):
@@ -421,14 +421,14 @@ class LookupTests(unittest.TestCase):
             result = self.rpc("resources/read", {"uri": uri}).json()
             self.assertIn("error", result)
         tools = self.rpc("tools/list").json()["result"]["tools"]
-        self.assertEqual({t["name"] for t in tools}, {"search", "get", "query"})
+        self.assertEqual({t["name"] for t in tools}, {"search", "get", "query", "get_server_setup"})
 
     def test_setup_metadata_exports_match_dynamic_and_do_not_change_records(self):
         spec = self.client.get("/openapi.json").json()
         card = self.client.get("/.well-known/mcp/server-card.json").json()
         health = self.client.get("/api/agent/health").json()
         for metadata in (spec["info"], card["serverInfo"], health):
-            self.assertEqual(metadata["version"], "2.1.0")
+            self.assertEqual(metadata["version"], "2.2.0")
         self.assertEqual(card["version"], "1.0")
         self.assertEqual(card["setupBook"], setup_book.setup_book_manifest())
         self.assertEqual(spec["paths"]["/api/agent/setup-book"]["get"]["parameters"], [])
@@ -460,7 +460,7 @@ class OfficialClientTest(unittest.TestCase):
                         init = await session.initialize()
                         self.assertEqual(init.serverInfo.version, app.VERSION)
                         tools = await session.list_tools()
-                        self.assertEqual({t.name for t in tools.tools}, {"search", "get", "query"})
+                        self.assertEqual({t.name for t in tools.tools}, {"search", "get", "query", "get_server_setup"})
                         found = await session.call_tool("search", {"query":"v2rayN", "limit":1})
                         self.assertFalse(found.isError)
                         self.assertEqual(found.structuredContent["items"][0]["id"], "v2rayn")
@@ -471,11 +471,11 @@ class OfficialClientTest(unittest.TestCase):
                         self.assertFalse(book.isError)
                         self.assertEqual(book.structuredContent, setup_book.setup_book_payload())
                         resource_list = await session.list_resources()
-                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", setup_book.RULES_RESOURCE_URI])
+                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", "fanqiang://books/server", setup_book.RULES_RESOURCE_URI])
                         resource = await session.read_resource(setup_book.BOOK_RESOURCE_URI)
                         self.assertEqual(json.loads(resource.contents[0].text), book.structuredContent)
                         prompt_list = await session.list_prompts()
-                        self.assertEqual([p.name for p in prompt_list.prompts], ["setup_device"])
+                        self.assertEqual([p.name for p in prompt_list.prompts], ["setup_device", "setup_server"])
                         prompt = await session.get_prompt("setup_device")
                         self.assertEqual(prompt.messages[2].content.text, book.structuredContent["content"])
                         with self.assertRaises(McpError) as caught:

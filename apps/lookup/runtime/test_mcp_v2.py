@@ -116,7 +116,7 @@ class MCPV2Tests(unittest.TestCase):
 
     def test_query_discovery_matches_the_strict_schema(self):
         tools = self.rpc("tools/list")["tools"]
-        self.assertEqual({tool["name"] for tool in tools}, {"search", "get", "query"})
+        self.assertEqual({tool["name"] for tool in tools}, {"search", "get", "query", "get_server_setup"})
         tool = next(tool for tool in tools if tool["name"] == "query")
         self.assertEqual(tool["inputSchema"], QUERY_SCHEMA)
         self.assertTrue(tool["annotations"]["readOnlyHint"])

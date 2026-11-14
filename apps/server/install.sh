@@ -7,7 +7,7 @@
 
 
 VERSION="1.0.0"
-DOCS_URL="https://github.com/JasperYubo/Fanqiang-Guide/tree/main/apps/server#readme"
+DOCS_URL="https://fanqiang.guide/server/"
 PICO_VERSION="v0.3.1"
 PICO_SHA_X86="86f0fe84aa55279352edbe13adfca484a03bcf189e2030b25e34628089069c3f"
 PICO_SHA_ARM="e78ab0de05d000698ff8b32458e71cb3134e52e9eaf540e3323a72e9914de060"

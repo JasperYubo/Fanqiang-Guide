@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "book_id": "server",
+  "book_version": "1.0",
+  "edition_date": "2026-11-13",
+  "edition_timezone": "America/New_York",
+  "book_file": "fanqiang-server-v1.0.ilang.md",
+  "book_sha256": "90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82",
+  "book_bytes": 5829,
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "book_sha256": "90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82",
+      "checked_at": "2026-11-14T01:20:23.085729+00:00"
+    },
+    "service_interface": {
+      "status": "verified",
+      "version": "2.2.0",
+      "scope": "Linux real ASGI JSON-RPC and HTTP transport parity, no-argument privacy guards, pinned resource/prompt/tool content, explicit server intent routing and existing phone/router regressions. Not public production deployment or a new installer run.",
+      "environment": "linux_asgi_and_sdk_loopback",
+      "checked_at": "2026-11-14T01:20:38.888837+00:00",
+      "evidence": {
+        "command": ".venv/bin/python -m unittest discover -s apps/lookup/runtime -p 'test_*.py' -q",
+        "tests": 132,
+        "failures": 0,
+        "server_regression_file": "apps/lookup/runtime/test_server_setup.py"
+      }
+    },
+    "installer_acceptance": {
+      "status": "verified",
+      "evidence": "apps/server/verification/2026-11-14.json",
+      "scope": "One isolated Debian 12 x86_64 installation, real Linux Xray client and PicoClaw/DeepSeek fault repair. Physical phones, ARM and other distributions were not tested."
+    }
+  },
+  "validation_results": {
+    "ilang_validate": {
+      "mode": "raw",
+      "counts": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      }
+    },
+    "ilang_book_check": {
+      "pass": true,
+      "A1": {
+        "item": "the book opens and closes with the marker",
+        "expect": 2,
+        "found": 2,
+        "pass": true
+      },
+      "A2": {
+        "item": "the grammar validator reports zero errors in strict mode",
+        "errors": 0,
+        "warnings": 0,
+        "pass": true
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      },
+      "note": "A3, whether the book does the tutorial's job and nothing else, is for a person to decide."
+    }
+  },
+  "sources": [
+    {
+      "path": "apps/server/install.sh",
+      "supports": "Canonical installer, DeepSeek model check, embedded PicoClaw instructions and constrained huarun command gate."
+    },
+    {
+      "path": "apps/server/verification/2026-11-14.json",
+      "sha256": "a93151c0243b41b8bd342af3cc2c68935f2a6b376d94f11af4522b58d1ccd960",
+      "supports": "One isolated Debian 12 x86_64 installation, real Linux client and model-assisted fault repair."
+    }
+  ],
+  "editorial_limits": [
+    "The public MCP provides a book, not target-server access or installation.",
+    "The user enters API credentials only in the target server terminal.",
+    "10 CNY is the recommended starting API balance, not a provider minimum or a promised duration."
+  ]
+}

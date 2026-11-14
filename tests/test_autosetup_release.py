@@ -32,7 +32,7 @@ class SetupReleaseTests(unittest.TestCase):
         for relative in ("lookup/server-card.json","site/.well-known/mcp/server-card.json"):
             p=self.release/relative
             p.parent.mkdir(parents=True,exist_ok=True)
-            p.write_text(json.dumps({"serverInfo":{"version":"2.1.0"},"capabilities":{"tools":{},"resources":{},"prompts":{}},"setupBook":self.manifest,"books":contract["book_catalog"](),"answerRules":contract["answer_rules_manifest"]()}))
+            p.write_text(json.dumps({"serverInfo":{"version":"2.2.0"},"capabilities":{"tools":{},"resources":{},"prompts":{}},"setupBook":self.manifest,"serverAssistant":contract["book_manifest"]("server"),"books":contract["book_catalog"](),"answerRules":contract["answer_rules_manifest"]()}))
 
 
         def put(relative, raw):

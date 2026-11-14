@@ -59,7 +59,7 @@ class RouterTransportTests(unittest.TestCase):
 
     def test_router_discovery_reuses_query(self):
         tools=self.rpc("tools/list",{})["tools"]
-        self.assertEqual({t["name"] for t in tools},{"search","get","query"})
+        self.assertEqual({t["name"] for t in tools},{"search","get","query","get_server_setup"})
         query=next(t for t in tools if t["name"]=="query")
         self.assertTrue(query["annotations"]["readOnlyHint"])
         self.assertFalse(query["inputSchema"]["additionalProperties"])
@@ -105,9 +105,9 @@ class RouterTransportTests(unittest.TestCase):
             response=self.rpc_response("tools/call",{"name":"query","arguments":{"router_model":value}})
             self.assertEqual(response.json()["error"]["code"],-32602)
 
-    def test_both_books_are_retrievable_with_exact_content(self):
+    def test_registered_books_are_retrievable_with_exact_content(self):
         catalog=self.client.get("/api/agent/books").json()
-        self.assertEqual({b["book_id"] for b in catalog["books"]},{"autosetup","merlin"})
+        self.assertEqual({b["book_id"] for b in catalog["books"]},{"autosetup","merlin","server"})
         for ident in ("autosetup","merlin"):
             expected=setup_book.book_payload(ident)
             response=self.client.get("/api/agent/books/"+ident)

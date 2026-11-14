@@ -486,15 +486,19 @@ def main():
     from research_pages import build_research_pages, add_research_discovery
     build_research_pages(directory / "public", directory.parents[1] / "research/publications.json",
                          base["page"])
+    from server_assistant import build_server_page, add_server_discovery
+    build_server_page(directory / "public", base["page"], directory.parent / "server")
     base["inject_ga4_into_final_html"]()
     guard = runpy.run_path(str(directory.parent / "worker/frontend/patch_external_browser.py"))["INJECTION"]
     for target in [*(directory / "public/answers").rglob("*.html"),
-                   *(directory / "public/research").rglob("*.html")]:
+                   *(directory / "public/research").rglob("*.html"),
+                   *(directory / "public/server").rglob("*.html")]:
         content = target.read_text(encoding="utf-8")
         if "external-browser-v1.0.js" not in content:
             write(directory / "public", target.relative_to(directory / "public").as_posix(), content.replace("<head>", "<head>" + guard, 1))
     from reader_layout import apply_reader_layout
     apply_reader_layout(directory / "public", base["header"](), base["footer"]())
+    add_server_discovery(directory / "public")
     add_research_discovery(directory / "public")
     from guide_research_links import add_ai_method_reports, load_report_index
     add_ai_method_reports(directory / "public", load_report_index(directory.parents[1] / "research/publications.json"))

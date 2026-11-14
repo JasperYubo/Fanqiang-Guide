@@ -22,15 +22,26 @@ def verify_final_site(site: Path) -> None:
         'id="guide-query-form"', 'id="chat-ask"', 'id="chat-panel"',
         'id="chat-flow-stage"', 'id="chat-artifact"',
         'src="/assets/chat-v1.2.js"',
-        'src="/assets/external-browser-v1.0.js"',
+        'src="/assets/external-browser-v1.0.js"', 'id="server-home"',
     ):
         if home.count(marker) != 1:
             raise RuntimeError(f"Final site is missing its chat UI or browser guard: {marker}")
     for relative in ("index.html", "sitemap.xml", "assets/chat-v1.2.js", "assets/chat-v1.2.css",
-                     "assets/external-browser-v1.0.js", "assets/external-browser-v1.0.css"):
+                     "assets/external-browser-v1.0.js", "assets/external-browser-v1.0.css",
+                     "server/index.html", "server/index.md", "server/install.sh",
+                     "assets/server-assistant-v1.0-2026-11-13.css"):
         file = site / relative
         if not file.is_file() or gzip.decompress(file.with_name(file.name + ".gz").read_bytes()) != file.read_bytes():
             raise RuntimeError(f"Final site asset is missing or stale: {relative}")
+
+    server = (site / "server/index.html").read_text(encoding="utf-8")
+    for marker in ('href="https://fanqiang.guide/server/"',
+                   'https://fanqiang.guide/server/install.sh', 'data-copy-code',
+                   'get_server_setup', 'setup_server', 'fanqiang://books/server'):
+        if marker not in server:
+            raise RuntimeError(f"Server installation page is incomplete: {marker}")
+    if (site / "server/install.sh").read_bytes() != (ROOT / "apps/server/install.sh").read_bytes():
+        raise RuntimeError("Published installer differs from the reviewed server installer.")
 
 def run(script: Path, *args: object) -> None:
     env = dict(os.environ, PYTHONUTF8="1", PYTHONDONTWRITEBYTECODE="1")
@@ -45,7 +56,7 @@ def source_inputs() -> dict:
     paths = [ROOT / "tools/ilang_grammar_validator.py", ROOT / "data/faq-cache.json",
              ROOT / "research/publications.json",
              ROOT / "developer/build_apps.py", ROOT / "data/router-compatibility.json", ROOT / "data/source-freshness.json", ROOT / "developer/sync_source_freshness.py"]
-    for name in ("site", "worker", "lookup"):
+    for name in ("site", "worker", "lookup", "server"):
         for path in (ROOT / "apps" / name).rglob("*"):
             relative = path.relative_to(ROOT)
             if any(part in ignored or part == ".env" or part.startswith(".env.") for part in relative.parts):
@@ -63,7 +74,7 @@ def build(output: Path) -> dict:
     output = output.resolve()
     if output == ROOT or output in ROOT.parents or output.exists():
         raise ValueError("Output must be a new directory, separate from the checkout root.")
-    for relative in ("apps/site", "apps/worker", "apps/lookup", "tools/ilang_grammar_validator.py"):
+    for relative in ("apps/site", "apps/worker", "apps/lookup", "apps/server", "tools/ilang_grammar_validator.py"):
         if not (ROOT / relative).exists():
             raise FileNotFoundError(relative)
     inputs = source_inputs()
@@ -75,7 +86,7 @@ def build(output: Path) -> dict:
         if scratch.parent != scratch_parent.resolve():
             raise RuntimeError("Invalid isolated build directory.")
         ignore = shutil.ignore_patterns("__pycache__", "*.pyc", ".venv", "venv", "node_modules", ".env", ".env.*")
-        for name in ("site", "worker", "lookup"):
+        for name in ("site", "worker", "lookup", "server"):
             shutil.copytree(ROOT / "apps" / name, scratch / "apps" / name, ignore=ignore)
         shutil.copytree(ROOT / "research", scratch / "research", ignore=ignore)
         (scratch / "data").mkdir()

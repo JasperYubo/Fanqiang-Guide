@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Fanqiang Guide public library lookup",
-    "version": "2.1.0"
+    "version": "2.2.0"
   },
   "servers": [
     {
@@ -17,7 +17,7 @@
     "/api/agent/search": {
       "get": {
         "operationId": "search",
-        "description": "::ILANG::v5.0\n[TYPE:tool][SCOPE:public_library_readonly]\n::MODULE{SEARCH}\n  [MUST] Search published tool and network reference records using query and optional exact platform, kind or verification filters.\n  [MUST] Preserve returned verification, compatibility, maintenance and source_claims qualifiers; unknown is not false and a source claim is not a live test.\n  [MUST] Cite source_url; use get with a returned id for the complete matching record. Empty query browses the filtered collection.\n::ILANG::COMPLETE::",
+        "description": "::ILANG::v5.0\n[TYPE:tool][SCOPE:public_library_readonly]\n::MODULE{SEARCH}\n  [MUST] Search published tool and network reference records using query and optional exact platform, kind or verification filters.\n  [MUST] Preserve returned verification, compatibility, maintenance and source_claims qualifiers; unknown is not false and a source claim is not a live test.\n  [MUST] Cite source_url; use get with a returned id for the complete matching record. Empty query browses the filtered collection.\n  [MUST] For explicit server-assistant or VPS setup intent, follow the separate server_setup handoff when present; its book and entry are not a library record or an installation result.\n::ILANG::COMPLETE::",
         "parameters": [
           {
             "name": "query",
@@ -145,6 +145,10 @@
                     },
                     "snapshot": {
                       "type": "object"
+                    },
+                    "server_setup": {
+                      "type": "object",
+                      "description": "Separate canonical server-assistant handoff for explicit VPS installation intent; not a library record."
                     }
                   }
                 }
@@ -573,6 +577,11 @@
             "required": true,
             "schema": {
               "type": "string",
+              "enum": [
+                "autosetup",
+                "merlin",
+                "server"
+              ],
               "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
             }
           }

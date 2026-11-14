@@ -2,7 +2,7 @@
 
 按设备找工具、核对官方资料，也可以把工程书交给自己的 AI，继续完成安装、配置与排错。
 
-**310 条工具与知识记录 · MCP 2.1.0 · 两本设备工程书**
+**310 条工具与知识记录 · MCP 2.2.0 · 三本配置工程书**
 
 [打开官网](https://fanqiang.guide/) ｜ [GitHub 项目页](https://jasperyubo.github.io/Fanqiang-Guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
 
@@ -15,7 +15,7 @@
 | 核对路由器型号、固件与插件 | [华硕与梅林](#merlin) · [OpenWrt](#openwrt) |
 | 查看项目的新版本和来源 | [版本与项目动态](UPDATES.md) |
 | 检查本机网络情况 | [本地网络诊断](https://fanqiang.guide/diagnostics/) |
-| 给自己的 VPS 装网络与 AI 助手 | [华润服务器助手](apps/server/README.md) |
+| 给自己的 VPS 装网络与 AI 助手 | [华润服务器助手](https://fanqiang.guide/server/) |
 
 <a id="start"></a>
 ## 新手从这里开始
@@ -31,7 +31,7 @@
 
 10 元为建议的 API 起步余额，VPS 另备。推荐全新 Debian 12 x64，Key 只在自己的服务器终端输入。
 
-**[开始安装华润服务器助手 →](apps/server/README.md)**
+**[开始安装华润服务器助手 →](https://fanqiang.guide/server/)**
 
 <a id="ai"></a>
 ## 让 AI 使用这份知识库
@@ -48,15 +48,16 @@
 }
 ```
 
-`search` 查找条目，`get` 读取详情，`query` 按平台、协议、功能或路由器条件筛选。工程书通过 MCP 资源读取，完整接入方式见 [AI 入口](https://fanqiang.guide/ai/)。
+`search` 查找条目，`get` 读取详情，`query` 按平台、协议、功能或路由器条件筛选。搭建自己的 VPS 时使用 `get_server_setup` 工具或 `setup_server` 提示词；工程书通过 MCP 资源读取。完整接入方式见 [AI 入口](https://fanqiang.guide/ai/)。
 
 <a id="books"></a>
-### 设备工程书
+### 配置工程书
 
 | 工程书 | 用途 | MCP 资源 |
 | --- | --- | --- |
 | [设备配置 v2.1](apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) | 手机、电脑配置，手机共享与路由器流程入口 | `fanqiang://books/autosetup` |
 | [梅林路由器 v1.0](apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) | 梅林兼容固件、fancyss 选包、安装前检查与恢复流程 | `fanqiang://books/merlin` |
+| [服务器助手 v1.0](apps/lookup/runtime/books/fanqiang-server-v1.0.ilang.md) | DeepSeek Key、自己的 VPS 安装、客户端导入与中文排错 | `fanqiang://books/server` |
 
 工程书提供流程，实际操作由你的 AI 通过目标设备工具执行；本站 MCP 提供只读资料。文档和接口验证、隔离 Linux 流程验证、真实手机与路由器测试的范围分别记录在[工程书元数据](https://fanqiang.guide/api/agent/books)中。
 

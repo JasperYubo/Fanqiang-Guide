@@ -1,5 +1,7 @@
 # 华润服务器助手
 
+[从华润主站开始安装](https://fanqiang.guide/server/)
+
 把自己的 VPS 配成可用的网络通道，再给它装上一位能用中文排错的 AI 助手。
 
 你买好了一台海外服务器，想在手机或电脑上稳定使用跨境业务平台：先准备 DeepSeek Key，再连接服务器运行安装命令，最后把生成的连接链接导入客户端。以后连不上，直接对助手说“帮我看看哪里出了问题”。
@@ -8,7 +10,7 @@
 
 打开 [DeepSeek 开放平台](https://platform.deepseek.com)，登录后充值 **10 元**，再在 API Keys 页面创建自己的 API Key。
 
-10 元是建议的起步余额，后续按 DeepSeek API 实际用量扣费；VPS 需要你自己准备，费用另计。助手使用你的 Key，默认模型为 `deepseek-flash`。
+充值 10 元，即可开始使用 AI 维护。VPS 自备，费用另计。助手使用你的 Key，默认模型为 `deepseek-flash`。
 
 先保管好 Key，稍后在自己的服务器终端里粘贴。华润网页不收集 Key，也不用把它发进聊天。
 
@@ -29,7 +31,7 @@ ssh root@203.0.113.10
 在刚连上的服务器里执行：
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/JasperYubo/Fanqiang-Guide/main/apps/server/install.sh)
+curl -fsSLo huarun-install.sh https://fanqiang.guide/server/install.sh && bash huarun-install.sh
 ```
 
 如果系统提示找不到 `curl`，先安装下载工具，再执行上面的命令：

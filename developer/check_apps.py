@@ -149,9 +149,10 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
                 failures.append(relative + ":answer_rules_incomplete")
         for relative in ("lookup/server-card.json", "site/.well-known/mcp/server-card.json"):
             card = json.loads((release / relative).read_text(encoding="utf-8"))
-            if (card["serverInfo"]["version"] != "2.1.0"
+            if (card["serverInfo"]["version"] != "2.2.0"
                     or not {"tools", "resources", "prompts"} <= set(card["capabilities"])
                     or card.get("setupBook") != expected
+                    or card.get("serverAssistant") != contract["book_manifest"]("server")
                     or card.get("books") != contract["book_catalog"]()
                     or card.get("answerRules") != contract["answer_rules_manifest"]()):
                 failures.append(relative + ":setup_capabilities_missing")
@@ -212,6 +213,7 @@ def main():
         ("worker-tests", [node, "--test", "--test-reporter=tap", *[str(ROOT / "apps/worker/test" / name) for name in NODE_TESTS]], ROOT / "apps/worker"),
         ("lookup-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/lookup/runtime"), "-p", "test_*.py", "-v"], ROOT / "apps/lookup/runtime"),
         ("case-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_cases*.py", "-v"], ROOT / "apps/site"),
+        ("server-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_server_assistant*.py", "-v"], ROOT / "apps/site"),
         ("faq-page-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/site"), "-p", "test_faq_pages*.py", "-v"], ROOT / "apps/site"),
         ("case-pipeline-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "apps/case-pipeline"), "-p", "test_*.py", "-v"], ROOT / "apps/case-pipeline"),
         ("subscription-method-tests", [sys.executable, "-m", "unittest", "discover", "-s", str(ROOT / "research/subscription-semantics"), "-p", "test_*.py", "-v"], ROOT / "research/subscription-semantics"),
