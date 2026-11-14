@@ -1,0 +1,24 @@
+name: Check HuaRun Server Assistant
+on:
+  workflow_dispatch:
+  push:
+    paths: ['apps/server/**', '.github/workflows/check-server.yml']
+  pull_request:
+    paths: ['apps/server/**', '.github/workflows/check-server.yml']
+permissions:
+  contents: read
+jobs:
+  offline-checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Check test dependencies
+        run: command -v bash && command -v jq && command -v openssl
+      - name: Check installer without installing services
+        run: python -m unittest discover -s apps/server/tests -v

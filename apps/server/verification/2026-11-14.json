@@ -1,0 +1,89 @@
+{
+  "verified_at": "2026-11-14T00:05:20.249937+00:00",
+  "environment": {
+    "os": "Debian 12 x86_64",
+    "runtime": "isolated Docker container with systemd on Linux development server",
+    "assistant": "PicoClaw v0.3.1",
+    "model": "deepseek-flash"
+  },
+  "installation": {
+    "fresh_install_passed": true,
+    "bootstrap_sha256": "cfb40979bb0f386e8675acfe8c2a4683b3205300bfd1017280f73cc3e41a7e15",
+    "runtime_regenerated_from_sha256": "e53721ef8aea423ab3637496c1be3d20008638549acf2bfcb004f5180d0f2aeb",
+    "public_trusted_tls": true,
+    "certificate_days_remaining": 89
+  },
+  "connectivity_before": {
+    "google": {
+      "curl_exit": 0,
+      "http_status": "204",
+      "error": ""
+    },
+    "wikipedia": {
+      "curl_exit": 0,
+      "http_status": "200",
+      "error": ""
+    },
+    "blocked_example": {
+      "curl_exit": 35,
+      "http_status": "000",
+      "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to example.com:443"
+    },
+    "public_tls": {
+      "curl_exit": 0,
+      "http_status": "200"
+    },
+    "passed": true
+  },
+  "repair": {
+    "injected_fault": "stopped xray service",
+    "real_model_api": true,
+    "observed_tool_commands": [
+      "huarun doctor --json",
+      "huarun fix",
+      "huarun doctor --json",
+      "huarun status --json"
+    ],
+    "xray_failed_before": true,
+    "all_server_checks_pass_after": true
+  },
+  "connectivity_after": {
+    "google": {
+      "curl_exit": 0,
+      "http_status": "204",
+      "error": ""
+    },
+    "wikipedia": {
+      "curl_exit": 0,
+      "http_status": "200",
+      "error": ""
+    },
+    "blocked_example": {
+      "curl_exit": 35,
+      "http_status": "000",
+      "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to example.com:443"
+    },
+    "public_tls": {
+      "curl_exit": 0,
+      "http_status": "200"
+    },
+    "passed": true
+  },
+  "verification": {
+    "offline_behavior_tests": 29,
+    "passed": 29,
+    "full_repository_check": true,
+    "iLang_strict": {
+      "errors": 0,
+      "warnings": 0,
+      "templates": 3,
+      "validator_commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff"
+    },
+    "secret_file_modes": [
+      "600",
+      "600"
+    ],
+    "credential_not_in_release_files": true
+  },
+  "scope": "One Debian 12 x86_64 installation and real Linux Xray client; physical phones, ARM and other Linux distributions were not tested."
+}
