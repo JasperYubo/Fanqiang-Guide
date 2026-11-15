@@ -30,6 +30,11 @@
 ::MODULE{AUTOMATIC_RELEASE}
   [MUST] 每次产品更新由 Linux 完成构建、测试及双站发布后，Pages 工作流的独立 release job 自动生成 GitHub Release；不依赖维护者电脑开机。
   [MUST] Release 绑定完整 source_sha，标签为 release-加提交前12位；重新运行同一版本不得重复创建或覆盖已发布附件。
+  [MUST] 每次正式 Release 前，Linux 隔离 Docker 执行候选安装器完整新安装，以及固定 1.0、1.1 和上一正式 Release 的升级；旧安装器绑定完整来源提交与 SHA256，覆盖角色不得缺失或跳过。
+  [MUST] 新安装确认自动更新定时器已启用；升级前写入自定义节点配置、白名单、Key 与记忆，升级后逐字节与权限比较，核对 Xray 和 Nginx 进程未重启、服务健康、真实代理允许与拒绝通路正常。
+  [MUST] 安装器及升级代码使用候选原始字节；仅 DeepSeek 账户校验与 ACME 签证使用隔离测试服务及测试 CA。测试不使用客户 Key，不把外部服务夹具当作生产账户或公网签证实测。
+  [MUST] linux-install-upgrade-proof.json 绑定 source_sha、installer_sha256、工作流 run_id 和 run_attempt，并记录基线来源、结果及测试范围。缺少报告、失败、跳过或身份不匹配必须阻止正式发布，不得使用历史静态报告代替本次执行。
+  [MUST] 报告作为公开 Release 附件，仅包含身份、摘要、测试项与结果，不包含 Key、节点内容或私有配置；在草稿转为正式 Release 前再次验证，只有通过版本进入客户自动更新渠道。
   [MUST] 发布前核对主站与 Pages 的事务身份、产品合同和实际安装器、Pages HTML 哈希；附件先上传到草稿并逐项校验，全部通过后正式发布。
   [MUST] 唯一既有回滚基线 270c81ba257398004ecf992d2cde2d3029d981de 不具有自动发版脚本，允许该精确版本只恢复页面。其他版本缺少脚本或校验失败必须报错，不能默认跳过。
   [MUST] Git 作者和提交者姓名均为 fanqiang guide，邮箱均为 info@fanqiang.guide；推送账户与提交署名分开核对。

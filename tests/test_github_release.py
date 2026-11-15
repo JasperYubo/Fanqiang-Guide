@@ -72,7 +72,7 @@ class FakeGitHub:
 
 class ReleaseTests(unittest.TestCase):
     def setUp(self):
-        self.installer = b'#!/bin/bash\nVERSION="1.1.0"\n'
+        self.installer = b'#!/bin/bash\nVERSION="1.2.0"\n'
         self.index = b'<h1>Fanqiang Guide</h1>'
         self.contract = {"version": "fixture"}
         self.expected = {"schema_version": 1, "source_sha": "a" * 40, "sync_id": "linux-test-1",
@@ -89,13 +89,81 @@ class ReleaseTests(unittest.TestCase):
         self.proof = r.verify_live(self.expected, self.contract, fetch=self.fetch, attempts=1)
         self.static = {"huarun-install.sh": self.installer, "SOUL.ilang.md": b'::ILANG::v5.0\n',
                        "huarun.SKILL.ilang.md": b'::ILANG::v5.0\n::STATE{@SKILL}\n'}
+        fixture_spec = importlib.util.spec_from_file_location("acceptance_fixture", Path(__file__).with_name("test_release_acceptance.py"))
+        fixture = importlib.util.module_from_spec(fixture_spec)
+        fixture_spec.loader.exec_module(fixture)
+        self.report, _, self.baseline = fixture.accepted_fixture()
+        self.report.update({k: self.expected[k] for k in ("source_sha", "installer_sha256", "run_id", "run_attempt")})
+        self.acceptance = r.encoded(self.report)
         self.api = FakeGitHub()
 
     def fetch(self, url):
         return self.public[url.split("?", 1)[0]]
 
     def publish(self, **kwargs):
-        return r.publish_release(self.api, self.expected, self.proof, self.static, "华润助手 v1.1.0 · MCP", "body", **kwargs)
+        return r.publish_release(self.api, self.expected, self.proof, self.static, "华润助手 v1.2.0 · MCP", "body", acceptance_raw=self.acceptance, baseline=self.baseline, **kwargs)
+
+    def test_acceptance_failure_blocks_all_release_writes(self):
+        mutations = [lambda report: report.update(passed=False),
+                     lambda report: report.update(skipped=1),
+                     lambda report: report.update(source_sha="f" * 40),
+                     lambda report: report.update(run_id="9999"),
+                     lambda report: report["upgrades"].pop(),
+                     lambda report: report["upgrades"][0]["preserved"].update(key=False),
+                     lambda report: report["upgrades"][1]["preserved"].update(whitelist=False),
+                     lambda report: report["upgrades"][2]["preserved"].update(node_config=False)]
+        for change in mutations:
+            with self.subTest(change=change):
+                report = copy.deepcopy(self.report)
+                change(report)
+                self.acceptance = r.encoded(report)
+                with self.assertRaisesRegex(r.ReleaseError, "linux_acceptance_failed"):
+                    self.publish()
+                self.assertEqual(self.api.events, [])
+        self.acceptance = None
+        with self.assertRaisesRegex(r.ReleaseError, "linux_acceptance_report_missing"):
+            self.publish()
+        self.assertEqual(self.api.events, [])
+
+    def test_acceptance_report_is_bound_and_published_unchanged(self):
+        self.publish()
+        self.assertEqual(self.api.data["linux-install-upgrade-proof.json"]["raw"], self.acceptance)
+        proof = json.loads(self.api.data["deployment-proof.json"]["raw"])
+        self.assertEqual(proof["linux_acceptance"]["sha256"], r.digest(self.acceptance))
+        self.assertEqual(proof["linux_acceptance"]["previous_stable"], self.baseline)
+        self.assertEqual(proof["assets"]["linux-install-upgrade-proof.json"]["sha256"], r.digest(self.acceptance))
+
+    def test_published_acceptance_cannot_be_removed_or_rewritten(self):
+        self.publish()
+        self.api.data["linux-install-upgrade-proof.json"]["raw"] = b'{}'
+        before = list(self.api.events)
+        with self.assertRaisesRegex(r.ReleaseError, "linux_acceptance_failed"):
+            self.publish()
+        self.assertEqual(self.api.events, before)
+
+    def test_previous_stable_follows_latest_and_excludes_candidate_on_rerun(self):
+        raw = self.installer
+        def record(source, ident, published):
+            return {"id": ident, "draft": False, "prerelease": False, "target_commitish": source,
+                    "tag_name": "release-" + source[:12], "published_at": published,
+                    "assets": [{"id": ident, "name": "huarun-install.sh", "state": "uploaded",
+                                "size": len(raw), "digest": "sha256:" + r.digest(raw)}]}
+        older_latest = record("b" * 40, 4, "2026-11-14T00:00:00Z")
+        newer = record("c" * 40, 5, "2026-11-15T00:00:00Z")
+        candidate = record("a" * 40, 6, "2026-11-16T00:00:00Z")
+        class API:
+            prefix = "/repos/" + r.REPOSITORY
+            latest = older_latest
+            def request(self, method, path):
+                return self.latest if path.endswith("/latest") else [candidate, newer, older_latest]
+            def read_asset(self, asset): return raw
+        api = API()
+        self.assertEqual(r.previous_stable(api, "a" * 40)["release_id"], 4)
+        api.latest = candidate
+        self.assertEqual(r.previous_stable(api, "a" * 40)["release_id"], 5)
+        api.latest = {**older_latest, "draft": True}
+        with self.assertRaisesRegex(r.ReleaseError, "previous_stable_identity_invalid"):
+            r.previous_stable(api, "a" * 40)
 
     def test_public_identity_all_fields_are_checked(self):
         for field in ("source_sha", "sync_id", "contract_sha256", "installer_sha256", "run_id", "run_attempt", "index_sha256"):
@@ -146,7 +214,7 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(result["tag"], "release-" + "a" * 12)
         self.assertEqual(self.api.events[0], ("create", True))
         self.assertEqual(self.api.events[-1][0], "publish")
-        self.assertEqual(set(self.api.data), set(self.static) | {"SHA256SUMS", "deployment-proof.json"})
+        self.assertEqual(set(self.api.data), set(self.static) | {"SHA256SUMS", "deployment-proof.json", "linux-install-upgrade-proof.json"})
         self.assertFalse(self.api.release["draft"])
         self.assertEqual(self.api.target, self.expected["source_sha"])
 
@@ -179,6 +247,8 @@ class ReleaseTests(unittest.TestCase):
         events = list(self.api.events)
         # Same code may be verified by a later full workflow rerun.
         self.expected["run_attempt"] = 2
+        self.report["run_attempt"] = 2
+        self.acceptance = r.encoded(self.report)
         self.proof = {**self.proof, "run_attempt": 2,
                       "pages_receipt": {**self.proof["pages_receipt"], "run_attempt": 2}}
         result = self.publish()
@@ -217,6 +287,8 @@ class ReleaseTests(unittest.TestCase):
         with self.assertRaises(r.ReleaseError):
             self.publish(before_publish=lambda: (_ for _ in ()).throw(r.ReleaseError("stale_live")))
         self.expected["run_attempt"] = 2
+        self.report["run_attempt"] = 2
+        self.acceptance = r.encoded(self.report)
         self.proof = {**self.proof, "run_attempt": 2,
                       "pages_receipt": {**self.proof["pages_receipt"], "run_attempt": 2}}
         self.publish()
@@ -238,7 +310,7 @@ class ReleaseTests(unittest.TestCase):
         self.assertEqual(self.publish()["status"], "already_published")
 
     def test_checksums_cover_every_other_asset_and_exact_bytes(self):
-        files = r.complete_assets(self.static, self.proof)
+        files = r.complete_assets(self.static, self.proof, self.acceptance)
         for line in files["SHA256SUMS"].decode().splitlines():
             checksum, name = line.split("  ", 1)
             self.assertEqual(checksum, r.digest(files[name]))
@@ -297,7 +369,7 @@ class ReleaseTests(unittest.TestCase):
         workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/pages.yml").read_text()
         deploy, release = workflow.split("\n  release:\n")
         self.assertNotIn("contents: write", deploy)
-        self.assertIn("needs: deploy", release)
+        self.assertIn("needs: [deploy, server-acceptance]", release)
         self.assertIn("if: ${{ inputs.source_sha != '270c81ba257398004ecf992d2cde2d3029d981de' }}", release)
         self.assertNotIn("hashFiles(", release)
         self.assertIn("contents: write", release)
@@ -305,6 +377,13 @@ class ReleaseTests(unittest.TestCase):
         self.assertIn("persist-credentials: false", release)
         self.assertEqual(release.count("GITHUB_TOKEN:"), 1)
         self.assertNotIn("on:\n  push:", workflow)
+        self.assertIn("developer/server_release_e2e.py", deploy)
+        self.assertNotIn("developer/server_release_e2e.py --source-sha", release)
+        self.assertIn("needs.server-acceptance.outputs.report_sha256", release)
+        self.assertIn("github.run_attempt", release)
+        self.assertIn('--acceptance-report "$RUNNER_TEMP/linux-install-upgrade-proof.json"', release)
+        self.assertNotIn("continue-on-error", release)
+        self.assertNotIn("--allow-dirty", release)
 
 
 if __name__ == "__main__":

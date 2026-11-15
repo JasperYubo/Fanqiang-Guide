@@ -33,7 +33,7 @@ MCP 工程书资源为 `fanqiang://books/autosetup`、`fanqiang://books/merlin`�
 | 路由器上游变更观察 | [观察范围与复核流程](ROUTER_UPSTREAM_WATCH.md) · [每日工作流](../.github/workflows/check-router-upstream.yml) |
 | 路由器型号与包匹配 | [兼容资料更新](update_router_compatibility.py) · [匹配数据](../data/router-compatibility.json) · [匹配逻辑](../apps/lookup/runtime/router_matching.py) |
 | 服务器助手与 iLang 模板 | [助手源码](../apps/server/assistant/) · [安装器同步](sync_server_assistant.py) |
-| 双站一致与自动发版 | Linux 同步维护部署主站后触发 [Pages 工作流](../.github/workflows/pages.yml)，[发布脚本](publish_github_release.py)核验双站收据与附件后生成 Release |
+| 双站一致与自动发版 | Linux 同步维护触发 [Pages 工作流](../.github/workflows/pages.yml)；[安装与升级验收](server_release_e2e.py)通过后，[发布脚本](publish_github_release.py)核验报告、双站收据与附件，再生成正式 Release |
 | 本地网络诊断工具 | [使用与开发说明](../apps/diagnostics/README.md) |
 
 [原始知识库](../export/library-v0.1-2026-09-11.json)包含 310 条知识记录；[当前路由器资料](../data/router-compatibility.json)包含 56 行兼容匹配；[历史型号表](../export/merlin-model-matrix-v0.1-2026-09-11.json)保留 58 条固件支持声明。它们的记录口径与证据范围分别维护。
@@ -49,7 +49,18 @@ python scripts/build_catalog.py
 
 涉及网站或查询服务时，使用 [check_apps.py](check_apps.py) 的完整构建检查。[MCP 验证](verify_mcp_v2_public.py)与[梅林接口验证](verify_merlin_public.py)检查服务行为；[隔离 Linux 流程验证](verify_autosetup_linux_flow.py)记录特定应用代理路径的实际结果。工程书验证、接口验证与物理设备测试分别报告，不能互相替代。
 
-上游仓库与正式 Release 观察、免费代理来源格式统计沿用现有流程。独立的路由器观察工作流每日对照已审核基线检查 fancyss 与已记录的 KoolCenter 来源，变化保留为待人工复核；报告见 Actions 摘要及 `router-upstream-review` 产物。该工作流进入默认分支后生效，不自动更新兼容矩阵或已审核包的固定版本。自动化不会安装软件、重写教程或实测代理连通性。部署和后台运行使用既有 Linux 环境；私有部署记录、认证信息与设备秘密不进入公开仓库。
+上游仓库与正式 Release 观察、免费代理来源格式统计沿用现有流程。独立的路由器观察工作流每日对照已审核基线检查 fancyss 与已记录的 KoolCenter 来源，变化保留为待人工复核；报告见 Actions 摘要及 `router-upstream-review` 产物。该工作流进入默认分支后生效，不自动更新兼容矩阵或已审核包的固定版本。路由器上游观察不会安装软件、重写教程或实测代理连通性。部署和后台运行使用既有 Linux 环境；私有部署记录、认证信息与设备秘密不进入公开仓库。
+
+
+## 正式发版前的安装与升级验收
+
+每次正式 Release 都在 Linux 的隔离 Docker 系统中执行候选安装器完整安装，并从固定的 1.0、1.1 和上一正式 Release 分别升级。旧安装器按完整提交与 SHA256 校验；相同基线可合并执行，覆盖角色不得缺失。测试脚本为 [server_release_e2e.py](server_release_e2e.py)，报告校验规则为 [release_acceptance.py](release_acceptance.py)。
+
+新安装必须启用自动更新定时器；升级前写入自定义节点配置、白名单、Key 和记忆，升级后逐字节及权限核对，并验证 Xray、Nginx 进程未重启，服务健康且真实代理通路的允许、拒绝规则均正常。报告缺失、任一失败、跳过、源码或安装器摘要不一致，都阻止正式 Release 发布；现有用户继续使用已安装版本。
+
+验收运行真实安装器、PicoClaw、Xray、Nginx 和升级代码。DeepSeek 账户校验与 ACME 签证使用隔离测试服务及测试 CA，不使用客户 Key，也不把这些结果当作生产账户余额或公网证书签发的验证。测试不修改候选安装器字节。正式发布仍需双站身份与实际安装器摘要一致。
+
+通过报告作为 `linux-install-upgrade-proof.json` 附在 Release 中，记录完整 `source_sha`、`installer_sha256`、工作流 `run_id` / `run_attempt`、基线来源和每项结果；不公开 Key、节点内容或私有配置。发布脚本在转为正式 Release 前再次核对证据，失败版本不能进入客户端自动更新渠道。相同安装器摘要不会让已安装用户重复升级。
 
 ## 历史交接记录
 

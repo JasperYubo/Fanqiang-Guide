@@ -39,7 +39,7 @@ def product_facts() -> dict:
         "books": books,
         "book_count": len(books),
         "knowledge_sentence": server["knowledge_policy"]["summary"],
-        "automatic_update_sentence": server["automatic_updates"]["summary"],
+        "automatic_update_sentence": server["automatic_updates"]["summary"] + "每次更新先通过 Linux 新安装和旧版升级验收，再进入自动更新渠道。",
         "price_sentence": f"充值 {amount} 元，即可开始使用 AI 维护。VPS 自备，费用另计。",
         "os_label": os_label,
     }

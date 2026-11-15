@@ -1,7 +1,8 @@
 """Publish a commit-bound GitHub Release only after both public sites agree.
 
 Uses the job-scoped GITHUB_TOKEN, creates a draft first, verifies every asset,
-then publishes. Existing published releases are immutable to this publisher.
+then publishes. A current-run Linux install/upgrade report is mandatory.
+Existing published releases are immutable to this publisher.
 """
 from __future__ import annotations
 
@@ -83,6 +84,62 @@ def load_receipt_module():
     return module
 
 
+def acceptance_module():
+    spec = importlib.util.spec_from_file_location("release_acceptance", ROOT / "developer/release_acceptance.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def installer_version(raw):
+    match = re.search(rb'^VERSION="([0-9]+\.[0-9]+\.[0-9]+)"$', raw, re.M)
+    if not match:
+        raise ReleaseError("assistant_version_missing")
+    return match[1].decode()
+
+
+def acceptance_proof(raw, expected, static_assets, previous_stable):
+    if not isinstance(raw, bytes) or not raw or len(raw) > MAX_BYTES:
+        raise ReleaseError("linux_acceptance_report_missing")
+    installer = static_assets.get("huarun-install.sh", b"")
+    if digest(installer) != expected["installer_sha256"]:
+        raise ReleaseError("acceptance_installer_identity_mismatch")
+    validator = acceptance_module()
+    try:
+        summary = validator.validate_report(json_object(raw),
+            {**expected, "candidate_version": installer_version(installer)}, previous_stable)
+    except validator.AcceptanceError as error:
+        raise ReleaseError("linux_acceptance_failed:" + str(error)) from None
+    return {**summary, "sha256": digest(raw), "bytes": len(raw)}
+
+
+def previous_stable(api, candidate_source):
+    release = api.request("GET", api.prefix + "/releases/latest")
+    if release.get("target_commitish") == candidate_source:
+        rows = api.request("GET", api.prefix + "/releases?per_page=100")
+        eligible = [row for row in rows if row.get("draft") is False and row.get("prerelease") is False
+                    and row.get("target_commitish") != candidate_source]
+        if not eligible:
+            raise ReleaseError("previous_stable_missing")
+        release = max(eligible, key=lambda row: (row.get("published_at") or "", row.get("id", 0)))
+    source = release.get("target_commitish", "")
+    if (release.get("draft") is not False or release.get("prerelease") is not False
+            or type(release.get("id")) is not int or release["id"] < 1
+            or not isinstance(source, str) or not re.fullmatch(r"[a-f0-9]{40}", source)
+            or release.get("tag_name") != "release-" + source[:12]):
+        raise ReleaseError("previous_stable_identity_invalid")
+    matches = [a for a in release.get("assets", []) if a.get("name") == "huarun-install.sh"]
+    if len(matches) != 1:
+        raise ReleaseError("previous_stable_installer_missing")
+    asset = matches[0]
+    raw = api.read_asset(asset)
+    if (asset.get("state") != "uploaded" or asset.get("size") != len(raw)
+            or asset.get("digest") != "sha256:" + digest(raw)):
+        raise ReleaseError("previous_stable_installer_digest_mismatch")
+    return {"release_id": release["id"], "source_sha": source,
+            "installer_sha256": digest(raw), "version": installer_version(raw)}
+
+
 def require_identity(actual, expected, fields, label):
     if not isinstance(actual, dict) or any(actual.get(key) != expected[key] for key in fields):
         raise ReleaseError(label + "_identity_mismatch")
@@ -152,9 +209,9 @@ def asset_manifest(assets):
     return {name: {"sha256": digest(raw), "bytes": len(raw)} for name, raw in sorted(assets.items())}
 
 
-def complete_assets(static_assets, proof):
-    assets = dict(static_assets)
-    proof = {**proof, "assets": asset_manifest(static_assets)}
+def complete_assets(static_assets, proof, acceptance_raw):
+    assets = {**static_assets, "linux-install-upgrade-proof.json": acceptance_raw}
+    proof = {**proof, "assets": asset_manifest(assets)}
     assets["deployment-proof.json"] = encoded(proof)
     assets["SHA256SUMS"] = "".join(digest(raw) + "  " + name + "\n" for name, raw in sorted(assets.items())).encode()
     return assets
@@ -284,7 +341,7 @@ def release_identity(release, source_sha, tag):
         raise ReleaseError("existing_release_wrong_source")
 
 
-def validate_historical_proof(proof, expected, static_assets):
+def validate_historical_proof(proof, expected, static_assets, acceptance_raw):
     fields = ("schema_version", "source_sha", "contract_sha256", "installer_sha256")
     require_identity(proof, expected, fields, "published_proof")
     if not re.fullmatch(r"[1-9][0-9]*", str(proof.get("run_id", ""))) or not isinstance(proof.get("run_attempt"), int) or proof["run_attempt"] < 1:
@@ -294,11 +351,17 @@ def validate_historical_proof(proof, expected, static_assets):
     require_identity(proof.get("origin_receipt"), proof, fields + ("sync_id",), "published_origin_proof")
     require_identity(proof.get("pages_receipt"), {**proof, "index_sha256": expected["index_sha256"]},
                      fields + ("sync_id", "run_id", "run_attempt", "index_sha256"), "published_pages_proof")
-    if proof.get("assets") != asset_manifest(static_assets) or proof.get("verified") != {"origin_installer": True, "pages_index": True, "shared_contract": True}:
+    historical_expected = {**expected, "run_id": proof["run_id"], "run_attempt": proof["run_attempt"]}
+    previous = proof.get("linux_acceptance", {}).get("previous_stable")
+    acceptance = acceptance_proof(acceptance_raw, historical_expected, static_assets, previous)
+    if proof.get("linux_acceptance") != acceptance:
+        raise ReleaseError("published_acceptance_proof_mismatch")
+    if proof.get("assets") != asset_manifest({**static_assets, "linux-install-upgrade-proof.json": acceptance_raw}) or proof.get("verified") != {"origin_installer": True, "pages_index": True, "shared_contract": True}:
         raise ReleaseError("published_proof_asset_mismatch")
 
 
-def publish_release(api, expected, proof, static_assets, title, body, *, before_publish=lambda: None):
+def publish_release(api, expected, proof, static_assets, title, body, *, acceptance_raw, baseline, before_publish=lambda: None):
+    proof = {**proof, "linux_acceptance": acceptance_proof(acceptance_raw, expected, static_assets, baseline)}
     tag = "release-" + expected["source_sha"][:12]
     target = api.tag_commit(tag)
     if target is not None and target != expected["source_sha"]:
@@ -310,7 +373,7 @@ def publish_release(api, expected, proof, static_assets, title, body, *, before_
     release_identity(release, expected["source_sha"], tag)
     release_id = release["id"]
     assets = asset_map(api.assets(release_id))
-    files = complete_assets(static_assets, proof)
+    files = complete_assets(static_assets, proof, acceptance_raw)
     if not release.get("draft"):
         if target != expected["source_sha"]:
             raise ReleaseError("published_tag_missing")
@@ -318,9 +381,12 @@ def publish_release(api, expected, proof, static_assets, title, body, *, before_
             raise ReleaseError("published_proof_missing")
         historical_raw = api.read_asset(assets["deployment-proof.json"])
         historical = json_object(historical_raw)
-        validate_historical_proof(historical, expected, static_assets)
+        if "linux-install-upgrade-proof.json" not in assets:
+            raise ReleaseError("published_acceptance_report_missing")
+        historical_acceptance = api.read_asset(assets["linux-install-upgrade-proof.json"])
+        validate_historical_proof(historical, expected, static_assets, historical_acceptance)
         # Preserve the original verified deployment receipt on repeat runs.
-        files = complete_assets(static_assets, historical)
+        files = complete_assets(static_assets, historical, historical_acceptance)
         if files["deployment-proof.json"] != historical_raw:
             raise ReleaseError("published_proof_encoding_mismatch")
         if set(assets) != set(files) or any(not asset_matches(api, assets[name], raw) for name, raw in files.items()):
@@ -335,7 +401,7 @@ def publish_release(api, expected, proof, static_assets, title, body, *, before_
         if existing:
             # Only unpublished receipt/checksum data or failed uploads can be
             # replaced. Never silently replace source artifacts or a release.
-            if name not in {"deployment-proof.json", "SHA256SUMS"} and existing.get("state") != "starter":
+            if name not in {"deployment-proof.json", "SHA256SUMS", "linux-install-upgrade-proof.json"} and existing.get("state") != "starter":
                 raise ReleaseError("draft_source_asset_mismatch")
             api.delete_asset(existing)
         uploaded = api.upload(release_id, name, raw)
@@ -358,6 +424,7 @@ def main():
     parser.add_argument("--source-sha", required=True)
     parser.add_argument("--sync-id", required=True)
     parser.add_argument("--contract-sha256", required=True)
+    parser.add_argument("--acceptance-report", type=Path, required=True)
     args = parser.parse_args()
     if os.environ.get("GITHUB_REPOSITORY", "").lower() != REPOSITORY.lower():
         raise ReleaseError("wrong_github_repository")
@@ -375,20 +442,35 @@ def main():
                      "index_sha256": digest((ROOT / "apps/pages/index.html").read_bytes())})
     proof = verify_live(expected, contract)
     static_assets = source_assets(ROOT, contract)
-    installer = static_assets["huarun-install.sh"].decode()
-    version = re.search(r'^VERSION="([0-9]+\.[0-9]+\.[0-9]+)"$', installer, re.M)
-    if not version:
-        raise ReleaseError("assistant_version_missing")
-    title = "华润服务器助手 v" + version[1] + " · 本机自动升级"
+    version = installer_version(static_assets["huarun-install.sh"])
+    report_path = args.acceptance_report
+    if report_path.is_symlink() or not report_path.is_file() or report_path.stat().st_size > MAX_BYTES:
+        raise ReleaseError("linux_acceptance_report_missing")
+    acceptance_raw = report_path.read_bytes()
+    api = GitHub(os.environ.get("GITHUB_TOKEN", ""))
+    baseline = previous_stable(api, args.source_sha)
+    acceptance_proof(acceptance_raw, expected, static_assets, baseline)
+    title = "华润服务器助手 v" + version + " · Linux 安装升级验收"
     body = ("华润服务器助手：先查本站 MCP 文档与排障资料，资料不足时使用 DeepSeek 搜索，修复后复查。VPS 本机定时升级助手，保留节点配置、白名单和 Key，失败自动回滚。\n\n"
             "- [主站与安装入口](https://fanqiang.guide/server/)\n"
             "- [GitHub 项目入口](https://jasperyubo.github.io/Fanqiang-Guide/)\n"
             "- [MCP 与工程书](https://fanqiang.guide/ai/)\n\n"
-            "附件包含安装脚本、iLang SOUL 与技能、工程书、SHA256 校验和及双站发布证明。\n\n"
+            "每次正式发版先在 Linux 验收新安装及旧版升级，核对节点配置、白名单和 Key 保留。失败版本不进入自动更新渠道。\n\n"
+            "附件包含安装脚本、iLang SOUL 与技能、工程书、SHA256 校验和、双站发布证明及 Linux 安装升级验收报告。\n\n"
             "源码版本：`" + args.source_sha + "`\n"
             "署名：fanqiang guide <info@fanqiang.guide>\n")
-    result = publish_release(GitHub(os.environ.get("GITHUB_TOKEN", "")), expected, proof, static_assets, title, body,
-                             before_publish=lambda: verify_live(expected, contract))
+    def recheck():
+        if report_path.is_symlink() or report_path.read_bytes() != acceptance_raw:
+            raise ReleaseError("acceptance_report_changed_before_publish")
+        if previous_stable(api, args.source_sha) != baseline:
+            raise ReleaseError("previous_stable_changed_before_publish")
+        helper.verify_checkout(args.source_sha)
+        if helper.installer_digest() != expected["installer_sha256"]:
+            raise ReleaseError("installer_changed_before_publish")
+        acceptance_proof(acceptance_raw, expected, static_assets, baseline)
+        verify_live(expected, contract)
+    result = publish_release(api, expected, proof, static_assets, title, body,
+                             acceptance_raw=acceptance_raw, baseline=baseline, before_publish=recheck)
     print(json.dumps(result, ensure_ascii=False))
 
 
