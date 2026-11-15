@@ -45,10 +45,11 @@ class ProductContractTests(unittest.TestCase):
         changed["os_label"] = "全新的 Test OS VPS"
         changed["price_sentence"] = "共享价格说明测试。"
         changed["knowledge_sentence"] = "共享检索与修复说明测试。"
+        changed["automatic_update_sentence"] = "共享自动更新说明测试。"
         template = "\n".join("{{" + token + "}}" for token in sorted(sync.REQUIRED_TOKENS))
         rendered = html.unescape(sync.render(template, changed))
         for value in (server["entry_url"], server["installer_url"], server["install_command"],
-                      "server-test-v9.2.ilang.md", "v9.2", "TestRuntime", "test-model", changed["os_label"], changed["price_sentence"], changed["knowledge_sentence"]):
+                      "server-test-v9.2.ilang.md", "v9.2", "TestRuntime", "test-model", changed["os_label"], changed["price_sentence"], changed["knowledge_sentence"], changed["automatic_update_sentence"]):
             self.assertIn(value, rendered)
         self.assertNotIn("{{", rendered)
 

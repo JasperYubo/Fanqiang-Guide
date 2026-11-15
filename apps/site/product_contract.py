@@ -39,6 +39,7 @@ def product_facts() -> dict:
         "books": books,
         "book_count": len(books),
         "knowledge_sentence": server["knowledge_policy"]["summary"],
+        "automatic_update_sentence": server["automatic_updates"]["summary"],
         "price_sentence": f"充值 {amount} 元，即可开始使用 AI 维护。VPS 自备，费用另计。",
         "os_label": os_label,
     }
@@ -49,7 +50,7 @@ def public_contract() -> dict:
     product = product_facts()
     server = product["server"]
     server_fields = ("entry_url", "installer_url", "install_command", "upgrade_command", "upgrade_scope", "api_url", "recommended_os",
-                     "recommended_api_balance", "assistant", "knowledge_policy", "tool", "prompt", "resource_uri", "download_url")
+                     "recommended_api_balance", "assistant", "knowledge_policy", "automatic_updates", "tool", "prompt", "resource_uri", "download_url")
     book_fields = ("book_id", "display_title", "version", "sha256", "download_url", "resource_uri")
     return {
         "schema_version": 1,
@@ -59,6 +60,7 @@ def public_contract() -> dict:
         "books_url": product["books_url"],
         "price_sentence": product["price_sentence"],
         "knowledge_sentence": product["knowledge_sentence"],
+        "automatic_update_sentence": product["automatic_update_sentence"],
         "os_label": product["os_label"],
         "book_count": product["book_count"],
         "server": {key: server[key] for key in server_fields},

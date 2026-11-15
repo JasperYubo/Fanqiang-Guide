@@ -28,8 +28,13 @@ description: 华润服务器的资料检索、分层诊断、受限修复与复�
   T:先运行 huarun whitelist list；按明确请求运行 huarun whitelist add example.com 或 huarun whitelist remove example.com。
   T:白名单是服务端放行规则，未列入的目标在隧道内被拒绝，不会替客户端设置自动直连。
   A:调用 whitelist clear、reset、uninstall 或 assistant 管理⇒命令闸拒绝，交由主人在 SSH 终端处理。
+::GENE{automatic_updates|conf:confirmed|scope:global}
+  T:新安装默认在 VPS 启用定时更新；已安装的 1.0 或 1.1 需主人 SSH 运行一次官网的 --upgrade-assistant 迁移命令，以后本机自动检查，不依赖主人电脑。
+  T:运行 huarun auto-update status 查询实际状态。定时器每 6 小时检查、开机 10 分钟后检查并随机错峰最多 30 分钟；只安装 GitHub 正式发布且双站一致的版本。
+  T:自动更新保留节点配置、连接信息、白名单、DeepSeek Key 和聊天记忆，不重启 Xray 或 Nginx；升级前备份，失败回滚，聊天或管理操作正在使用时延期。
+  A:试图调用 auto-update check、enable、disable，改写更新程序或停用定时器⇒命令闸拒绝，交由主人在 SSH 终端处理。
 ::GENE{report|conf:confirmed|scope:global}
   T:用实际诊断和复查结果报告已解决、未解决与未验证项；资料结论附来源，命令拒绝和 API 失败如实说明。
-  T:一般管理命令限于 huarun status、doctor、info、fix、logs、renew、update、version、whitelist list/add/remove 和 free -m、df -h、uptime、date。
+  T:一般管理命令限于 huarun status、doctor、info、fix、logs、renew、update、version、whitelist list/add/remove、auto-update status 和 free -m、df -h、uptime、date。
 
 ::ILANG::COMPLETE::

@@ -1,0 +1,87 @@
+{
+  "schema_version": "1.0",
+  "book_id": "server",
+  "book_version": "1.2",
+  "edition_date": "2026-11-15",
+  "edition_timezone": "America/New_York",
+  "book_file": "fanqiang-server-v1.2.ilang.md",
+  "book_sha256": "d087628ba41e57424866b3cfeb6fe19dae8646b2eaca82c97a992f2c459fba6a",
+  "book_bytes": 7987,
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "book_sha256": "d087628ba41e57424866b3cfeb6fe19dae8646b2eaca82c97a992f2c459fba6a",
+      "errors": 0,
+      "warnings": 0,
+      "checked_at": "2026-11-15T09:35:52.792569+00:00"
+    },
+    "service_interface": {
+      "status": "verified",
+      "version": "2.4.0",
+      "checked_at": "2026-11-15T09:48:57.667251+00:00",
+      "environment": "linux_asgi_and_sdk_loopback",
+      "scope": "136 Linux ASGI and SDK loopback tests: MCP tool/resource/HTTP parity, pinned book contents, privacy guards, separate fresh-install and existing-server migration instructions, update metadata boundaries, and existing device/router regressions. This is not public deployment or unattended GitHub update acceptance.",
+      "evidence": {
+        "command": "/root/huarun-server-20261113/.venv/bin/python -m unittest discover -s apps/lookup/runtime -p test_*.py -q",
+        "tests": 136,
+        "failures": 0
+      }
+    },
+    "installer_acceptance": {
+      "status": "verified",
+      "version": "1.2.0",
+      "stage": "pre_publication",
+      "checked_at": "2026-11-15T09:51:55.157332+00:00",
+      "evidence": "apps/server/verification/2026-11-15-auto-update.json",
+      "evidence_sha256": "b59dee2487aa138d9cc0c29e64f5435334c6ae508f0826ff3f67c03f1bb0afad",
+      "candidate_installer_sha256": "9a2c61f4b9338801a404388675bc1b6754e48f445986d24524480b660ba6b73c",
+      "release_transport": "explicit local release metadata fixture; not a published GitHub release",
+      "public_release_update": "pending publication and separate real-GitHub-feed acceptance",
+      "scope": "One isolated Debian 12 x86_64 systemd environment. The real updater and installer migrated an existing 1.1.0 installation to 1.2.0 using an explicitly local release metadata fixture; the timer was enabled and active. Six owner files retained their bytes and modes, including custom whitelist, Key-file comments and permissions, and owner memory. A failing fixture installer overwrote the manager and Key then exited 42; real rollback restored 1.2.0 and all six owner files, and retrying that release invoked the 24-hour backoff. A prepared unfinished transaction journal was recovered by the real systemd updater service to 1.1.0 with all six files restored and the journal cleared. Holding the shared lock caused the real service to return busy without updating. These are pre-publication integration checks; they do not verify a published GitHub release feed, fresh 1.2.0 network installation, physical clients, ARM, other distributions or arbitrary future releases."
+    }
+  },
+  "validation_results": {
+    "ilang_validate": {
+      "mode": "raw",
+      "counts": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      }
+    },
+    "ilang_book_check": {
+      "pass": true,
+      "A1": {
+        "item": "the book opens and closes with the marker",
+        "expect": 2,
+        "found": 2,
+        "pass": true
+      },
+      "A2": {
+        "item": "the grammar validator reports zero errors in strict mode",
+        "errors": 0,
+        "warnings": 0,
+        "pass": true
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      },
+      "note": "A3, whether the book does the tutorial's job and nothing else, is for a person to decide."
+    }
+  }
+}

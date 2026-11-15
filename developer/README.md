@@ -8,10 +8,10 @@
 
 | 入口 | 当前内容 | 实现或资料 |
 | --- | --- | --- |
-| 公共 MCP | 2.3.0；`search`、`get`、`query`、`get_server_setup` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
+| 公共 MCP | 2.4.0；`search`、`get`、`query`、`get_server_setup` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
 | 设备配置工程书 | autosetup 2.1 | [正文](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.evidence.json) |
 | 梅林路由器工程书 | merlin 1.0 | [正文](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.evidence.json) |
-| 服务器安装工程书 | server 1.1；MCP 优先、DeepSeek 搜索后备、修复复查 | [正文](../apps/lookup/runtime/books/fanqiang-server-v1.1.ilang.md) · [助手实现](../apps/server/README.md) |
+| 服务器安装工程书 | server 1.2；MCP 优先、DeepSeek 搜索后备、修复复查与 VPS 本机自动更新 | [正文](../apps/lookup/runtime/books/fanqiang-server-v1.2.ilang.md) · [助手实现](../apps/server/README.md) |
 | 服务器排障工程书 | troubleshooting 1.0；通过 MCP 资源直接读取 | [正文](../apps/lookup/runtime/books/fanqiang-troubleshooting-v1.0.ilang.md) |
 | 工程书注册与完整性 | 版本、资源 URI、摘要和验证元数据 | [统一注册表](../apps/lookup/runtime/setup_book.py) · [公开工程书目录](https://fanqiang.guide/api/agent/books) |
 | HTTP 查询 | 搜索、条目、条件筛选、工程书与时效 | [OpenAPI](../apps/lookup/runtime/openapi.json) |

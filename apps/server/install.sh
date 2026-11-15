@@ -6,7 +6,7 @@
 #=============================================================================
 
 
-VERSION="1.1.0"
+VERSION="1.2.0"
 DOCS_URL="https://fanqiang.guide/server/"
 PICO_VERSION="v0.3.1"
 PICO_SHA_X86="86f0fe84aa55279352edbe13adfca484a03bcf189e2030b25e34628089069c3f"
@@ -80,6 +80,36 @@ SWAP_FILE="/var/lib/huarun/swapfile"
 AI_HOME="/etc/huarun/assistant"
 AI_TPL="/etc/huarun/assistant-template"
 
+
+# A shared manager lock protects active chats and local administration. The
+# updater passes its already-exclusive descriptor to trusted child processes.
+MAINTENANCE_LOCK="/run/huarun/maintenance.lock"
+acquireMaintenanceLock() {
+    local mode="${1:-shared}" inherited="${HUARUN_UPDATE_LOCK_FD:-}"
+    MAINTENANCE_INHERITED=0
+    mkdir -p "${MAINTENANCE_LOCK%/*}" || return 1
+    chmod 700 "${MAINTENANCE_LOCK%/*}" || return 1
+    [[ ! -L "$MAINTENANCE_LOCK" ]] || return 1
+    if [[ "$inherited" =~ ^[0-9]+$ && "$inherited" -ge 3 && "$inherited" -le 1024 ]] \
+        && [[ "$(readlink "/proc/$$/fd/$inherited" 2>/dev/null)" == "$MAINTENANCE_LOCK" ]]; then
+        # Reassert exclusive ownership; an environment variable alone is never a lock.
+        flock -xn "$inherited" || return 75
+        MAINTENANCE_INHERITED=1
+        return 0
+    fi
+    unset HUARUN_UPDATE_LOCK_FD
+    local previous_umask
+    previous_umask=$(umask); umask 077
+    exec {MAINTENANCE_FD}>"$MAINTENANCE_LOCK" || { umask "$previous_umask"; return 1; }
+    umask "$previous_umask"
+    if [[ "$mode" == exclusive ]]; then
+        flock -xn "$MAINTENANCE_FD" || return 75
+        export HUARUN_UPDATE_LOCK_FD="$MAINTENANCE_FD"
+    else
+        flock -sn "$MAINTENANCE_FD" || return 75
+    fi
+}
+
 # 命令行参数（不给就交互问）
 OPT_UPGRADE_ASSISTANT=0
 OPT_DOMAIN=""; OPT_SITE=""; OPT_YES=0; OPT_JSON=0; OPT_NOSWAP=0; OPT_FORCE_OS=0
@@ -98,7 +128,7 @@ usage() {
   --json            装完只输出一段 JSON（隐含 --yes）
   --no-swap         内存小于 1G 时也不建 swap
   --force-os        内存小的机器上硬装重系统
-  --upgrade-assistant  仅升级已有助手和管理命令，保留网络配置、连接信息与 Key
+  --upgrade-assistant  升级已有助手并启用自动更新，保留网络配置、白名单与 Key
 先到 https://platform.deepseek.com 充值 10 元起步并创建 API Key。
 10 元是建议起步金额，不是平台最低充值额或时长承诺。
 环境变量 HUARUN_API_KEY 可以代替隐藏交互输入。助手为必装组件。
@@ -786,6 +816,7 @@ installAssistantTemplate() {
   A:只验证服务器就声称手机或电脑已连通⇒明确证据范围并请主人实际访问目标网站。
 ::GENE{scope|conf:confirmed|scope:global}
   T:按明确请求添加或删除单个白名单域名；清空、重置白名单、卸载、助手管理和权限扩展交给主人在 SSH 终端决定。
+  T:自动更新仅可运行 huarun auto-update status 查询真实状态；check、enable、disable 及定时器管理交给主人在 SSH 终端执行，不关闭更新或绕过正在使用时延期的规则。
   T:不索要或打印 API Key、SSH 密码、私钥及秘密文件；不将连接信息和私人日志发给知识站或搜索接口。
   A:为了完成任务绕过命令闸或修改自身边界⇒停止该动作并说明具体缺少的操作权限。
 
@@ -858,9 +889,14 @@ description: 华润服务器的资料检索、分层诊断、受限修复与复�
   T:先运行 huarun whitelist list；按明确请求运行 huarun whitelist add example.com 或 huarun whitelist remove example.com。
   T:白名单是服务端放行规则，未列入的目标在隧道内被拒绝，不会替客户端设置自动直连。
   A:调用 whitelist clear、reset、uninstall 或 assistant 管理⇒命令闸拒绝，交由主人在 SSH 终端处理。
+::GENE{automatic_updates|conf:confirmed|scope:global}
+  T:新安装默认在 VPS 启用定时更新；已安装的 1.0 或 1.1 需主人 SSH 运行一次官网的 --upgrade-assistant 迁移命令，以后本机自动检查，不依赖主人电脑。
+  T:运行 huarun auto-update status 查询实际状态。定时器每 6 小时检查、开机 10 分钟后检查并随机错峰最多 30 分钟；只安装 GitHub 正式发布且双站一致的版本。
+  T:自动更新保留节点配置、连接信息、白名单、DeepSeek Key 和聊天记忆，不重启 Xray 或 Nginx；升级前备份，失败回滚，聊天或管理操作正在使用时延期。
+  A:试图调用 auto-update check、enable、disable，改写更新程序或停用定时器⇒命令闸拒绝，交由主人在 SSH 终端处理。
 ::GENE{report|conf:confirmed|scope:global}
   T:用实际诊断和复查结果报告已解决、未解决与未验证项；资料结论附来源，命令拒绝和 API 失败如实说明。
-  T:一般管理命令限于 huarun status、doctor、info、fix、logs、renew、update、version、whitelist list/add/remove 和 free -m、df -h、uptime、date。
+  T:一般管理命令限于 huarun status、doctor、info、fix、logs、renew、update、version、whitelist list/add/remove、auto-update status 和 free -m、df -h、uptime、date。
 
 ::ILANG::COMPLETE::
 SKILLEOF
@@ -890,6 +926,7 @@ ALLOW = [
     re.compile(r'huarun (fix|renew|update|version)'),
     re.compile(r'huarun logs( [0-9]{1,3})?'),
     re.compile(r'huarun whitelist list'),
+    re.compile(r'huarun auto-update status'),
     re.compile(r'huarun whitelist (add|remove) [a-z0-9.-]{3,100}'),
     re.compile(r'free -m|df -h|uptime|date'),
 ]
@@ -1528,10 +1565,11 @@ RESEARCHEOF
 
 #=== 16. 装 AI 助手（有钥匙才装） ============================================
 installAssistant() {
-    [[ -n "$AI_KEY" && -f "$PICO_BIN_READY" ]] || { echo "助手安装前置条件未满足" >&2; return 1; }
+    [[ -f "$PICO_BIN_READY" ]] && { [[ -n "$AI_KEY" ]] || [[ ${OPT_UPGRADE_ASSISTANT:-0} -eq 1 && -s "${AI_HOME}/.security.yml" ]]; } || { echo "助手安装前置条件未满足" >&2; return 1; }
     say "$BLUE" "安装 PicoClaw ${PICO_VERSION} 和华润运维技能..."
     mkdir -p /usr/local/lib/huarun || return 1
-    install -m 0755 "$PICO_BIN_READY" /usr/local/lib/huarun/picoclaw || return 1
+    install -m 0755 "$PICO_BIN_READY" /usr/local/lib/huarun/.picoclaw.new.$$ || return 1
+    mv -f /usr/local/lib/huarun/.picoclaw.new.$$ /usr/local/lib/huarun/picoclaw || return 1
     setupAssistantHome "$AI_KEY" || return 1
     [[ -s "${AI_HOME}/config.json" && -s "${AI_HOME}/.security.yml" ]] || { echo "助手配置不完整，安装未完成" >&2; return 1; }
 }
@@ -1542,7 +1580,9 @@ setupAssistantHome() {
     export -n key AI_KEY
     mkdir -p "$AI_HOME" || return 1
     chmod 700 "$AI_HOME" || return 1
-    PICOCLAW_HOME="$AI_HOME" PICOCLAW_CONFIG="${AI_HOME}/config.json" /usr/local/lib/huarun/picoclaw onboard >/dev/null 2>&1 || true
+    if [[ ${OPT_UPGRADE_ASSISTANT:-0} -eq 0 ]]; then
+        PICOCLAW_HOME="$AI_HOME" PICOCLAW_CONFIG="${AI_HOME}/config.json" /usr/local/lib/huarun/picoclaw onboard >/dev/null 2>&1 || true
+    fi
     [[ -f "${AI_HOME}/config.json" ]] || { colorEcho "$RED" "助手初始化失败（没有 config.json）"; return 1; }
     mkdir -p "$ws/skills" "$ws/memory" || return 1
     mkdir -p "$ws/skills/huarun" || return 1
@@ -1551,25 +1591,34 @@ setupAssistantHome() {
     cp "${AI_TPL}/skills/huarun/SKILL.md" "$ws/skills/huarun/SKILL.md" || return 1
     install -m 0755 "${AI_TPL}/gate.py" "${AI_HOME}/gate.py" || return 1
     install -m 0644 "${AI_TPL}/research.py" "${AI_HOME}/research.py" || return 1
-    rm -f "$ws/USER.md" "$ws/IDENTITY.md" "$ws/AGENTS.md" 2>/dev/null || return 1
+    if [[ ${OPT_UPGRADE_ASSISTANT:-0} -eq 0 ]]; then
+        rm -f "$ws/USER.md" "$ws/IDENTITY.md" "$ws/AGENTS.md" 2>/dev/null || return 1
+    fi
 
-    # 钥匙单独放，600
-    umask 077
-    printf 'model_list:\n  %s:\n    api_keys:\n      - "%s"\n' "$AI_MODEL" "$key" > "${AI_HOME}/.security.yml" || { umask 022; return 1; }
-    umask 022
-    chmod 600 "${AI_HOME}/.security.yml" || return 1
+    # Upgrades preserve the complete existing secret file, including its mode.
+    if [[ ${OPT_UPGRADE_ASSISTANT:-0} -eq 0 ]]; then
+        # 钥匙单独放，600
+        umask 077
+        printf 'model_list:\n  %s:\n    api_keys:\n      - "%s"\n' "$AI_MODEL" "$key" > "${AI_HOME}/.security.yml" || { umask 022; return 1; }
+        umask 022
+        chmod 600 "${AI_HOME}/.security.yml" || return 1
+    else
+        [[ -s "${AI_HOME}/.security.yml" ]] || return 1
+    fi
 
     # 配置：只留 exec + read_file，远程通道关，钩子当命令闸
-    AI_HOME="$AI_HOME" WS="$ws" AI_MODEL="$AI_MODEL" AI_PROVIDER="$AI_PROVIDER" AI_API_BASE="$AI_API_BASE" python3 - << 'PYEOF' || return 1
+    AI_HOME="$AI_HOME" WS="$ws" AI_MODEL="$AI_MODEL" AI_PROVIDER="$AI_PROVIDER" AI_API_BASE="$AI_API_BASE" HUARUN_PRESERVE_MODEL="${OPT_UPGRADE_ASSISTANT:-0}" python3 - << 'PYEOF' || return 1
 import json, os
 home = os.environ["AI_HOME"]; ws = os.environ["WS"]
 p = os.path.join(home, "config.json")
 c = json.load(open(p))
 d = c.setdefault("agents", {}).setdefault("defaults", {})
 d.update({"workspace": ws, "restrict_to_workspace": True, "allow_read_outside_workspace": False,
-          "model_name": os.environ["AI_MODEL"], "max_tool_iterations": 20})
-c["model_list"] = [{"model_name": os.environ["AI_MODEL"], "provider": os.environ["AI_PROVIDER"],
-                    "model": os.environ["AI_MODEL"], "api_base": os.environ["AI_API_BASE"], "enabled": True}]
+          "max_tool_iterations": 20})
+if os.environ.get("HUARUN_PRESERVE_MODEL") != "1":
+    d["model_name"] = os.environ["AI_MODEL"]
+    c["model_list"] = [{"model_name": os.environ["AI_MODEL"], "provider": os.environ["AI_PROVIDER"],
+                        "model": os.environ["AI_MODEL"], "api_base": os.environ["AI_API_BASE"], "enabled": True}]
 t = c.setdefault("tools", {})
 t["filter_sensitive_data"] = True
 t.setdefault("exec", {}).update({"enabled": True, "enable_deny_patterns": True, "allow_remote": False, "timeout_seconds": 300})
@@ -1588,7 +1637,7 @@ PYEOF
     chmod 600 "${AI_HOME}/config.json" || return 1
 
     # info.json 记一笔
-    if [[ -f "$INFO_FILE" ]]; then
+    if [[ ${OPT_UPGRADE_ASSISTANT:-0} -eq 0 && -f "$INFO_FILE" ]]; then
         jq '.assistant = true' "$INFO_FILE" > "${INFO_FILE}.tmp" && mv "${INFO_FILE}.tmp" "$INFO_FILE" && chmod 600 "$INFO_FILE" || return 1
     fi
     say "$GREEN" "✓ AI 助手已装好：以后输入 huarun chat 跟它说话"
@@ -1641,9 +1690,11 @@ showInfo() {
 
 #=== 18. 安装管理命令 ========================================================
 installManager() {
-    cat > /usr/local/bin/huarun << 'MGRSCRIPT' || return 1
+    local manager_tmp
+    manager_tmp=$(mktemp /usr/local/bin/.huarun.XXXXXXXX) || return 1
+    cat > "$manager_tmp" << 'MGRSCRIPT' || return 1
 #!/bin/bash
-VERSION="1.1.0"
+VERSION="1.2.0"
 INFO_FILE="/etc/huarun/info.json"
 SITE_DIR="/usr/share/nginx/huarun"
 TPL_DIR="/usr/share/nginx/huarun-templates"
@@ -1664,6 +1715,36 @@ DEFAULT_DOMAINS="__DEFAULT_DOMAINS__"
 RED="\033[31m"; GREEN="\033[32m"; YELLOW="\033[33m"; BLUE="\033[36m"; PLAIN="\033[0m"
 colorEcho() { echo -e "${1}${*:2}${PLAIN}"; }
 info_get() { jq -r "$1 // empty" "$INFO_FILE" 2>/dev/null; }
+
+# A shared manager lock protects active chats and local administration. The
+# updater passes its already-exclusive descriptor to trusted child processes.
+MAINTENANCE_LOCK="/run/huarun/maintenance.lock"
+acquireMaintenanceLock() {
+    local mode="${1:-shared}" inherited="${HUARUN_UPDATE_LOCK_FD:-}"
+    MAINTENANCE_INHERITED=0
+    mkdir -p "${MAINTENANCE_LOCK%/*}" || return 1
+    chmod 700 "${MAINTENANCE_LOCK%/*}" || return 1
+    [[ ! -L "$MAINTENANCE_LOCK" ]] || return 1
+    if [[ "$inherited" =~ ^[0-9]+$ && "$inherited" -ge 3 && "$inherited" -le 1024 ]] \
+        && [[ "$(readlink "/proc/$$/fd/$inherited" 2>/dev/null)" == "$MAINTENANCE_LOCK" ]]; then
+        # Reassert exclusive ownership; an environment variable alone is never a lock.
+        flock -xn "$inherited" || return 75
+        MAINTENANCE_INHERITED=1
+        return 0
+    fi
+    unset HUARUN_UPDATE_LOCK_FD
+    local previous_umask
+    previous_umask=$(umask); umask 077
+    exec {MAINTENANCE_FD}>"$MAINTENANCE_LOCK" || { umask "$previous_umask"; return 1; }
+    umask "$previous_umask"
+    if [[ "$mode" == exclusive ]]; then
+        flock -xn "$MAINTENANCE_FD" || return 75
+        export HUARUN_UPDATE_LOCK_FD="$MAINTENANCE_FD"
+    else
+        flock -sn "$MAINTENANCE_FD" || return 75
+    fi
+}
+
 
 show_menu() {
     echo ""; echo -e "${BLUE}华润网络助手 管理菜单 v${VERSION}${PLAIN}"; echo ""
@@ -1973,7 +2054,7 @@ chat() {
     echo -e "${BLUE}跟助手说话：有问题直接说，比如「手机连不上了」。输入 exit 退出。${PLAIN}"
     cd "${AI_HOME}/workspace" 2>/dev/null || true
     unset HUARUN_API_KEY AI_KEY SETUP_KEY
-    PICOCLAW_HOME="$AI_HOME" PICOCLAW_CONFIG="${AI_HOME}/config.json" PICOCLAW_LOG_LEVEL=error exec /usr/local/lib/huarun/picoclaw agent "$@"
+    PICOCLAW_HOME="$AI_HOME" PICOCLAW_CONFIG="${AI_HOME}/config.json" PICOCLAW_LOG_LEVEL=error /usr/local/lib/huarun/picoclaw agent "$@"
 }
 
 assistant_cmd() {
@@ -2027,6 +2108,8 @@ PY
             require_terminal || return 1
             read -r -p "移除助手会删除其配置与 Key，输入 YES 确认: " confirm
             [[ "$confirm" == "YES" ]] || { echo "已取消"; return 1; }
+            systemctl disable --now huarun-auto-update.timer 2>/dev/null || true
+            (umask 077; touch /etc/huarun/auto-update.disabled) || return 1
             rm -rf "$AI_HOME"; [[ -f "$INFO_FILE" ]] && jq '.assistant = false' "$INFO_FILE" > "${INFO_FILE}.tmp" && mv "${INFO_FILE}.tmp" "$INFO_FILE" && chmod 600 "$INFO_FILE"
             colorEcho "$GREEN" "✓ 助手已移除（picoclaw 二进制保留）" ;;
         *) echo "用法: huarun assistant setup|remove" ;;
@@ -2044,6 +2127,9 @@ uninstall() {
         read -r -p "" confirm
         [[ "$confirm" != "y" ]] && [[ "$confirm" != "Y" ]] && return
     fi
+    systemctl disable --now huarun-auto-update.timer 2>/dev/null || true
+    rm -f /etc/systemd/system/huarun-auto-update.timer /etc/systemd/system/huarun-auto-update.service /usr/local/lib/huarun/auto_update.py
+    systemctl daemon-reload 2>/dev/null || true
     if [[ -f "$INFO_FILE" ]]; then
         local XCFG NCFG SDIR TDIR CDIR CRONF BBRF SWAPF ADIR ATPL WL TOSF
         XCFG=$(info_get .managedPaths.xrayConfig); NCFG=$(info_get .managedPaths.nginxConfig)
@@ -2190,6 +2276,40 @@ whitelist_menu() {
     done
 }
 
+auto_update_cmd() {
+    local action="${1:-status}"
+    case "$action" in
+        status) /usr/bin/python3 /usr/local/lib/huarun/auto_update.py --status ;;
+        check) /usr/bin/python3 /usr/local/lib/huarun/auto_update.py --run ;;
+        enable)
+            require_terminal || return 1
+            acquireMaintenanceLock exclusive || return $?
+            rm -f /etc/huarun/auto-update.disabled || return 1
+            systemctl enable --now huarun-auto-update.timer || return 1
+            auto_update_cmd status ;;
+        disable)
+            require_terminal || return 1
+            acquireMaintenanceLock exclusive || return $?
+            (umask 077; touch /etc/huarun/auto-update.disabled) || return 1
+            systemctl disable --now huarun-auto-update.timer || return 1
+            auto_update_cmd status ;;
+        *) echo '用法: huarun auto-update status|check|enable|disable' >&2; return 1 ;;
+    esac
+}
+
+manager_entry() {
+    if [[ "${1:-}" == auto-update ]]; then
+        shift; auto_update_cmd "$@"; return $?
+    fi
+    acquireMaintenanceLock shared || { echo '助手正在更新，请稍后重试。' >&2; return 75; }
+    if [[ $MAINTENANCE_INHERITED -ne 1 && -f /var/lib/huarun-updater/transaction.json ]]; then
+        systemctl start --no-block huarun-auto-update.service >/dev/null 2>&1 || true
+        echo '上次更新尚未完成，服务器正在自动恢复，请稍后重试。' >&2
+        return 75
+    fi
+    manager_main "$@"
+}
+
 # 子命令：给助手和自动化用；不带参数进菜单
 manager_main() {
 case "${1:-}" in
@@ -2219,6 +2339,7 @@ case "${1:-}" in
   whitelist list|add 域名|remove 域名|reset|clear --yes
   chat                 跟 AI 助手说话
   assistant setup|remove
+  auto-update status|check|enable|disable  自动更新状态与管理
   uninstall [--yes]
 不带参数进菜单。
 H
@@ -2226,20 +2347,841 @@ H
     *)         show_menu ;;
 esac
 }
-if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then manager_main "$@"; fi
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then manager_entry "$@"; fi
 MGRSCRIPT
     # 出厂白名单只在脚本顶上定义一次，这里填进管理命令
-    sed -i "s|^DEFAULT_DOMAINS=\"__DEFAULT_DOMAINS__\"|DEFAULT_DOMAINS=\"${DEFAULT_DOMAINS}\"|" /usr/local/bin/huarun || return 1
-    grep -q '^DEFAULT_DOMAINS="google.com ' /usr/local/bin/huarun || { say "$RED" "✗ 管理命令里的默认白名单没写进去"; return 1; }
-    chmod +x /usr/local/bin/huarun || return 1
+    sed -i "s|^DEFAULT_DOMAINS=\"__DEFAULT_DOMAINS__\"|DEFAULT_DOMAINS=\"${DEFAULT_DOMAINS}\"|" "$manager_tmp" || return 1
+    grep -q '^DEFAULT_DOMAINS="google.com ' "$manager_tmp" || { say "$RED" "✗ 管理命令里的默认白名单没写进去"; return 1; }
+    chmod +x "$manager_tmp" || return 1
+    mv -f "$manager_tmp" /usr/local/bin/huarun || return 1
     say "$GREEN" "✓ 管理命令已安装: huarun"
+}
+
+installAutoUpdater() {
+    local existed=0 enabled=0 active=0
+    [[ ! -e /etc/systemd/system/huarun-auto-update.timer ]] || existed=1
+    systemctl is-enabled --quiet huarun-auto-update.timer 2>/dev/null && enabled=1 || true
+    systemctl is-active --quiet huarun-auto-update.timer 2>/dev/null && active=1 || true
+    install -d -m 700 /var/lib/huarun-updater /run/huarun || return 1
+    install -d -m 755 /usr/local/lib/huarun || return 1
+    cat > /usr/local/lib/huarun/auto_update.py.new << 'AUTOUPDATEEOF' || return 1
+#!/usr/bin/env python3
+"""Verified, crash-recoverable assistant-only updates for an installed HuaRun VPS."""
+from __future__ import annotations
+
+import argparse
+import copy
+from datetime import datetime, timezone
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import signal
+import stat
+import subprocess
+import sys
+import time
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+import uuid
+
+REPOSITORY = "JasperYubo/Fanqiang-Guide"
+API = "https://api.github.com/repos/" + REPOSITORY + "/releases/latest"
+ORIGIN = "https://fanqiang.guide/"
+PAGES = "https://jasperyubo.github.io/Fanqiang-Guide/"
+STATE_DIR = "/var/lib/huarun-updater"
+LOCK_PATH = "/run/huarun/maintenance.lock"
+DISABLED_MARKER = "/etc/huarun/auto-update.disabled"
+TIMER = "huarun-auto-update.timer"
+MAX_DOWNLOAD = 2 * 1024 * 1024
+FAILURE_BACKOFF = 24 * 60 * 60
+TRANSACTION_NAME = re.compile(r"txn-\d{8}T\d{6}Z-[a-f0-9]{16}\Z")
+PROTECTED_PATHS = (
+    "/usr/local/etc/xray/config.json", "/usr/local/etc/xray/whitelist.txt",
+    "/etc/nginx/conf.d/huarun.conf", "/etc/huarun/info.json",
+    "/etc/huarun/assistant/.security.yml",
+)
+ASSISTANT_PATHS = (
+    "/usr/local/bin/huarun", "/usr/local/lib/huarun/picoclaw",
+    "/usr/local/lib/huarun/auto_update.py", "/etc/huarun/assistant/config.json",
+    "/etc/huarun/assistant/gate.py", "/etc/huarun/assistant/research.py",
+    "/etc/huarun/assistant/workspace/AGENT.md", "/etc/huarun/assistant/workspace/SOUL.md",
+    "/etc/huarun/assistant/workspace/skills/huarun/SKILL.md",
+    "/etc/huarun/assistant-template", "/etc/systemd/system/huarun-auto-update.service",
+    "/etc/systemd/system/huarun-auto-update.timer",
+)
+ALL_PATHS = PROTECTED_PATHS + ASSISTANT_PATHS
+
+
+class UpdateError(Exception):
+    """A fixed public error code, never a raw response or command output."""
+
+
+class Defer(UpdateError):
+    pass
+
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def sha256(raw):
+    return hashlib.sha256(raw).hexdigest()
+
+
+def file_digest(path):
+    hasher = hashlib.sha256()
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            hasher.update(block)
+    return hasher.hexdigest()
+
+
+def allowed_url(url):
+    try:
+        parsed = urlsplit(url)
+        if parsed.scheme != "https" or parsed.username or parsed.password or parsed.port not in (None, 443):
+            return False
+        host = parsed.hostname
+        if host == "api.github.com":
+            return parsed.path == "/repos/" + REPOSITORY + "/releases/latest"
+        if host == "github.com":
+            return bool(re.fullmatch("/" + re.escape(REPOSITORY) + r"/releases/download/release-[a-f0-9]{12}/(?:huarun-install\.sh|deployment-proof\.json)", parsed.path))
+        if host in {"release-assets.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"}:
+            return True
+        if host == "fanqiang.guide":
+            return parsed.path in {"/data/site-release.json", "/server/install.sh"}
+        if host == "jasperyubo.github.io":
+            return parsed.path == "/Fanqiang-Guide/deployment.json"
+    except ValueError:
+        pass
+    return False
+
+
+def fetch_public(url, *, timeout=12, max_bytes=MAX_DOWNLOAD):
+    """Anonymous fixed-host HTTPS only; signed release redirects carry no key."""
+    deadline = time.monotonic() + timeout
+    for _ in range(4):
+        if not allowed_url(url):
+            raise Defer("download_url_not_allowed")
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise Defer("download_timeout")
+        request = Request(url, headers={"Accept": "application/vnd.github+json" if urlsplit(url).hostname == "api.github.com" else "application/octet-stream",
+                                        "User-Agent": "HuaRunUpdater/1.0 (+https://fanqiang.guide/server/)",
+                                        "Cache-Control": "no-cache", "X-GitHub-Api-Version": "2026-03-10"})
+        try:
+            with build_opener(NoRedirect).open(request, timeout=remaining) as response:
+                chunks, total = [], 0
+                while True:
+                    if time.monotonic() >= deadline:
+                        raise Defer("download_timeout")
+                    chunk = response.read1(min(65536, max_bytes + 1 - total))
+                    if not chunk:
+                        return b"".join(chunks)
+                    total += len(chunk)
+                    if total > max_bytes:
+                        raise Defer("download_too_large")
+                    chunks.append(chunk)
+        except HTTPError as error:
+            if error.code in (301, 302, 303, 307, 308) and urlsplit(url).hostname in {"github.com", "release-assets.githubusercontent.com", "objects.githubusercontent.com", "github-releases.githubusercontent.com"}:
+                url = error.headers.get("Location", "")
+                continue
+            raise Defer("download_http_" + str(error.code)) from None
+        except (URLError, TimeoutError, OSError):
+            raise Defer("download_unavailable") from None
+    raise Defer("download_redirect_limit")
+
+
+def object_json(raw):
+    try:
+        result = json.loads(raw)
+    except (ValueError, TypeError, UnicodeError):
+        raise Defer("invalid_json") from None
+    if not isinstance(result, dict):
+        raise Defer("invalid_json_object")
+    return result
+
+
+def version(raw):
+    try:
+        values = set(re.findall(r'^VERSION="(\d+\.\d+\.\d+)"$', raw.decode("utf-8"), re.M))
+    except UnicodeError:
+        raise Defer("invalid_installer_encoding") from None
+    if len(values) != 1:
+        raise Defer("invalid_installer_version")
+    return values.pop()
+
+
+def semver(value):
+    if not isinstance(value, str) or not re.fullmatch(r"\d+\.\d+\.\d+", value):
+        raise UpdateError("invalid_installed_version")
+    return tuple(int(part) for part in value.split("."))
+
+
+def verify_release(fetch=fetch_public):
+    release = object_json(fetch(API))
+    if release.get("draft") is not False or release.get("prerelease") is not False:
+        raise Defer("release_not_stable")
+    source = release.get("target_commitish", "")
+    if not isinstance(source, str) or not re.fullmatch(r"[a-f0-9]{40}", source):
+        raise Defer("release_source_not_pinned")
+    tag = "release-" + source[:12]
+    if release.get("tag_name") != tag or type(release.get("id")) is not int or release["id"] < 1:
+        raise Defer("release_identity_mismatch")
+    assets = release.get("assets", [])
+    if not isinstance(assets, list):
+        raise Defer("release_assets_invalid")
+    selected = {}
+    for name in ("huarun-install.sh", "deployment-proof.json"):
+        matches = [item for item in assets if isinstance(item, dict) and item.get("name") == name]
+        if len(matches) != 1:
+            raise Defer("release_asset_missing_or_duplicate")
+        asset = matches[0]
+        expected_url = "https://github.com/" + REPOSITORY + "/releases/download/" + tag + "/" + name
+        if asset.get("browser_download_url") != expected_url or asset.get("state") != "uploaded":
+            raise Defer("release_asset_identity_mismatch")
+        checksum = asset.get("digest", "")
+        if not isinstance(checksum, str) or not re.fullmatch(r"sha256:[a-f0-9]{64}", checksum):
+            raise Defer("release_asset_digest_missing")
+        size = asset.get("size")
+        if not isinstance(size, int) or not 0 < size <= MAX_DOWNLOAD:
+            raise Defer("release_asset_size_invalid")
+        raw = fetch(expected_url)
+        if len(raw) != size or sha256(raw) != checksum[7:]:
+            raise Defer("release_asset_digest_mismatch")
+        selected[name] = raw
+    installer = selected["huarun-install.sh"]
+    proof = object_json(selected["deployment-proof.json"])
+    installer_sha = sha256(installer)
+    contract_sha = proof.get("contract_sha256", "")
+    if (proof.get("schema_version") != 1 or proof.get("source_sha") != source
+            or proof.get("installer_sha256") != installer_sha or not isinstance(contract_sha, str)
+            or not re.fullmatch(r"[a-f0-9]{64}", contract_sha)):
+        raise Defer("deployment_proof_identity_mismatch")
+    expected = {"schema_version": 1, "source_sha": source, "contract_sha256": contract_sha, "installer_sha256": installer_sha}
+    if not isinstance(proof.get("assets"), dict) or proof["assets"].get("huarun-install.sh") != {"sha256": installer_sha, "bytes": len(installer)}:
+        raise Defer("deployment_proof_installer_mismatch")
+    if not isinstance(proof.get("sync_id"), str) or not proof["sync_id"] or not re.fullmatch(r"[1-9][0-9]*", str(proof.get("run_id", ""))) or type(proof.get("run_attempt")) is not int or proof["run_attempt"] < 1:
+        raise Defer("deployment_proof_run_invalid")
+    for receipt_name in ("origin_receipt", "pages_receipt"):
+        receipt = proof.get(receipt_name)
+        if not isinstance(receipt, dict) or any(receipt.get(k) != v for k, v in expected.items()) or receipt.get("sync_id") != proof.get("sync_id"):
+            raise Defer("deployment_proof_receipt_mismatch")
+    if proof["pages_receipt"].get("run_id") != proof.get("run_id") or proof["pages_receipt"].get("run_attempt") != proof.get("run_attempt"):
+        raise Defer("deployment_proof_run_mismatch")
+    suffix = "?source=" + source + "&check=" + str(time.time_ns())
+    origin = object_json(fetch(ORIGIN + "data/site-release.json" + suffix))
+    pages = object_json(fetch(PAGES + "deployment.json" + suffix))
+    for receipt in (origin, pages):
+        if any(receipt.get(k) != v for k, v in expected.items()):
+            raise Defer("sites_not_on_release")
+    if not isinstance(origin.get("sync_id"), str) or not origin["sync_id"] or origin["sync_id"] != pages.get("sync_id"):
+        raise Defer("sites_not_same_transaction")
+    if not re.fullmatch(r"[1-9][0-9]*", str(pages.get("run_id", ""))) or not isinstance(pages.get("run_attempt"), int) or pages["run_attempt"] < 1:
+        raise Defer("pages_run_identity_invalid")
+    if sha256(fetch(ORIGIN + "server/install.sh" + suffix)) != installer_sha:
+        raise Defer("origin_installer_mismatch")
+    return {"source_sha": source, "installer_sha256": installer_sha, "version": version(installer),
+            "release_id": release["id"], "tag": tag, "release_url": "https://github.com/" + REPOSITORY + "/releases/tag/" + tag,
+            "installer": installer}
+
+
+def default_runner(args, *, timeout, env, pass_fds=()):
+    # Terminate the complete installer process group before rollback: killing only
+    # its shell could leave a downloader or writer racing restored files.
+    process = subprocess.Popen(args, env=env, pass_fds=pass_fds, start_new_session=True,
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               text=True, encoding="utf-8", errors="replace")
+    try:
+        stdout, stderr = process.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(process.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        process.communicate()
+        raise
+    return subprocess.CompletedProcess(args, process.returncode, stdout, stderr)
+
+
+class Updater:
+    def __init__(self, root=Path("/"), *, fetch=fetch_public, runner=default_runner, clock=time.time):
+        self.root = Path(root).resolve()
+        self.fetch, self.runner, self.clock = fetch, runner, clock
+        self.state_dir = self.path(STATE_DIR)
+        self.state_path = self.state_dir / "state.json"
+        self.journal_path = self.state_dir / "transaction.json"
+        self.backup_dir = self.state_dir / "backups"
+        self.lock_fd = None
+
+    def path(self, absolute, *, restore_leaf=False):
+        if not absolute.startswith("/") or ".." in Path(absolute).parts:
+            raise UpdateError("unsafe_local_path")
+        path = self.root / absolute.lstrip("/")
+        checked = path.parent if restore_leaf else path
+        if not checked.resolve().is_relative_to(self.root):
+            raise UpdateError("unsafe_local_path")
+        current = checked
+        while current != self.root:
+            if current.is_symlink():
+                raise UpdateError("symlink_local_path")
+            current = current.parent
+        return path
+
+    @staticmethod
+    def private_dir(path):
+        path.mkdir(parents=True, exist_ok=True, mode=0o700)
+        info = path.lstat()
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid():
+            raise UpdateError("unsafe_state_owner")
+        path.chmod(0o700)
+
+    @staticmethod
+    def atomic_json(path, value):
+        temporary = path.with_name(path.name + ".tmp-" + uuid.uuid4().hex)
+        fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as stream:
+                json.dump(value, stream, ensure_ascii=False, sort_keys=True)
+                stream.write("\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(temporary, path)
+            directory = os.open(path.parent, os.O_DIRECTORY)
+            try:
+                os.fsync(directory)
+            finally:
+                os.close(directory)
+        finally:
+            if temporary.exists():
+                temporary.unlink()
+
+    @staticmethod
+    def read_json(path, default=None):
+        if not path.exists() and not path.is_symlink():
+            return copy.deepcopy(default if default is not None else {})
+        info = path.lstat()
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or stat.S_IMODE(info.st_mode) & 0o077:
+            raise UpdateError("unsafe_state_file")
+        if info.st_size > MAX_DOWNLOAD:
+            raise UpdateError("state_too_large")
+        value = object_json(path.read_bytes())
+        return value
+
+    def command(self, args, timeout=15, *, check=True):
+        env = {k: v for k, v in os.environ.items() if k not in {"GITHUB_TOKEN", "GH_TOKEN", "HUARUN_API_KEY", "DEEPSEEK_API_KEY", "AI_KEY", "SETUP_KEY", "HUARUN_UPDATE_LOCK_FD"}}
+        descriptors = ()
+        if self.lock_fd is not None:
+            env["HUARUN_UPDATE_LOCK_FD"] = str(self.lock_fd)
+            descriptors = (self.lock_fd,)
+        try:
+            result = self.runner(list(map(str, args)), timeout=timeout, env=env, pass_fds=descriptors)
+        except (subprocess.TimeoutExpired, OSError):
+            raise UpdateError("local_command_failed") from None
+        if check and result.returncode:
+            raise UpdateError("local_command_failed")
+        return result
+
+    def timer_state(self):
+        result = {}
+        for name, option in (("enabled", "is-enabled"), ("active", "is-active")):
+            try:
+                command = self.command(["systemctl", option, TIMER], timeout=5, check=False)
+                value = command.stdout.strip()
+                allowed = {"enabled", "disabled", "static", "masked", "not-found", "active", "inactive", "failed", "activating", "deactivating"}
+                result[name] = value if value in allowed else "unknown"
+            except UpdateError:
+                result[name] = "unknown"
+        return result
+
+    def status(self):
+        state = self.read_json(self.state_path, {})
+        safe = {key: state[key] for key in ("status", "last_check") if key in state}
+        for name in ("last_good", "last_failure"):
+            record = state.get(name)
+            safe[name] = {key: record[key] for key in ("source_sha", "installer_sha256", "version", "release_id", "tag", "release_url", "at", "code") if key in record} if isinstance(record, dict) else None
+        safe["timer"] = self.timer_state()
+        safe["disabled"] = self.path(DISABLED_MARKER).exists()
+        safe["pending_recovery"] = self.journal_path.exists()
+        return safe
+
+    def write_state(self, state, status, **fields):
+        result = {**state, "schema_version": 1, "status": status, "last_check": int(self.clock()), **fields}
+        self.atomic_json(self.state_path, result)
+        return {"status": status, **fields}
+
+    def snapshot(self, path):
+        if not path.exists() and not path.is_symlink():
+            return {"exists": False}
+        info = path.lstat()
+        if stat.S_ISLNK(info.st_mode) or not (stat.S_ISREG(info.st_mode) or stat.S_ISDIR(info.st_mode)):
+            raise UpdateError("unsupported_backup_file")
+        record = {"exists": True, "mode": stat.S_IMODE(info.st_mode), "uid": info.st_uid, "gid": info.st_gid}
+        if path.is_dir():
+            record.update({"type": "directory", "children": {child.name: self.snapshot(child) for child in sorted(path.iterdir())}})
+        else:
+            record.update({"type": "file", "bytes": info.st_size, "sha256": file_digest(path)})
+        return record
+
+    @staticmethod
+    def sync_tree(path):
+        if path.is_symlink():
+            raise UpdateError("symlink_installed_path")
+        if path.is_dir():
+            for child in path.iterdir():
+                Updater.sync_tree(child)
+            descriptor = os.open(path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        else:
+            descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+        try:
+            os.fsync(descriptor)
+        finally:
+            os.close(descriptor)
+
+    def sync_parent_chain(self, path):
+        current = path.parent
+        while current.is_relative_to(self.root):
+            if not current.exists():
+                current = current.parent
+                continue
+            descriptor = os.open(current, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            try:
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+            if current == self.root:
+                break
+            current = current.parent
+
+    def sync_installed(self):
+        for target in ALL_PATHS:
+            path = self.path(target)
+            if path.exists():
+                self.sync_tree(path)
+            self.sync_parent_chain(path)
+
+    def clear_journal(self):
+        self.journal_path.unlink()
+        directory = os.open(self.state_dir, os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+
+    def backup(self, transaction):
+        if not TRANSACTION_NAME.fullmatch(transaction):
+            raise UpdateError("invalid_transaction_name")
+        folder = self.backup_dir / transaction
+        folder.mkdir(mode=0o700)
+        # A durable ownership marker also identifies an interrupted pre-journal
+        # backup; retention never deletes arbitrary user-created directories.
+        self.atomic_json(folder / "owner.json", {"schema_version": 1, "transaction": transaction})
+        entries = {}
+        try:
+            for index, target in enumerate(ALL_PATHS):
+                source = self.path(target)
+                before = self.snapshot(source)
+                destination = folder / str(index)
+                if before["exists"]:
+                    if before["type"] == "directory":
+                        shutil.copytree(source, destination, copy_function=shutil.copy2)
+                    else:
+                        shutil.copy2(source, destination)
+                    self.sync_tree(destination)
+                    # Backup ownership is root; source mode/owner is sealed separately.
+                    if self.snapshot(source) != before:
+                        raise UpdateError("source_changed_during_backup")
+                entries[target] = before
+            manifest = {"schema_version": 1, "transaction": transaction, "entries": entries}
+            self.atomic_json(folder / "backup.json", manifest)
+            self.sync_parent_chain(folder)
+            return folder, manifest
+        except Exception:
+            if folder.parent == self.backup_dir and not folder.is_symlink():
+                shutil.rmtree(folder)
+            raise
+
+    def restore_metadata(self, path, snapshot):
+        if snapshot["type"] == "directory":
+            for name, child in snapshot["children"].items():
+                if not isinstance(name, str) or name in {".", ".."} or "/" in name:
+                    raise UpdateError("invalid_backup_manifest")
+                self.restore_metadata(path / name, child)
+        os.chown(path, snapshot["uid"], snapshot["gid"])
+        path.chmod(snapshot["mode"])
+
+    def backup_matches(self, path, snapshot):
+        actual = self.snapshot(path)
+        def content_only(value):
+            if isinstance(value, dict):
+                return {key: content_only(item) for key, item in value.items() if key not in {"uid", "gid"}}
+            return value
+        return content_only(actual) == content_only(snapshot)
+
+    def restore(self, journal):
+        transaction = journal.get("transaction", "")
+        if not isinstance(transaction, str) or not TRANSACTION_NAME.fullmatch(transaction):
+            raise UpdateError("invalid_transaction_name")
+        folder = self.backup_dir / transaction
+        if folder.is_symlink() or not folder.resolve().is_relative_to(self.backup_dir.resolve()):
+            raise UpdateError("unsafe_backup_path")
+        manifest = self.read_json(folder / "backup.json")
+        if manifest.get("transaction") != transaction or set(manifest.get("entries", {})) != set(ALL_PATHS):
+            raise UpdateError("invalid_backup_manifest")
+        for index, target in enumerate(ALL_PATHS):
+            before = manifest["entries"][target]
+            if before.get("exists") and not self.backup_matches(folder / str(index), before):
+                raise UpdateError("backup_integrity_failed")
+        old_timer = journal.get("timer_before", {})
+        if old_timer.get("enabled") in {"disabled", "not-found"}:
+            self.command(["systemctl", "disable", "--now", TIMER], check=False)
+        for index, target in enumerate(ALL_PATHS):
+            destination = self.path(target, restore_leaf=True)
+            before = manifest["entries"][target]
+            try:
+                unchanged = self.snapshot(destination) == before
+            except UpdateError:
+                unchanged = False
+            if unchanged:
+                continue
+            if destination.exists() or destination.is_symlink():
+                if destination.is_dir() and not destination.is_symlink():
+                    shutil.rmtree(destination)
+                else:
+                    destination.unlink()
+            if before.get("exists"):
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                backup_path = folder / str(index)
+                if before["type"] == "directory":
+                    shutil.copytree(backup_path, destination, copy_function=shutil.copy2)
+                else:
+                    shutil.copy2(backup_path, destination)
+                self.restore_metadata(destination, before)
+                self.sync_tree(destination)
+            if self.snapshot(destination) != before:
+                raise UpdateError("restore_verification_failed")
+            self.sync_parent_chain(destination)
+        self.sync_installed()
+        self.command(["systemctl", "daemon-reload"])
+        if old_timer.get("enabled") == "enabled":
+            self.command(["systemctl", "enable", TIMER])
+        elif old_timer.get("enabled") == "disabled":
+            self.command(["systemctl", "disable", TIMER])
+        if old_timer.get("enabled") != "not-found" and old_timer.get("active") in {"active", "inactive", "failed"}:
+            self.command(["systemctl", "start" if old_timer["active"] == "active" else "stop", TIMER])
+        actual_timer = self.timer_state()
+        if old_timer.get("enabled") in {"enabled", "disabled"} and actual_timer["enabled"] != old_timer["enabled"]:
+            raise UpdateError("timer_restore_failed")
+        if old_timer.get("active") == "active" and actual_timer["active"] != "active":
+            raise UpdateError("timer_restore_failed")
+        if old_timer.get("active") in {"inactive", "failed"} and actual_timer["active"] == "active":
+            raise UpdateError("timer_restore_failed")
+
+    def health(self):
+        manager = self.path("/usr/local/bin/huarun")
+        try:
+            doctor = object_json(self.command([manager, "doctor", "--json"], timeout=30).stdout)
+            status_value = object_json(self.command([manager, "status", "--json"], timeout=20).stdout)
+            checks = doctor["checks"]
+            if not isinstance(checks, dict) or not checks or not isinstance(doctor["all_ok"], bool):
+                raise ValueError()
+            result = {"doctor": {}, "all_ok": doctor["all_ok"], "status": {}}
+            for name, check in checks.items():
+                if not isinstance(check, dict) or not isinstance(check.get("ok"), bool):
+                    raise ValueError()
+                result["doctor"][name] = check["ok"]
+            for name in ("xray", "nginx"):
+                if not isinstance(status_value.get(name), str) or not status_value[name]:
+                    raise ValueError()
+                result["status"][name] = status_value[name] == "active"
+            for name in ("port443", "renew_cron", "assistant"):
+                if not isinstance(status_value.get(name), bool):
+                    raise ValueError()
+                result["status"][name] = status_value[name]
+            return result
+        except (KeyError, ValueError, TypeError, Defer):
+            raise UpdateError("invalid_health_json") from None
+
+    @staticmethod
+    def nonregression(before, after):
+        if before["all_ok"] and not after["all_ok"]:
+            raise UpdateError("health_regression")
+        for section in ("doctor", "status"):
+            if any(value and after[section].get(name) is not True for name, value in before[section].items()):
+                raise UpdateError("health_regression")
+
+    def validate_installed(self, candidate, manifest, before):
+        for target in PROTECTED_PATHS:
+            if self.snapshot(self.path(target)) != manifest["entries"][target]:
+                raise UpdateError("protected_file_changed")
+        for target in ("/etc/huarun/assistant/gate.py", "/etc/huarun/assistant/research.py", "/usr/local/lib/huarun/auto_update.py"):
+            path = self.path(target)
+            try:
+                compile(path.read_bytes(), target, "exec")
+            except (SyntaxError, UnicodeError, OSError):
+                raise UpdateError("installed_python_invalid") from None
+        manager = self.path("/usr/local/bin/huarun")
+        self.command(["bash", "-n", manager])
+        current = self.command([manager, "version"]).stdout.strip()
+        if current != candidate["version"]:
+            raise UpdateError("installed_version_mismatch")
+        self.nonregression(before, self.health())
+
+    def prune_backups(self):
+        if not self.backup_dir.exists():
+            return
+        own = []
+        for path in self.backup_dir.iterdir():
+            if path.is_symlink() or not path.is_dir() or not TRANSACTION_NAME.fullmatch(path.name):
+                continue
+            try:
+                marker = self.read_json(path / "owner.json")
+            except (UpdateError, Defer):
+                continue
+            if marker.get("transaction") == path.name and marker.get("schema_version") == 1:
+                own.append(path)
+        for path in sorted(own, key=lambda p: p.name, reverse=True)[3:]:
+            if path.parent == self.backup_dir and path.resolve().is_relative_to(self.backup_dir.resolve()):
+                shutil.rmtree(path)
+
+    def failure(self, journal, code):
+        self.restore(journal)
+        state = journal.get("previous_state", {})
+        if code == "installer_busy":
+            result = self.write_state(state, "deferred", reason=code)
+            self.clear_journal()
+            self.prune_backups()
+            return result
+        candidate = journal.get("candidate", {})
+        failure = {"source_sha": candidate.get("source_sha"), "installer_sha256": candidate.get("installer_sha256"),
+                   "at": int(self.clock()), "code": code}
+        result = self.write_state(state, "rolled_back", last_failure=failure)
+        self.clear_journal()
+        self.prune_backups()
+        return result
+
+    def run(self):
+        self.private_dir(self.state_dir)
+        self.private_dir(self.backup_dir)
+        lock_path = self.path(LOCK_PATH)
+        self.private_dir(lock_path.parent)
+        fd = os.open(lock_path, os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+        try:
+            if os.fstat(fd).st_uid != os.geteuid() or not stat.S_ISREG(os.fstat(fd).st_mode):
+                raise UpdateError("unsafe_lock_file")
+            os.fchmod(fd, 0o600)
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                return {"status": "busy"}
+            self.lock_fd = fd
+            if self.journal_path.exists():
+                return self.failure(self.read_json(self.journal_path), "interrupted_update")
+            state = self.read_json(self.state_path, {})
+            if self.path(DISABLED_MARKER).exists():
+                return self.write_state(state, "disabled")
+            try:
+                candidate = verify_release(self.fetch)
+            except Defer as error:
+                return self.write_state(state, "deferred", reason=str(error))
+            public_candidate = {key: value for key, value in candidate.items() if key != "installer"}
+            previous_good = (state.get("last_good") or {})
+            if previous_good.get("installer_sha256") == candidate["installer_sha256"]:
+                return self.write_state(state, "up_to_date")
+            failure = (state.get("last_failure") or {})
+            if failure.get("source_sha") == candidate["source_sha"] and self.clock() - failure.get("at", 0) < FAILURE_BACKOFF:
+                return self.write_state(state, "backoff", reason="same_release_failed_recently")
+            current = self.command([self.path("/usr/local/bin/huarun"), "version"]).stdout.strip()
+            if semver(candidate["version"]) < semver(current):
+                return self.write_state(state, "deferred", reason="downgrade_refused")
+            baseline = self.health()
+            transaction = "txn-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:16]
+            folder, manifest = self.backup(transaction)
+            verified_path = folder / "verified-installer.sh"
+            descriptor = os.open(verified_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
+            with os.fdopen(descriptor, "wb") as stream:
+                stream.write(candidate["installer"])
+                stream.flush()
+                os.fsync(stream.fileno())
+            journal = {"schema_version": 1, "transaction": transaction, "phase": "prepared",
+                       "candidate": public_candidate, "previous_state": state, "timer_before": self.timer_state()}
+            self.atomic_json(self.journal_path, journal)
+            try:
+                journal["phase"] = "applying"
+                self.atomic_json(self.journal_path, journal)
+                applied = self.command(["bash", verified_path, "--upgrade-assistant", "--yes"], timeout=900, check=False)
+                if applied.returncode:
+                    raise UpdateError("installer_busy" if applied.returncode == 75 else "installer_failed")
+                journal["phase"] = "verifying"
+                self.atomic_json(self.journal_path, journal)
+                self.validate_installed(candidate, manifest, baseline)
+                self.sync_installed()
+            except (UpdateError, OSError, ValueError, TypeError, KeyError) as error:
+                code = str(error) if isinstance(error, UpdateError) else "local_update_failed"
+                return self.failure(journal, code)
+            good = {**public_candidate, "at": int(self.clock())}
+            result = self.write_state(state, "updated", last_good=good, last_failure=None)
+            self.clear_journal()
+            self.prune_backups()
+            return result
+        finally:
+            self.lock_fd = None
+            os.close(fd)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument("--status", action="store_true")
+    mode.add_argument("--run", action="store_true")
+    args = parser.parse_args()
+    if os.geteuid() != 0:
+        raise UpdateError("root_required")
+    updater = Updater()
+    print(json.dumps(updater.status() if args.status else updater.run(), ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except (UpdateError, OSError, ValueError, TypeError, KeyError) as error:
+        code = str(error) if isinstance(error, UpdateError) else type(error).__name__
+        print(json.dumps({"status": "failed", "code": code}))
+        raise SystemExit(1) from None
+AUTOUPDATEEOF
+    chmod 0755 /usr/local/lib/huarun/auto_update.py.new || return 1
+    python3 - <<'SYNCUPDATER' || return 1
+import os,pathlib
+p=pathlib.Path('/usr/local/lib/huarun/auto_update.py.new')
+compile(p.read_text(),str(p),'exec')
+with p.open('rb') as f: os.fsync(f.fileno())
+SYNCUPDATER
+    mv -f /usr/local/lib/huarun/auto_update.py.new /usr/local/lib/huarun/auto_update.py || return 1
+    cat > /etc/systemd/system/huarun-auto-update.service.new << 'UPDATESERVICE' || return 1
+[Unit]
+Description=HuaRun verified assistant update
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=/etc/huarun/assistant/.security.yml
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/lib/huarun/auto_update.py --run
+TimeoutStartSec=20min
+UMask=0077
+Nice=10
+PrivateTmp=true
+NoNewPrivileges=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/usr/local/bin /usr/local/lib/huarun /etc/huarun /etc/systemd/system /var/lib/huarun-updater /run/huarun /usr/local/etc/xray /etc/nginx/conf.d
+RuntimeDirectory=huarun
+RuntimeDirectoryMode=0700
+RuntimeDirectoryPreserve=yes
+StateDirectory=huarun-updater
+StateDirectoryMode=0700
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+UPDATESERVICE
+    cat > /etc/systemd/system/huarun-auto-update.timer.new << 'UPDATETIMER' || return 1
+[Unit]
+Description=Check HuaRun assistant releases automatically
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=6h
+RandomizedDelaySec=30min
+AccuracySec=1min
+Unit=huarun-auto-update.service
+
+[Install]
+WantedBy=timers.target
+UPDATETIMER
+    python3 - <<'SYNCUNITS' || return 1
+import os,pathlib
+for name in ('huarun-auto-update.service','huarun-auto-update.timer'):
+    p=pathlib.Path('/etc/systemd/system')/(name+'.new')
+    p.chmod(0o644)
+    with p.open('rb') as f: os.fsync(f.fileno())
+    os.replace(p,p.with_name(name))
+for name in ('/etc/systemd/system','/usr/local/lib/huarun'):
+    fd=os.open(name,os.O_RDONLY|os.O_DIRECTORY)
+    try: os.fsync(fd)
+    finally: os.close(fd)
+SYNCUNITS
+    systemctl daemon-reload || return 1
+    if [[ ! -f /etc/huarun/auto-update.disabled ]]; then
+        if [[ $existed -eq 0 || $enabled -eq 1 ]]; then
+            systemctl enable huarun-auto-update.timer >/dev/null || return 1
+            if [[ $existed -eq 0 || $active -eq 1 ]]; then
+                systemctl start huarun-auto-update.timer || return 1
+            fi
+        fi
+    fi
 }
 
 #=== 主流程 ==================================================================
 # Upgrade an existing assistant without touching Xray/Nginx/node configuration.
+verifyAssistantUpgrade() {
+    python3 - "$1" "$AI_HOME" <<'VERIFYPY' || return 1
+import pathlib,sys,json,hashlib,stat
+root=pathlib.Path(sys.argv[1]);home=pathlib.Path(sys.argv[2])
+for item in json.loads((root/'protected.json').read_text()):
+    p=pathlib.Path(item['path'])
+    if p.is_symlink() or p.exists()!=item['exists']: raise RuntimeError('protected_file_changed')
+    if item['exists'] and (hashlib.sha256(p.read_bytes()).hexdigest()!=item['sha256'] or stat.S_IMODE(p.stat().st_mode)!=item['mode']):
+        raise RuntimeError('protected_file_changed')
+for p in [home/'gate.py',home/'research.py',pathlib.Path('/usr/local/lib/huarun/auto_update.py')]:
+    compile(p.read_text(),str(p),'exec')
+json.loads((home/'config.json').read_text())
+VERIFYPY
+    bash -n /usr/local/bin/huarun || return 1
+    [[ "$(/usr/local/bin/huarun version)" == "$VERSION" ]] || return 1
+    /usr/local/lib/huarun/picoclaw version >/dev/null || return 1
+}
+
+restoreProtectedUpgrade() {
+    python3 - "$1" <<'RESTOREPY'
+import pathlib,sys,json,shutil
+root=pathlib.Path(sys.argv[1])
+for item in json.loads((root/'protected.json').read_text()):
+    p=pathlib.Path(item['path'])
+    if item['exists']:
+        if p.is_symlink(): p.unlink()
+        shutil.copy2(root/item['backup'],p)
+    elif p.exists() or p.is_symlink(): p.unlink()
+RESTOREPY
+}
+
+legacyAssistantIdle() {
+    python3 - <<'IDLEPY'
+import pathlib,sys
+for proc in pathlib.Path('/proc').iterdir():
+    if not proc.name.isdigit():
+        continue
+    try:
+        exe=(proc/'exe').resolve()
+        args=(proc/'cmdline').read_bytes().split(b'\0')
+        if str(exe).removesuffix(' (deleted)') == '/usr/local/lib/huarun/picoclaw' and b'agent' in args[1:]:
+            sys.exit(75)
+    except (OSError,RuntimeError):
+        continue
+IDLEPY
+}
+
 upgradeAssistant() {
     [[ $EUID -eq 0 && -s "${AI_HOME}/.security.yml" && -f "$INFO_FILE" ]] || { echo "只可在已安装华润助手的服务器上升级" >&2; return 1; }
-    local backup rollback_failed=0
+    acquireMaintenanceLock exclusive || { echo "助手或管理命令正在使用，升级已延期。" >&2; return 75; }
+    legacyAssistantIdle || { echo "已有助手对话正在运行，升级已延期。" >&2; return 75; }
+    local backup rollback_failed=0 timer_enabled=0 timer_active=0 extra
+    local -a updater_files=(/usr/local/lib/huarun/auto_update.py /etc/systemd/system/huarun-auto-update.service /etc/systemd/system/huarun-auto-update.timer)
+    systemctl is-enabled --quiet huarun-auto-update.timer 2>/dev/null && timer_enabled=1 || true
+    systemctl is-active --quiet huarun-auto-update.timer 2>/dev/null && timer_active=1 || true
     backup="/etc/huarun/backup/assistant-$(date -u +%Y%m%dT%H%M%SZ)-$$"
     mkdir -p "$backup" || return 1
     chmod 700 "$backup" || return 1
@@ -2250,18 +3192,29 @@ upgradeAssistant() {
     cp -a /usr/local/bin/huarun "$backup/huarun" || return 1
     cp -a /usr/local/lib/huarun/picoclaw "$backup/picoclaw" || return 1
     cp -a "$INFO_FILE" "$backup/info.json" || return 1
-    AI_KEY=$(python3 - "${AI_HOME}/.security.yml" <<'KEYEOF'
-import pathlib,re,sys
-s=pathlib.Path(sys.argv[1]).read_text()
-m=re.search(r'^\s*-\s*"(sk-[A-Za-z0-9_-]+)"\s*$',s,re.M)
-if not m:sys.exit(1)
-print(m.group(1))
-KEYEOF
-    ) || { echo "无法读取既有 DeepSeek Key，升级未开始" >&2; return 1; }
-    export -n AI_KEY
-    askKey || { unset AI_KEY; return 1; }
-    prepareAssistant || { unset AI_KEY; return 1; }
-    if ! (installAssistantTemplate && installManager && installAssistant); then
+    for extra in "${updater_files[@]}"; do
+        if [[ -e "$extra" ]]; then cp -a "$extra" "$backup/$(basename "$extra")" || return 1; fi
+    done
+    python3 - "$backup" "$AI_HOME" "$INFO_FILE" <<'PRESERVEPY' || return 1
+import pathlib,sys,json,hashlib,shutil,stat
+root=pathlib.Path(sys.argv[1]); paths=[sys.argv[3],sys.argv[2]+'/.security.yml','/usr/local/etc/xray/config.json','/usr/local/etc/xray/whitelist.txt','/etc/nginx/conf.d/huarun.conf']
+manifest=[]
+for i,name in enumerate(paths):
+    p=pathlib.Path(name); exists=p.exists()
+    if p.is_symlink(): raise RuntimeError('protected_path_symlink')
+    item={'path':name,'exists':exists,'backup':f'protected-{i}'}
+    if exists:
+        if not p.is_file(): raise RuntimeError('protected_path_not_file')
+        item.update(sha256=hashlib.sha256(p.read_bytes()).hexdigest(),mode=stat.S_IMODE(p.stat().st_mode))
+        shutil.copy2(p,root/item['backup'])
+    manifest.append(item)
+(root/'protected.json').write_text(json.dumps(manifest))
+PRESERVEPY
+    # No API requests or secret rewrites are needed to update local programs.
+    AI_KEY=""
+    OPT_UPGRADE_ASSISTANT=1
+    prepareAssistant || return 1
+    if ! (installAssistantTemplate && installManager && installAssistant && installAutoUpdater && verifyAssistantUpgrade "$backup"); then
         unset AI_KEY
         cp -a "$backup/huarun" /usr/local/bin/huarun || rollback_failed=1
         cp -a "$backup/picoclaw" /usr/local/lib/huarun/picoclaw || rollback_failed=1
@@ -2269,6 +3222,25 @@ KEYEOF
         cp -a "$backup/info.json" "$INFO_FILE" || rollback_failed=1
         if [[ -d "$backup/assistant-template" ]]; then
             cp -a "$backup/assistant-template/." "$AI_TPL/" || rollback_failed=1
+        fi
+        for extra in "${updater_files[@]}"; do
+            if [[ -e "$backup/$(basename "$extra")" ]]; then
+                cp -a "$backup/$(basename "$extra")" "$extra" || rollback_failed=1
+            else
+                rm -f "$extra" || rollback_failed=1
+            fi
+        done
+        restoreProtectedUpgrade "$backup" || rollback_failed=1
+        systemctl daemon-reload || rollback_failed=1
+        if [[ $timer_enabled -eq 1 ]]; then
+            systemctl enable huarun-auto-update.timer >/dev/null || rollback_failed=1
+        else
+            systemctl disable huarun-auto-update.timer >/dev/null 2>&1 || true
+        fi
+        if [[ $timer_active -eq 1 ]]; then
+            systemctl start huarun-auto-update.timer || rollback_failed=1
+        else
+            systemctl stop huarun-auto-update.timer >/dev/null 2>&1 || true
         fi
         if [[ $rollback_failed -eq 0 ]]; then
             echo "助手升级失败，已恢复备份；网络配置未改动" >&2
@@ -2279,12 +3251,14 @@ KEYEOF
     fi
     unset AI_KEY
     [[ -z "${PICO_TMP:-}" ]] || rm -rf -- "$PICO_TMP"
-    echo "华润助手已升级到 ${VERSION}：MCP 优先检索、DeepSeek 搜索后备、修复后复查。"
+    echo "华润助手已升级到 ${VERSION}：MCP 优先检索、DeepSeek 搜索后备、修复复查与本机自动升级。"
 }
 
 main() {
     set -e
     parseArgs "$@"
+    PICO_TMP=""
+    trap '[[ -z "${PICO_TMP:-}" ]] || rm -rf -- "$PICO_TMP"; unset AI_KEY HUARUN_API_KEY' EXIT
     if [[ $OPT_UPGRADE_ASSISTANT -eq 1 ]]; then
         upgradeAssistant
         return
@@ -2318,6 +3292,7 @@ main() {
     /usr/local/bin/huarun render >/dev/null && say "$GREEN" "✓ 站点首页已生成"
     startServices
     installAssistant
+    installAutoUpdater
     showInfo
     if [[ -n "$AI_KEY" && -f "${AI_HOME}/config.json" && $OPT_JSON -eq 0 && -t 0 ]]; then
         echo ""

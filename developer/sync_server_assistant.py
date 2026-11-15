@@ -7,7 +7,8 @@ PAYLOADS = {'AGENTEOF':'apps/server/assistant/AGENT.md',
             'SOULEOF':'apps/server/assistant/SOUL.md',
             'SKILLEOF':'apps/server/assistant/skills/huarun/SKILL.md',
             'GATEEOF':'apps/server/assistant/hook.py',
-            'RESEARCHEOF':'apps/server/research.py'}
+            'RESEARCHEOF':'apps/server/research.py',
+            'AUTOUPDATEEOF':'apps/server/auto_update.py'}
 
 def render(source):
     for delimiter, relative in PAYLOADS.items():

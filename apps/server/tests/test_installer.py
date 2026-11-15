@@ -4,13 +4,17 @@ All generated files, downloaded fixtures and command side effects stay in tempor
 folders. No network calls, service operations, package installs or root setup occur.
 """
 import base64
+import fcntl
 import json
 import os
 from pathlib import Path
 import re
 import shlex
 import subprocess
+import sys
 import tempfile
+import stat
+import time
 import unittest
 
 INSTALLER = Path(__file__).resolve().parents[1] / "install.sh"
@@ -47,7 +51,7 @@ class InstallerTests(unittest.TestCase):
         self.gate_path = self.root / "gate.py"
         self.gate_path.write_text(self.gate)
 
-    def run_shell(self, body, *, manager=False, env=None):
+    def run_shell(self, body, *, manager=False, env=None, pass_fds=()):
         path = self.manager_path if manager else INSTALLER
         script = f"source {shlex.quote(str(path))}\nset +e\n" + body
         values = {**os.environ, "HUARUN_API_KEY": "", "TEST_DIR": str(self.root)}
@@ -55,7 +59,7 @@ class InstallerTests(unittest.TestCase):
         if env:
             values.update(env)
         return subprocess.run(["bash", "-c", script], text=True, capture_output=True,
-                              env=values, timeout=15, input="")
+                              env=values, timeout=15, input="", pass_fds=pass_fds)
 
     def gate_request(self, command=None, **arguments):
         if command is not None:
@@ -292,7 +296,17 @@ systemctl() { return "$RESTART_EXIT"; }
         """Redirect fixed installation destinations before running real functions."""
         source = self.source.replace("/usr/local/lib/huarun", str(self.root / "lib/huarun"))
         source = source.replace("/usr/local/bin/huarun", str(self.root / "huarun"))
+        source = source.replace("/usr/local/bin/.huarun.", str(self.root / ".huarun."))
         source = source.replace("/etc/huarun/backup/", str(self.root / "backups") + "/")
+        for original, target in [
+            ("/run/huarun", self.root / "run/huarun"),
+            ("/var/lib/huarun-updater", self.root / "updater-state"),
+            ("/etc/systemd/system", self.root / "systemd"),
+            ("/usr/local/etc/xray", self.root / "xray"),
+            ("/etc/nginx/conf.d", self.root / "nginx"),
+            ("/etc/huarun", self.root / "etc/huarun"),
+        ]:
+            source = source.replace(original, str(target))
         # This copied fixture writes only to self.root. Relax its privilege check
         # so failure/rollback behavior also runs in the unprivileged build sandbox.
         # Assert the production guard still exists; never edit the real installer.
@@ -313,7 +327,9 @@ systemctl() { return "$RESTART_EXIT"; }
         for name in ["AGENT.md", "SOUL.md", "skills/huarun/SKILL.md", "gate.py", "research.py"]:
             (template / name).write_text('old template\n')
         self.root.joinpath("info.json").write_text('{"assistant":true,"fixture":"unchanged"}')
-        self.root.joinpath("prepared").write_text('new binary fixture')
+        (self.root / "systemd").mkdir(exist_ok=True)
+        (self.root / "etc/huarun").mkdir(parents=True, exist_ok=True)
+        self.root.joinpath("prepared").write_text('#!/bin/sh\nexit 0\n')
         self.root.joinpath("huarun").write_text('old manager fixture')
         binary = self.root / "lib/huarun/picoclaw"
         binary.parent.mkdir(parents=True, exist_ok=True)
@@ -325,6 +341,12 @@ AI_TPL="$TEST_DIR/template"
 INFO_FILE="$TEST_DIR/info.json"
 PICO_BIN_READY="$TEST_DIR/prepared"
 AI_KEY=sk-offline-upgrade-fixture
+legacyAssistantIdle() { return 0; }
+systemctl() {
+    printf '%s\n' "$*" >> "$TEST_DIR/systemctl-calls"
+    case "$1" in is-enabled|is-active) return 1 ;; esac
+    return 0
+}
 """
 
     def test_assistant_binary_install_failure_propagates_in_upgrade_conditional(self):
@@ -431,6 +453,134 @@ fi
         # One failed restore must not prevent the other files from being restored.
         self.assertEqual((self.root / "assistant/config.json").read_text(), '{}')
         self.assertEqual((self.root / "template/SOUL.md").read_text(), 'old template\n')
+
+
+    def isolated_manager(self):
+        source = self.manager
+        for original, target in [
+            ("/run/huarun", self.root / "run/huarun"),
+            ("/var/lib/huarun-updater", self.root / "updater-state"),
+            ("/usr/local/lib/huarun", self.root / "lib/huarun"),
+            ("/etc/huarun", self.root / "etc/huarun"),
+        ]:
+            source = source.replace(original, str(target))
+        path = self.root / "isolated-manager.sh"
+        path.write_text(source)
+        return 'source ' + shlex.quote(str(path)) + '\n'
+
+    def lock_file(self):
+        path = self.root / "run/huarun/maintenance.lock"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        return path
+
+    def test_updater_exclusive_lock_waits_for_shared_management_lock(self):
+        with self.lock_file().open('w') as held:
+            fcntl.flock(held, fcntl.LOCK_SH)
+            result = self.run_shell(self.isolated_installer() + 'acquireMaintenanceLock exclusive')
+            self.assertEqual(result.returncode, 75, result.stdout + result.stderr)
+
+    def test_installer_and_manager_accept_real_inherited_exclusive_lock(self):
+        with self.lock_file().open('w') as held:
+            fcntl.flock(held, fcntl.LOCK_EX)
+            for setup in [self.isolated_installer(), self.isolated_manager()]:
+                with self.subTest(setup=setup):
+                    result = self.run_shell(setup + 'acquireMaintenanceLock shared; rc=$?; [[ $rc -eq 0 && $MAINTENANCE_INHERITED -eq 1 ]]',
+                        env={'HUARUN_UPDATE_LOCK_FD': str(held.fileno())}, pass_fds=(held.fileno(),))
+                    self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            # The child must not release the parent's exclusive lock.
+            with self.lock_file().open('r') as contender:
+                with self.assertRaises(BlockingIOError):
+                    fcntl.flock(contender, fcntl.LOCK_EX | fcntl.LOCK_NB)
+
+    def test_invalid_inherited_fd_does_not_bypass_exclusive_lock(self):
+        with self.lock_file().open('w') as held, (self.root / 'unrelated-file').open('w') as wrong:
+            fcntl.flock(held, fcntl.LOCK_EX)
+            for setup in [self.isolated_installer(), self.isolated_manager()]:
+                for value, descriptors in [('999', ()), (str(wrong.fileno()), (wrong.fileno(),))]:
+                    with self.subTest(setup=setup, fd=value):
+                        result = self.run_shell(setup + 'acquireMaintenanceLock shared',
+                            env={'HUARUN_UPDATE_LOCK_FD': value}, pass_fds=descriptors)
+                        self.assertEqual(result.returncode, 75, result.stdout + result.stderr)
+
+    def test_maintenance_lock_symlink_is_rejected_without_touching_target(self):
+        target = self.root / 'unrelated-file'; target.write_text('preserve')
+        self.lock_file().symlink_to(target)
+        for setup in [self.isolated_installer(), self.isolated_manager()]:
+            result = self.run_shell(setup + 'acquireMaintenanceLock exclusive')
+            self.assertNotEqual(result.returncode, 0)
+            self.assertEqual(target.read_text(), 'preserve')
+
+    def test_chat_parent_holds_shared_lock_when_agent_closes_inherited_fds(self):
+        setup = self.isolated_manager() + self.assistant_files()
+        ready, release = self.root / 'agent-ready', self.root / 'agent-release'
+        binary = self.root / 'lib/huarun/picoclaw'
+        binary.write_text(f'#!{sys.executable}\nimport os,time,pathlib\n'
+            'for fd in range(3,1024):\n try: os.close(fd)\n except OSError: pass\n'
+            f'pathlib.Path({str(ready)!r}).touch()\n'
+            f'while not pathlib.Path({str(release)!r}).exists(): time.sleep(0.02)\n')
+        binary.chmod(0o755)
+        environment = {**os.environ, 'TEST_DIR':str(self.root)}
+        environment.pop('HUARUN_UPDATE_LOCK_FD', None)
+        process = subprocess.Popen(['bash','-c',setup+'manager_entry chat'],env=environment,
+                                   stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
+        try:
+            deadline = time.monotonic() + 3
+            while not ready.exists() and process.poll() is None and time.monotonic() < deadline:
+                time.sleep(0.02)
+            if not ready.exists():
+                initial_returncode = process.poll()
+                if initial_returncode is None:
+                    release.touch()
+                    process.terminate()
+                stdout, stderr = process.communicate(timeout=3)
+                self.fail('fixture agent did not start: '
+                          f'initial_returncode={initial_returncode}, returncode={process.returncode}, '
+                          f'stdout={stdout!r}, stderr={stderr!r}')
+            with self.lock_file().open('r') as contender:
+                with self.assertRaises(BlockingIOError):
+                    fcntl.flock(contender, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            release.touch()
+            stdout, stderr = process.communicate(timeout=3)
+            self.assertEqual(process.returncode, 0, stdout + stderr)
+            with self.lock_file().open('r') as contender:
+                fcntl.flock(contender, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        finally:
+            release.touch()
+            if process.poll() is None:
+                process.terminate(); process.communicate(timeout=3)
+
+    def test_upgrade_installs_without_secret_argument_or_online_key_validation(self):
+        setup = self.isolated_installer() + self.assistant_files()
+        secret, info = self.root / 'assistant/.security.yml', self.root / 'info.json'
+        secret.write_bytes(b'# preserve this layout\nmodel_list: {custom: {api_keys: ["offline-key"]}}\n')
+        info.write_bytes(b'{  "assistant": true, "node": "keep-format" }\n')
+        secret.chmod(0o640); info.chmod(0o644)
+        before = [(p.read_bytes(), stat.S_IMODE(p.stat().st_mode)) for p in (secret, info)]
+        (self.root/'prepared').write_text('#!/bin/sh\nprintf "%s\\n" "$*" >> "$TEST_DIR/picoclaw-calls"\nexit 0\n')
+        model = {'model_name':'custom','provider':'deepseek','model':'custom-model','api_base':'https://example.invalid/v1'}
+        (self.root/'assistant/config.json').write_text(json.dumps({'agents':{'defaults':{'model_name':'custom'}},'model_list':[model]}))
+        result = self.run_shell(setup + r"""
+askKey() { echo UNEXPECTED_KEY_CHECK; return 99; }
+curl() { echo UNEXPECTED_NETWORK; return 99; }
+prepareAssistant() { return 0; }
+upgradeAssistant
+""")
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertNotIn('UNEXPECTED', result.stdout + result.stderr)
+        self.assertEqual([(p.read_bytes(),stat.S_IMODE(p.stat().st_mode)) for p in (secret,info)], before)
+        updated = json.loads((self.root/'assistant/config.json').read_text())
+        self.assertEqual(updated['model_list'], [model])
+        self.assertEqual(updated['agents']['defaults']['model_name'], 'custom')
+        calls=(self.root/'systemctl-calls').read_text()
+        self.assertNotRegex(calls, r'(restart|reload) (xray|nginx)')
+        self.assertIn('enable huarun-auto-update.timer', calls)
+        self.assertIn('start huarun-auto-update.timer', calls)
+        self.assertEqual((self.root/'picoclaw-calls').read_text().splitlines(), ['version'])
+
+    def test_fresh_assistant_install_still_requires_key(self):
+        setup = self.isolated_installer() + self.assistant_files()
+        result = self.run_shell(setup + 'AI_KEY=""; OPT_UPGRADE_ASSISTANT=0; installAssistant')
+        self.assertNotEqual(result.returncode, 0)
 
     def test_upgrade_mode_never_enters_fresh_network_install(self):
         result = self.run_shell(r'''

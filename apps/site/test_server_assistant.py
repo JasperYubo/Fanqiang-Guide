@@ -110,9 +110,12 @@ class ServerPageTests(unittest.TestCase):
         reader.feed(raw)
         self.assertIn(INSTALL_COMMAND + " --upgrade-assistant", reader.code)
         self.assertIn('id="upgrade"', raw)
-        self.assertIn("保留现有网络配置、连接信息、白名单及 DeepSeek Key", raw)
+        self.assertIn("保留原节点配置、连接信息、白名单、DeepSeek Key 和聊天记忆", raw)
         markdown = (self.public / "server/index.md").read_text()
         self.assertIn(INSTALL_COMMAND + " --upgrade-assistant", markdown)
+        for text in ("新安装默认开启自动更新", "旧版 1.0 / 1.1", "每 6 小时", "失败回滚", "正在使用时延期", "huarun auto-update status", "huarun auto-update disable", "不能改动更新设置"):
+            self.assertIn(text, raw)
+        self.assertIn("不依赖你的电脑开机", markdown)
 
     def test_home_entry_is_idempotent_and_preserves_device_flow(self):
         self.discovery_fixture()

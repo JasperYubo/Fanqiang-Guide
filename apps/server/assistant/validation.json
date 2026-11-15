@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-11-15T08:46:02.825512+00:00",
+  "checked_at": "2026-11-15T09:35:52.792569+00:00",
   "documents": [
     {
       "path": "apps/server/assistant/AGENT.md",
-      "sha256": "a494500e79b13475d7f779b0071f2eda43c53fb727cccb8494a4332d09a0683a",
+      "sha256": "4bbcf87ce1d5133eefa86422447bf8736138f0ff0e566f921af5e3a6b0504dc4",
       "validation": {
         "mode": "raw",
         "counts": {
@@ -41,7 +41,7 @@
     },
     {
       "path": "apps/server/assistant/skills/huarun/SKILL.md",
-      "sha256": "f0dd64f78043dfd79cbaec31f67523b6f8487e133fd7185202ae3e369b5df568",
+      "sha256": "d9d60ad5437cb2b43ce9ecd38d11ed5824e5523df0feb5a09610a06b3b1ffc9f",
       "validation": {
         "mode": "mixed",
         "counts": {

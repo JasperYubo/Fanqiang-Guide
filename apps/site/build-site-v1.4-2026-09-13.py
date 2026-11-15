@@ -321,14 +321,16 @@ if hashlib.sha256(legacy_v2_evidence.read_bytes()).hexdigest() != '498b37722693a
     raise ValueError('Legacy v2.0 evidence integrity changed')
 (P / 'ai/books' / legacy_v2_evidence.name).write_bytes(legacy_v2_evidence.read_bytes())
 
-# Keep the v1.0 server handoff readable after the v1.1 MCP-first edition.
+# Preserve previously published server books and evidence byte-for-byte.
 for legacy_name, legacy_sha in {
     'fanqiang-server-v1.0.ilang.md': '90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82',
     'fanqiang-server-v1.0.evidence.json': '8701b322b0e1a6b80d7897b05ceee8f86bba35676b2d42b9a5dbf7da93c1228c',
+    'fanqiang-server-v1.1.ilang.md': '55b8eda29a8a5a106d0926dbf7b555cb90a4f6a93ace6729356212d278a40af8',
+    'fanqiang-server-v1.1.evidence.json': '2f3d78ec34136fae296c04ed2ba043d4067e1c18ac7f9e230c450b622fb9c198',
 }.items():
     legacy_data = (setup_runtime.parent / 'books' / legacy_name).read_bytes()
     if hashlib.sha256(legacy_data).hexdigest() != legacy_sha:
-        raise ValueError('Legacy server v1.0 integrity changed')
+        raise ValueError('Legacy server book integrity changed')
     (P / 'ai/books' / legacy_name).write_bytes(legacy_data)
 
 router_source = B.parent.parent / 'data/router-compatibility.json'

@@ -83,6 +83,12 @@ class HookTests(unittest.TestCase):
         self.start()
         for command in ['bash -c id','huarun uninstall --yes','huarun whitelist reset','huarun fix; id','huarun fix\nwhoami']:
             self.assertFalse(self.engine.approve(self.params(command))['approved'])
+    def test_agent_can_inspect_updates_but_cannot_control_the_updater(self):
+        self.start()
+        self.assertTrue(self.engine.approve(self.params('huarun auto-update status'))['approved'])
+        for action in ('check','enable','disable'):
+            self.assertFalse(self.engine.approve(self.params('huarun auto-update '+action))['approved'])
+
     def test_known_secrets_not_in_query_or_context(self):
         r=self.start(question='key=sk-secretABC123 vmess://connection-secret')
         retrieved=json.dumps(self.client.queries)+r['request']['messages'][-1]['content']

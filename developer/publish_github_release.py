@@ -379,8 +379,8 @@ def main():
     version = re.search(r'^VERSION="([0-9]+\.[0-9]+\.[0-9]+)"$', installer, re.M)
     if not version:
         raise ReleaseError("assistant_version_missing")
-    title = "华润服务器助手 v" + version[1] + " · MCP 优先检索"
-    body = ("华润服务器助手：先查本站 MCP 文档与排障资料，资料不足时使用 DeepSeek 搜索，修复后复查。\n\n"
+    title = "华润服务器助手 v" + version[1] + " · 本机自动升级"
+    body = ("华润服务器助手：先查本站 MCP 文档与排障资料，资料不足时使用 DeepSeek 搜索，修复后复查。VPS 本机定时升级助手，保留节点配置、白名单和 Key，失败自动回滚。\n\n"
             "- [主站与安装入口](https://fanqiang.guide/server/)\n"
             "- [GitHub 项目入口](https://jasperyubo.github.io/Fanqiang-Guide/)\n"
             "- [MCP 与工程书](https://fanqiang.guide/ai/)\n\n"

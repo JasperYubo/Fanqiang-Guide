@@ -52,7 +52,7 @@ class ServerSetupTests(unittest.TestCase):
 
     def test_server_metadata_declares_mcp_first_search_fallback_and_recheck(self):
         meta = setup_book.book_manifest("server")
-        self.assertEqual(meta["version"], "1.1")
+        self.assertEqual(meta["version"], "1.2")
         policy = meta["knowledge_policy"]
         self.assertEqual(policy["primary"], "huarun_mcp")
         self.assertEqual(policy["fallback"], "deepseek_search_when_insufficient")
@@ -60,10 +60,47 @@ class ServerSetupTests(unittest.TestCase):
         self.assertEqual(policy["recheck"], ["huarun doctor --json", "huarun status --json"])
         self.assertEqual(policy["instruction_format"], "iLang")
 
+    def test_existing_server_handoff_never_routes_to_fresh_installation(self):
+        initialized = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
+            "clientInfo": {"name": "migration-test", "version": "1"}})
+        instructions = initialized["instructions"].split("::MODULE{SERVER_SETUP}")[1].split("::MODULE{DEVICE_SETUP}")[0]
+        tool = next(t for t in self.rpc("tools/list")["tools"] if t["name"] == "get_server_setup")
+        prompt = self.rpc("prompts/get", {"name": "setup_server"})["messages"][0]["content"]["text"]
+        for text in (instructions, tool["description"], prompt):
+            with self.subTest(surface=text[:50]):
+                self.assertIn("For a fresh installation", text)
+                self.assertIn("For an existing 1.0 or 1.1 server", text)
+                self.assertIn("only the book's one-time --upgrade-assistant migration", text)
+                self.assertIn("Preserve node configuration, whitelist and API Key", text)
+                self.assertIn("do not reinstall the network or ask for another Key", text)
+                for old in ("[MUST] First use https://platform.deepseek.com", "[MUST] Start at https://platform.deepseek.com",
+                            "[MUST] Install PicoClaw", "[MUST] Follow PicoClaw", "[MUST] Follow the server book's PicoClaw"):
+                    self.assertNotIn(old, text)
+        description = next(p for p in self.rpc("prompts/list")["prompts"] if p["name"] == "setup_server")["description"]
+        self.assertIn("已装 1.0 / 1.1", description)
+        self.assertIn("不要求重装或重新提供 Key", description)
+
+    def test_automatic_update_metadata_preserves_existing_server_and_admin_boundary(self):
+        meta = setup_book.book_manifest("server")
+        self.assertEqual(meta["assistant"]["version"], "1.2.0")
+        update = meta["automatic_updates"]
+        self.assertTrue(update["enabled_by_default"])
+        self.assertEqual((update["interval_hours"], update["boot_delay_minutes"], update["random_delay_max_minutes"]), (6, 10, 30))
+        self.assertEqual(update["timer"], "huarun-auto-update.timer")
+        self.assertEqual(update["release_source"], "github_published_release_with_matching_sites")
+        self.assertTrue(update["existing_installation_requires_one_time_migration"])
+        self.assertEqual(update["migration_command"], meta["upgrade_command"])
+        self.assertFalse(update["network_services_restarted"])
+        self.assertTrue(update["backup_before_update"] and update["rollback_on_failure"])
+        self.assertEqual(update["busy_policy"], "defer_while_chat_or_manager_active")
+        self.assertIn("chat_memory", update["preserves"])
+        self.assertEqual(update["agent_allowed_commands"], ["huarun auto-update status"])
+        self.assertEqual(set(update["commands"]), {"status", "check", "disable", "enable"})
+
     def test_initialize_routes_server_and_client_flows_separately(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
             "clientInfo": {"name": "server-test", "version": "1"}})
-        self.assertEqual(result["serverInfo"]["version"], "2.3.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.4.0")
         instructions = result["instructions"]
         server = instructions.split("::MODULE{SERVER_SETUP}")[1].split("::MODULE{DEVICE_SETUP}")[0]
         for value in ("get_server_setup", "fanqiang://books/server", "setup_server", "https://platform.deepseek.com",

@@ -22,6 +22,7 @@ ALLOW = [
     re.compile(r'huarun (fix|renew|update|version)'),
     re.compile(r'huarun logs( [0-9]{1,3})?'),
     re.compile(r'huarun whitelist list'),
+    re.compile(r'huarun auto-update status'),
     re.compile(r'huarun whitelist (add|remove) [a-z0-9.-]{3,100}'),
     re.compile(r'free -m|df -h|uptime|date'),
 ]

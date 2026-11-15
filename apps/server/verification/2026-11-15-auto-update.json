@@ -1,0 +1,50 @@
+{
+  "verified_at": "2026-11-15T09:51:55.157332+00:00",
+  "stage": "pre_publication",
+  "environment": "isolated Debian 12 x86_64 systemd VPS container on Linux",
+  "candidate_installer_sha256": "9a2c61f4b9338801a404388675bc1b6754e48f445986d24524480b660ba6b73c",
+  "upgrade": {
+    "from": "1.1.0",
+    "to": "1.2.0",
+    "runner": "real auto_update.py and real installer",
+    "release_transport": "explicit local release metadata fixture, not a published GitHub release",
+    "passed": true,
+    "timer_enabled": true,
+    "timer_active": true
+  },
+  "preservation": {
+    "files_compared": 6,
+    "bytes_and_modes_unchanged": true,
+    "includes": [
+      "node configuration",
+      "custom whitelist",
+      "Nginx configuration",
+      "node info",
+      "existing Key file including comments and mode",
+      "owner memory"
+    ]
+  },
+  "rollback": {
+    "fault": "fixture installer overwrote manager and Key then exited42",
+    "restored_version": "1.2.0",
+    "all_six_owner_files_restored": true,
+    "repeat_same_failed_release": "24h backoff"
+  },
+  "interrupted_update": {
+    "method": "prepared unfinished transaction journal, then invoked real systemd updater service",
+    "restored_version": "1.1.0",
+    "all_six_owner_files_restored": true,
+    "journal_cleared_after_restore": true
+  },
+  "concurrency": {
+    "held_shared_lock": "real systemd service returned busy without updating"
+  },
+  "tests": {
+    "assistant": 99,
+    "skipped": 0,
+    "automatic_release": 21,
+    "mcp_runtime": 136
+  },
+  "public_release_update": "pending publication; checked separately after publishing",
+  "scope": "One Debian 12 x86_64 environment. Other distributions, ARM and arbitrary future releases are not certified by this record."
+}
