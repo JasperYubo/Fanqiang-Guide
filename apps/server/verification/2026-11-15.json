@@ -1,0 +1,136 @@
+{
+  "verified_at": "2026-11-15T09:02:25.234189+00:00",
+  "environment": {
+    "os": "Debian 12 x86_64",
+    "runtime": "isolated Docker container with systemd on Linux development server",
+    "assistant": "PicoClaw v0.3.1",
+    "assistant_package": "1.1.0",
+    "model": "deepseek-flash"
+  },
+  "installation": {
+    "fresh_install_passed": true,
+    "installer_sha256": "cdb22951eb5c34053fd99863e1d38bafec200217cdc426adfb8c3b7f5b368f6c",
+    "server_checks_passed": true,
+    "validation_mode": "Fresh bootstrap of the candidate, followed by payload corrections, a 1.0.0-to-1.1.0 assistant upgrade, and another upgrade using the exact final installer SHA recorded here. Final upgrade retained all four network configuration hashes. The published artifact is verified separately after deployment.",
+    "final_candidate_upgrade_passed": true
+  },
+  "knowledge_flow": {
+    "real_model_api": true,
+    "public_mcp_initialize": true,
+    "public_get_server_setup": true,
+    "public_search": true,
+    "model_received_server_document": true,
+    "public_troubleshooting_resource": "not_yet_deployed_at_test_time",
+    "candidate_troubleshooting_resource": "verified_in_linux_asgi_and_sdk_tests",
+    "first_party_before_external_search": true,
+    "deepseek_search": {
+      "endpoint": "https://api.deepseek.com/v1/tools/search",
+      "successful_calls": 2,
+      "result_counts": [
+        5,
+        5
+      ],
+      "fallback_reason_recorded": true
+    },
+    "scope": "The real embedded-agent run used the live server book and public search. The new troubleshooting resource was tested in the candidate service, but was not yet on the public MCP during this run. Full public resource retrieval remains a separate post-deployment check."
+  },
+  "repair": {
+    "injected_fault": "stopped xray service",
+    "real_model_api": true,
+    "observed_tool_commands": [
+      "huarun doctor --json",
+      "huarun status --json",
+      "huarun logs 50",
+      "huarun fix",
+      "huarun whitelist list",
+      "huarun status --json"
+    ],
+    "xray_failed_before": true,
+    "automatic_post_repair_checks": [
+      "huarun doctor --json",
+      "huarun status --json"
+    ],
+    "doctor_exit": 0,
+    "status_exit": 0,
+    "all_server_checks_pass_after": true,
+    "context_scope": "This first fault-recovery run preceded the corrected reference-message injection. MCP document delivery to the model was confirmed in a subsequent independent real-model turn; the complete updated public flow is checked after deployment."
+  },
+  "connectivity_before": {
+    "google": {
+      "curl_exit": 0,
+      "http_status": "204",
+      "error": ""
+    },
+    "wikipedia": {
+      "curl_exit": 0,
+      "http_status": "200",
+      "error": ""
+    },
+    "blocked_example": {
+      "curl_exit": 35,
+      "http_status": "000",
+      "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to example.com:443"
+    },
+    "public_tls": {
+      "curl_exit": 0,
+      "http_status": "200"
+    },
+    "passed": true
+  },
+  "connectivity_after": {
+    "google": {
+      "curl_exit": 0,
+      "http_status": "204",
+      "error": ""
+    },
+    "wikipedia": {
+      "curl_exit": 0,
+      "http_status": "200",
+      "error": ""
+    },
+    "blocked_example": {
+      "curl_exit": 35,
+      "http_status": "000",
+      "error": "curl: (35) OpenSSL SSL_connect: SSL_ERROR_SYSCALL in connection to example.com:443"
+    },
+    "public_tls": {
+      "curl_exit": 0,
+      "http_status": "200"
+    },
+    "passed": true
+  },
+  "upgrade": {
+    "from_version": "1.0.0",
+    "to_version": "1.1.0",
+    "command_option": "--upgrade-assistant",
+    "passed": true,
+    "network_configuration_files_compared": 4,
+    "network_configuration_hashes_unchanged": true,
+    "scope": "Only assistant and huarun management command updated; existing network configuration and the existing DeepSeek Key retained.",
+    "failure_injection_tests": {
+      "passed": 7,
+      "scope": "Binary/template/copy/config-write/manager/backup/rollback failure paths propagate failure instead of reporting successful upgrade."
+    }
+  },
+  "scope": "One isolated Debian 12 x86_64 installation and upgrade, with a real Linux SOCKS/Xray client. Physical phones, ARM and other distributions were not tested. Public troubleshooting resource deployment is not claimed by this pre-deployment record.",
+  "verification": {
+    "offline_assistant_tests": {
+      "research": 19,
+      "hook": 11,
+      "installer": 37,
+      "total": 67,
+      "passed": 67
+    },
+    "automatic_release_tests": {
+      "total": 21,
+      "passed": 21
+    },
+    "iLang_strict": {
+      "document_count": 5,
+      "mcp_prompt_sections": 3,
+      "errors": 0,
+      "warnings": 0
+    },
+    "scope": "Offline test counts refer to the Linux candidate checks observed before the final isolated full-build run; full public deployment is verified separately."
+  }
+}

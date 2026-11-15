@@ -1,7 +1,8 @@
 """Isolate update outputs and publish them with bounded, validated Git retries.
 
 Only the GitHub metadata collector receives GITHUB_TOKEN. Git keeps the checkout
-authentication configuration and environment. Child output is captured, never
+authentication configuration and environment, with project Git identity fixed
+independently of inherited author/committer settings. Child output is captured, never
 echoed: public logs contain fixed status messages, not commands or credentials.
 """
 
@@ -29,9 +30,13 @@ ERROR_CODES = {"command_timeout", "command_unavailable", "missing_or_invalid_out
                "unsafe_temp_path", "pipeline_timeout", "command_failed", "invalid_git_revision", "missing_date_page",
                "both_update_lines_failed", "publish_worktree_not_clean", "cannot_check_staged_changes",
                "source_checkout_not_clean", "push_failed_without_non_fast_forward", "publish_retry_limit",
-               "main_did_not_advance"}
+               "main_did_not_advance", "git_identity_config_mismatch", "commit_identity_mismatch"}
 VERSION_PATHS = ("data/upstream.json", "CATALOG.md", "UPDATES.md", "data/source-freshness.json")
-BOT_CONFIG = ("-c", "user.name=github-actions[bot]", "-c", "user.email=41898282+github-actions[bot]@users.noreply.github.com", "-c", "commit.gpgSign=false")
+GIT_NAME = "fanqiang guide"
+GIT_EMAIL = "info@fanqiang.guide"
+GIT_IDENTITY = {"GIT_AUTHOR_NAME": GIT_NAME, "GIT_AUTHOR_EMAIL": GIT_EMAIL,
+                "GIT_COMMITTER_NAME": GIT_NAME, "GIT_COMMITTER_EMAIL": GIT_EMAIL}
+BOT_CONFIG = ("-c", "user.name=" + GIT_NAME, "-c", "user.email=" + GIT_EMAIL, "-c", "commit.gpgSign=false")
 
 
 class PipelineError(RuntimeError):
@@ -102,7 +107,9 @@ class Pipeline:
         self.runner = runner or Runner()
         inherited = dict(os.environ if env is None else env)
         self.token = inherited.get("GITHUB_TOKEN")
-        self.env = {key: value for key, value in inherited.items() if key not in API_ENV_NAMES}
+        self.env = {key: value for key, value in inherited.items()
+                    if key not in API_ENV_NAMES and key != "EMAIL"
+                    and not key.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_"))}
         self.cancelled = cancelled or (lambda: False)
         self.max_attempts = max(1, min(int(max_attempts), MAX_ATTEMPTS))
         self.deadline = time.monotonic() + RUN_SECONDS
@@ -127,6 +134,10 @@ class Pipeline:
     def command(self, args, *, cwd=None, api=False, timeout=120, check=True):
         self.check()
         env = dict(self.env)
+        if args and args[0] == "git":
+            # Explicit environment identity also wins over author.* / committer.*
+            # configuration inherited with checkout authentication settings.
+            env.update(GIT_IDENTITY)
         if api and self.token:
             env["GITHUB_TOKEN"] = self.token
         result = self.runner.run(list(args), cwd=Path(cwd or self.root), env=env,
@@ -138,6 +149,20 @@ class Pipeline:
 
     def git(self, *args, cwd=None, check=True):
         return self.command(["git", *BOT_CONFIG, *args], cwd=cwd, timeout=90, check=check)
+
+    def configure_identity(self, cwd):
+        # --local persists the project identity without touching another project
+        # or the user's global configuration. Command/env identity remains fixed.
+        for key, expected in (("user.name", GIT_NAME), ("user.email", GIT_EMAIL)):
+            self.git("config", "--local", key, expected, cwd=cwd)
+            actual = self.git("config", "--local", "--get", key, cwd=cwd).stdout.rstrip("\n")
+            if actual != expected:
+                raise PipelineError("git_identity_config_mismatch")
+
+    def verify_commit_identity(self, cwd):
+        value = self.git("log", "-1", "--format=%an%x00%ae%x00%cn%x00%ce", cwd=cwd).stdout.rstrip("\n")
+        if value.split("\0") != [GIT_NAME, GIT_EMAIL, GIT_NAME, GIT_EMAIL]:
+            raise PipelineError("commit_identity_mismatch")
 
     def sha(self, ref, cwd=None):
         value = self.git("rev-parse", "--verify", ref, cwd=cwd).stdout.strip()
@@ -218,6 +243,7 @@ class Pipeline:
 
     def make_commit(self, worktree, artifacts):
         self.check()
+        self.configure_identity(worktree)
         if self.git("status", "--porcelain", cwd=worktree).stdout.strip():
             raise PipelineError("publish_worktree_not_clean")
         for relative, source in sorted(artifacts.items()):
@@ -229,6 +255,7 @@ class Pipeline:
         if changed.returncode != 1:
             raise PipelineError("cannot_check_staged_changes")
         self.git("commit", "-m", "更新工具版本与每日免费代理资料", cwd=worktree)
+        self.verify_commit_identity(worktree)
         if self.git("status", "--porcelain", cwd=worktree).stdout.strip():
             raise PipelineError("publish_worktree_not_clean")
         return True
@@ -242,6 +269,7 @@ class Pipeline:
                    for line in result.stdout.splitlines())
 
     def execute(self):
+        self.configure_identity(self.root)
         if self.git("status", "--porcelain").stdout.strip():
             raise PipelineError("source_checkout_not_clean")
         base = self.sha("HEAD")
@@ -266,6 +294,7 @@ class Pipeline:
             paths = {path for path in changed.split("\0") if path}
             if paths and paths <= {"README.md"}:
                 self.git("rebase", "--no-autostash", latest, cwd=worktree)
+                self.verify_commit_identity(worktree)
                 if self.git("status", "--porcelain", cwd=worktree).stdout.strip():
                     raise PipelineError("publish_worktree_not_clean")
                 self.events.append("readme_only_rebase")

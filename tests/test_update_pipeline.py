@@ -1,9 +1,15 @@
-"""Offline orchestration tests: all Git, Python, and network commands are fake."""
+"""Offline orchestration tests plus isolated real-Git identity regressions.
+
+Network and update collectors remain fake; real commits exist only in temporary
+repositories and are never pushed.
+"""
 
 from contextlib import redirect_stdout
 import importlib.util
 import io
 import json
+import os
+import subprocess
 from pathlib import Path
 import shutil
 import tempfile
@@ -46,6 +52,8 @@ class FakeRunner:
         self.remote = A
         self.push_count = 0
         self.added = {}
+        self.configs = {}
+        self.identity_value = "\0".join((pipeline.GIT_NAME, pipeline.GIT_EMAIL, pipeline.GIT_NAME, pipeline.GIT_EMAIL))
 
     def run(self, command, *, cwd, env, timeout):
         cwd = Path(cwd)
@@ -94,6 +102,16 @@ class FakeRunner:
         raise AssertionError("Unexpected fake command")
 
     def git(self, args, cwd):
+        if args[0] == "config":
+            if args[1:3] == ["--local", "--get"]:
+                return pipeline.CommandResult(stdout=self.configs.get((cwd, args[3]), "") + "\n")
+            if args[1] == "--local" and len(args) == 4:
+                self.configs[cwd, args[2]] = args[3]
+                return pipeline.CommandResult()
+            raise AssertionError("Unexpected fake Git config")
+        if args[0] == "log":
+            assert args == ["log", "-1", "--format=%an%x00%ae%x00%cn%x00%ce"]
+            return pipeline.CommandResult(stdout=self.identity_value + "\n")
         if args[0] == "status":
             return pipeline.CommandResult()
         if args[0] == "rev-parse":
@@ -322,6 +340,38 @@ class PipelineTests(unittest.TestCase):
             self.assertNotIn(TOKEN, " ".join(call["command"]))
         self.assertNotIn(TOKEN, json.dumps(item.events))
 
+    def test_wrong_actual_commit_identity_stops_before_push(self):
+        item, runner = self.make()
+        runner.identity_value = "other author\0other@example.com\0other committer\0committer@example.com"
+        with self.assertRaisesRegex(pipeline.PipelineError, "commit_identity_mismatch"):
+            item.execute()
+        self.assertEqual(runner.push_count, 0)
+        self.assertEqual(len(runner.commits), 1)
+
+    def test_wrong_identity_after_rebase_blocks_second_push(self):
+        self.revisions[B]["README.md"] = "new reader home"
+        item, runner = self.make(advances=[(B, ["README.md"])])
+        original_git = runner.git
+        def corrupt_rebase_identity(args, cwd):
+            result = original_git(args, cwd)
+            if args[0] == "rebase":
+                runner.identity_value = "other\0other@example.com\0other\0other@example.com"
+            return result
+        runner.git = corrupt_rebase_identity
+        with self.assertRaisesRegex(pipeline.PipelineError, "commit_identity_mismatch"):
+            item.execute()
+        self.assertEqual(runner.push_count, 1)
+
+    def test_git_calls_have_fixed_author_and_committer_without_inherited_dates(self):
+        item, runner = self.make()
+        item.env.update({"GIT_CONFIG_COUNT": "2", "GIT_CONFIG_KEY_1": "author.name", "GIT_CONFIG_VALUE_1": "other project"})
+        item.execute()
+        for call in runner.calls:
+            if call["command"][0] == "git":
+                for key, value in pipeline.GIT_IDENTITY.items():
+                    self.assertEqual(call["env"][key], value)
+                self.assertEqual(call["env"]["GIT_CONFIG_VALUE_0"], "checkout-auth-config")
+
     def test_unchanged_outputs_do_not_push(self):
         item, runner = self.make(unchanged=True)
         self.assertEqual(item.execute()["status"], "unchanged")
@@ -381,6 +431,50 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaisesRegex(pipeline.PipelineError, "unsafe_output_path"):
             pipeline.copy_file(artifact, item.temp / "../escape.txt", destination_root=item.temp)
         self.assertFalse((self.base / "escape.txt").exists())
+
+
+class RealGitIdentityTests(unittest.TestCase):
+    def test_real_commit_overrides_polluted_environment_and_global_config(self):
+        with tempfile.TemporaryDirectory(prefix="fanqiang-identity-test-") as temporary:
+            base = Path(temporary)
+            repository = base / "repository"
+            repository.mkdir()
+            global_config = base / "global.gitconfig"
+            global_text = "[user]\n name = Other Project\n email = other@example.com\n[author]\n name = Other Author\n email = author@example.com\n[committer]\n name = Other Committer\n email = committer@example.com\n"
+            global_config.write_text(global_text)
+            clean_env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_") and key != "EMAIL"}
+            clean_env.update({"GIT_CONFIG_GLOBAL": str(global_config), "GIT_CONFIG_NOSYSTEM": "1"})
+            def git(*args):
+                return subprocess.check_output(["git", "-c", "commit.gpgSign=false", *args], cwd=repository, env=clean_env, text=True).strip()
+            git("init", "--quiet")
+            git("config", "--local", "user.name", "Wrong Local Name")
+            git("config", "--local", "user.email", "wrong-local@example.com")
+            write(repository, "data/upstream.json", "before")
+            git("add", ".")
+            git("commit", "--quiet", "-m", "fixture baseline")
+            polluted = {**clean_env, "GIT_AUTHOR_NAME": "Inherited Author", "GIT_AUTHOR_EMAIL": "inherited-author@example.com",
+                        "GIT_COMMITTER_NAME": "Inherited Committer", "GIT_COMMITTER_EMAIL": "inherited-committer@example.com",
+                        "GIT_AUTHOR_DATE": "2001-01-01T00:00:00Z", "GIT_COMMITTER_DATE": "2001-01-01T00:00:00Z",
+                        "EMAIL": "fallback-other@example.com", "GIT_CONFIG_COUNT": "2",
+                        "GIT_CONFIG_KEY_0": "author.name", "GIT_CONFIG_VALUE_0": "Injected Author",
+                        "GIT_CONFIG_KEY_1": "committer.email", "GIT_CONFIG_VALUE_1": "injected-committer@example.com"}
+            item = pipeline.Pipeline(repository, env=polluted, temp_root=base)
+            try:
+                artifact = item.temp / "upstream.json"
+                artifact.write_text("after")
+                self.assertTrue(item.make_commit(repository, {"data/upstream.json": artifact}))
+                actual = git("log", "-1", "--format=%an%x00%ae%x00%cn%x00%ce")
+                self.assertEqual(actual.split("\0"), [pipeline.GIT_NAME, pipeline.GIT_EMAIL, pipeline.GIT_NAME, pipeline.GIT_EMAIL])
+                self.assertEqual(git("config", "--local", "--get", "user.name"), pipeline.GIT_NAME)
+                self.assertEqual(git("config", "--local", "--get", "user.email"), pipeline.GIT_EMAIL)
+                self.assertNotIn("2001", git("log", "-1", "--format=%aI%n%cI"))
+                self.assertEqual(git("status", "--porcelain"), "")
+                self.assertEqual(global_config.read_text(), global_text)
+                self.assertNotIn("GIT_AUTHOR_DATE", item.env)
+                self.assertNotIn("GIT_COMMITTER_DATE", item.env)
+                self.assertNotIn("EMAIL", item.env)
+            finally:
+                item.cleanup()
 
 
 class WorkflowTests(unittest.TestCase):

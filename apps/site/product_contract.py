@@ -11,7 +11,7 @@ import runpy
 from urllib.parse import urlsplit
 
 PAGES_URL = "https://jasperyubo.github.io/Fanqiang-Guide/"
-BOOK_DISPLAY_TITLES = {"autosetup": "设备配置", "merlin": "梅林路由器", "server": "服务器助手"}
+BOOK_DISPLAY_TITLES = {"autosetup": "设备配置", "merlin": "梅林路由器", "server": "服务器助手", "troubleshooting": "服务器排障"}
 
 
 def product_facts() -> dict:
@@ -38,6 +38,7 @@ def product_facts() -> dict:
         "books_url": site_url + "api/agent/books",
         "books": books,
         "book_count": len(books),
+        "knowledge_sentence": server["knowledge_policy"]["summary"],
         "price_sentence": f"充值 {amount} 元，即可开始使用 AI 维护。VPS 自备，费用另计。",
         "os_label": os_label,
     }
@@ -47,8 +48,8 @@ def public_contract() -> dict:
     """Small, stable deployment contract: only facts the two public sites share."""
     product = product_facts()
     server = product["server"]
-    server_fields = ("entry_url", "installer_url", "install_command", "api_url", "recommended_os",
-                     "recommended_api_balance", "assistant", "tool", "prompt", "resource_uri", "download_url")
+    server_fields = ("entry_url", "installer_url", "install_command", "upgrade_command", "upgrade_scope", "api_url", "recommended_os",
+                     "recommended_api_balance", "assistant", "knowledge_policy", "tool", "prompt", "resource_uri", "download_url")
     book_fields = ("book_id", "display_title", "version", "sha256", "download_url", "resource_uri")
     return {
         "schema_version": 1,
@@ -57,6 +58,7 @@ def public_contract() -> dict:
         "mcp_url": product["mcp_url"],
         "books_url": product["books_url"],
         "price_sentence": product["price_sentence"],
+        "knowledge_sentence": product["knowledge_sentence"],
         "os_label": product["os_label"],
         "book_count": product["book_count"],
         "server": {key: server[key] for key in server_fields},

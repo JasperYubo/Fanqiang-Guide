@@ -16,7 +16,7 @@
 
 ## 2. 连接自己的服务器
 
-准备一台全新的 **Debian 12 x64 VPS**，可以使用 root 登录，公网 80、443 端口可用。服务商控制台若有防火墙或安全组，也要放行这两个端口。
+准备一台**全新的 Debian 12 x64 VPS**，可以使用 root 登录，公网 80、443 端口可用。服务商控制台若有防火墙或安全组，也要放行这两个端口。
 
 在电脑终端中连接，把示例 IP 替换成你的服务器公网 IP：
 
@@ -64,6 +64,16 @@ huarun info
 
 打开白名单里的业务平台，例如 `x.com` 或 `google.com`，检查实际访问是否正常。默认允许 383 个业务根域名及其子域名；进入通道的名单外请求会被拒绝。需要添加网站，可以告诉助手。
 
+## 已经安装过：升级内置助手
+
+SSH 登录原来的 VPS，运行下面的升级命令：
+
+```bash
+curl -fsSLo huarun-install.sh https://fanqiang.guide/server/install.sh && bash huarun-install.sh --upgrade-assistant
+```
+
+这会更新内置助手和 `huarun` 管理命令，保留现有网络配置、连接信息、白名单及 DeepSeek Key。完成后运行 `huarun chat`，即可使用 MCP 优先检索、资料不足后备搜索和修复复查。
+
 ## 有问题，直接和助手说
 
 以后 SSH 登录这台服务器，运行：
@@ -79,7 +89,7 @@ huarun chat
 - “把 example.com 加进白名单。”
 - “证书还剩多少天？”
 
-助手会调用服务器上的检查、修复和查询命令，并报告实际结果。服务端检查正常后，仍需用你的手机或电脑打开目标网站，确认本地连接也已恢复。
+每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。它会结合服务器上的检查、修复和查询结果，给出所用资料来源和实际结果。服务端检查正常后，仍需用你的手机或电脑打开目标网站，确认本地连接也已恢复。
 
 如果助手暂时无法对话，先检查 DeepSeek 余额和 Key；网络通道与 AI 对话分别运行，仍可使用终端管理命令：
 
@@ -90,3 +100,17 @@ huarun fix
 ```
 
 安装中途失败时保留终端报错，先检查报错所指的域名、端口、下载连接或 API 问题。不要清空现有配置后反复安装。
+
+## 与常用的 AI 一起安装
+
+在支持远程 MCP 的 AI 客户端中连接 https://fanqiang.guide/mcp，获取同一套服务器安装说明。公共 MCP 只提供资料，操作由你授权的 AI 在自己的 VPS 上完成。
+
+- 安装工具：get_server_setup
+- 安装提示：setup_server
+- 工程书资源：fanqiang://books/server
+- [服务器助手工程书](https://fanqiang.guide/ai/books/fanqiang-server-v1.1.ilang.md)
+- [安装脚本](https://fanqiang.guide/server/install.sh)
+
+搜索和对话均使用你自己的 DeepSeek API Key，按官方实际用量计费。
+
+当前内置 PicoClaw v0.3.1，默认使用 DeepSeek 的 deepseek-flash 模型。

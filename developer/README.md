@@ -8,13 +8,15 @@
 
 | 入口 | 当前内容 | 实现或资料 |
 | --- | --- | --- |
-| 公共 MCP | 2.1.0；`search`、`get`、`query` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
+| 公共 MCP | 2.3.0；`search`、`get`、`query`、`get_server_setup` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
 | 设备配置工程书 | autosetup 2.1 | [正文](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.evidence.json) |
 | 梅林路由器工程书 | merlin 1.0 | [正文](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.evidence.json) |
+| 服务器安装工程书 | server 1.1；MCP 优先、DeepSeek 搜索后备、修复复查 | [正文](../apps/lookup/runtime/books/fanqiang-server-v1.1.ilang.md) · [助手实现](../apps/server/README.md) |
+| 服务器排障工程书 | troubleshooting 1.0；通过 MCP 资源直接读取 | [正文](../apps/lookup/runtime/books/fanqiang-troubleshooting-v1.0.ilang.md) |
 | 工程书注册与完整性 | 版本、资源 URI、摘要和验证元数据 | [统一注册表](../apps/lookup/runtime/setup_book.py) · [公开工程书目录](https://fanqiang.guide/api/agent/books) |
 | HTTP 查询 | 搜索、条目、条件筛选、工程书与时效 | [OpenAPI](../apps/lookup/runtime/openapi.json) |
 
-MCP 工程书资源是 `fanqiang://books/autosetup` 和 `fanqiang://books/merlin`。`get_setup_book` 与 `/api/agent/setup-book` 保留兼容用途；新接入使用工程书资源或 `/api/agent/books`。服务读取公共资料，目标设备操作由用户自己的 AI 在已授权范围内执行。
+MCP 工程书资源为 `fanqiang://books/autosetup`、`fanqiang://books/merlin`、`fanqiang://books/server` 和 `fanqiang://books/troubleshooting`。`get_setup_book` 与 `/api/agent/setup-book` 保留兼容用途；新接入使用工程书资源或 `/api/agent/books`。服务读取公共资料，目标设备操作由用户自己的 AI 在已授权范围内执行。
 
 ## 修改哪一层
 
@@ -30,6 +32,8 @@ MCP 工程书资源是 `fanqiang://books/autosetup` 和 `fanqiang://books/merlin
 | 来源更新时间 | [时效投影](refresh_knowledge_sources.py) · [时效同步](sync_source_freshness.py) · [公开状态](https://fanqiang.guide/api/agent/freshness) |
 | 路由器上游变更观察 | [观察范围与复核流程](ROUTER_UPSTREAM_WATCH.md) · [每日工作流](../.github/workflows/check-router-upstream.yml) |
 | 路由器型号与包匹配 | [兼容资料更新](update_router_compatibility.py) · [匹配数据](../data/router-compatibility.json) · [匹配逻辑](../apps/lookup/runtime/router_matching.py) |
+| 服务器助手与 iLang 模板 | [助手源码](../apps/server/assistant/) · [安装器同步](sync_server_assistant.py) |
+| 双站一致与自动发版 | Linux 同步维护部署主站后触发 [Pages 工作流](../.github/workflows/pages.yml)，[发布脚本](publish_github_release.py)核验双站收据与附件后生成 Release |
 | 本地网络诊断工具 | [使用与开发说明](../apps/diagnostics/README.md) |
 
 [原始知识库](../export/library-v0.1-2026-09-11.json)包含 310 条知识记录；[当前路由器资料](../data/router-compatibility.json)包含 56 行兼容匹配；[历史型号表](../export/merlin-model-matrix-v0.1-2026-09-11.json)保留 58 条固件支持声明。它们的记录口径与证据范围分别维护。

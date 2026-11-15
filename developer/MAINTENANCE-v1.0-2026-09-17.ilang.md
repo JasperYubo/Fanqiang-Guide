@@ -27,6 +27,13 @@
   [MUST] 发布前保存实时基线和回滚点；保留现网资料、freshness状态、定时器和未涉及内容。失败时按已有授权进行有界重试、重新生成或恢复已验证版本，不绕过检查，不擅自修改认证或扩大业务范围。
   [MUST] 故障与恢复写入私有证据；成功通知以两站和MCP实际验收为条件。需要外部决策或凭据时明确报告具体阻塞，不声称已自动修复。
 
+::MODULE{AUTOMATIC_RELEASE}
+  [MUST] 每次产品更新由 Linux 完成构建、测试及双站发布后，Pages 工作流的独立 release job 自动生成 GitHub Release；不依赖维护者电脑开机。
+  [MUST] Release 绑定完整 source_sha，标签为 release-加提交前12位；重新运行同一版本不得重复创建或覆盖已发布附件。
+  [MUST] 发布前核对主站与 Pages 的事务身份、产品合同和实际安装器、Pages HTML 哈希；附件先上传到草稿并逐项校验，全部通过后正式发布。
+  [MUST] 唯一既有回滚基线 270c81ba257398004ecf992d2cde2d3029d981de 不具有自动发版脚本，允许该精确版本只恢复页面。其他版本缺少脚本或校验失败必须报错，不能默认跳过。
+  [MUST] Git 作者和提交者姓名均为 fanqiang guide，邮箱均为 info@fanqiang.guide；推送账户与提交署名分开核对。
+
 ::MODULE{DATA_BOUNDARIES}
   [MUST] 每日Actions更新上游版本观测、CATALOG、UPDATES和免费代理日期页面；不自动扩大人工资料库，不自动部署网站，不自动替换Worker知识。
   [MUST] tools/source修改需要通过tools/rebuild_library.py显式重建公开资料导出；网站冻结资料与根export是不同维护层，不能把上游版本观测冒充新的人工核验或设备兼容性实测。

@@ -30,11 +30,16 @@ BOOK_REGISTRY = {
         "version": "2.1", "last_updated": "2026-11-02",
         "evidence_path": ROOT / "books/fanqiang-autosetup-v2.1.evidence.json",
         "evidence_sha256": "e2b258e71a090dcaca2465b0b62df72944a99f88afa9b21df4363377c30a3498"},
-    "server": {"path": ROOT / "books/fanqiang-server-v1.0.ilang.md",
-        "sha256": "90bf8236f57ae35113d2bce942fec8cb67a541e764f0e94b8d10afdda9900a82", "title": SERVER_TITLE,
-        "version": "1.0", "last_updated": "2026-11-13", "prompt": "setup_server",
-        "evidence_path": ROOT / "books/fanqiang-server-v1.0.evidence.json",
-        "evidence_sha256": "8701b322b0e1a6b80d7897b05ceee8f86bba35676b2d42b9a5dbf7da93c1228c"},
+    "server": {"path": ROOT / "books/fanqiang-server-v1.1.ilang.md",
+        "sha256": "55b8eda29a8a5a106d0926dbf7b555cb90a4f6a93ace6729356212d278a40af8", "title": SERVER_TITLE,
+        "version": "1.1", "last_updated": "2026-11-15", "prompt": "setup_server",
+        "evidence_path": ROOT / "books/fanqiang-server-v1.1.evidence.json",
+        "evidence_sha256": "2f3d78ec34136fae296c04ed2ba043d4067e1c18ac7f9e230c450b622fb9c198"},
+    "troubleshooting": {"path": ROOT / "books/fanqiang-troubleshooting-v1.0.ilang.md",
+        "sha256": "c79f7f3ebc5b0ce18bd0472967109663780dddfb963338d883f9e1a48ffa7217", "title": "华润服务器分层排障与修复复查",
+        "version": "1.0", "last_updated": "2026-11-15", "prompt": None,
+        "evidence_path": ROOT / "books/fanqiang-troubleshooting-v1.0.evidence.json",
+        "evidence_sha256": "190f44c55affa53dc8dfbfc6c4036b0670a08abba7ecf24508904014b0a18cd0"},
     "merlin": {"path": ROOT / "books/fanqiang-merlin-v1.0.ilang.md", "sha256": "c5eaa0000454df3f39c71ed92fc5dca30b683f29d73d9e77d4a3e26ba220b07e",
         "title": "Merlin-compatible router and fancyss engineering book",
         "version": "1.0", "last_updated": "2026-11-02",
@@ -67,6 +72,7 @@ SERVER_SETUP_DESCRIPTION = """::ILANG::v5.0
   [MUST] Return the canonical server-assistant entry, installer command and complete server engineering book for the user's own authorized VPS. Accept no arguments or secrets.
   [MUST] First use https://platform.deepseek.com to create the user's API Key with a recommended 10 CNY starting balance; then SSH to the user's fresh Debian 12 VPS and follow https://fanqiang.guide/server/.
   [MUST] Install PicoClaw with DeepSeek deepseek-flash and the network service; import the connection in the actual client, verify it, and use huarun chat over SSH afterward.
+  [MUST] The embedded assistant reads HuaRun MCP documents and fanqiang://books/troubleshooting first each turn, uses DeepSeek search only when references are insufficient, and rechecks doctor and status after repairs.
   [MUST] The public MCP returns knowledge only. The user's authorized AI needs its own target-server tools; API keys, SSH passwords and connection URLs stay local.
 ::ILANG::COMPLETE::"""
 SERVER_PROMPT_DESCRIPTION = (
@@ -75,12 +81,21 @@ SERVER_PROMPT_DESCRIPTION = (
     "公开知识流程，无参数；不接收 SSH 密码、API Key 或节点链接，也不会远程安装。"
 )
 
+TROUBLESHOOTING_DESCRIPTION = "华润 MCP 优先的服务器排障参考：Linux、DNS、TLS、Nginx、Xray、CDN、白名单与修复复查。公开资料，不接收私人日志或凭据。"
+
 def server_setup_metadata():
     return {"entry_url": SERVER_ENTRY_URL, "installer_url": SERVER_INSTALLER_URL,
-        "install_command": SERVER_INSTALL_COMMAND, "tool": "get_server_setup",
+        "install_command": SERVER_INSTALL_COMMAND, "upgrade_command": SERVER_INSTALL_COMMAND + " --upgrade-assistant",
+        "upgrade_scope": "assistant_and_manager_only_preserve_network_configuration_and_key", "tool": "get_server_setup",
         "api_url": "https://platform.deepseek.com",
         "assistant": {"runtime": "PicoClaw", "runtime_version": "0.3.1",
-            "provider": "DeepSeek", "model": "deepseek-flash", "command": "huarun chat"},
+            "provider": "DeepSeek", "model": "deepseek-flash", "command": "huarun chat", "version": "1.1.0"},
+        "knowledge_policy": {"primary": "huarun_mcp", "mcp_url": "https://fanqiang.guide/mcp",
+            "resources": ["fanqiang://books/server", "fanqiang://books/troubleshooting"],
+            "fallback": "deepseek_search_when_insufficient", "search_api": "https://api.deepseek.com/v1/tools/search",
+            "recheck": ["huarun doctor --json", "huarun status --json"], "instruction_format": "iLang",
+            "expertise_standard": "顶级服务运维专家，以 CCIE 级网络能力为基础",
+            "summary": "每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。"},
         "recommended_api_balance": {"amount": 10, "currency": "CNY", "minimum_required": False},
         "recommended_os": "fresh Debian 12 x86_64",
         "execution_location": "user_owned_authorized_vps"}
@@ -130,7 +145,7 @@ def book_manifest(book_id):
         "resource_uri": "fanqiang://books/" + book_id, "prompt": entry.get("prompt", "setup_device"),
         "executor": "user_agent", "content_type": "text/markdown; charset=utf-8",
         "byte_length": len(raw), "validation": validation,
-        "capability_boundaries": list(CAPABILITY_BOUNDARIES if book_id != "server" else CAPABILITY_BOUNDARIES[:4] + (
+        "capability_boundaries": list(CAPABILITY_BOUNDARIES if book_id not in {"server", "troubleshooting"} else CAPABILITY_BOUNDARIES[:4] + (
             "Installation and huarun chat run on the user-owned authorized VPS over SSH; the public MCP never receives its credentials.",
             "Server health checks are not proof of actual phone or desktop client connectivity; verify the real client separately.",
         )), **(server_setup_metadata() if book_id == "server" else {})}
@@ -183,6 +198,7 @@ def server_setup_prompt_intro(metadata):
   [MUST] Use the full answer rules in the next message and the complete server book in the final message. Validate its SHA256 against @BOOK.
   [MUST] Start at https://platform.deepseek.com for the user's API Key and recommended 10 CNY balance; then https://fanqiang.guide/server/ for SSH installation on the user's own authorized VPS.
   [MUST] Follow the server book's PicoClaw, DeepSeek deepseek-flash, network installation, actual client import and verification, then huarun chat sequence. The phone/router book is a separate workflow.
+  [MUST] For repair, read fanqiang://books/troubleshooting first; use DeepSeek search only for a concrete knowledge gap, then verify actual doctor and status results after changes.
   [MUST] Keep API keys, SSH credentials and connection URLs on the target device. This read-only MCP neither receives secrets nor operates servers.
   [MUST] Execute only the active user's authorized task using tools actually connected to its target server. Retrieval does not prove installation; report only observed checks.
 ::ILANG::COMPLETE::"""

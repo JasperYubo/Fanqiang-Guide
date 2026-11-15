@@ -2,9 +2,9 @@ name: Check HuaRun Server Assistant
 on:
   workflow_dispatch:
   push:
-    paths: ['apps/server/**', '.github/workflows/check-server.yml']
+    paths: ['apps/server/**', 'developer/sync_server_assistant.py', '.github/workflows/check-server.yml']
   pull_request:
-    paths: ['apps/server/**', '.github/workflows/check-server.yml']
+    paths: ['apps/server/**', 'developer/sync_server_assistant.py', '.github/workflows/check-server.yml']
 permissions:
   contents: read
 jobs:
@@ -20,5 +20,7 @@ jobs:
           python-version: '3.13'
       - name: Check test dependencies
         run: command -v bash && command -v jq && command -v openssl
+      - name: Check embedded assistant sources
+        run: python developer/sync_server_assistant.py --check
       - name: Check installer without installing services
         run: python -m unittest discover -s apps/server/tests -v

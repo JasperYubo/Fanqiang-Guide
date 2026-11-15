@@ -28,7 +28,7 @@ class ProductContractTests(unittest.TestCase):
         self.assertEqual(actual["server"], registry["book_manifest"]("server"))
         self.assertEqual([{key: value for key, value in book.items() if key != "display_title"} for book in actual["books"]],
                          registry["book_catalog"]()["books"])
-        self.assertEqual([book["display_title"] for book in actual["books"]], ["设备配置", "梅林路由器", "服务器助手"])
+        self.assertEqual([book["display_title"] for book in actual["books"]], ["设备配置", "梅林路由器", "服务器助手", "服务器排障"])
         self.assertEqual(actual["book_count"], len(registry["BOOK_REGISTRY"]))
         self.assertEqual(actual["price_sentence"], "充值 10 元，即可开始使用 AI 维护。VPS 自备，费用另计。")
         self.assertEqual(actual["mcp_url"], actual["site_url"] + "mcp")
@@ -44,10 +44,11 @@ class ProductContractTests(unittest.TestCase):
             version=server["version"], download_url=server["download_url"])
         changed["os_label"] = "全新的 Test OS VPS"
         changed["price_sentence"] = "共享价格说明测试。"
+        changed["knowledge_sentence"] = "共享检索与修复说明测试。"
         template = "\n".join("{{" + token + "}}" for token in sorted(sync.REQUIRED_TOKENS))
         rendered = html.unescape(sync.render(template, changed))
         for value in (server["entry_url"], server["installer_url"], server["install_command"],
-                      "server-test-v9.2.ilang.md", "v9.2", "TestRuntime", "test-model", changed["os_label"], changed["price_sentence"]):
+                      "server-test-v9.2.ilang.md", "v9.2", "TestRuntime", "test-model", changed["os_label"], changed["price_sentence"], changed["knowledge_sentence"]):
             self.assertIn(value, rendered)
         self.assertNotIn("{{", rendered)
 

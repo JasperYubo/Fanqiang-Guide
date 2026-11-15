@@ -21,7 +21,7 @@ from setup_book import (BOOK_RESOURCE_URI, BOOK_TITLE, NO_ARGUMENTS_SCHEMA,
     SETUP_BOOK_DESCRIPTION, SETUP_PROMPT_DESCRIPTION, setup_book_manifest, setup_book_payload,
     setup_book_prompt_intro, BOOK_REGISTRY, BOOK_RESOURCE_TEMPLATE,
     RULES_RESOURCE_URI, answer_rules_text, answer_rules_manifest, book_catalog, book_payload,
-    SERVER_SETUP_DESCRIPTION, SERVER_PROMPT_DESCRIPTION, SERVER_TITLE, server_setup_prompt_intro)
+    SERVER_SETUP_DESCRIPTION, SERVER_PROMPT_DESCRIPTION, SERVER_TITLE, server_setup_prompt_intro, TROUBLESHOOTING_DESCRIPTION)
 
 from library_query import normalize_query, QueryValidationError, QUERY_INPUT_SCHEMA
 
@@ -307,7 +307,8 @@ def create_app(library, allowed_origins=()):
     for book_id in sorted(BOOK_REGISTRY):
         metadata = book_payload(book_id)
         mcp.resource("fanqiang://books/" + book_id, name="book-" + book_id,
-            title=metadata["title"], description=SERVER_PROMPT_DESCRIPTION if book_id == "server" else SETUP_PROMPT_DESCRIPTION,
+            title=metadata["title"], description=(SERVER_PROMPT_DESCRIPTION if book_id == "server" else
+                TROUBLESHOOTING_DESCRIPTION if book_id == "troubleshooting" else SETUP_PROMPT_DESCRIPTION),
             mime_type="application/json", meta={k: v for k, v in metadata.items() if k != "content"})(
                 resource_reader(book_id))
 

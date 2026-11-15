@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "book_id": "server",
+  "book_version": "1.1",
+  "edition_date": "2026-11-15",
+  "edition_timezone": "America/New_York",
+  "book_file": "fanqiang-server-v1.1.ilang.md",
+  "book_sha256": "55b8eda29a8a5a106d0926dbf7b555cb90a4f6a93ace6729356212d278a40af8",
+  "book_bytes": 6218,
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "book_sha256": "55b8eda29a8a5a106d0926dbf7b555cb90a4f6a93ace6729356212d278a40af8",
+      "checked_at": "2026-11-15T08:46:02.825512+00:00"
+    },
+    "service_interface": {
+      "status": "verified",
+      "version": "2.3.0",
+      "scope": "Linux ASGI and SDK loopback JSON-RPC/HTTP resource parity, pinned books, no-argument privacy guards and existing device/router regressions. This is not public deployment or embedded-agent installer acceptance.",
+      "environment": "linux_asgi_and_sdk_loopback",
+      "checked_at": "2026-11-15T08:48:53.826218+00:00",
+      "evidence": {
+        "command": "/root/huarun-server-20261113/.venv/bin/python -m unittest discover -s apps/lookup/runtime -p test_*.py -q",
+        "tests": 134,
+        "failures": 0
+      }
+    },
+    "installer_acceptance": {
+      "status": "verified",
+      "checked_at": "2026-11-15T09:02:25.234189+00:00",
+      "evidence": "apps/server/verification/2026-11-15.json",
+      "scope": "Isolated Debian 12 x86_64 systemd installation, real PicoClaw/DeepSeek with public server-book retrieval and DeepSeek Search fallback, stopped-Xray repair with automatic doctor/status recheck, real Linux SOCKS client, and 1.0.0 to 1.1.0 assistant-only upgrade preserving four network configuration hashes. The new public troubleshooting resource was not yet deployed during the run; candidate ASGI/SDK resource tests passed. Physical phones, ARM and other distributions were not tested."
+    }
+  },
+  "validation_results": {
+    "ilang_validate": {
+      "mode": "raw",
+      "counts": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      }
+    },
+    "ilang_book_check": {
+      "pass": true,
+      "A1": {
+        "item": "the book opens and closes with the marker",
+        "expect": 2,
+        "found": 2,
+        "pass": true
+      },
+      "A2": {
+        "item": "the grammar validator reports zero errors in strict mode",
+        "errors": 0,
+        "warnings": 0,
+        "pass": true
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      },
+      "note": "A3, whether the book does the tutorial's job and nothing else, is for a person to decide."
+    }
+  }
+}

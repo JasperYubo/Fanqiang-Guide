@@ -19,7 +19,7 @@ INSTALL_COMMAND = SERVER["install_command"]
 CSS_PATH = "/assets/server-assistant-v1.0-2026-11-13.css"
 BOOK_PATH = urlsplit(SERVER["download_url"]).path
 TITLE = "华润服务器助手：自己的 VPS，自带 AI 助手"
-DESCRIPTION = "在自己的 Debian 12 VPS 安装华润服务器助手：准备 DeepSeek API Key、SSH 登录、运行安装命令，再把连接导入手机或电脑，用内置 AI 检查与排障。"
+DESCRIPTION = "华润 Linux VPS 服务器助手：PicoClaw 与 DeepSeek 先查华润 MCP 文档，资料不足再联网搜索，诊断和修复后复查；提供 iLang 运维技能与安装指南。"
 NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 
@@ -62,21 +62,24 @@ def build_server_page(public: Path, page, server_source: Path) -> None:
 <div class="server-client-grid"><a href="/guides/client-downloads.html"><strong>Windows</strong><span>v2rayN · 查看下载入口 →</span></a><a href="/guides/client-downloads.html"><strong>Android</strong><span>v2rayNG · 查看下载入口 →</span></a><a href="/guides/shadowrocket-platforms.html"><strong>iPhone / iPad</strong><span>Shadowrocket · 查看使用指南 →</span></a><a href="/guides/client-downloads.html"><strong>macOS / Linux</strong><span>选择支持 VMess 的客户端 →</span></a></div><p>导入后启动客户端，实际打开要访问的网站验证。服务器服务正常与手机、电脑实际连通，需要分别检查。</p><p class="server-note">默认使用域名白名单：进入此通道的非白名单目标会被阻止。若要增加目标域名，可以在下一步让 AI 帮你检查和添加。</p></div></section>
 <section class="server-step" id="assistant" aria-labelledby="assistant-title"><div class="server-step-number" aria-hidden="true">05</div><div><p class="eyebrow">让 AI 帮你维护</p><h2 id="assistant-title">有问题，直接在服务器里问。</h2><p>重新 SSH 登录你的 VPS，打开内置 AI 助手：</p>
 ''' + code(SERVER["assistant"]["command"]) + r'''
-<div class="server-examples" aria-label="可以问助手的问题"><p>“手机连不上，帮我检查服务和证书。”</p><p>“把连接信息再给我看一下。”</p><p>“检查 example.com 能否访问，需要的话加入白名单。”</p><p>“证书还有多少天到期？”</p></div><p>AI 会通过 {{PROVIDER}} API 理解你的问题，在这台服务器上检查相关配置。需要改动时，先看清它准备执行的操作。提问和回复会使用你的 {{PROVIDER}} API 余额。</p><details class="server-details"><summary>查看状态、诊断和修复命令</summary><p>这些命令在 SSH 终端直接运行。先查看状态与诊断结果，再按提示决定是否修复。</p>
+<div class="server-examples" aria-label="可以问助手的问题"><p>“手机连不上，帮我检查服务和证书。”</p><p>“把连接信息再给我看一下。”</p><p>“检查 example.com 能否访问，需要的话加入白名单。”</p><p>“证书还有多少天到期？”</p></div><p>{{KNOWLEDGE_SENTENCE}}AI 会结合这台服务器的真实检查结果定位问题，修复后报告复查结果和资料来源。对话与搜索会使用你的 {{PROVIDER}} API 余额。</p><details class="server-details"><summary>查看状态、诊断和修复命令</summary><p>这些命令在 SSH 终端直接运行。先查看状态与诊断结果，再按提示决定是否修复。</p>
 ''' + code("huarun status\nhuarun doctor\nhuarun fix") + r'''
 </details></div></section>
+<section class="server-step" id="upgrade" aria-labelledby="upgrade-title"><div class="server-step-number" aria-hidden="true">↻</div><div><p class="eyebrow">已安装用户</p><h2 id="upgrade-title">升级助手，保留现有连接。</h2><p>SSH 登录原来的 VPS，运行下面的升级命令：</p>
+''' + code(SERVER["upgrade_command"]) + r'''
+<p>更新内置助手和 <code>huarun</code> 管理命令，保留现有网络配置、连接信息、白名单及 DeepSeek Key。完成后运行 <code>{{CHAT_COMMAND}}</code>，使用 MCP 优先检索、资料不足后备搜索和修复复查。</p></div></section>
 <section class="server-mcp" id="mcp" aria-labelledby="mcp-title"><p class="eyebrow">也可以交给你常用的 AI</p><h2 id="mcp-title">MCP 接入，也是同一条安装路径。</h2><p>如果你的 AI 客户端支持 MCP，可连接华润 MCP，获取服务器助手的准备条件、安装步骤与工程书，再由你授权的 AI 带着操作自己的 VPS。</p>
 ''' + code(FACTS["mcp_url"]) + r'''
 <p>告诉 AI：“帮我在自己的 VPS 安装华润服务器助手。”服务器助手入口与本页一致；已有设备配置继续使用原来的设备配置流程。</p><p class="server-note">华润公共 MCP 提供安装说明，不代管你的服务器登录信息。Key 仍在自己的服务器终端配置。</p><details class="server-details"><summary>查看 MCP 的对应入口</summary><dl class="server-mcp-contract"><dt>安装工具</dt><dd><code>{{SERVER_TOOL}}</code></dd><dt>安装提示</dt><dd><code>{{SERVER_PROMPT}}</code></dd><dt>工程书资源</dt><dd><code>{{SERVER_RESOURCE}}</code></dd></dl></details><div class="server-actions"><a class="button button-secondary" href="/ai/#device-setup">查看 MCP 接入说明</a><a class="text-link" href="''' + BOOK_PATH + r'''" download>下载服务器助手工程书 →</a></div></section>
 </main>
 '''
     values = {
-        "PRICE_SENTENCE": FACTS["price_sentence"], "OS_LABEL": FACTS["os_label"],
+        "PRICE_SENTENCE": FACTS["price_sentence"], "KNOWLEDGE_SENTENCE": FACTS["knowledge_sentence"], "OS_LABEL": FACTS["os_label"],
         "API_URL": SERVER["api_url"], "RUNTIME": SERVER["assistant"]["runtime"],
         "PROVIDER": SERVER["assistant"]["provider"],
         "RUNTIME_VERSION": SERVER["assistant"]["runtime_version"],
         "MODEL": SERVER["assistant"]["model"],
-        "SERVER_ENTRY_URL": ENTRY_URL, "INSTALL_COMMAND": INSTALL_COMMAND,
+        "SERVER_ENTRY_URL": ENTRY_URL, "INSTALL_COMMAND": INSTALL_COMMAND, "UPGRADE_COMMAND": SERVER["upgrade_command"],
         "INSTALLER_URL": INSTALLER_URL, "MCP_URL": FACTS["mcp_url"],
         "CHAT_COMMAND": SERVER["assistant"]["command"], "SERVER_BOOK_URL": SERVER["download_url"],
         "PRICE_AMOUNT": str(SERVER["recommended_api_balance"]["amount"]),
@@ -86,6 +89,11 @@ def build_server_page(public: Path, page, server_source: Path) -> None:
     for name, value in values.items():
         body = body.replace("{{" + name + "}}", html.escape(value, quote=True))
     schemas = [
+        {"@type": "SoftwareApplication", "@id": ENTRY_URL + "#software", "name": "华润服务器助手 Fanqiang Guide",
+         "url": ENTRY_URL, "applicationCategory": "DeveloperApplication", "operatingSystem": "Debian 12 Linux",
+         "softwareVersion": SERVER["assistant"]["version"], "description": DESCRIPTION,
+         "downloadUrl": INSTALLER_URL, "isAccessibleForFree": True,
+         "license": "https://github.com/JasperYubo/Fanqiang-Guide/blob/main/LICENSE"},
         {"@type": "WebPage", "@id": ENTRY_URL + "#webpage", "url": ENTRY_URL,
          "name": TITLE, "description": DESCRIPTION, "inLanguage": "zh-CN"},
         {"@type": "BreadcrumbList", "itemListElement": [
@@ -138,13 +146,13 @@ def add_server_discovery(public: Path) -> None:
     # The text negotiation/AI reading surface receives the same public facts.
     book_rows = "\n".join(
         "| [" + book["display_title"] + "](" + book["download_url"] + ") | " + book["version"] +
-        " | " + book["resource_uri"] + " | " + book["prompt"] + " |"
+        " | " + book["resource_uri"] + " | " + (book["prompt"] or "直接读取资源") + " |"
         for book in FACTS["books"])
     fence = chr(96) * 3
     markdown_facts = (
         "<!-- product-facts:start -->\n## 配置工程书与服务器助手\n\n"
         "公共 MCP：" + FACTS["mcp_url"] + "。共有 " + str(FACTS["book_count"]) +
-        " 本配置工程书，按目标选择手机电脑、梅林路由器或自己的 VPS 流程。\n\n"
+        " 本配置工程书，按目标选择手机电脑、梅林路由器、自己的 VPS 安装或服务器排障流程。\n\n"
         "| 工程书 | 版本 | 资源 | 提示 |\n| --- | --- | --- | --- |\n" + book_rows + "\n\n"
         "[服务器助手安装入口](" + ENTRY_URL + ") · [GitHub 项目页](" + FACTS["pages_url"] + ")\n\n"
         + FACTS["price_sentence"] + "准备 " + FACTS["os_label"] + "，SSH 登录自己的 VPS 后安装。\n\n"
@@ -152,6 +160,7 @@ def add_server_discovery(public: Path) -> None:
         "安装脚本：" + INSTALLER_URL + "。API 平台：" + SERVER["api_url"] + "。\n\n"
         "内置 " + SERVER["assistant"]["runtime"] + " v" + SERVER["assistant"]["runtime_version"] +
         "，默认模型 " + SERVER["assistant"]["model"] + "，对话命令 " + SERVER["assistant"]["command"] + "。\n\n"
+        + FACTS["knowledge_sentence"] + "\n\n"
         "安装工具：" + SERVER["tool"] + "；提示：" + SERVER["prompt"] +
         "；资源：" + SERVER["resource_uri"] + "。Key 在自己的服务器终端配置，公共 MCP 提供只读说明。\n"
         "<!-- product-facts:end -->")
@@ -176,5 +185,5 @@ def add_server_discovery(public: Path) -> None:
             sitemap.remove(node)
     node = ET.SubElement(sitemap, "{" + NS + "}url")
     ET.SubElement(node, "{" + NS + "}loc").text = ENTRY_URL
-    ET.SubElement(node, "{" + NS + "}lastmod").text = "2026-11-13"
+    ET.SubElement(node, "{" + NS + "}lastmod").text = "2026-11-15"
     write(public, "sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(sitemap, encoding="unicode"))

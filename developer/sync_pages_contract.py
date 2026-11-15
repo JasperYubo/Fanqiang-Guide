@@ -20,12 +20,13 @@ OUTPUT = ROOT / "apps/pages/index.html"
 REQUIRED_TOKENS = {
     "SITE_URL", "PAGES_URL", "SERVER_ENTRY_URL", "INSTALLER_URL", "INSTALL_COMMAND",
     "API_URL", "MCP_URL", "PRICE_SENTENCE", "OS_LABEL", "RUNTIME", "RUNTIME_VERSION",
-    "MODEL", "SERVER_TOOL", "SERVER_PROMPT", "SERVER_RESOURCE", "BOOK_COUNT", "BOOK_CARDS",
+    "MODEL", "KNOWLEDGE_SENTENCE", "SERVER_TOOL", "SERVER_PROMPT", "SERVER_RESOURCE", "BOOK_COUNT", "BOOK_CARDS",
 }
 BOOK_DESCRIPTIONS = {
     "autosetup": "手机与电脑配置、手机共享、路由器流程入口",
     "merlin": "兼容固件、fancyss 选包、安装检查与恢复流程",
     "server": "准备 DeepSeek Key、安装自己的 VPS、导入客户端与中文排错",
+    "troubleshooting": "华润 MCP 优先、资料不足再搜索、分层排障与修复复查",
 }
 
 
@@ -63,7 +64,7 @@ def render(template: str, product: dict | None = None) -> str:
         "PRICE_SENTENCE": product["price_sentence"], "PRICE_AMOUNT": server["recommended_api_balance"]["amount"],
         "OS_LABEL": product["os_label"], "RUNTIME": assistant["runtime"],
         "RUNTIME_VERSION": assistant["runtime_version"], "PROVIDER": assistant["provider"],
-        "MODEL": assistant["model"], "CHAT_COMMAND": assistant["command"],
+        "MODEL": assistant["model"], "KNOWLEDGE_SENTENCE": product["knowledge_sentence"], "CHAT_COMMAND": assistant["command"],
         "SERVER_TOOL": server["tool"], "SERVER_PROMPT": server["prompt"],
         "SERVER_RESOURCE": server["resource_uri"], "SERVER_BOOK_URL": server["download_url"],
         "BOOK_COUNT": product["book_count"],

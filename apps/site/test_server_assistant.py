@@ -69,6 +69,8 @@ class ServerPageTests(unittest.TestCase):
         (self.public / "sitemap.xml").write_text(
             '<urlset xmlns="' + NS + '"><url><loc>https://fanqiang.guide/</loc></url></urlset>')
         (self.public / "index.md").write_text("# Existing\n")
+        (self.public / "ai").mkdir()
+        (self.public / "ai/index.md").write_text("# AI entry\n")
         (self.public / "llms.txt").write_text("# Existing discovery\n")
 
     def test_installer_is_exact_and_gzip_matches(self):
@@ -98,8 +100,19 @@ class ServerPageTests(unittest.TestCase):
         self.assertNotIn("<input", raw)
         self.assertNotIn("<form", raw)
         for marker in (ENTRY_URL, BOOK_PATH, "get_server_setup", "setup_server",
-                       "fanqiang://books/server", "DeepSeek API 余额", "终端隐藏输入"):
+                       "fanqiang://books/server", "DeepSeek API 余额", "终端隐藏输入",
+                       "每轮先查华润 MCP", "资料不足再用 DeepSeek 搜索", "修复后自动复查"):
             self.assertIn(marker, raw)
+
+    def test_existing_install_upgrade_is_separate_from_fresh_install(self):
+        raw = self.build()
+        reader = CodeReader()
+        reader.feed(raw)
+        self.assertIn(INSTALL_COMMAND + " --upgrade-assistant", reader.code)
+        self.assertIn('id="upgrade"', raw)
+        self.assertIn("保留现有网络配置、连接信息、白名单及 DeepSeek Key", raw)
+        markdown = (self.public / "server/index.md").read_text()
+        self.assertIn(INSTALL_COMMAND + " --upgrade-assistant", markdown)
 
     def test_home_entry_is_idempotent_and_preserves_device_flow(self):
         self.discovery_fixture()
@@ -118,6 +131,8 @@ class ServerPageTests(unittest.TestCase):
         self.assertIn("https://fanqiang.guide/", locations)
         catalog = json.loads((self.public / ".well-known/ai-catalog.json").read_text())
         self.assertEqual(len(catalog["entries"]), 2)
+        ai_markdown = (self.public / "ai/index.md").read_text()
+        self.assertIn("fanqiang://books/troubleshooting | 直接读取资源 |", ai_markdown)
 
     def test_missing_home_anchor_fails_instead_of_silent_omission(self):
         self.discovery_fixture()

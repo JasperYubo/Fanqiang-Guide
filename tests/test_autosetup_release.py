@@ -32,7 +32,7 @@ class SetupReleaseTests(unittest.TestCase):
         for relative in ("lookup/server-card.json","site/.well-known/mcp/server-card.json"):
             p=self.release/relative
             p.parent.mkdir(parents=True,exist_ok=True)
-            p.write_text(json.dumps({"serverInfo":{"version":"2.2.0"},"capabilities":{"tools":{},"resources":{},"prompts":{}},"setupBook":self.manifest,"serverAssistant":contract["book_manifest"]("server"),"books":contract["book_catalog"](),"answerRules":contract["answer_rules_manifest"]()}))
+            p.write_text(json.dumps({"serverInfo":{"version":"2.3.0"},"capabilities":{"tools":{},"resources":{},"prompts":{}},"setupBook":self.manifest,"serverAssistant":contract["book_manifest"]("server"),"books":contract["book_catalog"](),"answerRules":contract["answer_rules_manifest"]()}))
 
 
         def put(relative, raw):
@@ -44,6 +44,8 @@ class SetupReleaseTests(unittest.TestCase):
             for prefix in ("lookup/books/", "site/ai/books/"):
                 put(prefix + entry["evidence_path"].name, entry["evidence_path"].read_bytes())
                 put(prefix + entry["path"].name, entry["path"].read_bytes())
+        for name in ("fanqiang-server-v1.0.ilang.md", "fanqiang-server-v1.0.evidence.json"):
+            put("site/ai/books/" + name, (ROOT / "apps/lookup/runtime/books" / name).read_bytes())
         legacy = ROOT / "apps/lookup/runtime/books/fanqiang-autosetup-v1.1.ilang.md"
         put("site/ai/books/" + legacy.name, legacy.read_bytes())
         legacy_v2 = ROOT / "apps/lookup/runtime/books/fanqiang-autosetup-v2.0.ilang.md"
@@ -76,6 +78,10 @@ class SetupReleaseTests(unittest.TestCase):
         path.write_bytes(path.read_bytes().replace(b"\n",b"\r\n"))
         self.assertIn("lookup/source-freshness.json:invalid_or_wrong_library_binding",
                       checks.validate_autosetup_release(ROOT,self.release))
+
+    def test_old_server_book_remains_byte_identical_after_upgrade(self):
+        (self.release/"site/ai/books/fanqiang-server-v1.0.ilang.md").write_text("silently changed old handoff")
+        self.assertIn("server:legacy_v1_download_mismatch", checks.validate_autosetup_release(ROOT, self.release))
 
     def test_stale_download_is_rejected(self):
         (self.release/"site/ai/books/fanqiang-autosetup-v2.1.ilang.md").write_text("old book")

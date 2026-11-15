@@ -107,7 +107,7 @@ class RouterTransportTests(unittest.TestCase):
 
     def test_registered_books_are_retrievable_with_exact_content(self):
         catalog=self.client.get("/api/agent/books").json()
-        self.assertEqual({b["book_id"] for b in catalog["books"]},{"autosetup","merlin","server"})
+        self.assertEqual({b["book_id"] for b in catalog["books"]},{"autosetup","merlin","server","troubleshooting"})
         for ident in ("autosetup","merlin"):
             expected=setup_book.book_payload(ident)
             response=self.client.get("/api/agent/books/"+ident)

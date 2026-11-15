@@ -68,3 +68,33 @@ jobs:
       - name: 发布页面
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+
+  release:
+    name: 双站核验后自动发版
+    # 已核验的既有回滚基线早于 Release 脚本；仅该精确旧版本免发版。
+    # 其他版本缺少发布脚本仍须失败，不能把缺失当作可跳过。
+    if: ${{ inputs.source_sha != '270c81ba257398004ecf992d2cde2d3029d981de' }}
+    needs: deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    env:
+      SOURCE_SHA: ${{ inputs.source_sha }}
+      SYNC_ID: ${{ inputs.sync_id }}
+      CONTRACT_SHA256: ${{ inputs.contract_sha256 }}
+    steps:
+      - name: 读取与双站一致的精确源码版本
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ inputs.source_sha }}
+          persist-credentials: false
+      - name: 校验发布脚本与附件来源
+        run: |
+          python3 developer/sync_server_assistant.py --check
+          python3 developer/sync_pages_contract.py --check
+          python3 -m unittest discover -s tests -p test_github_release.py -q
+      - name: 核验双站并发布完整 GitHub Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 developer/publish_github_release.py --source-sha "$SOURCE_SHA" --sync-id "$SYNC_ID" --contract-sha256 "$CONTRACT_SHA256"

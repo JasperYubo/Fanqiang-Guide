@@ -17,7 +17,7 @@ INSTALLER = Path(__file__).resolve().parents[1] / "install.sh"
 
 
 def heredoc(source, delimiter):
-    match = re.search(r"<<\s*'" + re.escape(delimiter) + r"'\s*\n(.*?)^" + re.escape(delimiter) + r"\s*$", source, re.M | re.S)
+    match = re.search(r"<<\s*'" + re.escape(delimiter) + r"'[ \t]*(?:\|\|[ \t]*return[ \t]+1)?[ \t]*\n(.*?)^" + re.escape(delimiter) + r"\s*$", source, re.M | re.S)
     if not match:
         raise AssertionError(f"Missing generated {delimiter} payload")
     return match.group(1)
@@ -60,11 +60,15 @@ class InstallerTests(unittest.TestCase):
     def gate_request(self, command=None, **arguments):
         if command is not None:
             arguments["command"] = command
-        request = {"jsonrpc": "2.0", "id": 1, "method": "hook.approve_tool",
-                   "params": {"tool": "exec", "arguments": {"action": "run", **arguments}}}
-        result = subprocess.run(["python3", str(self.gate_path)], input=json.dumps(request) + "\n",
-                                text=True, capture_output=True, timeout=5, check=True)
-        return json.loads(result.stdout)["result"]
+        namespace = {"__name__": "test_generated_hook", "__file__": str(self.gate_path)}
+        exec(compile(self.gate, str(self.gate_path), "exec"), namespace)
+        class EvidenceClient:
+            def query_mcp(self, query):
+                return {"mcp_attempted": True, "query_id": "fixture", "documents": [{"text": "offline reference"}]}
+        engine = namespace["HookEngine"](client_factory=EvidenceClient, audit_dir=False)
+        engine.before_llm({"meta": {"TurnID": "fixture"}, "messages": [{"role":"user","content":"检查故障"}]})
+        return engine.approve({"meta": {"TurnID": "fixture"}, "tool": "exec",
+                               "arguments": {"action": "run", **arguments}})
 
     def test_installer_and_generated_manager_shell_syntax(self):
         result = subprocess.run(["bash", "-n", str(INSTALLER)], capture_output=True, text=True)
@@ -282,6 +286,162 @@ systemctl() { return "$RESTART_EXIT"; }
             self.assertEqual(rules, [{"type": "field", "port": "0-65535", "outboundTag": "blocked"}])
         else:
             self.assertEqual((self.root / "whitelist").read_text(), "example.com\n")
+
+
+    def isolated_installer(self):
+        """Redirect fixed installation destinations before running real functions."""
+        source = self.source.replace("/usr/local/lib/huarun", str(self.root / "lib/huarun"))
+        source = source.replace("/usr/local/bin/huarun", str(self.root / "huarun"))
+        source = source.replace("/etc/huarun/backup/", str(self.root / "backups") + "/")
+        # This copied fixture writes only to self.root. Relax its privilege check
+        # so failure/rollback behavior also runs in the unprivileged build sandbox.
+        # Assert the production guard still exists; never edit the real installer.
+        root_guard = '[[ $EUID -eq 0 && -s "${AI_HOME}/.security.yml"'
+        self.assertEqual(source.count(root_guard), 1)
+        source = source.replace(root_guard, '[[ -s "${AI_HOME}/.security.yml"', 1)
+        path = self.root / "isolated-install.sh"
+        path.write_text(source)
+        return 'source ' + shlex.quote(str(path)) + '\n'
+
+    def assistant_files(self):
+        home = self.root / "assistant"
+        template = self.root / "template"
+        home.mkdir(exist_ok=True)
+        (template / "skills/huarun").mkdir(parents=True, exist_ok=True)
+        (home / "config.json").write_text('{}')
+        (home / ".security.yml").write_text('model_list:\n  fixture:\n    api_keys:\n      - "sk-offline-upgrade-fixture"\n')
+        for name in ["AGENT.md", "SOUL.md", "skills/huarun/SKILL.md", "gate.py", "research.py"]:
+            (template / name).write_text('old template\n')
+        self.root.joinpath("info.json").write_text('{"assistant":true,"fixture":"unchanged"}')
+        self.root.joinpath("prepared").write_text('new binary fixture')
+        self.root.joinpath("huarun").write_text('old manager fixture')
+        binary = self.root / "lib/huarun/picoclaw"
+        binary.parent.mkdir(parents=True, exist_ok=True)
+        binary.write_text('#!/bin/sh\nexit 0\n')
+        binary.chmod(0o755)
+        return r"""
+AI_HOME="$TEST_DIR/assistant"
+AI_TPL="$TEST_DIR/template"
+INFO_FILE="$TEST_DIR/info.json"
+PICO_BIN_READY="$TEST_DIR/prepared"
+AI_KEY=sk-offline-upgrade-fixture
+"""
+
+    def test_assistant_binary_install_failure_propagates_in_upgrade_conditional(self):
+        setup = self.isolated_installer() + self.assistant_files()
+        result = self.run_shell(setup + r"""
+install() { return 73; }
+setupAssistantHome() { echo UNEXPECTED_SETUP; }
+if ! (installAssistant); then exit 17; else echo UNEXPECTED_SUCCESS; fi
+""")
+        self.assertEqual(result.returncode, 17, result.stdout + result.stderr)
+        self.assertNotIn("UNEXPECTED", result.stdout + result.stderr)
+
+    def test_assistant_template_write_failure_stops_in_upgrade_conditional(self):
+        setup = self.isolated_installer() + self.assistant_files()
+        result = self.run_shell(setup + r"""
+cat() { return 73; }
+if ! (installAssistantTemplate); then exit 17; else echo UNEXPECTED_SUCCESS; fi
+""")
+        self.assertEqual(result.returncode, 17, result.stdout + result.stderr)
+        self.assertEqual((self.root / "template/SOUL.md").read_text(), 'old template\n')
+        self.assertNotIn("UNEXPECTED", result.stdout + result.stderr)
+
+    def test_assistant_setup_copy_and_config_failure_do_not_report_success(self):
+        for failing_command in ["cp", "install", "python3"]:
+            with self.subTest(failing_command=failing_command):
+                setup = self.isolated_installer() + self.assistant_files()
+                result = self.run_shell(setup + failing_command + r"""() { return 73; }
+if ! (setupAssistantHome "$AI_KEY"); then exit 17; else echo UNEXPECTED_SUCCESS; fi
+""")
+                self.assertEqual(result.returncode, 17, result.stdout + result.stderr)
+                self.assertNotIn("UNEXPECTED", result.stdout + result.stderr)
+                self.assertNotIn("AI 助手已装好", result.stdout)
+
+    def test_manager_write_and_substitution_failure_propagate(self):
+        for failing_command in ["cat", "sed"]:
+            with self.subTest(failing_command=failing_command):
+                result = self.run_shell(self.isolated_installer() + failing_command + r"""() { return 73; }
+if ! (installManager); then exit 17; else echo UNEXPECTED_SUCCESS; fi
+""")
+                self.assertEqual(result.returncode, 17, result.stdout + result.stderr)
+                self.assertNotIn("UNEXPECTED", result.stdout + result.stderr)
+                self.assertNotIn("管理命令已安装", result.stdout)
+
+    def test_upgrade_backup_failure_prevents_installation(self):
+        setup = self.isolated_installer() + self.assistant_files()
+        result = self.run_shell(setup + r"""
+cp() { return 73; }
+askKey() { echo UNEXPECTED_KEY_REQUEST; }
+installAssistantTemplate() { echo UNEXPECTED_INSTALL; }
+if upgradeAssistant; then echo UNEXPECTED_SUCCESS; else exit 17; fi
+""")
+        self.assertEqual(result.returncode, 17, result.stdout + result.stderr)
+        self.assertNotIn("UNEXPECTED", result.stdout + result.stderr)
+        self.assertEqual((self.root / "huarun").read_text(), 'old manager fixture')
+
+    def failing_upgrade(self, *, restore_failure=False):
+        setup = self.isolated_installer() + self.assistant_files()
+        body = r"""
+askKey() { return 0; }
+prepareAssistant() { return 0; }
+installAssistantTemplate() { printf changed > "$AI_TPL/SOUL.md"; }
+installManager() { printf changed > "$TEST_DIR/huarun"; }
+installAssistant() {
+    printf changed > "$AI_HOME/config.json"
+    printf changed > "$TEST_DIR/lib/huarun/picoclaw"
+    printf changed > "$INFO_FILE"
+    return 73
+}
+"""
+        if restore_failure:
+            body += r"""
+cp() {
+    case "$2" in
+        "$TEST_DIR"/backups/*/huarun) return 73 ;;
+    esac
+    command cp "$@"
+}
+"""
+        return self.run_shell(setup + body + r"""
+if upgradeAssistant; then echo UNEXPECTED_SUCCESS; else
+    [[ -z "${AI_KEY+x}" ]] || echo UNEXPECTED_KEY_RETAINED
+    exit 17
+fi
+""")
+
+    def test_upgrade_install_failure_restores_previous_files(self):
+        result = self.failing_upgrade()
+        self.assertEqual(result.returncode, 17, result.stdout + result.stderr)
+        self.assertNotIn("UNEXPECTED", result.stdout + result.stderr)
+        self.assertIn("已恢复备份", result.stderr)
+        self.assertEqual((self.root / "huarun").read_text(), 'old manager fixture')
+        self.assertEqual((self.root / "lib/huarun/picoclaw").read_text(), '#!/bin/sh\nexit 0\n')
+        self.assertEqual((self.root / "assistant/config.json").read_text(), '{}')
+        self.assertEqual((self.root / "template/SOUL.md").read_text(), 'old template\n')
+        self.assertEqual(json.loads((self.root / "info.json").read_text()), {"assistant": True, "fixture": "unchanged"})
+
+    def test_upgrade_restore_failure_reports_backup_location(self):
+        result = self.failing_upgrade(restore_failure=True)
+        self.assertEqual(result.returncode, 17, result.stdout + result.stderr)
+        self.assertNotIn("UNEXPECTED", result.stdout + result.stderr)
+        self.assertIn("部分备份恢复失败", result.stderr)
+        self.assertIn(str(self.root / "backups"), result.stderr)
+        self.assertNotIn("已恢复备份", result.stderr)
+        # One failed restore must not prevent the other files from being restored.
+        self.assertEqual((self.root / "assistant/config.json").read_text(), '{}')
+        self.assertEqual((self.root / "template/SOUL.md").read_text(), 'old template\n')
+
+    def test_upgrade_mode_never_enters_fresh_network_install(self):
+        result = self.run_shell(r'''
+upgradeAssistant() { echo UPGRADE_ONLY; return 0; }
+checkSystem() { echo UNEXPECTED_FRESH_INSTALL; return 99; }
+checkConflicts() { echo UNEXPECTED_FRESH_INSTALL; return 99; }
+main --upgrade-assistant
+''')
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("UPGRADE_ONLY", result.stdout)
+        self.assertNotIn("UNEXPECTED_FRESH_INSTALL", result.stdout)
 
     def test_main_rejects_missing_key_before_any_mutating_step(self):
         result = self.run_shell(r'''

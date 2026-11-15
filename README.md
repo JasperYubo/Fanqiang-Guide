@@ -1,10 +1,10 @@
-# 翻墙指南 · 工具、路由器与 AI 配置参考
+# Fanqiang Guide 华润 · 翻墙指南、MCP 与 AI 服务器助手
 
-按设备找工具、核对官方资料，也可以把工程书交给自己的 AI，继续完成安装、配置与排错。
+开源网络工具知识库与 Linux VPS 运维助手：按设备核对官方资料，通过 MCP（Model Context Protocol）和 iLang 工程书完成配置；PicoClaw + DeepSeek 帮你诊断、修复并复查自己的服务器。
 
-**310 条工具与知识记录 · MCP 2.2.0 · 三本配置工程书**
+**310 条工具与知识记录 · MCP 2.3.0 · 四本配置与排障工程书**
 
-[打开官网](https://fanqiang.guide/) ｜ [GitHub 项目页](https://jasperyubo.github.io/Fanqiang-Guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
+[打开官网](https://fanqiang.guide/) ｜ [GitHub 项目页](https://jasperyubo.github.io/Fanqiang-Guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [软件发布](https://github.com/JasperYubo/Fanqiang-Guide/releases) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
 
 ## 你想做什么
 
@@ -27,11 +27,13 @@
 <a id="server"></a>
 ## 给自己的服务器装上 AI 助手
 
-先到 [DeepSeek 开放平台](https://platform.deepseek.com) 充值 10 元并创建 Key，再连接自己的 VPS，运行安装命令。华润会安装网络服务和 PicoClaw 助手，生成可导入手机、电脑的连接链接；以后可以用中文让助手检查和修复服务器。
+先到 [DeepSeek 开放平台](https://platform.deepseek.com) 充值 10 元并创建 Key，再连接自己的 VPS，运行安装命令。华润会安装网络服务和 PicoClaw 助手，生成可导入手机、电脑的连接链接；以后可以用中文让助手检查和修复服务器。每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。
 
 10 元为建议的 API 起步余额，VPS 另备。推荐全新 Debian 12 x64，Key 只在自己的服务器终端输入。
 
 **[开始安装华润服务器助手 →](https://fanqiang.guide/server/)**
+
+已安装用户可按[升级说明](https://fanqiang.guide/server/#upgrade)更新内置助手，保留现有网络配置、白名单和 Key。
 
 <a id="ai"></a>
 ## 让 AI 使用这份知识库
@@ -57,7 +59,9 @@
 | --- | --- | --- |
 | [设备配置 v2.1](apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) | 手机、电脑配置，手机共享与路由器流程入口 | `fanqiang://books/autosetup` |
 | [梅林路由器 v1.0](apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) | 梅林兼容固件、fancyss 选包、安装前检查与恢复流程 | `fanqiang://books/merlin` |
-| [服务器助手 v1.0](apps/lookup/runtime/books/fanqiang-server-v1.0.ilang.md) | DeepSeek Key、自己的 VPS 安装、客户端导入与中文排错 | `fanqiang://books/server` |
+| [服务器助手 v1.1](apps/lookup/runtime/books/fanqiang-server-v1.1.ilang.md) | DeepSeek Key、自己的 VPS 安装、客户端导入与中文排错 | `fanqiang://books/server` |
+
+| [服务器排障 v1.0](apps/lookup/runtime/books/fanqiang-troubleshooting-v1.0.ilang.md) | DNS、TLS、Nginx、Xray、CDN 与分层排障，资料不足后备搜索和修复复查 | `fanqiang://books/troubleshooting` |
 
 工程书提供流程，实际操作由你的 AI 通过目标设备工具执行；本站 MCP 提供只读资料。文档和接口验证、隔离 Linux 流程验证、真实手机与路由器测试的范围分别记录在[工程书元数据](https://fanqiang.guide/api/agent/books)中。
 

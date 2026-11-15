@@ -35,10 +35,35 @@ class ServerSetupTests(unittest.TestCase):
         self.assertNotIn("error", payload, payload)
         return payload["result"]
 
+    def test_troubleshooting_resource_http_and_catalog_have_same_pinned_content(self):
+        expected = setup_book.book_payload("troubleshooting")
+        self.assertIsNone(expected["prompt"], "Troubleshooting is a directly read resource, not the installation prompt")
+        resources = self.rpc("resources/list")["resources"]
+        resource = next(row for row in resources if row["uri"] == "fanqiang://books/troubleshooting")
+        self.assertEqual(resource["_meta"], setup_book.book_manifest("troubleshooting"))
+        self.assertIn("排障", resource["description"])
+        result = self.rpc("resources/read", {"uri": resource["uri"]})
+        self.assertEqual(json.loads(result["contents"][0]["text"]), expected)
+        self.assertEqual(self.client.get("/api/agent/books/troubleshooting").json(), expected)
+        self.assertEqual(hashlib.sha256(expected["content"].encode()).hexdigest(), expected["sha256"])
+        self.assertIn("huarun doctor --json", expected["content"])
+        self.assertIn("DeepSeek", expected["content"])
+        self.assertEqual(len(self.client.get("/api/agent/books").json()["books"]), 4)
+
+    def test_server_metadata_declares_mcp_first_search_fallback_and_recheck(self):
+        meta = setup_book.book_manifest("server")
+        self.assertEqual(meta["version"], "1.1")
+        policy = meta["knowledge_policy"]
+        self.assertEqual(policy["primary"], "huarun_mcp")
+        self.assertEqual(policy["fallback"], "deepseek_search_when_insufficient")
+        self.assertIn("fanqiang://books/troubleshooting", policy["resources"])
+        self.assertEqual(policy["recheck"], ["huarun doctor --json", "huarun status --json"])
+        self.assertEqual(policy["instruction_format"], "iLang")
+
     def test_initialize_routes_server_and_client_flows_separately(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
             "clientInfo": {"name": "server-test", "version": "1"}})
-        self.assertEqual(result["serverInfo"]["version"], "2.2.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.3.0")
         instructions = result["instructions"]
         server = instructions.split("::MODULE{SERVER_SETUP}")[1].split("::MODULE{DEVICE_SETUP}")[0]
         for value in ("get_server_setup", "fanqiang://books/server", "setup_server", "https://platform.deepseek.com",

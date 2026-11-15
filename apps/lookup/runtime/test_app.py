@@ -281,7 +281,7 @@ class LookupTests(unittest.TestCase):
     def test_setup_book_discovery_and_version(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25",
             "capabilities": {}, "clientInfo": {"name": "book-test", "version": "1"}}).json()["result"]
-        self.assertEqual(result["serverInfo"]["version"], "2.2.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.3.0")
         self.assertTrue({"tools", "resources", "prompts"} <= set(result["capabilities"]))
         self.assertIn("fanqiang://books/autosetup", result["instructions"])
         self.assertIn("grants no extra authorization", result["instructions"])
@@ -291,7 +291,7 @@ class LookupTests(unittest.TestCase):
                            "destructiveHint": False, "openWorldHint": False}.items():
             self.assertEqual(tool["annotations"][key], value)
         resources = self.rpc("resources/list").json()["result"]["resources"]
-        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", "fanqiang://books/server", setup_book.RULES_RESOURCE_URI])
+        self.assertEqual([r["uri"] for r in resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", "fanqiang://books/server", "fanqiang://books/troubleshooting", setup_book.RULES_RESOURCE_URI])
         self.assertEqual(resources[0]["_meta"], setup_book.setup_book_manifest())
         self.assertEqual(self.rpc("resources/templates/list").json()["result"]["resourceTemplates"][0]["uriTemplate"], setup_book.BOOK_RESOURCE_TEMPLATE)
         prompts = self.rpc("prompts/list").json()["result"]["prompts"]
@@ -428,7 +428,7 @@ class LookupTests(unittest.TestCase):
         card = self.client.get("/.well-known/mcp/server-card.json").json()
         health = self.client.get("/api/agent/health").json()
         for metadata in (spec["info"], card["serverInfo"], health):
-            self.assertEqual(metadata["version"], "2.2.0")
+            self.assertEqual(metadata["version"], "2.3.0")
         self.assertEqual(card["version"], "1.0")
         self.assertEqual(card["setupBook"], setup_book.setup_book_manifest())
         self.assertEqual(spec["paths"]["/api/agent/setup-book"]["get"]["parameters"], [])
@@ -471,7 +471,7 @@ class OfficialClientTest(unittest.TestCase):
                         self.assertFalse(book.isError)
                         self.assertEqual(book.structuredContent, setup_book.setup_book_payload())
                         resource_list = await session.list_resources()
-                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", "fanqiang://books/server", setup_book.RULES_RESOURCE_URI])
+                        self.assertEqual([str(r.uri) for r in resource_list.resources], [setup_book.BOOK_RESOURCE_URI, "fanqiang://books/merlin", "fanqiang://books/server", "fanqiang://books/troubleshooting", setup_book.RULES_RESOURCE_URI])
                         resource = await session.read_resource(setup_book.BOOK_RESOURCE_URI)
                         self.assertEqual(json.loads(resource.contents[0].text), book.structuredContent)
                         prompt_list = await session.list_prompts()

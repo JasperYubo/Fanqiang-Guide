@@ -123,6 +123,9 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
             for prefix in ("lookup/books/", "site/ai/books/"):
                 if (release / (prefix + entry["evidence_path"].name)).read_bytes() != entry["evidence_path"].read_bytes():
                     failures.append(prefix + entry["evidence_path"].name + ":evidence_mismatch")
+        for name in ("fanqiang-server-v1.0.ilang.md", "fanqiang-server-v1.0.evidence.json"):
+            if (release / ("site/ai/books/" + name)).read_bytes() != (source / "apps/lookup/runtime/books" / name).read_bytes():
+                failures.append("server:legacy_v1_download_mismatch")
         # Previously distributed versioned links must keep their exact content.
         old = source / "apps/lookup/runtime/books/fanqiang-autosetup-v1.1.ilang.md"
         if (release / ("site/ai/books/" + old.name)).read_bytes() != old.read_bytes():
@@ -149,7 +152,7 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
                 failures.append(relative + ":answer_rules_incomplete")
         for relative in ("lookup/server-card.json", "site/.well-known/mcp/server-card.json"):
             card = json.loads((release / relative).read_text(encoding="utf-8"))
-            if (card["serverInfo"]["version"] != "2.2.0"
+            if (card["serverInfo"]["version"] != "2.3.0"
                     or not {"tools", "resources", "prompts"} <= set(card["capabilities"])
                     or card.get("setupBook") != expected
                     or card.get("serverAssistant") != contract["book_manifest"]("server")
@@ -207,6 +210,8 @@ def main():
         print(json.dumps({"ok": False, "report": str(output / "report.json"), "error": report["error"]}))
         raise SystemExit(1)
     commands = [
+        ("assistant-source-sync", [sys.executable, str(ROOT / "developer/sync_server_assistant.py"), "--check"], ROOT),
+        ("assistant-ilang", [sys.executable, str(ROOT / "tools/ilang_grammar_validator.py"), "--lint", str(ROOT / "apps/server/assistant/AGENT.md"), str(ROOT / "apps/server/assistant/SOUL.md"), str(ROOT / "apps/server/assistant/skills/huarun/SKILL.md"), "--strict", "--json"], ROOT),
         ("pages-contract-sync", [sys.executable, str(ROOT / "developer/sync_pages_contract.py"), "--check"], ROOT),
         ("ilang-documents", [sys.executable, str(ROOT / "tools/ilang_grammar_validator.py"), "--lint",
                              str(ROOT / "CLAUDE.md"), str(ROOT / "developer/MAINTENANCE-v1.0-2026-09-17.ilang.md"), "--strict", "--json"], ROOT),

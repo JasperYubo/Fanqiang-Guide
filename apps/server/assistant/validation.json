@@ -1,0 +1,62 @@
+{
+  "checked_at": "2026-11-15T08:46:02.825512+00:00",
+  "documents": [
+    {
+      "path": "apps/server/assistant/AGENT.md",
+      "sha256": "a494500e79b13475d7f779b0071f2eda43c53fb727cccb8494a4332d09a0683a",
+      "validation": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "apps/server/assistant/SOUL.md",
+      "sha256": "d1f00eab877ba81b2307f78750076fdd53945bfbf5661cf0869013e4eb3342a5",
+      "validation": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "apps/server/assistant/skills/huarun/SKILL.md",
+      "sha256": "f0dd64f78043dfd79cbaec31f67523b6f8487e133fd7185202ae3e369b5df568",
+      "validation": {
+        "mode": "mixed",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    }
+  ]
+}

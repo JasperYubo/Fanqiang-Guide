@@ -93,7 +93,7 @@ def ai_layout(raw, header, footer):
     prompt_item = '<li><code>setup_device</code> 提示无参数，依次提供前导、完整九条 ANSWER_RULES 与完整工程书。</li>'
     if prompt_item in raw:
         raw = raw.replace(prompt_item,
-            '<li>配置提示按目标选择：' + '、'.join('<code>' + escape(prompt) + '</code>' for prompt in dict.fromkeys(book["prompt"] for book in facts["books"])) +
+            '<li>配置提示按目标选择：' + '、'.join('<code>' + escape(prompt) + '</code>' for prompt in dict.fromkeys(book["prompt"] for book in facts["books"] if book["prompt"])) +
             '。各自提供对应工程书；服务器助手也可通过工具 <code>' + escape(facts["server"]["tool"]) + '</code> 获取安装说明。</li>', 1)
     # Keep technical interface information available without blocking the basic flow.
     access = re.search(r'<section aria-labelledby="setup-access">.*?</section>', raw, re.S)
