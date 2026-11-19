@@ -32,7 +32,7 @@ class SetupReleaseTests(unittest.TestCase):
         for relative in ("lookup/server-card.json","site/.well-known/mcp/server-card.json"):
             p=self.release/relative
             p.parent.mkdir(parents=True,exist_ok=True)
-            p.write_text(json.dumps({"serverInfo":{"version":"2.4.0"},"capabilities":{"tools":{},"resources":{},"prompts":{}},"setupBook":self.manifest,"serverAssistant":contract["book_manifest"]("server"),"books":contract["book_catalog"](),"answerRules":contract["answer_rules_manifest"]()}))
+            p.write_text(json.dumps({"serverInfo":{"version":"2.5.0"},"capabilities":{"tools":{},"resources":{},"prompts":{}},"setupBook":self.manifest,"serverAssistant":contract["book_manifest"]("server"),"books":contract["book_catalog"](),"answerRules":contract["answer_rules_manifest"]()}))
 
 
         def put(relative, raw):
@@ -45,7 +45,8 @@ class SetupReleaseTests(unittest.TestCase):
                 put(prefix + entry["evidence_path"].name, entry["evidence_path"].read_bytes())
                 put(prefix + entry["path"].name, entry["path"].read_bytes())
         for name in ("fanqiang-server-v1.0.ilang.md", "fanqiang-server-v1.0.evidence.json",
-                     "fanqiang-server-v1.1.ilang.md", "fanqiang-server-v1.1.evidence.json"):
+                     "fanqiang-server-v1.1.ilang.md", "fanqiang-server-v1.1.evidence.json",
+                     "fanqiang-server-v1.2.ilang.md", "fanqiang-server-v1.2.evidence.json"):
             put("site/ai/books/" + name, (ROOT / "apps/lookup/runtime/books" / name).read_bytes())
         legacy = ROOT / "apps/lookup/runtime/books/fanqiang-autosetup-v1.1.ilang.md"
         put("site/ai/books/" + legacy.name, legacy.read_bytes())
@@ -140,7 +141,8 @@ class SetupReleaseTests(unittest.TestCase):
         self.assertIn("autosetup:legacy_v2_evidence_mismatch", checks.validate_autosetup_release(ROOT,self.release))
 
     def test_previous_server_edition_download_must_remain_exact(self):
-        for name in ("fanqiang-server-v1.1.ilang.md", "fanqiang-server-v1.1.evidence.json"):
+        for name in ("fanqiang-server-v1.1.ilang.md", "fanqiang-server-v1.1.evidence.json",
+                     "fanqiang-server-v1.2.ilang.md", "fanqiang-server-v1.2.evidence.json"):
             with self.subTest(name=name):
                 path = self.release / "site/ai/books" / name
                 original = path.read_bytes()

@@ -1,18 +1,24 @@
 """Real installed-service probes; output contains hashes and booleans only."""
 import hashlib,json,pathlib,socket,stat,subprocess,sys,time,uuid
-FILES={'node_config':'/usr/local/etc/xray/config.json','whitelist':'/usr/local/etc/xray/whitelist.txt','key':'/etc/huarun/assistant/.security.yml','memory':'/etc/huarun/assistant/workspace/memory/release-preservation.txt','nginx_config':'/etc/nginx/conf.d/huarun.conf','connection_info':'/etc/huarun/info.json'}
+FILES={'node_config':'/usr/local/etc/xray/config.json','whitelist':'/usr/local/etc/xray/whitelist.txt','key':'/etc/huarun/assistant/.security.yml','memory':'/etc/huarun/assistant/workspace/memory/release-preservation.txt','nginx_config':'/etc/nginx/conf.d/huarun.conf','connection_info':'/etc/huarun/info.json','network_config':'/etc/huarun/network.json','egress_config':'/etc/huarun/egress.json'}
 def cmd(args,check=True,timeout=30):return subprocess.run(args,capture_output=True,text=True,check=check,timeout=timeout)
 def snapshot():
-    return {k:{'sha256':hashlib.sha256(pathlib.Path(v).read_bytes()).hexdigest(),'mode':stat.S_IMODE(pathlib.Path(v).stat().st_mode)} for k,v in FILES.items()}
+    return {k:({'exists':True,'sha256':hashlib.sha256(pathlib.Path(v).read_bytes()).hexdigest(),'mode':stat.S_IMODE(pathlib.Path(v).stat().st_mode),'uid':pathlib.Path(v).stat().st_uid,'gid':pathlib.Path(v).stat().st_gid} if pathlib.Path(v).exists() else {'exists':False,'sha256':None,'mode':None,'uid':None,'gid':None}) for k,v in FILES.items()}
 def processes():
     return {name:cmd(['systemctl','show',name,'-p','MainPID','-p','ExecMainStartTimestampMonotonic']).stdout for name in ['xray','nginx']}
-def customize():
+def customize(with_network=False):
     cmd(['/usr/local/bin/huarun','whitelist','add','preserve.example'])
     p=pathlib.Path(FILES['node_config']);data=json.loads(p.read_text());data['inbounds'][0]['settings']['clients'].append({'id':str(uuid.uuid4()),'email':'owner-preserved@example.invalid'});p.write_text(json.dumps(data,indent=2)+'\n')
     # This restart happens before the preservation baseline; the upgrade must not restart it.
     cmd(['systemctl','restart','xray'])
     p=pathlib.Path(FILES['key']);p.write_text(p.read_text()+'\n# owner custom comment retained verbatim\n');p.chmod(0o640)
     p=pathlib.Path(FILES['memory']);p.parent.mkdir(parents=True,exist_ok=True);p.write_text('Owner memory: preserve this exact text.\n');p.chmod(0o640)
+    if with_network:
+        domain=json.loads(pathlib.Path(FILES['connection_info']).read_bytes())['domain']
+        network={'schema_version':1,'domain':domain,'cloudflare':{'account_id':'1'*32,'zone_id':'2'*32,'api_token':'synthetic-cloudflare-preservation-secret','proxied':False},'address_source':{'mode':'static','addresses':{'A':'8.8.8.8'}},'notification':{'kind':'none'},'probes':[],'owner_note':'preserve exact owner JSON formatting'}
+        egress={'schema_version':1,'profiles':{'owner-preserved':{'protocol':'socks5','host':'192.0.2.7','port':1080,'username':'synthetic-owner','password':'synthetic-preserved-exit-password'}}}
+        for key,value in [('network_config',network),('egress_config',egress)]:
+            p=pathlib.Path(FILES[key]);p.write_text(json.dumps(value,indent=4)+'\n');p.chmod(0o600)
     return {'snapshot':snapshot(),'processes':processes()}
 def probe():
     info=json.loads(pathlib.Path(FILES['connection_info']).read_text())
@@ -47,14 +53,16 @@ def probe():
         active=cmd(['systemctl','is-active','--quiet','huarun-auto-update.timer'],check=False).returncode==0
         # Genuine TLS verification, issued from the real CSR by the isolated CA.
         tls=cmd(['/usr/bin/curl','--silent','--show-error','--max-time','8','--noproxy','*','--cacert','/opt/e2e-state/ca.crt','-o','/dev/null','https://'+info['domain']],check=False)
-        return {'version':cmd(['/usr/local/bin/huarun','version']).stdout.strip(),'services_healthy':services and healthy_checks,'doctor_checks':{k:v.get('ok') for k,v in health.get('checks',{}).items()},'timer_enabled':timer,'timer_active':active,'proxy_diagnostic':{'returncode':allowed.returncode,'error':allowed.stderr,'bytes':len(allowed.stdout)},'proxy_allowed':allowed.returncode==0 and allowed.stdout=='204','blocked_target_reachable':direct_reachable,'proxy_block_route_verified':route_blocked,'proxy_blocked':direct_reachable and route_blocked and blocked.returncode!=0 and blocked.stdout=='000','tls_verified':tls.returncode==0,'processes':processes()}
+        return {'version':cmd(['/usr/local/bin/huarun','version']).stdout.strip(),'services_healthy':services and healthy_checks,'doctor_checks':{k:v.get('ok') for k,v in health.get('checks',{}).items()},'timer_enabled':timer,'timer_active':active,'network_timer_enabled':cmd(['systemctl','is-enabled','--quiet','huarun-network.timer'],check=False).returncode==0,'network_timer_active':cmd(['systemctl','is-active','--quiet','huarun-network.timer'],check=False).returncode==0,'proxy_diagnostic':{'returncode':allowed.returncode,'error':allowed.stderr,'bytes':len(allowed.stdout)},'proxy_allowed':allowed.returncode==0 and allowed.stdout=='204','blocked_target_reachable':direct_reachable,'proxy_block_route_verified':route_blocked,'proxy_blocked':direct_reachable and route_blocked and blocked.returncode!=0 and blocked.stdout=='000','tls_verified':tls.returncode==0,'processes':processes()}
     finally:
         client.terminate()
         try:client.wait(timeout=5)
         except subprocess.TimeoutExpired:client.kill();client.wait()
         client_path.unlink(missing_ok=True)
-if sys.argv[1]=='customize':result=customize()
-elif sys.argv[1]=='snapshot':result={'snapshot':snapshot(),'processes':processes()}
-elif sys.argv[1]=='probe':result=probe()
-else:raise SystemExit(2)
-print(json.dumps(result,sort_keys=True))
+def main():
+    if sys.argv[1]=='customize':result=customize('--network-configs' in sys.argv[2:])
+    elif sys.argv[1]=='snapshot':result={'snapshot':snapshot(),'processes':processes()}
+    elif sys.argv[1]=='probe':result=probe()
+    else:raise SystemExit(2)
+    print(json.dumps(result,sort_keys=True))
+if __name__=='__main__':main()

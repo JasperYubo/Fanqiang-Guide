@@ -30,6 +30,18 @@ DOCTOR_REQUIRED_CHECKS = ("xray", "nginx", "port443", "xray_config", "nginx_conf
                           "cert", "cron", "firewall", "dns", "disk")
 UPGRADE_CHECKS = FRESH_CHECKS + ("network_processes_unchanged",)
 PRESERVED_CHECKS = ("node_config", "whitelist", "key", "memory")
+NETWORK_FAULT_SUITES = ('test_network.py','test_ip_provider.py','test_aws_provider.py','test_egress.py','test_network_setup.py')
+NETWORK_FEATURE_CHECKS = (
+    "passed", "cloudflare_dns01", "cloudflare_txt_created", "cloudflare_txt_removed", "dns01_leading_dash_value",
+    "ddns_address_changed", "ddns_readback_verified", "notification_retry_queued",
+    "notification_recovered_delivered", "domain_migration_verified", "domain_identity_preserved",
+    "domain_migration_rollback", "socks5_chain_verified", "http_connect_chain_verified",
+    "chain_whitelist_enforced", "chain_failure_closed", "network_timer_enabled", "network_timer_active",
+    "fixture_unknown_ca_rejected", "fixture_wrong_san_rejected",
+)
+NETWORK_PRESERVED_CHECKS = PRESERVED_CHECKS + ("nginx_config", "connection_info", "network_config", "egress_config")
+NETWORK_TIMER_CHECKS = ("network_timer_enabled", "network_timer_active")
+UNCONFIGURED_CHECKS = ("network_config_absent", "egress_config_absent", "network_status_not_configured")
 HEX = {40: re.compile(r"[0-9a-f]{40}"), 64: re.compile(r"[0-9a-f]{64}")}
 SEMVER = re.compile(r"(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)")
 RUN_ID = re.compile(r"[1-9][0-9]*")
@@ -94,6 +106,44 @@ def _previous(value):
     }
 
 
+def _preservation_manifest(case, *, unconfigured=False):
+    manifest = _object(case.get("preservation_checks"), "preservation_manifest_missing")
+    before = _object(manifest.get("before"), "preservation_before_missing")
+    after = _object(manifest.get("after"), "preservation_after_missing")
+    for name in NETWORK_PRESERVED_CHECKS:
+        left = _object(before.get(name), "preservation_before_item_missing")
+        right = _object(after.get(name), "preservation_after_item_missing")
+        absent = unconfigured and name in ("network_config", "egress_config")
+        if absent:
+            if left != {"exists": False, "sha256": None, "mode": None, "uid": None, "gid": None}:
+                raise AcceptanceError("unconfigured_file_existed")
+        else:
+            if left.get("exists") is not True:
+                raise AcceptanceError("preserved_file_missing")
+            _digest(left.get("sha256"), 64, "preserved_file_digest_invalid")
+            mode = left.get("mode")
+            if type(mode) is not int or not 0 <= mode <= 0o777:
+                raise AcceptanceError("preserved_file_mode_invalid")
+            if any(type(left.get(field)) is not int or left[field] < 0 for field in ("uid", "gid")):
+                raise AcceptanceError("preserved_file_owner_invalid")
+            if name in ("network_config", "egress_config") and mode & 0o077:
+                raise AcceptanceError("preserved_network_secret_permissions")
+        if left != right:
+            raise AcceptanceError("preserved_file_bytes_or_mode_changed")
+
+
+def _unconfigured_case(case, candidate_version):
+    _checks(case, UPGRADE_CHECKS + NETWORK_TIMER_CHECKS + UNCONFIGURED_CHECKS, "unconfigured_upgrade")
+    _doctor(case.get("doctor_checks"), "unconfigured_upgrade")
+    _checks(case.get("preserved"), NETWORK_PRESERVED_CHECKS, "unconfigured_preserved")
+    _preservation_manifest(case, unconfigured=True)
+    pin = LEGACY_BASELINES["legacy-1.0"]
+    if (case.get("baseline_source_sha") != pin["source_sha"]
+            or case.get("baseline_installer_sha256") != pin["installer_sha256"]
+            or case.get("from_version") != pin["version"]
+            or case.get("to_version") != candidate_version):
+        raise AcceptanceError("unconfigured_baseline_identity_mismatch")
+
 def validate_report(report, expected, previous_stable=None):
     """Return a compact verified summary or raise :class:`AcceptanceError`.
 
@@ -138,7 +188,18 @@ def validate_report(report, expected, previous_stable=None):
     fresh = report.get("fresh_install")
     _checks(fresh, FRESH_CHECKS, "fresh_install")
     _doctor(fresh.get("doctor_checks"), "fresh_install")
-    if "installed_version" in fresh and fresh["installed_version"] != candidate_version:
+    network_release = candidate_parts >= (1, 3, 0)
+    if network_release:
+        _checks(fresh.get("network_features"), NETWORK_FEATURE_CHECKS, "network_features")
+        _unconfigured_case(report.get("unconfigured_upgrade"), candidate_version)
+        faults = _object(report.get("network_fault_tests"), "network_fault_tests_missing")
+        _checks(faults, ("passed",), "network_fault_tests")
+        _positive_integer(faults.get("tests"), "network_fault_tests_empty")
+        if type(faults.get("skipped")) is not int or faults["skipped"] != 0:
+            raise AcceptanceError("network_fault_tests_skipped")
+        if faults.get("suites") != list(NETWORK_FAULT_SUITES):
+            raise AcceptanceError("network_fault_suites_incomplete")
+    if (network_release or "installed_version" in fresh) and fresh.get("installed_version") != candidate_version:
         raise AcceptanceError("fresh_install_version_mismatch")
     upgrades = report.get("upgrades")
     if not isinstance(upgrades, list) or not 1 <= len(upgrades) <= len(REQUIRED_ROLES):
@@ -148,7 +209,10 @@ def validate_report(report, expected, previous_stable=None):
     for case in upgrades:
         _checks(case, UPGRADE_CHECKS, "upgrade")
         _doctor(case.get("doctor_checks"), "upgrade")
-        _checks(case.get("preserved"), PRESERVED_CHECKS, "preserved")
+        _checks(case.get("preserved"), NETWORK_PRESERVED_CHECKS if network_release else PRESERVED_CHECKS, "preserved")
+        if network_release:
+            _checks(case, NETWORK_TIMER_CHECKS, "network_upgrade")
+            _preservation_manifest(case)
         roles = case.get("roles")
         if (not isinstance(roles, list) or not roles or any(not isinstance(role, str) for role in roles)
                 or len(roles) != len(set(roles)) or not set(roles) <= REQUIRED_ROLES):
@@ -180,5 +244,6 @@ def validate_report(report, expected, previous_stable=None):
     return {"schema_version": 1, "kind": KIND, **identities, "platform": "linux", "passed": True,
             "skipped": 0, "fresh_install": True, "doctor_checks": list(DOCTOR_REQUIRED_CHECKS),
             "upgrade_cases": len(upgrades),
-            "upgrade_roles": sorted(covered), "preserved": list(PRESERVED_CHECKS),
+            "upgrade_roles": sorted(covered), "preserved": list(NETWORK_PRESERVED_CHECKS if network_release else PRESERVED_CHECKS),
+            **({"network_features": list(NETWORK_FEATURE_CHECKS), "unconfigured_upgrade": True} if network_release else {}),
             "baselines": sorted(summary_cases, key=lambda case: case["roles"]), "previous_stable": previous}

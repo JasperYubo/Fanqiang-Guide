@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0",
+  "book_id": "server",
+  "book_version": "1.3",
+  "date": "2026-11-18",
+  "timezone": "America/New_York",
+  "document": {
+    "path": "books/fanqiang-server-v1.3.ilang.md",
+    "sha256": "b7244f37e594f2c80fce53a5fbdc96b80a33603afa402bf78a31db9c6287f2de",
+    "byte_length": 13486
+  },
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "book_sha256": "b7244f37e594f2c80fce53a5fbdc96b80a33603afa402bf78a31db9c6287f2de",
+      "errors": 0,
+      "warnings": 0,
+      "checked_at": "2026-11-19T02:49:26.014719+00:00"
+    },
+    "service_interface": {
+      "status": "verified",
+      "version": "2.5.0",
+      "checked_at": "2026-11-19T02:49:26.014719+00:00",
+      "environment": "linux_asgi_and_sdk_loopback",
+      "scope": "Runtime lookup, pinned book HTTP/tool/resource/prompt parity, read-only/privacy guards and compatibility tests; not public deployment or installer acceptance.",
+      "evidence": "apps/server/verification/2026-11-18-mcp.json",
+      "evidence_sha256": "1354174bc120218863b16435ad724ae1a0024b47b66fe0f994e8e64904d0ff52",
+      "tests": 136
+    },
+    "installer_acceptance": {
+      "status": "validated",
+      "version": "1.3.0",
+      "scope": "Linux Debian 12 amd64 candidate: fresh install with network features, legacy 1.0/1.1/previous stable 1.2 upgrades, and an unconfigured legacy upgrade. Development evidence does not authorize publication; GitHub reruns the exact final commit before publishing the Release.",
+      "installer_sha256": "db9d67e1b667f8a817e619111fdc95e40a43c89e142ee3ea3d5fe26e4029951d",
+      "development_report": "apps/server/verification/2026-11-18-linux-candidate.json",
+      "development_report_sha256": "7b680a8deb2826f7d85f0482dda9c7552de67e9f1db9d60e263c5d1e59f7bd18",
+      "fresh_install_passed": true,
+      "network_features": {
+        "chain_failure_closed": true,
+        "chain_whitelist_enforced": true,
+        "cloudflare_dns01": true,
+        "cloudflare_txt_created": true,
+        "cloudflare_txt_removed": true,
+        "ddns_address_changed": true,
+        "ddns_readback_verified": true,
+        "dns01_leading_dash_value": true,
+        "domain_identity_preserved": true,
+        "domain_migration_rollback": true,
+        "domain_migration_verified": true,
+        "fixture_unknown_ca_rejected": true,
+        "fixture_wrong_san_rejected": true,
+        "http_connect_chain_verified": true,
+        "network_timer_active": true,
+        "network_timer_enabled": true,
+        "notification_recovered_delivered": true,
+        "notification_retry_queued": true,
+        "passed": true,
+        "scope": "installed-runtime-real-tls-and-xray; local Cloudflare/ACME/Telegram/two-region contracts; no live provider or Telegram claim",
+        "socks5_chain_verified": true
+      },
+      "upgrade_versions": [
+        "1.0.0",
+        "1.1.0",
+        "1.2.0"
+      ],
+      "protected_files_per_upgrade": 8,
+      "unconfigured_upgrade_passed": true,
+      "network_fault_tests": {
+        "passed": true,
+        "skipped": 0,
+        "suites": [
+          "test_network.py",
+          "test_ip_provider.py",
+          "test_aws_provider.py",
+          "test_egress.py",
+          "test_network_setup.py"
+        ],
+        "tests": 147
+      },
+      "skipped": 0,
+      "formal_publication_proof_asset": "linux-install-upgrade-proof.json"
+    },
+    "provider_live": {
+      "status": "not_tested",
+      "providers": [
+        "digitalocean_reserved_ipv4",
+        "hetzner_floating_ipv4",
+        "vultr_reserved_ipv4",
+        "aws_elastic_ip"
+      ],
+      "scope": "No cloud-provider credentials were used for real address allocation or rotation. Contract/injected tests and live Cloudflare/DNS-01 checks are separate evidence; no real cloud IP rotation is claimed."
+    },
+    "network_live": {
+      "status": "verified",
+      "checked_at": "2026-11-19T02:47:50.957737+00:00",
+      "environment": "isolated_debian12_x86_64_systemd_linux_vps",
+      "stage": "pre_publication",
+      "evidence": "apps/server/verification/2026-11-18-network-live.json",
+      "evidence_sha256": "b7cfeaca01124f45d87cf585ba23918fb4b2d39d228f54848919d124a5c19337",
+      "scope": "Real Cloudflare DNS write/readback and drift repair, DNS-01 challenge cleanup, installed VMess/TLS node request, Telegram API delivery, same-domain idempotence, new-domain migration retaining node identity/configuration/whitelist/Key, and failed-domain rollback followed by node recheck. This does not certify cloud-provider IP rotation, physical clients or the final release installer."
+    },
+    "provider_contract": {
+      "status": "verified",
+      "tests": 74,
+      "evidence": "apps/server/verification/2026-11-18-network-live.json",
+      "evidence_sha256": "b7cfeaca01124f45d87cf585ba23918fb4b2d39d228f54848919d124a5c19337",
+      "scope": "74 Linux API-contract and injected-failure tests across DigitalOcean, Hetzner, Vultr and AWS; AWS signatures and XML/query shapes independently checked with botocore. No real cloud allocation, billing or target-region restoration is claimed."
+    },
+    "chain_egress": {
+      "status": "verified",
+      "checked_at": "2026-11-19T02:51:10.065079+00:00",
+      "environment": "isolated_debian12_x86_64_systemd_linux_vps",
+      "stage": "pre_publication",
+      "evidence": "apps/server/verification/2026-11-18-network-live.json",
+      "evidence_sha256": "b7cfeaca01124f45d87cf585ba23918fb4b2d39d228f54848919d124a5c19337",
+      "scope": "Real installed VMess/TLS node via controlled authenticated SOCKS5 and HTTP CONNECT endpoints; original inbound, whitelist and Key retained; invalid-profile rollback, failed-exit no-direct-fallback and explicit direct recovery passed. Residential identity and UDP are not verified."
+    }
+  },
+  "validation_results": {
+    "ilang_validate": {
+      "mode": "raw",
+      "counts": {
+        "errors": 0,
+        "warnings": 0,
+        "infos": 0
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      }
+    },
+    "ilang_book_check": {
+      "pass": true,
+      "A1": {
+        "item": "the book opens and closes with the marker",
+        "expect": 2,
+        "found": 2,
+        "pass": true
+      },
+      "A2": {
+        "item": "the grammar validator reports zero errors in strict mode",
+        "errors": 0,
+        "warnings": 0,
+        "pass": true
+      },
+      "findings": [],
+      "validator": {
+        "repository": "https://github.com/ilang-ai/ilang-spec",
+        "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+        "file": "ilang_grammar_validator.py",
+        "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+      },
+      "note": "A3, whether the book does the tutorial's job and nothing else, is for a person to decide."
+    }
+  }
+}

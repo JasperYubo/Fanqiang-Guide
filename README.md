@@ -2,7 +2,7 @@
 
 开源网络工具知识库与 Linux VPS 运维助手：按设备核对官方资料，通过 MCP（Model Context Protocol）和 iLang 工程书完成配置；PicoClaw + DeepSeek 帮你诊断、修复并复查自己的服务器。
 
-**310 条工具与知识记录 · MCP 2.4.0 · 四本配置与排障工程书**
+**310 条工具与知识记录 · MCP 2.5.0 · 四本配置与排障工程书**
 
 [打开官网](https://fanqiang.guide/) ｜ [GitHub 项目页](https://jasperyubo.github.io/Fanqiang-Guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [软件发布](https://github.com/JasperYubo/Fanqiang-Guide/releases) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
 
@@ -27,9 +27,13 @@
 <a id="server"></a>
 ## 给自己的服务器装上 AI 助手
 
-先到 [DeepSeek 开放平台](https://platform.deepseek.com) 充值 10 元并创建 Key，再连接自己的 VPS，运行安装命令。华润会安装网络服务和 PicoClaw 助手，生成可导入手机、电脑的连接链接；以后可以用中文让助手检查和修复服务器。每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。
+准备已接入 Cloudflare 的自有域名，在账户 API 令牌中选择 **Full account and zone access**。再到 [DeepSeek 开放平台](https://platform.deepseek.com) 充值 10 元并创建 Key，再连接自己的 VPS，运行安装命令。华润会安装网络服务和 PicoClaw 助手，生成可导入手机、电脑的连接链接；以后可以用中文让助手检查和修复服务器。每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。
 
-10 元为建议的 API 起步余额，VPS 另备。推荐全新 Debian 12 x64，Key 只在自己的服务器终端输入。
+10 元为建议的 API 起步余额，VPS 与域名自备。推荐全新 Debian 12 x64，Key 和完整 Cloudflare 令牌只在自己的服务器终端隐藏输入。
+
+固定域名自动维护 DNS-01 TLS 和动态 IP 解析，故障通过已配置的 Telegram 渠道通知；符合探针证据、授权和预算条件时，DigitalOcean Reserved IPv4、Hetzner Floating IPv4、Vultr Cloud Compute Reserved IPv4 与已绑定 AWS Elastic IP 的实例可自动更换，其他厂商通知处理。已有家宽等代理可接入 SOCKS5 / HTTP CONNECT 链式 TCP 出口，让 Agent 切换已配置 profile 并复查出口 IP，保留白名单且不静默回退直连。
+
+默认仅 DNS 解析；选择 Cloudflare 橙云时，区域 SSL/TLS 需已设为 Full (strict)，助手只读核对。使用 `huarun network setup` 接入域名与通知；使用 `huarun egress setup home` 配置自备出口。普通自动更新保留原域名，旧节点迁移需单独执行 network setup，保留 UUID、WebSocket 路径和 Key，完成后重新导入新连接。
 
 **[开始安装华润服务器助手 →](https://fanqiang.guide/server/)**
 
@@ -61,7 +65,7 @@
 | --- | --- | --- |
 | [设备配置 v2.1](apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) | 手机、电脑配置，手机共享与路由器流程入口 | `fanqiang://books/autosetup` |
 | [梅林路由器 v1.0](apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) | 梅林兼容固件、fancyss 选包、安装前检查与恢复流程 | `fanqiang://books/merlin` |
-| [服务器助手 v1.2](apps/lookup/runtime/books/fanqiang-server-v1.2.ilang.md) | DeepSeek Key、自己的 VPS 安装、客户端导入与中文排错 | `fanqiang://books/server` |
+| [服务器助手 v1.3](apps/lookup/runtime/books/fanqiang-server-v1.3.ilang.md) | Cloudflare 固定域名、TLS、动态 IP、通知、链式出口与中文排错 | `fanqiang://books/server` |
 
 | [服务器排障 v1.0](apps/lookup/runtime/books/fanqiang-troubleshooting-v1.0.ilang.md) | DNS、TLS、Nginx、Xray、CDN 与分层排障，资料不足后备搜索和修复复查 | `fanqiang://books/troubleshooting` |
 

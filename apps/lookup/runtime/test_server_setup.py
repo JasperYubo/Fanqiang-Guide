@@ -52,7 +52,7 @@ class ServerSetupTests(unittest.TestCase):
 
     def test_server_metadata_declares_mcp_first_search_fallback_and_recheck(self):
         meta = setup_book.book_manifest("server")
-        self.assertEqual(meta["version"], "1.2")
+        self.assertEqual(meta["version"], "1.3")
         policy = meta["knowledge_policy"]
         self.assertEqual(policy["primary"], "huarun_mcp")
         self.assertEqual(policy["fallback"], "deepseek_search_when_insufficient")
@@ -82,7 +82,7 @@ class ServerSetupTests(unittest.TestCase):
 
     def test_automatic_update_metadata_preserves_existing_server_and_admin_boundary(self):
         meta = setup_book.book_manifest("server")
-        self.assertEqual(meta["assistant"]["version"], "1.2.0")
+        self.assertEqual(meta["assistant"]["version"], "1.3.0")
         update = meta["automatic_updates"]
         self.assertTrue(update["enabled_by_default"])
         self.assertEqual((update["interval_hours"], update["boot_delay_minutes"], update["random_delay_max_minutes"]), (6, 10, 30))
@@ -100,7 +100,7 @@ class ServerSetupTests(unittest.TestCase):
     def test_initialize_routes_server_and_client_flows_separately(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
             "clientInfo": {"name": "server-test", "version": "1"}})
-        self.assertEqual(result["serverInfo"]["version"], "2.4.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.5.0")
         instructions = result["instructions"]
         server = instructions.split("::MODULE{SERVER_SETUP}")[1].split("::MODULE{DEVICE_SETUP}")[0]
         for value in ("get_server_setup", "fanqiang://books/server", "setup_server", "https://platform.deepseek.com",

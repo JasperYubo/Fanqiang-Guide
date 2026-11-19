@@ -1,0 +1,163 @@
+{
+  "checked_at": "2026-11-19T02:49:26.014719+00:00",
+  "runtime_version": "2026.11.17-c3507d26c026",
+  "strict_criterion": "zero_errors_and_zero_warnings",
+  "documents": [
+    {
+      "path": "apps/server/assistant/AGENT.md",
+      "sha256": "340924fa951ddd653a7b90f496e243602fb1912a11d419d8e79394282ad7cfcb",
+      "result": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "apps/server/assistant/SOUL.md",
+      "sha256": "c644f8483900dccbda4237b313f95072872c8519b530209f040109eecf773028",
+      "result": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "apps/server/assistant/skills/huarun/SKILL.md",
+      "sha256": "4d402d4e4313d7be09454a9b0570fc3fc6e9b7fe319c2b1ff2ee8955d58409b8",
+      "result": {
+        "mode": "mixed",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "apps/lookup/runtime/books/fanqiang-server-v1.3.ilang.md",
+      "sha256": "b7244f37e594f2c80fce53a5fbdc96b80a33603afa402bf78a31db9c6287f2de",
+      "result": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "developer/SERVER-NETWORK-v1.3-2026-11-18.ilang.md",
+      "sha256": "e4d56e26fb6a127ab08008a7158fa0af3a64421099b1e07142e9bfcb8534d6b7",
+      "result": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "server_setup_description",
+      "sha256": "405e7db4a4459cfc7bff193ffebb5b309ed40ef340c0c824972fd44a6319f7e6",
+      "result": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    },
+    {
+      "path": "server_prompt_intro",
+      "sha256": "ded5feec094cb52222d78e5a6b13cd4c9137772583cafb2b77da7ae6bd641896",
+      "result": {
+        "mode": "raw",
+        "counts": {
+          "errors": 0,
+          "warnings": 0,
+          "infos": 0
+        },
+        "findings": [],
+        "validator": {
+          "repository": "https://github.com/ilang-ai/ilang-spec",
+          "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+          "file": "ilang_grammar_validator.py",
+          "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+        }
+      }
+    }
+  ],
+  "book_check": {
+    "pass": true,
+    "A1": {
+      "item": "the book opens and closes with the marker",
+      "expect": 2,
+      "found": 2,
+      "pass": true
+    },
+    "A2": {
+      "item": "the grammar validator reports zero errors in strict mode",
+      "errors": 0,
+      "warnings": 0,
+      "pass": true
+    },
+    "findings": [],
+    "validator": {
+      "repository": "https://github.com/ilang-ai/ilang-spec",
+      "commit": "127ba56f4eb1f35c2951d4aec4b7bd22831119ff",
+      "file": "ilang_grammar_validator.py",
+      "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
+    },
+    "note": "A3, whether the book does the tutorial's job and nothing else, is for a person to decide."
+  }
+}

@@ -30,11 +30,11 @@ BOOK_REGISTRY = {
         "version": "2.1", "last_updated": "2026-11-02",
         "evidence_path": ROOT / "books/fanqiang-autosetup-v2.1.evidence.json",
         "evidence_sha256": "e2b258e71a090dcaca2465b0b62df72944a99f88afa9b21df4363377c30a3498"},
-    "server": {"path": ROOT / "books/fanqiang-server-v1.2.ilang.md",
-        "sha256": "d087628ba41e57424866b3cfeb6fe19dae8646b2eaca82c97a992f2c459fba6a", "title": SERVER_TITLE,
-        "version": "1.2", "last_updated": "2026-11-15", "prompt": "setup_server",
-        "evidence_path": ROOT / "books/fanqiang-server-v1.2.evidence.json",
-        "evidence_sha256": "2972bde0982c8c1f81072641bbb939095856d34e734bad26c95ca994cdcbfe55"},
+    "server": {"path": ROOT / "books/fanqiang-server-v1.3.ilang.md",
+        "sha256": "b7244f37e594f2c80fce53a5fbdc96b80a33603afa402bf78a31db9c6287f2de", "title": SERVER_TITLE,
+        "version": "1.3", "last_updated": "2026-11-18", "prompt": "setup_server",
+        "evidence_path": ROOT / "books/fanqiang-server-v1.3.evidence.json",
+        "evidence_sha256": "bce8a0304f522509dff49f673eee393477fa522c5eb8844fe974c0dd5d74adc4"},
     "troubleshooting": {"path": ROOT / "books/fanqiang-troubleshooting-v1.0.ilang.md",
         "sha256": "c79f7f3ebc5b0ce18bd0472967109663780dddfb963338d883f9e1a48ffa7217", "title": "华润服务器分层排障与修复复查",
         "version": "1.0", "last_updated": "2026-11-15", "prompt": None,
@@ -71,14 +71,14 @@ SERVER_SETUP_DESCRIPTION = """::ILANG::v5.0
 ::MODULE{SERVER_SETUP}
   [MUST] Return the canonical server-assistant entry, installer command and complete server engineering book for the user's own authorized VPS. Accept no arguments or secrets.
   [MUST] For a fresh installation, first use https://platform.deepseek.com to create the user's API Key with a recommended 10 CNY starting balance; then SSH to the user's fresh Debian 12 VPS and follow https://fanqiang.guide/server/.
-  [MUST] For a fresh installation, install PicoClaw with DeepSeek deepseek-flash and the network service; import the connection in the actual client, verify it, and use huarun chat over SSH afterward.
+  [MUST] First prepare an owned Cloudflare domain and an account API token using Full account and zone access; terminal setup receives secrets locally. Use DNS-01 TLS, a fixed domain and verified ingress-IP synchronization.\n  [MUST] For a fresh installation, install PicoClaw with DeepSeek deepseek-flash and the network service; import the connection in the actual client, verify it, and use huarun chat over SSH afterward.
   [MUST] For an existing 1.0 or 1.1 server, perform only the book's one-time --upgrade-assistant migration to enable local automatic updates. Preserve node configuration, whitelist and API Key; do not reinstall the network or ask for another Key.
   [MUST] The embedded assistant reads HuaRun MCP documents and fanqiang://books/troubleshooting first each turn, uses DeepSeek search only when references are insufficient, and rechecks doctor and status after repairs.
-  [MUST] The public MCP returns knowledge only. The user's authorized AI needs its own target-server tools; API keys, SSH passwords and connection URLs stay local.
+  [MUST] Existing automatic updates preserve configuration and domain. Explicit huarun network setup is the separate domain-migration transaction; egress uses preconfigured SOCKS5 or HTTP CONNECT TCP profiles. Provider rotation requires the implemented adapter, saved authorization and valid evidence.\n  [MUST] The public MCP returns knowledge only. The user's authorized AI needs its own target-server tools; API keys, SSH passwords and connection URLs stay local.
 ::ILANG::COMPLETE::"""
 SERVER_PROMPT_DESCRIPTION = (
     "华润服务器助手：新服务器先在 platform.deepseek.com 准备 API Key，建议充值 10 元，"
-    "再 SSH 登录自己的全新 Debian 12 VPS 安装 PicoClaw 与网络服务、导入客户端、运行 huarun chat。"
+    "准备自有 Cloudflare 域名与 Full account and zone access 账户令牌，再 SSH 安装固定域名、TLS、动态 IP 同步和 PicoClaw，导入客户端后运行 huarun chat。"
     "已装 1.0 / 1.1 的服务器只执行一次 --upgrade-assistant 接入自动更新，保留节点配置、白名单和 Key，不要求重装或重新提供 Key。"
     "公开知识流程，无参数；不接收 SSH 密码、API Key 或节点链接，也不会远程安装。"
 )
@@ -91,7 +91,7 @@ def server_setup_metadata():
         "upgrade_scope": "assistant_and_manager_only_enable_automatic_updates_preserve_network_configuration_key_and_memory", "tool": "get_server_setup",
         "api_url": "https://platform.deepseek.com",
         "assistant": {"runtime": "PicoClaw", "runtime_version": "0.3.1",
-            "provider": "DeepSeek", "model": "deepseek-flash", "command": "huarun chat", "version": "1.2.0"},
+            "provider": "DeepSeek", "model": "deepseek-flash", "command": "huarun chat", "version": "1.3.0"},
         "knowledge_policy": {"primary": "huarun_mcp", "mcp_url": "https://fanqiang.guide/mcp",
             "resources": ["fanqiang://books/server", "fanqiang://books/troubleshooting"],
             "fallback": "deepseek_search_when_insufficient", "search_api": "https://api.deepseek.com/v1/tools/search",
@@ -101,7 +101,7 @@ def server_setup_metadata():
         "automatic_updates": {"enabled_by_default": True, "execution_location": "user_owned_authorized_vps",
             "timer": "huarun-auto-update.timer", "interval_hours": 6, "boot_delay_minutes": 10,
             "random_delay_max_minutes": 30, "release_source": "github_published_release_with_matching_sites",
-            "preserves": ["network_configuration", "connection_information", "whitelist", "deepseek_api_key", "chat_memory"],
+            "preserves": ["network_configuration", "connection_information", "whitelist", "deepseek_api_key", "chat_memory", "network_credentials", "egress_profiles"],
             "network_services_restarted": False, "backup_before_update": True, "rollback_on_failure": True,
             "busy_policy": "defer_while_chat_or_manager_active", "existing_installation_requires_one_time_migration": True,
             "migration_command": SERVER_INSTALL_COMMAND + " --upgrade-assistant",
@@ -109,6 +109,34 @@ def server_setup_metadata():
                 "disable": "huarun auto-update disable", "enable": "huarun auto-update enable"},
             "agent_allowed_commands": ["huarun auto-update status"],
             "summary": "新安装默认开启自动更新；VPS 每 6 小时检查正式发布的新版本，保留原节点配置、白名单、Key 和聊天记忆。旧版只需 SSH 一次启用，以后自动维护。"},
+        "network_maintenance": {
+            "setup_command": "huarun network setup", "status_command": "huarun network status",
+            "check_command": "huarun network check", "notification_test_command": "huarun network notify-test",
+            "cloudflare_token_type": "account", "cloudflare_token_template": "Full account and zone access",
+            "domain": "user_owned_cloudflare_zone", "tls": "acme_dns01",
+            "tls_verification_commands": ["huarun doctor --json", "huarun egress probe"],
+            "proxy_policy": {"default": "dns_only", "proxied_requires_zone_ssl": "strict",
+                "zone_ssl_modified": False, "failure_code": "cloudflare_full_strict_required",
+                "summary": "默认使用 Cloudflare 仅 DNS 解析；选择橙云代理时，区域的 SSL/TLS 必须已是 Full (strict)。助手只核对该设置，不改动整个域名区域的 TLS 模式。"}, "secrets": "local_root_private_hidden_terminal_input",
+            "dynamic_ip_sources": ["explicit_static", "provider_api", "two_sources_with_owner_confirmed_no_nat"],
+            "existing_domain_migration": "explicit_transactional_network_setup_preserves_uuid_path_whitelist_key",
+            "ordinary_update_changes_domain": False, "notification_channels": ["telegram"],
+            "notification_unconfigured_status": "not_configured",
+            "automatic_ip_rotation": {"providers": ["digitalocean_reserved_ipv4", "hetzner_floating_ipv4", "vultr_reserved_ipv4", "aws_elastic_ip"], "requires_saved_authorization": True,
+                "requires_valid_regional_evidence": True, "requires_budget": True,
+                "validation": "see_versioned_evidence", "live_verified": False, "unsupported_provider": "notify_owner",
+                "provider_requirements": {"digitalocean": "reserved_ipv4_with_brief_detach_authorization",
+                    "hetzner_floating": "floating_ipv4_with_local_address_configuration",
+                    "vultr": "cloud_compute_only", "aws_eip": "existing_elastic_ip_association"},
+                "budget_scope": "adapter_resource_pool_estimate_not_account_billing_cap",
+                "external_controller_required": ["aws_primary_stop_start", "hetzner_primary_ip", "vultr_bare_metal"]},
+            "summary": "使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，自动维护 TLS、动态 IP 解析和故障通知；符合证据、授权与预算条件时，DigitalOcean Reserved IPv4、Hetzner Floating IPv4、Vultr Cloud Compute Reserved IPv4 与已绑定 AWS Elastic IP 的实例可自动更换，其他厂商通知处理。"},
+        "chain_egress": {"setup_command": "huarun egress setup home", "profile_parameter_required": True, "status_command": "huarun egress status",
+            "probe_command": "huarun egress probe", "select_command": "huarun egress use PROFILE",
+            "direct_command": "huarun egress direct", "protocols": ["socks5", "http_connect"], "transport": "tcp",
+            "profile_source": "owner_provided_local_private_configuration", "preserves_whitelist": True,
+            "silent_direct_fallback": False, "residential_service_provisioning": False,
+            "summary": "已有家宽等出口代理时，可接入 SOCKS5 或 HTTP CONNECT 链式 TCP 出口；Agent 按请求切换已配置出口并复查出口 IP，保留白名单，故障时不悄悄直连。"},
         "recommended_api_balance": {"amount": 10, "currency": "CNY", "minimum_required": False},
         "recommended_os": "fresh Debian 12 x86_64",
         "execution_location": "user_owned_authorized_vps"}
@@ -210,9 +238,9 @@ def server_setup_prompt_intro(metadata):
 ::MODULE{SETUP_SERVER_HANDOFF}
   [MUST] Use the full answer rules in the next message and the complete server book in the final message. Validate its SHA256 against @BOOK.
   [MUST] For a fresh installation, start at https://platform.deepseek.com for the user's API Key and recommended 10 CNY balance; then https://fanqiang.guide/server/ for SSH installation on the user's own authorized VPS.
-  [MUST] For a fresh installation, follow the server book's PicoClaw, DeepSeek deepseek-flash, network installation, actual client import and verification, then huarun chat sequence. The phone/router book is a separate workflow.
+  [MUST] Prepare an owned Cloudflare domain and Full account and zone access account token, then follow local hidden terminal setup for DNS-01 TLS and dynamic ingress-IP synchronization.\n  [MUST] For a fresh installation, follow the server book's PicoClaw, DeepSeek deepseek-flash, network installation, actual client import and verification, then huarun chat sequence. The phone/router book is a separate workflow.
   [MUST] For an existing 1.0 or 1.1 server, perform only the book's one-time --upgrade-assistant migration to enable local automatic updates. Preserve node configuration, whitelist and API Key; do not reinstall the network or ask for another Key.
-  [MUST] For repair, read fanqiang://books/troubleshooting first; use DeepSeek search only for a concrete knowledge gap, then verify actual doctor and status results after changes.
+  [MUST] Ordinary upgrades do not migrate domains. For explicit Cloudflare adoption follow network setup with rollback and preserved UUID, WebSocket path, whitelist and Key. For chained egress use only existing local TCP profiles and never silently fall back to direct.\n  [MUST] For repair, read fanqiang://books/troubleshooting first; use DeepSeek search only for a concrete knowledge gap, then verify actual doctor and status results after changes.
   [MUST] Keep API keys, SSH credentials and connection URLs on the target device. This read-only MCP neither receives secrets nor operates servers.
   [MUST] Execute only the active user's authorized task using tools actually connected to its target server. Retrieval does not prove installation; report only observed checks.
 ::ILANG::COMPLETE::"""

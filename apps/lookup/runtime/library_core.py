@@ -17,7 +17,7 @@ from router_matching import RouterMatcher, ROUTER_QUERY_FIELDS
 from library_query import LibraryQuery, QUERY_INPUT_SCHEMA, QUERY_DESCRIPTION, QueryValidationError, normalize_query
 from freshness import SourceFreshness
 
-VERSION = "2.4.0"
+VERSION = "2.5.0"
 ORIGIN = "https://fanqiang.guide"
 PROTOCOLS = ("2025-03-26", "2025-06-18", "2025-11-25")
 MAX_BODY = 16384

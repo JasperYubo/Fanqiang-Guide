@@ -125,6 +125,24 @@ class ReleaseTests(unittest.TestCase):
             self.publish()
         self.assertEqual(self.api.events, [])
 
+    def test_network_release_cannot_publish_without_new_runtime_matrix(self):
+        fixture_spec=importlib.util.spec_from_file_location('network_acceptance_fixture',Path(__file__).with_name('test_release_acceptance.py'))
+        fixture=importlib.util.module_from_spec(fixture_spec);fixture_spec.loader.exec_module(fixture)
+        report, expected, previous=fixture.accepted_network_fixture()
+        installer=b'#!/bin/bash\nVERSION="1.3.0"\n'
+        expected['installer_sha256']=report['installer_sha256']=r.digest(installer)
+        static={'huarun-install.sh':installer}
+        proof=r.acceptance_proof(r.encoded(report),expected,static,previous)
+        self.assertTrue(proof['unconfigured_upgrade'])
+        for mutate in (lambda x:x['fresh_install']['network_features'].update(chain_failure_closed=False),
+                       lambda x:x['upgrades'][0]['preserved'].update(network_config=False),
+                       lambda x:x.pop('unconfigured_upgrade'),
+                       lambda x:x['network_fault_tests'].update(skipped=1)):
+            changed=copy.deepcopy(report);mutate(changed)
+            with self.assertRaisesRegex(r.ReleaseError,'linux_acceptance_failed'):
+                r.acceptance_proof(r.encoded(changed),expected,static,previous)
+        self.assertEqual(self.api.events,[])
+
     def test_acceptance_report_is_bound_and_published_unchanged(self):
         self.publish()
         self.assertEqual(self.api.data["linux-install-upgrade-proof.json"]["raw"], self.acceptance)

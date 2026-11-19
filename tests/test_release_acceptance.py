@@ -27,6 +27,27 @@ def accepted_fixture():
     return report, expected, previous
 
 
+def accepted_network_fixture():
+    report, expected, previous = accepted_fixture()
+    report['candidate_version'] = expected['candidate_version'] = '1.3.0'
+    report['fresh_install']['installed_version'] = '1.3.0'
+    report['fresh_install']['network_features'] = {field: True for field in a.NETWORK_FEATURE_CHECKS}
+    for case in report['upgrades']:
+        case['to_version'] = '1.3.0'
+        case.update({field: True for field in a.NETWORK_TIMER_CHECKS})
+        case['preserved'] = {field: True for field in a.NETWORK_PRESERVED_CHECKS}
+        before = {field: {'exists': True, 'sha256': 'a'*64, 'mode': 0o600, 'uid':0, 'gid':0} for field in a.NETWORK_PRESERVED_CHECKS}
+        case['preservation_checks'] = {'before': before, 'after': copy.deepcopy(before)}
+    unconfigured = copy.deepcopy(report['upgrades'][0])
+    unconfigured.update({field: True for field in a.UNCONFIGURED_CHECKS})
+    for side in ('before', 'after'):
+        for name in ('network_config','egress_config'):
+            unconfigured['preservation_checks'][side][name] = {'exists':False, 'sha256':None, 'mode':None, 'uid':None, 'gid':None}
+    report['unconfigured_upgrade'] = unconfigured
+    report['network_fault_tests'] = {'passed':True,'tests':100,'skipped':0,'suites':list(a.NETWORK_FAULT_SUITES)}
+    return report, expected, previous
+
+
 class ReleaseAcceptanceTests(unittest.TestCase):
     def setUp(self):
         self.report, self.expected, self.previous = accepted_fixture()
@@ -245,6 +266,58 @@ class ReleaseAcceptanceTests(unittest.TestCase):
                 with self.assertRaises(a.AcceptanceError):
                     a.validate_report(self.report, expected, self.previous)
 
+
+
+class NetworkReleaseAcceptanceTests(unittest.TestCase):
+    def setUp(self): self.report, self.expected, self.previous = accepted_network_fixture()
+    def validate(self): return a.validate_report(self.report,self.expected,self.previous)
+    def test_complete_network_matrix_passes(self):
+        result=self.validate();self.assertTrue(result['unconfigured_upgrade']);self.assertEqual(result['network_features'],list(a.NETWORK_FEATURE_CHECKS))
+    def test_every_network_feature_is_mandatory(self):
+        for name in a.NETWORK_FEATURE_CHECKS:
+            for value in (None,False,1,'true'):
+                with self.subTest(name=name,value=value):
+                    self.setUp();self.report['fresh_install']['network_features'][name]=value
+                    with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_network_proof_cannot_reuse_old_12_matrix(self):
+        del self.report['fresh_install']['network_features']
+        with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_unconfigured_upgrade_is_mandatory_and_pinned(self):
+        for mutation in ('missing','wrong-source','preexisting-config','disabled-timer','claimed-configured'):
+            with self.subTest(mutation=mutation):
+                self.setUp()
+                if mutation=='missing':del self.report['unconfigured_upgrade']
+                elif mutation=='wrong-source':self.report['unconfigured_upgrade']['baseline_source_sha']='f'*40
+                elif mutation=='preexisting-config':self.report['unconfigured_upgrade']['preservation_checks']['before']['network_config']['exists']=True
+                elif mutation=='disabled-timer':self.report['unconfigured_upgrade']['network_timer_active']=False
+                else:self.report['unconfigured_upgrade']['network_status_not_configured']=False
+                with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_network_secret_preservation_is_mandatory(self):
+        for name in ('network_config','egress_config'):
+            with self.subTest(name=name):
+                self.setUp();self.report['upgrades'][0]['preserved'][name]=False
+                with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_boolean_claim_cannot_hide_changed_bytes_or_mode(self):
+        for field,value in [('sha256','b'*64),('mode',0o640),('exists',False),('uid',1000),('gid',1000)]:
+            with self.subTest(field=field):
+                self.setUp();self.report['upgrades'][0]['preservation_checks']['after']['network_config'][field]=value
+                with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_shared_readable_network_credentials_are_rejected(self):
+        for side in ('before','after'):self.report['upgrades'][1]['preservation_checks'][side]['egress_config']['mode']=0o644
+        with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_fault_suite_missing_skipped_or_empty_fails(self):
+        for change in ('missing','empty','skipped','incomplete','failed'):
+            with self.subTest(change=change):
+                self.setUp()
+                if change=='missing':del self.report['network_fault_tests']
+                elif change=='empty':self.report['network_fault_tests']['tests']=0
+                elif change=='skipped':self.report['network_fault_tests']['skipped']=1
+                elif change=='incomplete':self.report['network_fault_tests']['suites'].pop()
+                else:self.report['network_fault_tests']['passed']=False
+                with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_missing_preservation_hashes_are_rejected(self):
+        del self.report['upgrades'][2]['preservation_checks']
+        with self.assertRaises(a.AcceptanceError):self.validate()
 
 if __name__ == "__main__":
     unittest.main()

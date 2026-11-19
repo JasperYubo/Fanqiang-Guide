@@ -64,6 +64,7 @@ class Machine:
         self.root, self.release = root, release
         self.calls, self.applied, self.mode = [], 0, 'success'
         self.timer = {'enabled': 'enabled', 'active': 'active'}
+        self.network_timer = {'enabled': 'not-found', 'active': 'inactive'}
         self.initial_doctor = {'checks': {'xray': {'ok': True}, 'dns': {'ok': False}}, 'all_ok': False}
         self.initial_status = {'xray': 'active', 'nginx': 'active', 'port443': True, 'renew_cron': True, 'assistant': True}
         self.lock_passed = []
@@ -106,16 +107,21 @@ class Machine:
             self.lock_passed.append(args)
         if args[0] == 'systemctl':
             action = args[1]
+            timer = self.network_timer if args[-1] == 'huarun-network.timer' else self.timer
             if action == 'is-enabled':
-                return subprocess.CompletedProcess(args, 0, self.timer['enabled'], '')
+                if timer['enabled'] == 'not-found':
+                    return subprocess.CompletedProcess(args, 1, '', 'Unit file does not exist')
+                return subprocess.CompletedProcess(args, 0, timer['enabled'], '')
             if action == 'is-active':
-                return subprocess.CompletedProcess(args, 0, self.timer['active'], '')
+                return subprocess.CompletedProcess(args, 0, timer['active'], '')
+            if action == 'show':
+                return subprocess.CompletedProcess(args, 0, 'not-found' if timer['enabled'] == 'not-found' else 'loaded', '')
             if action in {'enable', 'disable'}:
-                self.timer['enabled'] = action + 'd'
+                timer['enabled'] = action + 'd'
                 if '--now' in args:
-                    self.timer['active'] = 'active' if action == 'enable' else 'inactive'
+                    timer['active'] = 'active' if action == 'enable' else 'inactive'
             if action in {'start', 'stop'}:
-                self.timer['active'] = 'active' if action == 'start' else 'inactive'
+                timer['active'] = 'active' if action == 'start' else 'inactive'
             return subprocess.CompletedProcess(args, 0, '', '')
         if args[0] == 'bash' and args[1] == '-n':
             return subprocess.run(args, capture_output=True, text=True)
@@ -130,6 +136,8 @@ class Machine:
                 elif target.endswith('.service') or target.endswith('.timer'):
                     self.put(target, b'[Unit]\nDescription=Updated\n', 0o644)
             self.put('/etc/huarun/assistant-template/config.json', b'{"new":true}')
+            if self.network_timer['enabled'] == 'not-found':
+                self.network_timer.update(enabled='enabled', active='active')
             if self.mode in {'protected', 'crash', 'failure', 'symlink'}:
                 self.put(m.PROTECTED_PATHS[0], b'corrupted secret', 0o777)
                 self.put('/etc/huarun/assistant/.security.yml', b'wrong key', 0o644)
@@ -409,6 +417,151 @@ class TransactionTests(unittest.TestCase):
         self.updater.private_dir(self.updater.state_dir)
         self.updater.atomic_json(self.updater.state_path, {'last_good': {'version': '1.2.0', 'key': 'secret'}})
         self.assertEqual(self.updater.status()['last_good'], {'version': '1.2.0'})
+
+
+class NetworkUpgradeTests(unittest.TestCase):
+    setUp = TransactionTests.setUp
+    assert_restored = TransactionTests.assert_restored
+    def test_missing_network_unit_is_detected_from_load_state(self):
+        self.assertEqual(self.updater.timer_state('huarun-network.timer'), {'enabled': 'not-found', 'active': 'inactive'})
+        self.assertIn(['systemctl', 'show', '--property=LoadState', '--value', 'huarun-network.timer'], self.machine.calls)
+
+    def test_absent_network_configuration_stays_absent_after_upgrade(self):
+        for target in ('/etc/huarun/network.json', '/etc/huarun/egress.json'):
+            self.machine.path(target).unlink()
+        self.assertEqual(self.updater.run()['status'], 'updated')
+        for target in ('/etc/huarun/network.json', '/etc/huarun/egress.json'):
+            self.assertFalse(self.machine.path(target).exists())
+        self.assertEqual(self.machine.network_timer, {'enabled': 'enabled', 'active': 'active'})
+
+    def test_existing_cloudflare_and_exit_credentials_are_byte_and_mode_preserved(self):
+        for target in ('/etc/huarun/network.json', '/etc/huarun/egress.json'):
+            self.machine.put(target, ('{  "local_secret": "synthetic-private", "path": "'+target+'" }\n').encode(), 0o600)
+            self.original[target] = self.updater.snapshot(self.machine.path(target))
+        self.assertEqual(self.updater.run()['status'], 'updated')
+        for target in m.PROTECTED_PATHS:
+            self.assertEqual(self.updater.snapshot(self.machine.path(target)), self.original[target], target)
+
+    def test_each_new_configuration_mutation_forces_exact_rollback(self):
+        original_runner = self.machine
+        for target in ('/etc/huarun/network.json', '/etc/huarun/egress.json'):
+            with self.subTest(target=target):
+                def mutate(args, **options):
+                    result = original_runner(args, **options)
+                    if args[0] == 'bash' and args[1] != '-n':
+                        self.machine.put(target, b'{"lost":"private configuration"}', 0o644)
+                    return result
+                self.updater.runner = mutate
+                self.assertEqual(self.updater.run()['status'], 'rolled_back')
+                self.assert_restored()
+                self.updater.state_path.unlink()
+                self.machine.applied = 0
+
+    def test_new_module_syntax_failure_forces_rollback(self):
+        original_runner = self.machine
+        for name in ('network.py', 'ip_provider.py', 'aws_provider.py', 'egress.py', 'network_setup.py'):
+            with self.subTest(name=name):
+                def break_module(args, **options):
+                    result = original_runner(args, **options)
+                    if args[0] == 'bash' and args[1] != '-n':
+                        self.machine.put('/usr/local/lib/huarun/'+name, b'invalid python ???')
+                    return result
+                self.updater.runner = break_module
+                result = self.updater.run()
+                self.assertEqual(result['status'], 'rolled_back')
+                self.assertEqual(result['last_failure']['code'], 'installed_python_invalid')
+                self.assert_restored()
+                self.updater.state_path.unlink()
+                self.machine.applied = 0
+
+    def test_disabled_existing_network_timer_is_preserved_on_success(self):
+        self.machine.network_timer = {'enabled': 'disabled', 'active': 'inactive'}
+        self.assertEqual(self.updater.run()['status'], 'updated')
+        self.assertEqual(self.machine.network_timer, {'enabled': 'disabled', 'active': 'inactive'})
+
+    def test_unexpected_network_timer_change_rolls_back_prior_state(self):
+        self.machine.network_timer = {'enabled': 'disabled', 'active': 'inactive'}
+        original_runner = self.machine
+        def enable_unexpectedly(args, **options):
+            result = original_runner(args, **options)
+            if args[0] == 'bash' and args[1] != '-n':
+                self.machine.network_timer = {'enabled': 'enabled', 'active': 'active'}
+            return result
+        self.updater.runner = enable_unexpectedly
+        result = self.updater.run()
+        self.assertEqual(result['status'], 'rolled_back')
+        self.assertEqual(result['last_failure']['code'], 'network_timer_changed_unexpectedly')
+        self.assertEqual(self.machine.network_timer, {'enabled': 'disabled', 'active': 'inactive'})
+        self.assert_restored()
+
+    def test_network_timer_stop_failure_preserves_recovery_journal(self):
+        self.machine.mode = 'failure'
+        original_runner = self.machine
+        def stop_failure(args, **options):
+            if args[:2] == ['systemctl', 'disable'] and args[-1] == 'huarun-network.timer':
+                return subprocess.CompletedProcess(args, 1, '', 'systemd failure')
+            return original_runner(args, **options)
+        self.updater.runner = stop_failure
+        with self.assertRaisesRegex(m.UpdateError, 'network_timer_restore_failed'):
+            self.updater.run()
+        self.assertTrue(self.updater.journal_path.exists())
+        self.assertEqual(self.machine.network_timer['active'], 'active')
+        self.updater.runner = original_runner
+        self.assertEqual(self.updater.run()['status'], 'rolled_back')
+        self.assertEqual(self.machine.network_timer['active'], 'inactive')
+
+    def legacy_interrupted_update(self):
+        self.updater.private_dir(self.updater.state_dir)
+        self.updater.private_dir(self.updater.backup_dir)
+        transaction = 'txn-20261118T000000Z-'+'c'*16
+        # Produce 1.2's exact numeric backup indexes, then remove the newer
+        # path_order member which genuinely did not exist in the legacy schema.
+        with patch.object(m, 'ALL_PATHS', m.LEGACY_ALL_PATHS):
+            folder, manifest = self.updater.backup(transaction)
+        manifest.pop('path_order')
+        self.updater.atomic_json(folder/'backup.json', manifest)
+        journal = {'schema_version':1,'transaction':transaction,'phase':'applying',
+                   'candidate':{'source_sha':'a'*40,'installer_sha256':'b'*64},
+                   'previous_state':{},'timer_before':{'enabled':'enabled','active':'active'}}
+        self.updater.atomic_json(self.updater.journal_path, journal)
+        for target in m.LEGACY_ALL_PATHS:
+            if target.endswith('assistant-template'):
+                self.machine.put(target+'/config.json', b'changed')
+            else:
+                self.machine.put(target, b'changed by interrupted 1.3 installer', 0o644)
+        self.machine.put('/etc/systemd/system/huarun-network.timer', b'new timer from interrupted installer')
+        self.machine.network_timer = {'enabled':'enabled','active':'active'}
+        return folder, manifest
+
+    def test_legacy_manifest_numeric_indexes_recover_with_new_code(self):
+        self.legacy_interrupted_update()
+        self.release.calls.clear()
+        result = self.updater.run()
+        self.assertEqual(result['status'],'rolled_back')
+        self.assertFalse(self.release.calls)
+        for target in m.LEGACY_ALL_PATHS:
+            self.assertEqual(self.updater.snapshot(self.machine.path(target)), self.original[target], target)
+        # The old journal cannot claim ownership of new local files: keep them
+        # intact and prove the newly introduced timer is no longer executing.
+        self.assertTrue(self.machine.path('/etc/systemd/system/huarun-network.timer').exists())
+        self.assertEqual(self.machine.network_timer, {'enabled':'disabled','active':'inactive'})
+
+    def test_legacy_manifest_corruption_fails_before_any_partial_restore(self):
+        folder, manifest = self.legacy_interrupted_update()
+        (folder/'5').write_bytes(b'corrupted manager backup')
+        changed = self.machine.path(m.LEGACY_ALL_PATHS[0]).read_bytes()
+        with self.assertRaisesRegex(m.UpdateError,'backup_integrity_failed'):
+            self.updater.run()
+        self.assertEqual(self.machine.path(m.LEGACY_ALL_PATHS[0]).read_bytes(), changed)
+        self.assertTrue(self.updater.journal_path.exists())
+
+    def test_reordered_manifest_is_rejected_before_restore(self):
+        folder, manifest = self.legacy_interrupted_update()
+        manifest['path_order'] = list(reversed(m.LEGACY_ALL_PATHS))
+        self.updater.atomic_json(folder/'backup.json', manifest)
+        with self.assertRaisesRegex(m.UpdateError,'invalid_backup_manifest'):
+            self.updater.run()
+        self.assertTrue(self.updater.journal_path.exists())
 
 
 if __name__ == '__main__':

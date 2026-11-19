@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-19T02:51:10.065079+00:00",
+  "environment": "isolated_debian12_x86_64_systemd_linux_vps",
+  "stage": "pre_publication",
+  "source_receipt_sha256": {
+    "real-network-verification.json": "9ca66610e1dda3b9ad9b2126aa72e933f9f20f0fc5246bf5ea3cca8478386cc3",
+    "real-migration-verification.json": "b0fdfd148b29b3eb08c3e1d52ad29dc2640f5ab482a0ed134b353b0201fb956a",
+    "aws-updater-proof.json": "d3e7894639eb38a59e48ab16ab68c66c10bb6773ba1bf02d2583b399954e758f",
+    "real-chain-verification.json": "908140aa82c2171db16fe4bf9f721cc33ba503e747ef082cc2684b4ddb5f2dce",
+    "real-upgrade-verification.json": "4cb696878350ea02db8e8430048a1091dcefda6daf9d668d50517f93e451ba91"
+  },
+  "cloudflare": {
+    "real_dns_write_readback": true,
+    "real_dns_drift_corrected": true,
+    "dns01_challenges_cleaned": true,
+    "installed_vmess_tls_node_probe": true,
+    "probe_path": "installed_node",
+    "probe_transport": "tcp"
+  },
+  "notification": {
+    "channel": "telegram",
+    "api_delivery_status": "delivered",
+    "human_read_receipt": "not_tested"
+  },
+  "domain_migration": {
+    "same_domain_idempotent": true,
+    "new_domain_tls_node_verified": true,
+    "node_identity_preserved": true,
+    "config_whitelist_key_bytes_preserved": true,
+    "invalid_domain_rollback_and_node_recheck": true,
+    "dns01_challenges_cleaned": true
+  },
+  "provider_contract": {
+    "tests": 74,
+    "aws_sdk_independent_checks": {
+      "implementation": "botocore 1.34.46",
+      "sigv4_match": true,
+      "describe_instances_xml_shape_match": true,
+      "allocation_tag_query_shape_match": true
+    },
+    "live_cloud_ip_rotation_verified": false
+  },
+  "not_covered": [
+    "real_cloud_provider_ip_allocation_or_rotation",
+    "actual_regional_blocking_and_recovery",
+    "physical_phone_clients",
+    "residential_egress_identity",
+    "public_release_update_delivery",
+    "final_release_installation_upgrade_gate"
+  ],
+  "chain_egress": {
+    "scope": "Real installed VMess/TLS node through controlled authenticated SOCKS5 and HTTP CONNECT proxy endpoints; these endpoints do not demonstrate residential service identity.",
+    "results": [
+      {
+        "protocol": "socks5",
+        "installed_node_https_verified": true,
+        "authenticated_tunnels": 2,
+        "protected_files_unchanged": true,
+        "inbounds_unchanged": true,
+        "bad_profile_retained_previous_exit": true,
+        "failed_exit_did_not_fallback": true,
+        "explicit_direct_recovered": true,
+        "residential_status": "not_verified"
+      },
+      {
+        "protocol": "http-connect",
+        "installed_node_https_verified": true,
+        "authenticated_tunnels": 2,
+        "protected_files_unchanged": true,
+        "inbounds_unchanged": true,
+        "bad_profile_retained_previous_exit": true,
+        "failed_exit_did_not_fallback": true,
+        "explicit_direct_recovered": true,
+        "residential_status": "not_verified"
+      }
+    ]
+  },
+  "configured_canary_upgrade": {
+    "real_config_upgrade_preserved": true,
+    "network_processes_unchanged": true,
+    "preserved_files": 7,
+    "installer_sha256": "db9d67e1b667f8a817e619111fdc95e40a43c89e142ee3ea3d5fe26e4029951d",
+    "network_timer_active": true
+  }
+}

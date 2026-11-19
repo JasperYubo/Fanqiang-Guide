@@ -23,10 +23,12 @@ ALLOW = [
     re.compile(r'huarun logs( [0-9]{1,3})?'),
     re.compile(r'huarun whitelist list'),
     re.compile(r'huarun auto-update status'),
+    re.compile(r'huarun network (status|check)'),
+    re.compile(r'huarun egress (status|probe|direct|use [a-z0-9][a-z0-9_-]{0,31})'),
     re.compile(r'huarun whitelist (add|remove) [a-z0-9.-]{3,100}'),
     re.compile(r'free -m|df -h|uptime|date'),
 ]
-MUTATING = re.compile(r'huarun (fix|renew|update|whitelist (add|remove) [a-z0-9.-]{3,100})')
+MUTATING = re.compile(r'huarun (fix|renew|update|network check|egress (direct|use [a-z0-9][a-z0-9_-]{0,31})|whitelist (add|remove) [a-z0-9.-]{3,100})')
 
 
 def safe_text(value):

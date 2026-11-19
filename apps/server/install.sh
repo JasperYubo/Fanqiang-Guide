@@ -6,7 +6,7 @@
 #=============================================================================
 
 
-VERSION="1.2.0"
+VERSION="1.3.0"
 DOCS_URL="https://fanqiang.guide/server/"
 PICO_VERSION="v0.3.1"
 PICO_SHA_X86="86f0fe84aa55279352edbe13adfca484a03bcf189e2030b25e34628089069c3f"
@@ -112,6 +112,8 @@ acquireMaintenanceLock() {
 
 # 命令行参数（不给就交互问）
 OPT_UPGRADE_ASSISTANT=0
+OPT_LEGACY_DIRECT=0
+OPT_NETWORK_STDIN=0
 OPT_DOMAIN=""; OPT_SITE=""; OPT_YES=0; OPT_JSON=0; OPT_NOSWAP=0; OPT_FORCE_OS=0
 AI_KEY="${HUARUN_API_KEY:-}"
 export -n AI_KEY
@@ -122,9 +124,11 @@ colorEcho() { echo -e "${1}${*:2}${PLAIN}"; }
 usage() {
     cat <<USAGE
 用法: bash install.sh [选项]
-  --domain <域名>   已解析到本机的域名；不给则交互问，直接回车用 <ip>.sslip.io
+  --domain <域名>   Cloudflare 已托管的自有固定域名
   --site <1-4>      站点类型：1 文档站 2 加密工具站 3 学生福利导航站 4 不要站点（默认 1）
-  --yes             不问任何问题（域名缺省用 sslip.io）
+  --yes             不问交互问题；须提供域名和受保护的网络配置
+  --network-config-stdin  从标准输入读取 Cloudflare/网络 JSON（令牌不进命令行）
+  --legacy-direct   显式使用旧版 HTTP-01/sslip.io 安装路线
   --json            装完只输出一段 JSON（隐含 --yes）
   --no-swap         内存小于 1G 时也不建 swap
   --force-os        内存小的机器上硬装重系统
@@ -138,6 +142,8 @@ USAGE
 parseArgs() {
     while [[ $# -gt 0 ]]; do
         case "$1" in
+            --legacy-direct) OPT_LEGACY_DIRECT=1; shift ;;
+            --network-config-stdin) OPT_NETWORK_STDIN=1; shift ;;
             --domain) [[ $# -ge 2 && "$2" != --* ]] || { echo "--domain 缺少域名" >&2; return 1; }; OPT_DOMAIN="$2"; shift 2 ;;
             --domain=*) OPT_DOMAIN="${1#*=}"; shift ;;
             --site) [[ $# -ge 2 && "$2" != --* ]] || { echo "--site 缺少选项" >&2; return 1; }; OPT_SITE="$2"; shift 2 ;;
@@ -238,7 +244,10 @@ getData() {
     [[ $OPT_JSON -eq 0 ]] && echo -e "${BLUE}华润网络助手 跨境电商加速器 v${VERSION}${PLAIN}" && echo ""
     DOMAIN="$OPT_DOMAIN"
     if [[ -z "$DOMAIN" && $OPT_YES -eq 0 ]]; then
-        read -r -p "请输入你的域名（已解析到本机；没有就直接回车，用 sslip.io 域名申请证书）: " DOMAIN
+        read -r -p "请输入固定域名（Cloudflare 托管的自有域名）: " DOMAIN
+    fi
+    if [[ -z "$DOMAIN" && $OPT_LEGACY_DIRECT -ne 1 ]]; then
+        echo "请用 --domain 指定 Cloudflare 托管的自有域名。" >&2; return 1
     fi
     if [[ -z "$DOMAIN" ]]; then
         local ip
@@ -387,6 +396,2870 @@ openFirewall() {
 }
 
 #=== 7. 申请证书 =============================================================
+installNetworkPrograms() {
+    mkdir -p /usr/local/lib/huarun "$ACME_HOME/dnsapi" || return 1
+    cat > /usr/local/lib/huarun/network.py.new << 'NETWORKEOF' || return 1
+#!/usr/bin/env python3
+"""Cloudflare domain maintenance, authenticated reachability and bounded recovery.
+
+Cloudflare account tokens use Full account and zone access as selected by the
+owner. Secrets stay in the local private configuration, never in model output.
+This module never rewrites Xray, Nginx, node identity, whitelist or DeepSeek keys.
+"""
+from __future__ import annotations
+
+import argparse
+import base64
+import contextlib
+import copy
+import fcntl
+import getpass
+import hashlib
+import hmac
+import http.client
+import http.server
+import ipaddress
+import json
+import os
+from pathlib import Path
+import re
+import secrets
+import socket
+import ssl
+import stat
+import subprocess
+import sys
+import tempfile
+import time
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode, urlsplit
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+CONFIG = "/etc/huarun/network.json"
+STATE_DIR = "/var/lib/huarun-network"
+LOCK = "/run/huarun/maintenance.lock"
+NETWORK_LOCK = "/run/huarun/network.lock"
+CF = "https://api.cloudflare.com/client/v4"
+MAX_BYTES = 256 * 1024
+MAX_CONFIG = 64 * 1024
+HEX32 = re.compile(r"[a-f0-9]{32}\Z")
+DOCTOR_CHECKS = ("xray", "nginx", "port443", "xray_config", "nginx_config",
+                 "cert", "cron", "firewall", "dns", "disk")
+IP_SERVICES = ("https://api.ipify.org", "https://checkip.amazonaws.com")
+HEALTH_FAILURES = 3
+
+
+class NetworkError(Exception):
+    """A fixed, public code. Never include HTTP bodies or secret-bearing URLs."""
+
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise NetworkError("redirect_rejected")
+
+
+def encoded(value):
+    return (json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":")) + "\n").encode()
+
+
+def hostname(value):
+    if not isinstance(value, str):
+        raise NetworkError("invalid_domain")
+    value = value.lower().rstrip(".")
+    if len(value) > 253 or not re.fullmatch(r"(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}", value):
+        raise NetworkError("invalid_domain")
+    return value
+
+
+def address(value, kind=None):
+    try:
+        parsed = ipaddress.ip_address(value)
+    except (TypeError, ValueError):
+        raise NetworkError("invalid_ip") from None
+    if not parsed.is_global or parsed.is_multicast or parsed.is_unspecified:
+        raise NetworkError("non_public_ip")
+    if kind is not None and parsed.version != {"A": 4, "AAAA": 6}.get(kind):
+        raise NetworkError("ip_family_mismatch")
+    return str(parsed)
+
+
+def addresses(value):
+    if not isinstance(value, dict) or not value or set(value) - {"A", "AAAA"}:
+        raise NetworkError("invalid_addresses")
+    return {kind: address(ip, kind) for kind, ip in value.items()}
+
+
+def secret_string(value, name, minimum=12):
+    if not isinstance(value, str) or not minimum <= len(value) <= 4096 or any(c.isspace() for c in value):
+        raise NetworkError("invalid_" + name)
+    return value
+
+
+def private_file(path, limit=MAX_CONFIG):
+    path = Path(path)
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return None
+    if not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or stat.S_IMODE(info.st_mode) & 0o077:
+        raise NetworkError("private_file_permissions")
+    if info.st_size > limit:
+        raise NetworkError("private_file_too_large")
+    return path
+
+
+def load_private(path, default=None, limit=MAX_CONFIG):
+    path = private_file(path, limit)
+    if path is None:
+        return copy.deepcopy(default)
+    try:
+        value = json.loads(path.read_bytes())
+    except (ValueError, UnicodeError):
+        raise NetworkError("private_json_invalid") from None
+    if not isinstance(value, dict):
+        raise NetworkError("private_json_invalid")
+    return value
+
+
+def atomic_private(path, value):
+    path = Path(path)
+    if path.is_symlink():
+        raise NetworkError("private_path_symlink")
+    path.parent.mkdir(parents=True, mode=0o700, exist_ok=True)
+    if path.parent.is_symlink():
+        raise NetworkError("private_parent_symlink")
+    # Do not change the modes of an existing owner-managed parent.
+    fd, temporary = tempfile.mkstemp(prefix="." + path.name + ".", dir=path.parent)
+    try:
+        os.fchmod(fd, 0o600)
+        with os.fdopen(fd, "wb") as output:
+            output.write(encoded(value))
+            output.flush()
+            os.fsync(output.fileno())
+        os.replace(temporary, path)
+        directory = os.open(path.parent, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def public_probe_url(value, resolve=False):
+    try:
+        parsed = urlsplit(value)
+        if (parsed.scheme != "https" or not parsed.hostname or parsed.username or parsed.password
+                or parsed.port not in (None, 443) or parsed.fragment or parsed.query):
+            raise ValueError()
+        hostname(parsed.hostname)
+        if resolve:
+            found = socket.getaddrinfo(parsed.hostname, 443, type=socket.SOCK_STREAM)
+            if not found:
+                raise ValueError()
+            for item in found:
+                address(item[4][0])
+    except (TypeError, ValueError, OSError, NetworkError):
+        raise NetworkError("invalid_probe_url") from None
+    return value
+
+
+def request(method, url, payload=None, headers=None, timeout=12, probe=False):
+    """Fixed credential origins; authenticated probe URLs are owner configured."""
+    parsed = urlsplit(url)
+    allowed = (url.startswith(CF + "/") or
+               (parsed.scheme == "https" and parsed.hostname == "api.telegram.org"
+                and re.fullmatch(r"/bot[0-9]+:[A-Za-z0-9_-]+/sendMessage", parsed.path)) or
+               url in IP_SERVICES)
+    if not allowed:
+        if not probe:
+            raise NetworkError("upstream_not_allowed")
+        public_probe_url(url, resolve=True)
+    raw = None if payload is None else encoded(payload)
+    supplied = {"User-Agent": "HuaRun-Network/1.0", "Accept": "application/json"}
+    supplied.update(headers or {})
+    if raw is not None:
+        supplied["Content-Type"] = "application/json"
+    req = Request(url, data=raw, headers=supplied, method=method)
+    try:
+        with build_opener(NoRedirect).open(req, timeout=timeout) as response:
+            body = response.read(MAX_BYTES + 1)
+            if len(body) > MAX_BYTES:
+                raise NetworkError("response_too_large")
+    except HTTPError as error:
+        raise NetworkError("upstream_http_" + str(error.code)) from None
+    except (URLError, TimeoutError, OSError, ssl.SSLError):
+        raise NetworkError("upstream_unavailable") from None
+    if url in IP_SERVICES:
+        return body.decode("ascii").strip()
+    try:
+        result = json.loads(body)
+    except (ValueError, UnicodeError):
+        raise NetworkError("upstream_invalid_json") from None
+    if not isinstance(result, dict):
+        raise NetworkError("upstream_invalid_json")
+    return result
+
+
+def validate_config(value):
+    if not isinstance(value, dict) or type(value.get("schema_version")) is not int or value["schema_version"] != 1:
+        raise NetworkError("configuration_schema_invalid")
+    result = copy.deepcopy(value)
+    result["domain"] = hostname(result.get("domain"))
+    cf = result.get("cloudflare")
+    if not isinstance(cf, dict):
+        raise NetworkError("cloudflare_configuration_missing")
+    for name in ("account_id", "zone_id"):
+        if not isinstance(cf.get(name), str) or not HEX32.fullmatch(cf[name]):
+            raise NetworkError("invalid_" + name)
+    secret_string(cf.get("api_token"), "cloudflare_token")
+    if type(cf.get("proxied", False)) is not bool:
+        raise NetworkError("invalid_proxy_setting")
+    source = result.get("address_source")
+    if not isinstance(source, dict) or source.get("mode") not in ("static", "consensus", "provider", "digitalocean", "hetzner_floating"):
+        raise NetworkError("address_source_required")
+    if source["mode"] == "static":
+        source["addresses"] = addresses(source.get("addresses"))
+    if source["mode"] == "consensus" and source.get("no_nat_confirmed") is not True:
+        raise NetworkError("inbound_ip_confirmation_required")
+    notification = result.get("notification", {"kind": "none"})
+    if not isinstance(notification, dict) or notification.get("kind") not in ("telegram", "none"):
+        raise NetworkError("notification_kind_invalid")
+    if notification["kind"] == "telegram":
+        if not re.fullmatch(r"[0-9]{5,20}:[A-Za-z0-9_-]{20,120}", str(notification.get("bot_token", ""))):
+            raise NetworkError("telegram_token_invalid")
+        if not re.fullmatch(r"-?[0-9]{1,20}", str(notification.get("chat_id", ""))):
+            raise NetworkError("telegram_chat_invalid")
+    result["notification"] = notification
+    provider = result.get("provider", {})
+    if not isinstance(provider, dict):
+        raise NetworkError("provider_configuration_invalid")
+    if provider.get("auto_rotate") is True and source["mode"] not in ("provider", "digitalocean", "hetzner_floating"):
+        raise NetworkError("automatic_rotation_requires_provider_address_source")
+    probes = result.get("probes", [])
+    if not isinstance(probes, list) or len(probes) > 8:
+        raise NetworkError("probes_invalid")
+    names = set()
+    for probe in probes:
+        if not isinstance(probe, dict):
+            raise NetworkError("probe_invalid")
+        public_probe_url(probe.get("url"))
+        secret_string(probe.get("key"), "probe_key", minimum=32)
+        region = probe.get("region")
+        if not isinstance(region, str) or not re.fullmatch(r"[a-z0-9-]{2,32}", region):
+            raise NetworkError("probe_region_invalid")
+        endpoint = urlsplit(probe["url"]).hostname
+        if endpoint in names:
+            raise NetworkError("probe_hosts_must_be_independent")
+        names.add(endpoint)
+    result["probes"] = probes
+    return result
+
+
+class MaintenanceLock:
+    """Shared with chat, exclusive against updates; serialize network mutations.
+
+    The inherited descriptors must actually reference the expected local locks.
+    Only an inherited verified exclusive maintenance descriptor may be forwarded
+    as HUARUN_UPDATE_LOCK_FD to existing updater-aware subprocesses.
+    """
+    def __init__(self, path=LOCK, network_path=NETWORK_LOCK):
+        self.path, self.network_path = Path(path).absolute(), Path(network_path).absolute()
+        self.fd = self.network_fd = None
+        self.inherited = self.network_inherited = False
+
+    @staticmethod
+    def _acquire(path, variable, mode):
+        path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+        if path.is_symlink():
+            raise NetworkError("maintenance_lock_symlink")
+        inherited = os.environ.get(variable, "")
+        if inherited.isdigit() and 3 <= int(inherited) <= 65535:
+            try:
+                fd = int(inherited)
+                info = os.fstat(fd)
+                if (os.readlink("/proc/self/fd/" + inherited) == str(path)
+                        and stat.S_ISREG(info.st_mode) and info.st_uid == os.geteuid()
+                        and not stat.S_IMODE(info.st_mode) & 0o077):
+                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    return fd, True
+            except (OSError, ValueError):
+                pass
+        fd = os.open(path, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW, 0o600)
+        try:
+            info = os.fstat(fd)
+            if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                    or stat.S_IMODE(info.st_mode) & 0o077):
+                raise NetworkError("maintenance_lock_permissions")
+            fcntl.flock(fd, mode | fcntl.LOCK_NB)
+        except Exception as error:
+            os.close(fd)
+            if isinstance(error, BlockingIOError):
+                raise NetworkError("maintenance_busy") from None
+            raise
+        return fd, False
+
+    def __enter__(self):
+        try:
+            self.fd, self.inherited = self._acquire(self.path, "HUARUN_UPDATE_LOCK_FD", fcntl.LOCK_SH)
+            self.network_fd, self.network_inherited = self._acquire(
+                self.network_path, "HUARUN_NETWORK_LOCK_FD", fcntl.LOCK_EX)
+        except Exception:
+            self.__exit__()
+            raise
+        return self
+
+    def __exit__(self, *unused):
+        if self.network_fd is not None and not self.network_inherited:
+            os.close(self.network_fd)
+            self.network_fd = None
+        if self.fd is not None and not self.inherited:
+            os.close(self.fd)
+            self.fd = None
+
+
+class Cloudflare:
+    def __init__(self, config, transport=request):
+        self.config, self.transport = config, transport
+        self.cf = config["cloudflare"]
+
+    def api(self, method, path, payload=None):
+        result = self.transport(method, CF + path, payload,
+                                {"Authorization": "Bearer " + self.cf["api_token"]})
+        if result.get("success") is not True or "result" not in result:
+            raise NetworkError("cloudflare_request_failed")
+        return result
+
+    def verify(self):
+        token = self.api("GET", "/accounts/" + self.cf["account_id"] + "/tokens/verify")["result"]
+        if not isinstance(token, dict) or token.get("status") != "active":
+            raise NetworkError("cloudflare_token_inactive")
+        zone = self.api("GET", "/zones/" + self.cf["zone_id"])["result"]
+        if (not isinstance(zone, dict) or zone.get("id") != self.cf["zone_id"] or
+                zone.get("account", {}).get("id") != self.cf["account_id"]):
+            raise NetworkError("cloudflare_zone_account_mismatch")
+        if zone.get("status") != "active":
+            raise NetworkError("cloudflare_zone_not_active")
+        zone_name = hostname(zone.get("name"))
+        domain = self.config["domain"]
+        if domain != zone_name and not domain.endswith("." + zone_name):
+            raise NetworkError("domain_outside_selected_zone")
+        return {"zone_name": zone_name, "token_active": True}
+
+    @property
+    def prefix(self):
+        return "/zones/" + self.cf["zone_id"] + "/dns_records"
+
+    def records(self, name):
+        if name not in (self.config["domain"], "_acme-challenge." + self.config["domain"]):
+            raise NetworkError("record_name_not_selected")
+        result = self.api("GET", self.prefix + "?" + urlencode({"name": name, "per_page": 100}))
+        items = result["result"]
+        pages = result.get("result_info", {}).get("total_pages", 1)
+        if not isinstance(items, list) or pages not in (0, 1) or (pages == 0 and items):
+            raise NetworkError("dns_records_ambiguous")
+        for item in items:
+            if not isinstance(item, dict) or item.get("name", "").lower().rstrip(".") != name:
+                raise NetworkError("dns_record_identity_mismatch")
+            if not HEX32.fullmatch(str(item.get("id", ""))):
+                raise NetworkError("dns_record_id_invalid")
+        return items
+
+    def read_record(self, ident, kind, name):
+        if not HEX32.fullmatch(str(ident)):
+            raise NetworkError("dns_record_id_invalid")
+        value = self.api("GET", self.prefix + "/" + ident)["result"]
+        if not isinstance(value, dict) or value.get("id") != ident or value.get("type") != kind or value.get("name", "").lower().rstrip(".") != name:
+            raise NetworkError("dns_record_identity_mismatch")
+        return value
+
+    def sync(self, wanted):
+        wanted = addresses(wanted)
+        name = self.config["domain"]
+        rows = self.records(name)
+        if any(r.get("type") == "CNAME" for r in rows):
+            raise NetworkError("domain_has_cname")
+        # Validate the complete selection before the first mutation.
+        matches_by_kind = {kind: [r for r in rows if r.get("type") == kind] for kind in wanted}
+        if any(len(matches) > 1 for matches in matches_by_kind.values()):
+            raise NetworkError("multiple_address_records_require_owner_selection")
+        proxy_active = any(row.get("type") in ("A", "AAAA") and row.get("proxied") is True for row in rows)
+        proxy_new = self.cf.get("proxied") is True and any(not matches for matches in matches_by_kind.values())
+        if proxy_active or proxy_new:
+            setting = self.api("GET", "/zones/" + self.cf["zone_id"] + "/settings/ssl")["result"]
+            if not isinstance(setting, dict) or setting.get("value") != "strict":
+                # Never change the whole zone's TLS mode on behalf of one node.
+                raise NetworkError("cloudflare_full_strict_required")
+        changes, selected = [], {}
+        for kind, ip in wanted.items():
+            matches = matches_by_kind[kind]
+            if matches:
+                record = matches[0]
+                ident = record["id"]
+                if record.get("content") != ip:
+                    # Only content changes. Keep existing TTL/proxy/comment/tags.
+                    self.api("PATCH", self.prefix + "/" + ident, {"content": ip})
+                    changes.append(kind)
+            else:
+                record = self.api("POST", self.prefix, {"type": kind, "name": name, "content": ip,
+                                    "ttl": 1 if self.cf.get("proxied", False) else 300,
+                                    "proxied": self.cf.get("proxied", False)})["result"]
+                ident = record.get("id") if isinstance(record, dict) else None
+                changes.append(kind)
+            observed = self.read_record(ident, kind, name)
+            if observed.get("content") != ip:
+                raise NetworkError("dns_write_readback_mismatch")
+            selected[kind] = {"record_id": ident, "content": ip, "proxied": observed.get("proxied") is True}
+        return {"changed": changes, "records": selected}
+
+    def dns_add(self, name, value, state):
+        if name != "_acme-challenge." + self.config["domain"] or not re.fullmatch(r"[A-Za-z0-9_-]{20,256}", value):
+            raise NetworkError("dns_challenge_invalid")
+        fingerprint = hashlib.sha256((name + "\0" + value).encode()).hexdigest()
+        entries = state.setdefault("challenges", {})
+        prior = entries.get(fingerprint)
+        if prior:
+            observed = self.read_record(prior["id"], "TXT", name)
+            if observed.get("content") != value:
+                raise NetworkError("challenge_record_changed")
+            return fingerprint
+        # A matching foreign TXT is never adopted or deleted during cleanup.
+        matches = [r for r in self.records(name) if r.get("type") == "TXT" and r.get("content") == value]
+        if matches:
+            entries[fingerprint] = {"id": matches[0]["id"], "owned": False, "name": name, "value": value}
+            return fingerprint
+        created = self.api("POST", self.prefix, {"type": "TXT", "name": name, "content": value, "ttl": 120})["result"]
+        ident = created.get("id") if isinstance(created, dict) else None
+        if self.read_record(ident, "TXT", name).get("content") != value:
+            raise NetworkError("challenge_write_readback_mismatch")
+        entries[fingerprint] = {"id": ident, "owned": True, "name": name, "value": value}
+        return fingerprint
+
+    def dns_remove(self, name, value, state):
+        fingerprint = hashlib.sha256((name + "\0" + value).encode()).hexdigest()
+        entry = state.get("challenges", {}).get(fingerprint)
+        if not entry:
+            return False
+        if entry.get("name") != name or entry.get("value") != value:
+            raise NetworkError("challenge_identity_mismatch")
+        if entry.get("owned") is True:
+            rows = self.records(name)
+            if not any(row["id"] == entry["id"] for row in rows):
+                del state["challenges"][fingerprint]
+                return True
+            observed = self.read_record(entry["id"], "TXT", name)
+            if observed.get("content") != value:
+                raise NetworkError("challenge_record_changed")
+            self.api("DELETE", self.prefix + "/" + entry["id"])
+            if any(row["id"] == entry["id"] for row in self.records(name)):
+                raise NetworkError("challenge_cleanup_readback_failed")
+        del state["challenges"][fingerprint]
+        return True
+
+def probe_signature(key, value):
+    return hmac.new(key.encode(), encoded(value), hashlib.sha256).hexdigest()
+
+
+class PinnedHTTPS(http.client.HTTPSConnection):
+    """Resolve once, reject private destinations, retain certificate/SNI checks."""
+    def __init__(self, host, ip, timeout):
+        super().__init__(host, port=443, timeout=timeout, context=ssl.create_default_context())
+        self.pinned_ip = ip
+
+    def connect(self):
+        sock = socket.create_connection((self.pinned_ip, 443), self.timeout)
+        self.sock = self._context.wrap_socket(sock, server_hostname=self.host)
+
+
+def probe_request(url, payload, key, timeout=12):
+    public_probe_url(url)
+    parsed = urlsplit(url)
+    try:
+        resolved = socket.getaddrinfo(parsed.hostname, 443, type=socket.SOCK_STREAM)
+        ips = sorted({address(row[4][0]) for row in resolved})
+        if not ips:
+            raise NetworkError("probe_dns_empty")
+        connection = PinnedHTTPS(parsed.hostname, ips[0], timeout)
+        try:
+            connection.request("POST", parsed.path or "/", encoded(payload),
+                               {"Content-Type": "application/json", "X-HuaRun-Signature": probe_signature(key, payload)})
+            response = connection.getresponse()
+            if response.status != 200:
+                raise NetworkError("probe_http_failed")
+            raw = response.read(MAX_BYTES + 1)
+            if len(raw) > MAX_BYTES:
+                raise NetworkError("probe_response_too_large")
+        finally:
+            connection.close()
+        data = json.loads(raw)
+    except (OSError, ValueError, ssl.SSLError, http.client.HTTPException):
+        raise NetworkError("probe_unavailable") from None
+    if not isinstance(data, dict):
+        raise NetworkError("probe_invalid_json")
+    return data
+
+
+def probe_results(config, connect_ip=None, path="/", transport=probe_request, now=time.time):
+    output = []
+    for probe in config.get("probes", []):
+        payload = {"schema_version": 1, "nonce": secrets.token_hex(16), "domain": config["domain"],
+                   "connect_ip": connect_ip, "path": path, "at": int(now())}
+        try:
+            data = transport(probe["url"], payload, probe["key"])
+            observed = data.get("result")
+            if (not isinstance(observed, dict) or
+                    not hmac.compare_digest(str(data.get("signature", "")), probe_signature(probe["key"], observed))):
+                raise NetworkError("probe_signature_invalid")
+            if (observed.get("nonce") != payload["nonce"] or observed.get("domain") != payload["domain"]
+                    or observed.get("connect_ip") != connect_ip or type(observed.get("at")) is not int
+                    or abs(now() - observed["at"]) > 90):
+                raise NetworkError("probe_response_not_bound")
+            checks = ("tcp_ok", "tls_ok", "websocket_ok")
+            if any(type(observed.get(name)) is not bool for name in checks):
+                raise NetworkError("probe_result_invalid")
+            output.append({"region": probe["region"], "host": urlsplit(probe["url"]).hostname,
+                           "verified": True, "reachable": all(observed[name] for name in checks)})
+        except NetworkError as error:
+            output.append({"region": probe["region"], "host": urlsplit(probe["url"]).hostname,
+                           "verified": False, "reachable": None, "code": str(error)})
+    return output
+
+
+def doctor(lock_fd=None, runner=subprocess.run):
+    env = dict(os.environ)
+    passed = ()
+    if lock_fd is not None:
+        env["HUARUN_UPDATE_LOCK_FD"] = str(lock_fd)
+        passed = (lock_fd,)
+    try:
+        result = runner(["/usr/local/bin/huarun", "doctor", "--json"], capture_output=True,
+                        text=True, timeout=45, env=env, pass_fds=passed)
+        body = json.loads(result.stdout)
+        checks = body.get("checks", {})
+        return (result.returncode == 0 and body.get("all_ok") is True and
+                all(isinstance(checks.get(key), dict) and checks[key].get("ok") is True for key in DOCTOR_CHECKS)
+                and local_node_healthy())
+    except (OSError, ValueError, subprocess.TimeoutExpired, TypeError):
+        return False
+
+
+class Network:
+    def __init__(self, config_path=CONFIG, state_dir=STATE_DIR, transport=request,
+                 probe_transport=probe_request, clock=time.time, doctor_fn=doctor, provider_factory=None):
+        self.config_path, self.state_dir = Path(config_path), Path(state_dir)
+        self.state_path = self.state_dir / "state.json"
+        self.transport, self.probe_transport, self.clock = transport, probe_transport, clock
+        self.doctor_fn, self.provider_factory = doctor_fn, provider_factory
+        self.lock_fd = None
+
+    def config(self):
+        value = load_private(self.config_path)
+        return None if value is None else validate_config(value)
+
+    def state(self):
+        return load_private(self.state_path, {"schema_version": 1, "status": "not_configured", "failures": 0,
+                                              "events": [], "outbox": [], "challenges": {}}, limit=MAX_BYTES)
+
+    def save(self, state):
+        state["updated_at"] = int(self.clock())
+        if len(encoded(state)) > MAX_BYTES:
+            raise NetworkError("state_too_large")
+        atomic_private(self.state_path, state)
+
+    def provider(self, config):
+        settings = config.get("provider", {"kind": "manual"})
+        factory = self.provider_factory
+        if factory is None:
+            try:
+                from ip_provider import get_provider
+            except ImportError:
+                raise NetworkError("provider_module_unavailable") from None
+            factory = get_provider
+        return factory(settings, self.state_dir / "provider")
+
+    def inbound(self, config):
+        source = config["address_source"]
+        if source["mode"] == "static":
+            return source["addresses"]
+        if source["mode"] in ("provider", "digitalocean", "hetzner_floating"):
+            try:
+                return addresses(self.provider(config).get_inbound_addresses())
+            except Exception as error:
+                if isinstance(error, NetworkError):
+                    raise
+                raise NetworkError("provider_address_unavailable") from None
+        observed = [address(self.transport("GET", url), "A") for url in IP_SERVICES]
+        if len(set(observed)) != 1:
+            raise NetworkError("public_ip_sources_disagree")
+        return {"A": observed[0]}
+
+    def status(self):
+        config = self.config()
+        state = self.state()
+        if config is None:
+            return {"configured": False, "status": "not_configured", "notification": "not_configured"}
+        return {"configured": True, "domain": config["domain"], "status": state.get("status", "configured"),
+                "address_source": config["address_source"]["mode"],
+                "cloudflare": {"account_id": config["cloudflare"]["account_id"],
+                               "zone_id": config["cloudflare"]["zone_id"], "credential": "stored",
+                               "requested_permissions": "Full account and zone access"},
+                "notification": "configured" if config["notification"]["kind"] == "telegram" else "not_configured",
+                "pending_notifications": len(state.get("outbox", [])),
+                "probe_count": len(config["probes"]), "failures": state.get("failures", 0),
+                "provider": config.get("provider", {}).get("kind", "manual"),
+                "last_check": state.get("last_check"), "last_error": state.get("last_error"),
+                "last_notification": state.get("last_notification"),
+                "provider_result": state.get("provider_result"),
+                "notification_status": state.get("notification_status", "not_configured"),
+                "addresses": {k: v.get("content") for k, v in state.get("records", {}).items()}}
+
+    def event(self, state, code, text, force=False):
+        # One notification per incident/code. Time-bounded non-incident events
+        # (DNS/probe setup/errors) remain useful without flooding every timer tick.
+        stamp = str(state.get("incident_id", "none")) + ":" + code
+        seen = state.setdefault("event_seen", {})
+        previous = seen.get(stamp)
+        if not force and previous is not None and self.clock() - previous < 21600:
+            return
+        seen[stamp] = int(self.clock())
+        state["event_seen"] = dict(sorted(seen.items(), key=lambda item: item[1])[-128:])
+        item = {"id": secrets.token_hex(8), "at": int(self.clock()), "code": code, "text": text[:1500],
+                "attempts": 0, "next_attempt": 0}
+        state.setdefault("events", []).append({k: item[k] for k in ("id", "at", "code")})
+        state["events"] = state["events"][-100:]
+        state.setdefault("outbox", []).append(item)
+        state["outbox"] = state["outbox"][-100:]
+        state["last_event"] = code
+        self.save(state)
+
+    def deliver(self, config, state):
+        notification = config["notification"]
+        if notification["kind"] != "telegram":
+            state["notification_status"] = "not_configured"
+            return
+        state["notification_status"] = "configured"
+        for item in list(state.get("outbox", [])):
+            if item.get("next_attempt", 0) > self.clock():
+                continue
+            try:
+                result = self.transport("POST", "https://api.telegram.org/bot" + notification["bot_token"] + "/sendMessage",
+                                        {"chat_id": str(notification["chat_id"]), "text": item["text"],
+                                         "disable_web_page_preview": True})
+                if result.get("ok") is not True or not isinstance(result.get("result", {}).get("message_id"), int):
+                    raise NetworkError("notification_delivery_unconfirmed")
+            except NetworkError:
+                item["attempts"] = item.get("attempts", 0) + 1
+                item["next_attempt"] = int(self.clock()) + min(21600, 60 * 2 ** min(item["attempts"], 8))
+                state["last_notification"] = {"status": "retry_pending", "at": int(self.clock())}
+                self.save(state)
+                break
+            state["outbox"].remove(item)
+            state["last_notification"] = {"status": "delivered", "at": int(self.clock()), "event_id": item["id"]}
+            self.save(state)
+
+    def configure(self, value, allow_domain_change=False, info_path="/etc/huarun/info.json"):
+        config = validate_config(value)
+        info = Path(info_path)
+        if info.exists():
+            try:
+                old_domain = json.loads(info.read_bytes())["domain"]
+            except (ValueError, KeyError):
+                raise NetworkError("installed_domain_unreadable") from None
+            if old_domain != config["domain"] and not allow_domain_change:
+                raise NetworkError("domain_change_requires_migration")
+        cf = Cloudflare(config, self.transport)
+        cf.verify()
+        # Only validate addresses here; prepare performs the explicitly selected DNS operation.
+        self.inbound(config)
+        atomic_private(self.config_path, config)
+        state = self.state()
+        state["status"], state["last_error"] = "configured", None
+        self.save(state)
+        if config["notification"]["kind"] == "telegram":
+            self.notify_test()
+        return self.status()
+
+    def prepare(self, expected_domain=None):
+        config = self.config()
+        if config is None:
+            raise NetworkError("configuration_required")
+        if expected_domain is not None and hostname(expected_domain) != config["domain"]:
+            raise NetworkError("configured_domain_mismatch")
+        cf = Cloudflare(config, self.transport)
+        cf.verify()
+        observed = cf.sync(self.inbound(config))
+        state = self.state()
+        state["records"] = observed["records"]
+        state["status"] = "dns_ready"
+        self.save(state)
+        return {"domain": config["domain"], "status": "dns_ready", "changed": observed["changed"]}
+
+    def challenge(self, operation, name, value):
+        config = self.config()
+        if config is None:
+            raise NetworkError("configuration_required")
+        cf = Cloudflare(config, self.transport)
+        cf.verify()
+        state = self.state()
+        if operation == "dns-add":
+            cf.dns_add(name, value, state)
+        else:
+            cf.dns_remove(name, value, state)
+        self.save(state)
+        return {"status": "created" if operation == "dns-add" else "removed"}
+
+    def notify_test(self):
+        config = self.config()
+        if config is None or config["notification"]["kind"] != "telegram":
+            raise NetworkError("notification_not_configured")
+        state = self.state()
+        self.event(state, "notification_test", "华润网络助手：" + config["domain"] + " 的故障与恢复通知已连接。", force=True)
+        self.deliver(config, state)
+        self.save(state)
+        return {"status": state.get("last_notification", {}).get("status", "pending")}
+
+    def _path(self):
+        try:
+            data = json.loads(Path("/etc/huarun/info.json").read_bytes())
+            value = data.get("wsPath", "/")
+            if isinstance(value, str) and re.fullmatch(r"/[A-Za-z0-9/_-]{0,160}", value):
+                return value
+        except (OSError, ValueError):
+            pass
+        return "/"
+
+    def observations(self, config, connect_ip=None):
+        return probe_results(config, connect_ip, self._path(), self.probe_transport, self.clock)
+
+    @staticmethod
+    def confirmed(results, reachable):
+        # Mixed evidence cannot authorize an automatic origin change.
+        if reachable is False and any(r.get("verified") is True and r.get("reachable") is True for r in results):
+            return False
+        rows = [r for r in results if r.get("verified") is True and r.get("reachable") is reachable]
+        return len({r["host"] for r in rows}) >= 2 and len({r["region"] for r in rows}) >= 2
+
+    def run(self):
+        config = self.config()
+        if config is None:
+            return {"status": "not_configured"}
+        state = self.state()
+        state["last_check"] = int(self.clock())
+        cf = Cloudflare(config, self.transport)
+        try:
+            cf.verify()
+            provider = None
+            if config.get("provider", {}).get("kind") not in (None, "manual", "none"):
+                provider = self.provider(config)
+                if hasattr(provider, "restore_local_address"):
+                    provider.restore_local_address()
+
+            def commit(ip):
+                result = cf.sync({"A": address(ip, "A")})
+                state.setdefault("records", {}).update(result["records"])
+                self.save(state)
+                return True
+
+            def verify(ip):
+                return self.confirmed(self.observations(config, address(ip, "A")), True)
+
+            # A running provider transaction must finish/recover before routine DDNS.
+            if provider is not None and provider.pending():
+                result = provider.rotate(state.get("incident_id", "recovery"), verify, commit)
+                state["provider_result"] = {k: result.get(k) for k in ("status", "code")}
+                state["status"] = "recovery_" + result.get("status", "failed")
+                if result.get("status") == "rotated":
+                    state["failures"] = 0
+                    state["dns_settle_until"] = int(self.clock()) + 900
+                    self.event(state, "ip_recovered", "华润网络助手：" + config["domain"] + " 已自动更换 IP，DNS 与双地区连接复查通过。")
+                elif result.get("status") in ("deferred", "failed", "rolled_back"):
+                    self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 自动换 IP 未完成，请查看 huarun network status，并到 VPS 面板处理；原配置与 Key 保留。")
+                state["last_error"] = None
+                self.deliver(config, state)
+                self.save(state)
+                return self.status()
+            synced = cf.sync(self.inbound(config))
+            state["records"] = synced["records"]
+            if synced["changed"]:
+                self.event(state, "dns_changed", "华润网络助手：" + config["domain"] + " 已同步新的入站 IP，原节点配置和 Key 保留。")
+            healthy = self.doctor_fn(self.lock_fd)
+            results = self.observations(config)
+            state["probes"] = results
+            if not healthy:
+                state["failures"], state["status"] = 0, "local_service_fault"
+                self.event(state, "local_service_fault", "华润网络助手：" + config["domain"] + " 本机服务或证书检查异常，未将它判定为 IP 封锁，也未更换 IP。请查看 huarun doctor。")
+            elif self.confirmed(results, True):
+                was_fault = state.get("status") not in ("healthy", "configured", "dns_ready", "not_configured")
+                state["failures"], state["status"] = 0, "healthy"
+                if was_fault:
+                    self.event(state, "recovered", "华润网络助手：" + config["domain"] + " 已恢复，服务、TLS 和双地区连接检查通过。")
+                state.pop("incident_id", None)
+            elif self.confirmed(results, False) and self.clock() < state.get("dns_settle_until", 0):
+                state["failures"], state["status"] = 0, "dns_propagating"
+            elif self.confirmed(results, False):
+                state["failures"] = state.get("failures", 0) + 1
+                state["status"] = "regional_access_suspected"
+                if state["failures"] >= HEALTH_FAILURES:
+                    if not state.get("incident_id"):
+                        state["incident_id"] = secrets.token_hex(12)
+                    self.event(state, "regional_access_failure", "华润网络助手：" + config["domain"] + " 本机服务正常，但两个独立地区连续访问失败；疑似入口线路受阻。将按已配置的厂商恢复策略处理。")
+                    # An edge outage cannot be fixed by rotating a healthy origin.
+                    proxied = any(v.get("proxied") is True for v in state["records"].values())
+                    if proxied:
+                        state["status"] = "cdn_path_fault_manual_review"
+                        self.event(state, "cdn_path_fault", "华润网络助手：" + config["domain"] + " 的 Cloudflare 入口持续异常；已暂停自动更换源站 IP，避免把 CDN 故障误判为源站 IP 故障。")
+                    elif provider is not None:
+                        result = provider.rotate(state["incident_id"], verify, commit)
+                        state["provider_result"] = {k: result.get(k) for k in ("status", "code")}
+                        state["status"] = "recovery_" + result.get("status", "failed")
+                        if result.get("status") == "rotated":
+                            state["failures"] = 0
+                            state["dns_settle_until"] = int(self.clock()) + 900
+                            self.event(state, "ip_recovered", "华润网络助手：" + config["domain"] + " 已自动更换 IP，DNS 与双地区连接复查通过。")
+                        elif result.get("status") in ("deferred", "failed", "rolled_back"):
+                            self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 无法按当前厂商授权完成自动换 IP，请查看 huarun network status，并到 VPS 面板处理；新 IP 就绪后会继续同步 DNS。")
+                    else:
+                        state["status"] = "manual_ip_change_required"
+                        self.event(state, "manual_ip_change_required", "华润网络助手：" + config["domain"] + " 持续访问异常，当前厂商未接入自动换 IP。请到 VPS 面板或联系厂商更换 IP；系统会继续检测并同步 DNS。")
+            else:
+                state["failures"], state["status"] = 0, "reachability_unconfirmed"
+                self.event(state, "probe_setup_required", "华润网络助手：" + config["domain"] + " 尚缺两个独立地区的有效探针结果；本机检查正常，无法据此认定被墙，未自动更换 IP。")
+            state["last_error"] = None
+        except Exception as error:
+            # Provider exceptions may contain URLs or credentials: only expose our fixed codes.
+            code = str(error) if isinstance(error, NetworkError) else "provider_or_runtime_failed"
+            state["status"], state["last_error"] = "error", code
+            self.event(state, "maintenance_error_" + code, "华润网络助手：" + config["domain"] + " 网络维护未完成（" + code + "）。原节点和 Key 保留，请查看 network status。")
+        self.deliver(config, state)
+        self.save(state)
+        return self.status()
+
+def discover_zone(token, domain, transport=request):
+    parts = hostname(domain).split(".")
+    for offset in range(len(parts) - 1):
+        suffix = ".".join(parts[offset:])
+        data = transport("GET", CF + "/zones?" + urlencode({"name": suffix, "per_page": 50}),
+                         None, {"Authorization": "Bearer " + token})
+        if data.get("success") is not True:
+            raise NetworkError("cloudflare_zone_discovery_failed")
+        matches = [item for item in data.get("result", []) if isinstance(item, dict) and item.get("name") == suffix]
+        if len(matches) > 1:
+            raise NetworkError("cloudflare_zone_ambiguous")
+        if matches:
+            return matches[0].get("account", {}).get("id"), matches[0].get("id")
+    raise NetworkError("domain_not_in_cloudflare_account")
+
+
+def provider_choices():
+    """Only advertise implemented provider adapters in terminal onboarding."""
+    labels = {"digitalocean": "DigitalOcean Reserved IPv4",
+              "hetzner_floating": "Hetzner Floating IPv4",
+              "vultr": "Vultr Reserved IPv4", "aws_eip": "AWS EC2 Elastic IPv4"}
+    try:
+        from ip_provider import capabilities
+        available = {row["kind"] for row in capabilities() if row.get("automatic_rotation") is True}
+    except (ImportError, KeyError, TypeError):
+        available = set()
+    return [(kind, label) for kind, label in labels.items() if kind in available]
+
+
+def interactive_provider(kind):
+    if kind == "aws_eip":
+        provider = {"kind": kind, "account_id": input("AWS Account ID（12 位）: ").strip(),
+                    "region": input("AWS Region（如 us-east-1）: ").strip(),
+                    "instance_id": input("EC2 Instance ID（i-...）: ").strip(),
+                    "access_key_id": getpass.getpass("AWS Access Key ID（隐藏输入）: ").strip(),
+                    "secret_access_key": getpass.getpass("AWS Secret Access Key（隐藏输入）: ").strip(),
+                    "auto_rotate": False, "cleanup_owned_old_ip": False}
+        session = getpass.getpass("AWS Session Token（长期凭据可留空，隐藏输入）: ").strip()
+        if session:
+            provider["session_token"] = session
+        interface = input("Network Interface ID（空则唯一主 ENI）: ").strip()
+        private_ip = input("Private IPv4（空则主私网地址）: ").strip()
+        if interface:
+            provider["network_interface_id"] = interface
+        if private_ip:
+            provider["private_ip_address"] = private_ip
+        if input("授权已绑定 EIP 的实例自动申请并切换 EIP（可能短暂中断及产生 IPv4 费用）？[y/N]: ").strip().lower() == "y":
+            provider.update(auto_rotate=True, allow_reserved_ip_allocation=True, allow_downtime=True,
+                            max_attempts_per_day=int(input("每日最多换 IP 次数 [1]: ").strip() or "1"),
+                            max_elastic_ips=5,
+                            max_monthly_ipv4_usd=float(input("公网 IPv4 预计月费上限（美元）[20]: ").strip() or "20"))
+            provider["cleanup_owned_old_ip"] = input("新入口验证后回收本工具创建的旧 EIP（保留原有地址）？[Y/n]: ").strip().lower() != "n"
+        return provider
+    if kind not in ("digitalocean", "hetzner_floating", "vultr"):
+        raise NetworkError("provider_interactive_setup_unavailable")
+    provider = {"kind": kind, "token": getpass.getpass("厂商 API Token（隐藏输入）: ").strip(),
+                "auto_rotate": False, "cleanup_owned_old_ip": False}
+    instance = input("实例 ID（Vultr 为 UUID，其余为数字）: ").strip()
+    provider["instance_id"] = instance if kind == "vultr" else int(instance)
+    provider["region"] = input("实例地域标识（如 nyc3 / fsn1 / sea）: ").strip()
+    if kind in ("hetzner_floating", "vultr"):
+        provider["interface"] = input("公网接口名称（如 eth0 / ens3）: ").strip()
+        selected = input("已在使用的 Floating / Reserved IPv4（无则留空）: ").strip()
+        if selected:
+            provider["managed_ip"] = address(selected, "A")
+    wording = ("授权故障时自动分配并切换 Reserved IPv4（可能短暂中断及产生闲置 IP 费用）？[y/N]: "
+               if kind == "digitalocean" else
+               "授权故障时自动申请新 IPv4 并添加本机 /32 地址（保留主 IP，可能产生地址费用）？[y/N]: ")
+    if input(wording).strip().lower() == "y":
+        provider["auto_rotate"] = True
+        provider["max_attempts_per_day"] = int(input("每日最多换 IP 次数 [1]: ").strip() or "1")
+        if kind == "digitalocean":
+            provider.update(allow_reserved_ip_allocation=True, allow_downtime=True, max_unassigned_ips=2,
+                            max_monthly_unassigned_usd=float(input("闲置 IPv4 预计月费上限（美元）[10]: ").strip() or "10"))
+        elif kind == "hetzner_floating":
+            provider.update(allow_floating_ip_allocation=True, allow_guest_network_changes=True, max_floating_ips=2,
+                            max_monthly_floating_eur=float(input("Floating IPv4 预计月费上限（欧元）[6]: ").strip() or "6"))
+        else:
+            provider.update(allow_reserved_ip_allocation=True, allow_guest_network_changes=True, max_reserved_ips=2,
+                            max_monthly_reserved_usd=float(input("Reserved IPv4 预计月费上限（美元）[6]: ").strip() or "6"))
+        provider["cleanup_owned_old_ip"] = input("新入口验证后回收本工具创建的旧 IP（保留原有地址）？[Y/n]: ").strip().lower() != "n"
+    return provider
+
+
+def interactive_config(domain=None):
+    if not sys.stdin.isatty():
+        raise NetworkError("terminal_required")
+    domain = hostname(domain or input("固定节点域名（已接入 Cloudflare 的自有域名）: ").strip())
+    token = getpass.getpass("Cloudflare Full account and zone access 账户令牌（隐藏输入）: ").strip()
+    secret_string(token, "cloudflare_token")
+    account, zone = discover_zone(token, domain)
+    options = provider_choices()
+    available = {str(index + 3): kind for index, (kind, label) in enumerate(options)}
+    menu = "入站地址来源：1 固定 IP，2 本机动态公网 IP（无 NAT）"
+    menu += "".join("，" + str(index + 3) + " " + label for index, (_, label) in enumerate(options))
+    choice = input(menu + " [2]: ").strip() or "2"
+    value = {"schema_version": 1, "domain": domain,
+             "cloudflare": {"account_id": account, "zone_id": zone, "api_token": token,
+                            "proxied": input("新建 DNS 记录是否启用 Cloudflare 代理？[y/N]: ").strip().lower() == "y"},
+             "probes": [], "notification": {"kind": "none"}}
+    if choice == "1":
+        ipv4 = input("入站公网 IPv4（可留空）: ").strip()
+        ipv6 = input("入站公网 IPv6（可留空）: ").strip()
+        value["address_source"] = {"mode": "static", "addresses": {k: ip for k, ip in (("A", ipv4), ("AAAA", ipv6)) if ip}}
+    elif choice == "2":
+        yes = input("确认出口公网 IPv4 就是此 VPS 的可访问入站 IPv4（无 NAT / Reserved IP）？[y/N]: ").strip().lower()
+        if yes != "y":
+            raise NetworkError("inbound_ip_confirmation_required")
+        value["address_source"] = {"mode": "consensus", "no_nat_confirmed": True}
+    elif choice in available:
+        value["address_source"] = {"mode": "provider"}
+        value["provider"] = interactive_provider(available[choice])
+    else:
+        raise NetworkError("address_source_invalid")
+    if input("配置 Telegram 故障及恢复通知？[Y/n]: ").strip().lower() != "n":
+        value["notification"] = {"kind": "telegram",
+                                 "bot_token": getpass.getpass("Telegram Bot Token（隐藏输入）: ").strip(),
+                                 "chat_id": input("接收通知的 Chat ID: ").strip()}
+    if input("现在配置两个独立地区的自有 HTTPS 探针？[y/N]: ").strip().lower() == "y":
+        for number in (1, 2):
+            value["probes"].append({"url": input("探针 " + str(number) + " HTTPS URL: ").strip(),
+                                    "region": input("地区标识（如 cn-telecom）: ").strip().lower(),
+                                    "key": getpass.getpass("探针 HMAC Key（至少 32 字符，隐藏输入）: ").strip()})
+    return value
+
+
+def local_node_healthy(info_path="/etc/huarun/info.json"):
+    """Check the installed TLS/WS path before blaming an external route."""
+    try:
+        value = json.loads(Path(info_path).read_bytes())
+        domain, path = hostname(value.get("domain")), value.get("wsPath")
+        if not isinstance(path, str) or not re.fullmatch(r"/[A-Za-z0-9/_-]{0,160}", path):
+            return False
+        result = _observe_connection(domain, "127.0.0.1", path)
+        return all(result.get(name) is True for name in ("tcp_ok", "tls_ok", "websocket_ok"))
+    except (OSError, ValueError, NetworkError, AttributeError):
+        return False
+
+
+def observe_target(domain, connect_ip, path):
+    """Public probes reject private targets and verify TCP, TLS and WS."""
+    try:
+        if connect_ip is not None:
+            ips = [address(connect_ip)]
+        else:
+            ips = sorted({address(row[4][0]) for row in socket.getaddrinfo(domain, 443, type=socket.SOCK_STREAM)})
+        if not ips:
+            raise NetworkError("target_dns_empty")
+    except (OSError, NetworkError):
+        return {"tcp_ok": False, "tls_ok": False, "websocket_ok": False}
+    return _observe_connection(domain, ips[0], path)
+
+
+def _observe_connection(domain, ip, path):
+    result = {"tcp_ok": False, "tls_ok": False, "websocket_ok": False}
+    sock = None
+    try:
+        sock = socket.create_connection((ip, 443), timeout=7)
+        result["tcp_ok"] = True
+        sock = ssl.create_default_context().wrap_socket(sock, server_hostname=domain)
+        result["tls_ok"] = True
+        ws_key = base64.b64encode(secrets.token_bytes(16)).decode()
+        request_bytes = ("GET " + path + " HTTP/1.1\r\nHost: " + domain +
+                         "\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Version: 13\r\nSec-WebSocket-Key: " +
+                         ws_key + "\r\n\r\n").encode()
+        sock.sendall(request_bytes)
+        response = http.client.HTTPResponse(sock)
+        response.begin()
+        expected = base64.b64encode(hashlib.sha1((ws_key + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode()).digest()).decode()
+        result["websocket_ok"] = response.status == 101 and hmac.compare_digest(response.getheader("Sec-WebSocket-Accept", ""), expected)
+    except (OSError, ssl.SSLError, NetworkError, http.client.HTTPException):
+        pass
+    finally:
+        if sock is not None:
+            sock.close()
+    return result
+
+
+def make_probe_handler(config, observer=observe_target, clock=time.time):
+    domain = hostname(config.get("domain"))
+    key = secret_string(config.get("key"), "probe_key", 32)
+    path = config.get("path")
+    if not isinstance(path, str) or not re.fullmatch(r"/[A-Za-z0-9/_-]{0,160}", path):
+        raise NetworkError("probe_target_path_invalid")
+    seen = {}
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def do_POST(self):
+            if self.path != "/probe":
+                self.send_error(404)
+                return
+            try:
+                self.connection.settimeout(10)
+                length = int(self.headers.get("Content-Length", "0"))
+                if not 0 < length <= 8192:
+                    raise NetworkError("invalid_request")
+                value = json.loads(self.rfile.read(length))
+                if not isinstance(value, dict):
+                    raise NetworkError("invalid_request")
+                if not hmac.compare_digest(self.headers.get("X-HuaRun-Signature", ""), probe_signature(key, value)):
+                    raise NetworkError("unauthorized")
+                nonce = value.get("nonce")
+                if (value.get("schema_version") != 1 or value.get("domain") != domain or value.get("path") != path
+                        or type(value.get("at")) is not int or abs(clock() - value["at"]) > 90
+                        or not isinstance(nonce, str) or not re.fullmatch(r"[a-f0-9]{32}", nonce)):
+                    raise NetworkError("request_not_bound")
+                for old, timestamp in list(seen.items()):
+                    if timestamp < clock() - 180:
+                        del seen[old]
+                if nonce in seen or len(seen) > 1000:
+                    raise NetworkError("replayed_request")
+                ip = value.get("connect_ip")
+                if ip is not None:
+                    ip = address(ip)
+                seen[nonce] = clock()
+                result = {"nonce": nonce, "domain": domain, "connect_ip": ip, "at": int(clock()),
+                          **observer(domain, ip, path)}
+                raw = encoded({"result": result, "signature": probe_signature(key, result)})
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Content-Length", str(len(raw)))
+                self.end_headers()
+                self.wfile.write(raw)
+            except (NetworkError, ValueError, OSError):
+                self.send_error(403, "Rejected")
+
+        def log_message(self, *unused):
+            pass
+
+    return Handler
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("command", choices=("configure", "prepare", "status", "run", "config-domain",
+                                           "dns-add", "dns-remove", "notify-test", "probe-server"), nargs="?")
+    parser.add_argument("challenge_name", nargs="?")
+    parser.add_argument("challenge_value", nargs="?")
+    parser.add_argument("--domain")
+    parser.add_argument("--configure-stdin", action="store_true")
+    parser.add_argument("--allow-domain-change", action="store_true")
+    parser.add_argument("--probe-config", type=Path)
+    parser.add_argument("--listen", default="127.0.0.1")
+    parser.add_argument("--port", type=int, default=9077)
+    args = parser.parse_args()
+    operation = "configure" if args.configure_stdin else args.command
+    if operation is None:
+        parser.error("command required")
+    if os.geteuid() != 0:
+        raise NetworkError("root_required")
+    network = Network()
+    if operation == "status":
+        result = network.status()
+    elif operation == "config-domain":
+        config = network.config()
+        if config is None:
+            raise NetworkError("configuration_required")
+        print(config["domain"])
+        return 0
+    elif operation == "probe-server":
+        if not args.probe_config or args.listen != "127.0.0.1" or not 1024 <= args.port <= 65535:
+            raise NetworkError("probe_listener_invalid")
+        handler = make_probe_handler(load_private(args.probe_config))
+        http.server.ThreadingHTTPServer((args.listen, args.port), handler).serve_forever()
+        return 0
+    else:
+        with MaintenanceLock() as lock:
+            network.lock_fd = lock.fd if lock.inherited else None
+            if operation == "configure":
+                if args.configure_stdin:
+                    raw = sys.stdin.buffer.read(MAX_CONFIG + 1)
+                    if len(raw) > MAX_CONFIG:
+                        raise NetworkError("configuration_too_large")
+                    try:
+                        config = json.loads(raw)
+                    except (ValueError, UnicodeError):
+                        raise NetworkError("configuration_json_invalid") from None
+                    if args.allow_domain_change and os.environ.get("HUARUN_DOMAIN_MIGRATION") != "1":
+                        raise NetworkError("domain_migration_wrapper_required")
+                else:
+                    config = interactive_config(args.domain)
+                if args.domain and hostname(args.domain) != config.get("domain"):
+                    raise NetworkError("configured_domain_mismatch")
+                result = network.configure(config, args.allow_domain_change)
+            elif operation == "prepare":
+                result = network.prepare(args.domain)
+            elif operation in ("dns-add", "dns-remove"):
+                if args.challenge_name is None or args.challenge_value is None:
+                    raise NetworkError("challenge_arguments_required")
+                result = network.challenge(operation, args.challenge_name, args.challenge_value)
+            elif operation == "notify-test":
+                result = network.notify_test()
+            else:
+                result = network.run()
+    print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main())
+    except NetworkError as error:
+        print(json.dumps({"status": "error", "code": str(error)}, ensure_ascii=False))
+        raise SystemExit(75 if str(error) == "maintenance_busy" else 1) from None
+    except (OSError, ValueError, TypeError, KeyError, KeyboardInterrupt):
+        print('{"status":"error","code":"network_operation_failed"}')
+        raise SystemExit(1) from None
+NETWORKEOF
+    chmod 0755 /usr/local/lib/huarun/network.py.new && mv -f /usr/local/lib/huarun/network.py.new /usr/local/lib/huarun/network.py || return 1
+    cat > /usr/local/lib/huarun/aws_provider.py.new << 'AWSPROVIDEREOF' || return 1
+"""AWS EC2 Elastic IPv4 adapter using bounded SigV4 Query API requests.
+
+Contract sources (checked 2026-11-18):
+https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_AllocateAddress.html
+https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_AssociateAddress.html
+https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeAddresses.html
+https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_ReleaseAddress.html
+https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_sigv-create-signed-request.html
+
+An existing Elastic IP is required for reversible automatic replacement. No
+instance is stopped or destroyed. An unacknowledged allocation is reconciled by
+its unique transaction tag; it is never blindly repeated. This module has API
+contract/fault-injection tests; no live AWS-account verification is claimed.
+"""
+from __future__ import annotations
+import datetime,hashlib,hmac,ipaddress,math,re,time
+from pathlib import Path
+from urllib.parse import urlencode,quote
+from urllib.request import Request,build_opener
+from urllib.error import HTTPError,URLError
+import xml.etree.ElementTree as ET
+from ip_provider import DigitalOceanRotator,ProviderError,_Store,_integer,_ipv4,NoRedirect
+
+API_VERSION='2016-11-15'
+MAX_RESPONSE=2*1024*1024
+PUBLIC_IPV4_HOURLY_USD=0.005
+MONTHLY_ESTIMATE_HOURS=744
+PRICE_VERIFIED_ON='2026-11-18'
+ACTIONS={'DescribeInstances','DescribeAddresses','AllocateAddress','AssociateAddress','DisassociateAddress','ReleaseAddress'}
+
+def checked(value,pattern,code):
+    if not isinstance(value,str) or not re.fullmatch(pattern,value):raise ProviderError(code)
+    return value
+
+def text(node,path,default=None):
+    found=node.find(path)
+    return found.text if found is not None and found.text is not None else default
+
+def xml(raw,action):
+    if not isinstance(raw,bytes) or len(raw)>MAX_RESPONSE or b'<!DOCTYPE' in raw.upper() or b'<!ENTITY' in raw.upper():raise ProviderError('provider_xml_invalid')
+    try:root=ET.fromstring(raw)
+    except ET.ParseError:raise ProviderError('provider_xml_invalid') from None
+    for node in root.iter():node.tag=node.tag.split('}')[-1]
+    if root.tag!=action+'Response':raise ProviderError('provider_xml_identity_invalid')
+    return root
+
+def signed_request(config,action,params,now):
+    if action not in ACTIONS or not isinstance(params,dict) or any(not isinstance(k,str) or not isinstance(v,(str,int)) or isinstance(v,bool) for k,v in params.items()):raise ProviderError('provider_action_invalid')
+    region=checked(config.get('region'),r'[a-z]{2}(?:-[a-z]+){1,3}-[1-9][0-9]?', 'provider_region_invalid')
+    key=checked(config.get('access_key_id'),r'[A-Z0-9]{16,128}','provider_access_key_invalid')
+    secret=checked(config.get('secret_access_key'),r'[A-Za-z0-9/+=]{20,256}','provider_secret_key_invalid')
+    token=config.get('session_token','')
+    if not isinstance(token,str) or len(token)>8192 or any(ord(c)<33 or ord(c)>126 for c in token):raise ProviderError('provider_session_token_invalid')
+    host='ec2.'+region+('.amazonaws.com.cn' if region.startswith('cn-') else '.amazonaws.com')
+    stamp=datetime.datetime.fromtimestamp(now,datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    date=stamp[:8]
+    body=urlencode(sorted({**params,'Action':action,'Version':API_VERSION}.items()),quote_via=quote,safe='~').encode()
+    headers={'content-type':'application/x-www-form-urlencoded; charset=utf-8','host':host,'x-amz-date':stamp}
+    if token:headers['x-amz-security-token']=token
+    keys=';'.join(sorted(headers));canonical_headers=''.join(k+':'+headers[k]+'\n' for k in sorted(headers))
+    canonical='POST\n/\n\n'+canonical_headers+'\n'+keys+'\n'+hashlib.sha256(body).hexdigest()
+    scope=date+'/'+region+'/ec2/aws4_request'
+    tosign='AWS4-HMAC-SHA256\n'+stamp+'\n'+scope+'\n'+hashlib.sha256(canonical.encode()).hexdigest()
+    signing=('AWS4'+secret).encode()
+    for part in (date,region,'ec2','aws4_request'):signing=hmac.new(signing,part.encode(),hashlib.sha256).digest()
+    signature=hmac.new(signing,tosign.encode(),hashlib.sha256).hexdigest()
+    headers['authorization']='AWS4-HMAC-SHA256 Credential='+key+'/'+scope+', SignedHeaders='+keys+', Signature='+signature
+    return Request('https://'+host+'/',data=body,method='POST',headers=headers)
+
+class EC2API:
+    def __init__(self,config,clock=time.time,opener=None):
+        self.config=dict(config);self.clock=clock;self.opener=opener or build_opener(NoRedirect)
+        signed_request(self.config,'DescribeAddresses',{},self.clock())
+    def __call__(self,action,params):
+        req=signed_request(self.config,action,params,self.clock())
+        try:
+            with self.opener.open(req,timeout=20) as response:raw=response.read(MAX_RESPONSE+1)
+        except HTTPError as error:
+            # Never expose response bodies, credential diagnostics or request headers.
+            raise ProviderError('provider_aws_http_'+str(error.code)) from None
+        except (URLError,OSError,TimeoutError):raise ProviderError('provider_aws_unavailable') from None
+        return xml(raw,action)
+
+class AWSElasticRotator(DigitalOceanRotator):
+    def __init__(self,config,state_dir,request=None,clock=time.time):
+        self.config=dict(config);self.clock=clock
+        self.account=checked(config.get('account_id'),r'[0-9]{12}','provider_account_invalid')
+        self.instance=checked(config.get('instance_id'),r'i-(?:[0-9a-f]{8}|[0-9a-f]{17})','provider_instance_invalid')
+        self.region=checked(config.get('region'),r'[a-z]{2}(?:-[a-z]+){1,3}-[1-9][0-9]?','provider_region_invalid')
+        self.eni=config.get('network_interface_id') or None
+        if self.eni:checked(self.eni,r'eni-(?:[0-9a-f]{8}|[0-9a-f]{17})','provider_interface_invalid')
+        self.private=config.get('private_ip_address') or None
+        if self.private:
+            try:
+                if ipaddress.ip_address(self.private).version!=4:raise ValueError()
+            except (ValueError,TypeError):raise ProviderError('provider_private_ip_invalid') from None
+        self.scope='aws_eip:'+self.account+':'+self.region+':'+self.instance+':'+str(self.eni or 'primary')+':'+str(self.private or 'primary')
+        self.request=request if request is not None else EC2API(config,clock=clock)
+        self.store=_Store(Path(state_dir)/'aws_eip')
+    def _droplet(self):
+        root=self.request('DescribeInstances',{'InstanceId.1':self.instance})
+        reservations=root.findall('reservationSet/item')
+        matches=[]
+        for reservation in reservations:
+            for instance in reservation.findall('instancesSet/item'):
+                matches.append((text(reservation,'ownerId'),instance))
+        if len(matches)!=1:raise ProviderError('provider_instance_identity_or_state_mismatch')
+        owner,node=matches[0]
+        if owner!=self.account or text(node,'instanceId')!=self.instance or text(node,'instanceState/name')!='running' or not text(node,'vpcId'):raise ProviderError('provider_instance_identity_or_state_mismatch')
+        # Only a selected ENI / private IP is eligible. Secondary IPs remain intact.
+        interfaces=node.findall('networkInterfaceSet/item')
+        choices=[i for i in interfaces if text(i,'networkInterfaceId')==self.eni] if self.eni else [i for i in interfaces if text(i,'attachment/deviceIndex')=='0']
+        if len(choices)!=1:raise ProviderError('provider_interface_ambiguous')
+        eni=choices[0];ident=text(eni,'networkInterfaceId')
+        checked(ident,r'eni-(?:[0-9a-f]{8}|[0-9a-f]{17})','provider_interface_invalid')
+        if text(eni,'ownerId')!=self.account or text(eni,'attachment/instanceId',self.instance)!=self.instance:raise ProviderError('provider_interface_owner_mismatch')
+        private=self.private or text(eni,'privateIpAddress')
+        choices=[a for a in eni.findall('privateIpAddressesSet/item') if text(a,'privateIpAddress')==private]
+        if len(choices)!=1:raise ProviderError('provider_private_ip_ambiguous')
+        try:
+            if ipaddress.ip_address(private).version!=4:raise ValueError()
+        except (ValueError,TypeError):raise ProviderError('provider_private_ip_invalid') from None
+        public=text(choices[0],'association/publicIp')
+        return {'id':self.instance,'eni':ident,'private':private,'public':public}
+    def _ips(self):
+        root=self.request('DescribeAddresses',{})
+        rows=[]
+        for node in root.findall('addressesSet/item'):
+            if text(node,'domain')!='vpc':continue
+            row={'ip':_ipv4(text(node,'publicIp')),'id':checked(text(node,'allocationId'),r'eipalloc-(?:[0-9a-f]{8}|[0-9a-f]{17})','provider_allocation_id_invalid'),
+                 'association':text(node,'associationId'),'eni':text(node,'networkInterfaceId'),'private':text(node,'privateIpAddress'),
+                 'instance':text(node,'instanceId'),'owner':text(node,'networkInterfaceOwnerId'),'border':text(node,'networkBorderGroup'),
+                 'tags':{text(t,'key'):text(t,'value') for t in node.findall('tagSet/item')}}
+            if row['association']:checked(row['association'],r'eipassoc-(?:[0-9a-f]{8}|[0-9a-f]{17})','provider_association_invalid')
+            rows.append(row)
+        if len(rows)>1000 or len({r['id'] for r in rows})!=len(rows) or len({r['ip'] for r in rows})!=len(rows):raise ProviderError('provider_ip_list_invalid')
+        return rows
+    def _get(self,ip):
+        rows=[r for r in self._ips() if r['ip']==_ipv4(ip)]
+        return rows[0] if rows else None
+    @staticmethod
+    def _assigned(value):
+        if value is None or not value.get('association'):return None
+        return value.get('instance') or value.get('eni') or 'associated'
+    def _selected(self,rows,instance):
+        return [r for r in rows if r['eni']==instance['eni'] and r['private']==instance['private'] and r['association']]
+    def get_inbound_addresses(self):
+        instance=self._droplet();bound=self._selected(self._ips(),instance)
+        if len(bound)>1:raise ProviderError('provider_multiple_inbound_addresses')
+        if bound:
+            if bound[0]['owner']!=self.account:raise ProviderError('provider_interface_owner_mismatch')
+            return {'A':bound[0]['ip']}
+        if instance['public']:return {'A':_ipv4(instance['public'])}
+        raise ProviderError('provider_public_ipv4_missing')
+    def _authorization(self,ledger,rows):
+        for key in ('auto_rotate','allow_reserved_ip_allocation','allow_downtime'):
+            if self.config.get(key) is not True:raise ProviderError('provider_'+key+'_not_authorized')
+        maximum=_integer(self.config.get('max_attempts_per_day',1),1,3,'provider_attempt_limit_invalid')
+        limit=_integer(self.config.get('max_elastic_ips',5),2,50,'provider_address_limit_invalid')
+        budget=self.config.get('max_monthly_ipv4_usd',20)
+        if type(budget) not in (int,float) or not math.isfinite(budget) or not 0<budget<=1000:raise ProviderError('provider_budget_invalid')
+        recent=[t for t in ledger['attempts'] if type(t) in (int,float) and t>self.clock()-86400]
+        if len(recent)>=maximum:raise ProviderError('provider_daily_attempt_limit')
+        if len(rows)+1>limit or (len(rows)+1)*PUBLIC_IPV4_HOURLY_USD*MONTHLY_ESTIMATE_HOURS>budget:raise ProviderError('provider_address_budget_exceeded')
+        ledger['attempts']=recent+[int(self.clock())]
+    def _adopt(self,journal,row):
+        if (row['id'] in journal['before_ids'] or row['ip'] in journal['before_ips'] or row['association'] or row['tags'].get('huarun-transaction')!=journal['allocation_tag'] or row['tags'].get('huarun-instance')!=self.instance or row['border']!=journal['border']):raise ProviderError('provider_allocation_identity_invalid')
+        journal.update(new_ip=row['ip'],new_id=row['id'],new_owned=True,phase='detach_old')
+        self._save(journal)
+        ledger=self._ledger();ledger['owned'][row['ip']]={'id':row['id'],'created_at':journal['created_at'],'incident':journal['incident']};self.store.write('ledger.json',ledger)
+        return journal
+    def _start(self,incident,ledger):
+        instance=self._droplet();rows=self._ips();bound=self._selected(rows,instance)
+        if len(bound)!=1:raise ProviderError('provider_existing_elastic_ip_required_for_rollback')
+        old=bound[0]
+        if old['owner']!=self.account or not old['border']:raise ProviderError('provider_old_ip_identity_invalid')
+        self._authorization(ledger,rows)
+        journal={'scope':self.scope,'incident':incident,'phase':'allocating','created_at':int(self.clock()),'old_ip':old['ip'],'old_id':old['id'],
+                 'old_reserved':True,'old_owned':old['ip'] in ledger['owned'],'before_ips':[r['ip'] for r in rows],'before_ids':[r['id'] for r in rows],
+                 'dns_attempted':False,'new_ip':None,'eni':instance['eni'],'private':instance['private'],'border':old['border'],
+                 'allocation_tag':hashlib.sha256((self.scope+':'+incident).encode()).hexdigest()}
+        self.store.write('ledger.json',ledger);self._save(journal)
+        try:
+            answer=self.request('AllocateAddress',{'Domain':'vpc','NetworkBorderGroup':old['border'],
+                'TagSpecification.1.ResourceType':'elastic-ip','TagSpecification.1.Tag.1.Key':'huarun-transaction','TagSpecification.1.Tag.1.Value':journal['allocation_tag'],
+                'TagSpecification.1.Tag.2.Key':'huarun-instance','TagSpecification.1.Tag.2.Value':self.instance})
+            ident=text(answer,'allocationId');ip=text(answer,'publicIp')
+            rows=[r for r in self._ips() if r['id']==ident and r['ip']==ip]
+            if len(rows)!=1:raise ProviderError('provider_allocation_not_yet_visible')
+            return self._adopt(journal,rows[0])
+        except Exception:
+            journal.update(phase='allocation_unknown',code='provider_allocation_requires_reconciliation');self._save(journal)
+            return journal
+    def _prepare_old(self,journal):
+        # AssociateAddress replaces the old EIP while retaining its allocation.
+        return True
+    def _assignment(self,journal,ip,target,label):
+        instance=self._droplet()
+        if instance['eni']!=journal['eni'] or instance['private']!=journal['private']:raise ProviderError('provider_instance_address_changed')
+        value=self._get(ip)
+        expected=journal['new_id'] if ip==journal['new_ip'] else journal['old_id']
+        if value is None or value['id']!=expected:raise ProviderError('provider_reserved_ip_disappeared')
+        correct=value['eni']==journal['eni'] and value['private']==journal['private'] and value['owner']==self.account
+        if value['association'] and not correct:raise ProviderError('provider_ip_assigned_elsewhere')
+        matches=(not value['association']) if target is None else bool(value['association'] and correct)
+        action=journal.get('action')
+        if action:
+            if action['ip']!=ip or action['target']!=target:raise ProviderError('provider_action_conflict')
+            if matches:journal.pop('action');self._save(journal);return True
+            journal['code']='provider_action_requires_reconciliation';self._save(journal);return False
+        if matches:return True
+        journal['action']={'ip':ip,'target':target,'label':label,'started_at':int(self.clock())};self._save(journal)
+        try:
+            if target is None:self.request('DisassociateAddress',{'AssociationId':value['association']})
+            else:self.request('AssociateAddress',{'AllocationId':value['id'],'NetworkInterfaceId':journal['eni'],'PrivateIpAddress':journal['private'],'AllowReassociation':'false'})
+            journal['action']['acknowledged']=True;self._save(journal)
+        except Exception:journal['code']='provider_action_requires_reconciliation';self._save(journal)
+        return False
+    def _delete_created(self,journal,ip):
+        ledger=self._ledger();owned=ledger['owned'].get(ip)
+        expected=journal.get('new_id') if ip==journal.get('new_ip') and journal.get('new_owned') is True else owned.get('id') if isinstance(owned,dict) else None
+        if not expected:raise ProviderError('provider_delete_not_owned')
+        row=self._get(ip)
+        if row is not None:
+            if row['id']!=expected or row['association']:raise ProviderError('provider_delete_identity_or_assignment_mismatch')
+            # Default-VPC ReleaseAddress also detaches: explicitly reject any attached resource first.
+            self.request('ReleaseAddress',{'AllocationId':expected})
+            if self._get(ip) is not None:return False
+        ledger['owned'].pop(ip,None);self.store.write('ledger.json',ledger);return True
+    def rotate(self,incident_id,verify_ip,update_dns):
+        try:
+            journal=self._journal()
+            if journal and journal.get('phase') in ('allocating','allocation_unknown'):
+                matches=[r for r in self._ips() if r['tags'].get('huarun-transaction')==journal['allocation_tag'] and r['tags'].get('huarun-instance')==self.instance]
+                if len(matches)==1:self._adopt(journal,matches[0])
+                else:return {'status':'deferred','code':'provider_allocation_requires_reconciliation'}
+        except ProviderError as error:return {'status':'deferred','code':str(error)}
+        except Exception:return {'status':'deferred','code':'provider_operation_failed'}
+        return super().rotate(incident_id,verify_ip,update_dns)
+AWSPROVIDEREOF
+    chmod 0755 /usr/local/lib/huarun/aws_provider.py.new && mv -f /usr/local/lib/huarun/aws_provider.py.new /usr/local/lib/huarun/aws_provider.py || return 1
+    cat > /usr/local/lib/huarun/ip_provider.py.new << 'PROVIDEREOF' || return 1
+#!/usr/bin/env python3
+"""Bounded, crash-aware DigitalOcean Reserved IPv4 replacement.
+
+The caller holds the HuaRun maintenance lock. It supplies independent reachability
+verification and an idempotent DNS write/read-back callback. No server, disk, or
+foreign IP is deleted. A lost allocation response requires reconciliation rather
+than another potentially billable POST. Provider API contract verified 2026-11-18:
+https://docs.digitalocean.com/products/networking/reserved-ips/how-to/modify/
+https://docs.digitalocean.com/products/networking/reserved-ips/details/limits/
+https://github.com/digitalocean/openapi/tree/master/specification/resources/reserved_ips
+"""
+from __future__ import annotations
+import hashlib
+import ipaddress
+import json
+import math
+import os
+from pathlib import Path
+import re
+import secrets
+import stat
+import subprocess
+import time
+from urllib.error import HTTPError, URLError
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+API = "https://api.digitalocean.com/v2"
+UNASSIGNED_MONTHLY_USD = 5.0
+PRICE_VERIFIED_ON = "2026-11-18"
+MAX_RESPONSE = 2 * 1024 * 1024
+
+
+class ProviderError(Exception):
+    """Only a controlled nonsecret code crosses this boundary."""
+
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def _ipv4(value):
+    try:
+        ip = ipaddress.ip_address(value)
+        if ip.version != 4 or not ip.is_global:
+            raise ValueError()
+        return str(ip)
+    except (ValueError, TypeError):
+        raise ProviderError("provider_ipv4_invalid") from None
+
+
+def _integer(value, lower, upper, code):
+    if type(value) is not int or not lower <= value <= upper:
+        raise ProviderError(code)
+    return value
+
+
+def _safe_id(value):
+    if not isinstance(value, str) or not 1 <= len(value) <= 256:
+        raise ProviderError("incident_id_invalid")
+    return hashlib.sha256(value.encode()).hexdigest()
+
+
+def capabilities():
+    tested = {"validation": "official_contract_tested", "live_verified": False, "address_family": "ipv4"}
+    return [
+        {**tested, "kind": "digitalocean", "automatic_rotation": True, "mechanism": "new_reserved_ipv4",
+         "requires": ["provider_token", "instance_id", "region", "allocation_and_interruption_authorization", "independent_candidate_verification"],
+         "source": "https://docs.digitalocean.com/products/networking/reserved-ips/details/limits/"},
+        {**tested, "kind": "hetzner_floating", "automatic_rotation": True, "mechanism": "new_floating_ipv4",
+         "requires": ["provider_token", "instance_id", "region", "interface", "allocation_and_guest_alias_authorization", "independent_candidate_verification"],
+         "source": "https://docs.hetzner.com/cloud/floating-ips/overview/"},
+        {**tested, "kind": "vultr", "automatic_rotation": True, "mechanism": "new_reserved_ipv4_cloud_compute",
+         "requires": ["provider_token", "instance_id", "region", "interface", "allocation_and_guest_alias_authorization", "independent_candidate_verification"],
+         "source": "https://docs.vultr.com/products/network/reserved-ips/management/attachment"},
+        {**tested, "kind": "aws_eip", "automatic_rotation": True, "mechanism": "new_elastic_ipv4_online",
+         "requires": ["aws_credentials", "account_id", "instance_id", "region", "existing_elastic_ip_for_rollback",
+                      "allocation_and_interruption_authorization", "independent_candidate_verification"],
+         "source": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/working-with-eips.html"},
+        {"kind": "aws_primary", "automatic_rotation": False, "reason": "external_controller_required",
+         "mechanism": "stop_start_dynamic_public_ipv4", "live_verified": False,
+         "source": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/working-with-ip-addresses.html"},
+        {"kind": "hetzner_primary", "automatic_rotation": False, "reason": "external_controller_required",
+         "live_verified": False, "source": "https://docs.hetzner.com/cloud/servers/primary-ips/faq/"},
+        {"kind": "vultr_bare_metal", "automatic_rotation": False, "reason": "external_controller_required",
+         "live_verified": False, "source": "https://docs.vultr.com/products/compute/instances/bare-metal/networking/reserved-ips"},
+        {"kind": "bandwagonhost", "automatic_rotation": False, "reason": "replacement_api_not_verified",
+         "validation": "official_documentation_unavailable", "live_verified": False, "source": "https://kiwivm.64clouds.com/api/"},
+        {"kind": "other", "automatic_rotation": False, "reason": "provider_adapter_unavailable", "live_verified": False},
+    ]
+
+
+class DigitalOceanAPI:
+    origin = API
+    patterns = {
+        "GET": r"(?:/droplets/[1-9][0-9]*|/reserved_ips\?per_page=200&page=[1-9][0-9]*|/reserved_ips/[0-9.]+(?:/actions/[1-9][0-9]*)?)",
+        "POST": r"(?:/reserved_ips|/reserved_ips/[0-9.]+/actions)",
+        "DELETE": r"/reserved_ips/[0-9.]+",
+    }
+    missing_pattern = r"/reserved_ips/[0-9.]+"
+    missing_key = "reserved_ip"
+    def __init__(self, token):
+        if not isinstance(token, str) or not 8 <= len(token) <= 512 or any(c.isspace() for c in token):
+            raise ProviderError("provider_token_invalid")
+        self._token = token
+        self._opener = build_opener(NoRedirect)
+
+    def __call__(self, method, path, data=None):
+        patterns = self.patterns
+        if method not in patterns or not isinstance(path, str) or not re.fullmatch(patterns[method], path):
+            raise ProviderError("provider_api_path_invalid")
+        raw = None if data is None else json.dumps(data, separators=(",", ":")).encode()
+        request = Request(self.origin + path, data=raw, method=method, headers={
+            "Authorization": "Bearer " + self._token, "Accept": "application/json",
+            "Content-Type": "application/json", "User-Agent": "HuaRun-IP-Recovery/1.0"})
+        try:
+            with self._opener.open(request, timeout=20) as response:
+                body = response.read(MAX_RESPONSE + 1)
+        except HTTPError as error:
+            if error.code == 404 and method == "GET" and re.fullmatch(self.missing_pattern, path):
+                return {self.missing_key: None}
+            if error.code == 404 and method == "DELETE":
+                return {}
+            raise ProviderError("provider_http_" + str(error.code)) from None
+        except (URLError, TimeoutError, OSError):
+            raise ProviderError("provider_network_unavailable") from None
+        if len(body) > MAX_RESPONSE:
+            raise ProviderError("provider_response_too_large")
+        try:
+            result = json.loads(body) if body else {}
+        except (ValueError, UnicodeError):
+            raise ProviderError("provider_invalid_json") from None
+        if not isinstance(result, dict):
+            raise ProviderError("provider_invalid_response")
+        return result
+
+
+class _Store:
+    def __init__(self, root):
+        self.root = Path(root)
+        if any(part.is_symlink() for part in (self.root, *self.root.parents)):
+            raise ProviderError("provider_state_symlink")
+        self.root.mkdir(mode=0o700, parents=True, exist_ok=True)
+        if self.root.stat().st_uid != os.geteuid():
+            raise ProviderError("provider_state_owner_mismatch")
+        self.root.chmod(0o700)
+
+    def read(self, name, default):
+        path = self.root / name
+        if path.is_symlink():
+            raise ProviderError("provider_state_symlink")
+        if not path.exists():
+            return default
+        info = path.stat()
+        if not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid() or info.st_mode & 0o077 or info.st_size > MAX_RESPONSE:
+            raise ProviderError("provider_state_permissions_invalid")
+        try:
+            value = json.loads(path.read_bytes())
+        except (ValueError, OSError):
+            raise ProviderError("provider_state_invalid") from None
+        if not isinstance(value, dict):
+            raise ProviderError("provider_state_invalid")
+        return value
+
+    def write(self, name, value):
+        path = self.root / name
+        if path.is_symlink():
+            raise ProviderError("provider_state_symlink")
+        tmp = self.root / (name + ".tmp." + str(os.getpid()) + "." + secrets.token_hex(4))
+        flags = os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, "O_NOFOLLOW", 0)
+        fd = os.open(tmp, flags, 0o600)
+        try:
+            with os.fdopen(fd, "wb") as stream:
+                stream.write((json.dumps(value, sort_keys=True) + "\n").encode())
+                stream.flush()
+                os.fsync(stream.fileno())
+            os.replace(tmp, path)
+            descriptor = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(descriptor)
+            finally:
+                os.close(descriptor)
+        finally:
+            tmp.unlink(missing_ok=True)
+
+    def remove(self, name):
+        path = self.root / name
+        if path.is_symlink():
+            raise ProviderError("provider_state_symlink")
+        path.unlink(missing_ok=True)
+        fd = os.open(self.root, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+
+class DigitalOceanRotator:
+    """No mutation occurs until rotate() has checked saved authorization/budgets."""
+    def __init__(self, config, state_dir, request=None, clock=time.time):
+        self.config = dict(config)
+        self.instance = _integer(config.get("instance_id", config.get("droplet_id")), 1, 2**63-1, "provider_instance_invalid")
+        self.region = config.get("region", "")
+        if not isinstance(self.region, str) or not re.fullmatch(r"[a-z]{2,8}[1-9][0-9]?", self.region):
+            raise ProviderError("provider_region_invalid")
+        self.request = request if request is not None else DigitalOceanAPI(config.get("token"))
+        self.clock = clock
+        self.scope = "digitalocean:" + str(self.instance) + ":" + self.region
+        self.store = _Store(Path(state_dir) / "digitalocean")
+
+    def _ledger(self):
+        ledger = self.store.read("ledger.json", {"scope": self.scope, "attempts": [], "owned": {}, "finished": {}})
+        if ledger.get("scope") != self.scope:
+            raise ProviderError("provider_state_scope_mismatch")
+        if not isinstance(ledger.get("attempts"), list) or not isinstance(ledger.get("owned"), dict) or not isinstance(ledger.get("finished"), dict):
+            raise ProviderError("provider_ledger_invalid")
+        return ledger
+
+    def _journal(self):
+        journal = self.store.read("transaction.json", {})
+        if journal and journal.get("scope") != self.scope:
+            raise ProviderError("provider_state_scope_mismatch")
+        return journal
+
+    def pending(self):
+        return bool(self._journal())
+
+    def _save(self, journal):
+        journal["updated_at"] = int(self.clock())
+        self.store.write("transaction.json", journal)
+
+    def _droplet(self):
+        d = self.request("GET", "/droplets/" + str(self.instance)).get("droplet")
+        if (not isinstance(d, dict) or d.get("id") != self.instance or d.get("region", {}).get("slug") != self.region
+                or d.get("status") != "active"):
+            raise ProviderError("provider_instance_identity_or_state_mismatch")
+        return d
+
+    def _ips(self):
+        result = []
+        for page in range(1, 11):
+            data = self.request("GET", "/reserved_ips?per_page=200&page=" + str(page))
+            rows = data.get("reserved_ips")
+            if not isinstance(rows, list):
+                raise ProviderError("provider_ip_list_invalid")
+            for row in rows:
+                if not isinstance(row, dict) or not isinstance(row.get("region"), dict):
+                    raise ProviderError("provider_ip_list_invalid")
+                _ipv4(row.get("ip"))
+                assigned = row.get("droplet")
+                if assigned is not None and (not isinstance(assigned, dict) or type(assigned.get("id")) is not int):
+                    raise ProviderError("provider_ip_assignment_invalid")
+            result.extend(rows)
+            if not data.get("links", {}).get("pages", {}).get("next"):
+                return result
+        raise ProviderError("provider_ip_list_limit")
+
+    def _get(self, ip):
+        ip = _ipv4(ip)
+        value = self.request("GET", "/reserved_ips/" + ip).get("reserved_ip")
+        if value is None:
+            return None
+        if (not isinstance(value, dict) or value.get("ip") != ip
+                or value.get("region", {}).get("slug") != self.region):
+            raise ProviderError("provider_ip_identity_mismatch")
+        assigned = value.get("droplet")
+        if assigned is not None and (not isinstance(assigned, dict) or type(assigned.get("id")) is not int):
+            raise ProviderError("provider_ip_assignment_invalid")
+        return value
+
+    @staticmethod
+    def _assigned(value):
+        return None if value is None or value.get("droplet") is None else value["droplet"]["id"]
+
+    def get_inbound_addresses(self):
+        droplet = self._droplet()
+        bound = [row for row in self._ips() if self._assigned(row) == self.instance]
+        if len(bound) > 1:
+            raise ProviderError("provider_multiple_inbound_addresses")
+        if bound:
+            if bound[0].get("region", {}).get("slug") != self.region:
+                raise ProviderError("provider_ip_region_mismatch")
+            return {"A": _ipv4(bound[0].get("ip"))}
+        values = [v.get("ip_address") for v in droplet.get("networks", {}).get("v4", []) if v.get("type") == "public"]
+        if len(values) != 1:
+            raise ProviderError("provider_public_ipv4_ambiguous")
+        return {"A": _ipv4(values[0])}
+
+    def current_ip(self):
+        return self.get_inbound_addresses()["A"]
+
+    def _authorization(self, ledger, rows):
+        for key in ("auto_rotate", "allow_reserved_ip_allocation", "allow_downtime"):
+            if self.config.get(key) is not True:
+                raise ProviderError("provider_" + key + "_not_authorized")
+        maximum = _integer(self.config.get("max_attempts_per_day", 1), 1, 3, "provider_attempt_limit_invalid")
+        limit = _integer(self.config.get("max_unassigned_ips", 2), 1, 3, "provider_unassigned_limit_invalid")
+        budget = self.config.get("max_monthly_unassigned_usd", 10)
+        if type(budget) not in (int, float) or not math.isfinite(budget) or not 0 < budget <= 100:
+            raise ProviderError("provider_budget_invalid")
+        recent = [t for t in ledger["attempts"] if type(t) in (int, float) and t > self.clock() - 86400]
+        if len(recent) >= maximum:
+            raise ProviderError("provider_daily_attempt_limit")
+        unassigned = sum(self._assigned(row) is None for row in rows)
+        peak = unassigned + 1 + int(any(self._assigned(row) == self.instance for row in rows))
+        if peak > limit or peak * UNASSIGNED_MONTHLY_USD > budget:
+            raise ProviderError("provider_unassigned_budget_exceeded")
+        ledger["attempts"] = recent + [int(self.clock())]
+
+    def _start(self, incident, ledger):
+        droplet = self._droplet()
+        rows = self._ips()
+        bound = [row for row in rows if self._assigned(row) == self.instance]
+        if len(bound) > 1:
+            raise ProviderError("provider_multiple_inbound_addresses")
+        if bound:
+            old = _ipv4(bound[0].get("ip"))
+            if bound[0].get("region", {}).get("slug") != self.region:
+                raise ProviderError("provider_ip_region_mismatch")
+        else:
+            public = [v.get("ip_address") for v in droplet.get("networks", {}).get("v4", []) if v.get("type") == "public"]
+            if len(public) != 1:
+                raise ProviderError("provider_public_ipv4_ambiguous")
+            old = _ipv4(public[0])
+        self._authorization(ledger, rows)
+        journal = {"scope": self.scope, "incident": incident, "phase": "allocating", "created_at": int(self.clock()),
+                   "old_ip": old, "old_reserved": bool(bound), "old_owned": old in ledger["owned"],
+                   "before_ips": [row.get("ip") for row in rows], "dns_attempted": False, "new_ip": None}
+        self.store.write("ledger.json", ledger)
+        self._save(journal)  # Never repeat an allocation whose acknowledgement was lost.
+        try:
+            answer = self.request("POST", "/reserved_ips", {"region": self.region}).get("reserved_ip")
+            if not isinstance(answer, dict):
+                raise ProviderError("provider_allocation_response_invalid")
+            new = _ipv4(answer.get("ip"))
+            if (new == old or new in journal["before_ips"] or answer.get("region", {}).get("slug") != self.region
+                    or self._assigned(answer) is not None):
+                raise ProviderError("provider_allocation_identity_invalid")
+            journal.update(new_ip=new, new_owned=True, phase="detach_old")
+            self._save(journal)
+            ledger["owned"][new] = {"created_at": journal["created_at"], "incident": incident}
+            self.store.write("ledger.json", ledger)
+        except Exception:
+            journal.update(phase="allocation_unknown", code="provider_allocation_requires_reconciliation")
+            self._save(journal)
+        return journal
+
+    def _assignment(self, journal, ip, target, label):
+        value = self._get(ip)
+        if value is None:
+            raise ProviderError("provider_reserved_ip_disappeared")
+        current = self._assigned(value)
+        if current not in (None, self.instance):
+            raise ProviderError("provider_ip_assigned_elsewhere")
+        action = journal.get("action")
+        if action:
+            if action.get("ip") != ip or action.get("target") != target:
+                raise ProviderError("provider_action_conflict")
+            ident = action.get("id")
+            if ident:
+                result = self.request("GET", "/reserved_ips/" + ip + "/actions/" + str(ident)).get("action", {})
+                if result.get("id") != ident:
+                    raise ProviderError("provider_action_identity_mismatch")
+                if result.get("status") == "errored":
+                    journal.pop("action", None); self._save(journal)
+                    raise ProviderError("provider_action_failed")
+                if result.get("status") != "completed":
+                    if self.clock() - action["started_at"] > 900:
+                        journal["code"] = "provider_action_requires_reconciliation"; self._save(journal)
+                    return False
+            elif current != target:
+                journal["code"] = "provider_action_requires_reconciliation"; self._save(journal)
+                return False
+            if current == target:
+                journal.pop("action", None); self._save(journal)
+                return True
+            if self.clock() - action["started_at"] > 900:
+                journal["code"] = "provider_action_requires_reconciliation"; self._save(journal)
+            return False
+        if current == target:
+            return True
+        journal["action"] = {"ip": ip, "target": target, "label": label, "started_at": int(self.clock())}
+        self._save(journal)
+        data = {"type": "assign", "droplet_id": target} if target is not None else {"type": "unassign"}
+        try:
+            action = self.request("POST", "/reserved_ips/" + ip + "/actions", data).get("action")
+            if not isinstance(action, dict) or type(action.get("id")) is not int or action["id"] < 1:
+                raise ProviderError("provider_action_response_invalid")
+            journal["action"]["id"] = action["id"]; self._save(journal)
+        except Exception:
+            journal["code"] = "provider_action_requires_reconciliation"; self._save(journal)
+        return False
+
+    def _delete_created(self, journal, ip):
+        ledger = self._ledger()
+        owned = ip in ledger["owned"] or (ip == journal.get("new_ip") and journal.get("new_owned") is True)
+        if not owned:
+            raise ProviderError("provider_delete_not_owned")
+        current = self._get(ip)
+        if current is not None and self._assigned(current) is not None:
+            raise ProviderError("provider_delete_still_assigned")
+        if current is not None:
+            self.request("DELETE", "/reserved_ips/" + ip)
+            if self._get(ip) is not None:
+                return False
+        ledger["owned"].pop(ip, None); self.store.write("ledger.json", ledger)
+        return True
+
+    def _finish(self, journal, status, code):
+        ip = journal["new_ip"] if status == "rotated" else journal["old_ip"]
+        result = {"status": status, "code": code, "addresses": {"A": ip}, "incident": journal["incident"],
+                  "old_reserved_ip_retained": bool(journal["old_reserved"] and not journal.get("old_deleted"))}
+        ledger = self._ledger()
+        if status == "rotated" and journal.get("new_owned") is True:
+            ledger["owned"].setdefault(ip, {"created_at": journal["created_at"], "incident": journal["incident"]})
+        ledger["finished"][journal["incident"]] = result
+        ledger["finished"] = dict(list(ledger["finished"].items())[-100:])
+        self.store.write("ledger.json", ledger)
+        self.store.remove("transaction.json")
+        return result
+
+    def _prepare_old(self, journal):
+        return not journal["old_reserved"] or self._assignment(journal, journal["old_ip"], None, "detach_old")
+
+    def _prepare_candidate(self, journal):
+        pass
+
+    def _remove_candidate_local(self, journal):
+        pass
+
+    def _rollback(self, journal, update_dns):
+        new = journal.get("new_ip")
+        if not new:
+            return {"status": "deferred", "code": "provider_allocation_requires_reconciliation"}
+        if journal["phase"] == "rollback_detach":
+            self._remove_candidate_local(journal)
+            if not self._assignment(journal, new, None, "rollback_detach_new"):
+                return {"status": "pending", "code": journal.get("code", "provider_rollback_in_progress")}
+            journal["phase"] = "rollback_old"; self._save(journal)
+        if journal["phase"] == "rollback_old":
+            if journal["old_reserved"] and not self._assignment(journal, journal["old_ip"], self.instance, "rollback_restore_old"):
+                return {"status": "pending", "code": journal.get("code", "provider_rollback_in_progress")}
+            journal["phase"] = "rollback_dns"; self._save(journal)
+        if journal["phase"] == "rollback_dns":
+            if journal["dns_attempted"]:
+                try:
+                    if update_dns(journal["old_ip"]) is not True:
+                        return {"status": "pending", "code": "provider_dns_rollback_pending"}
+                except Exception:
+                    return {"status": "pending", "code": "provider_dns_rollback_pending"}
+            journal["phase"] = "rollback_cleanup"; self._save(journal)
+        if not self._delete_created(journal, new):
+            return {"status": "pending", "code": "provider_cleanup_pending"}
+        return self._finish(journal, "rolled_back", journal.get("failure", "provider_recovery_failed"))
+
+    def rotate(self, incident_id, verify_ip, update_dns):
+        """Advance a durable transaction; callbacks must not echo credentials.
+
+        Call on subsequent timer ticks while pending() is true. Do not publish
+        get_inbound_addresses() to DNS during a pending transaction: that address
+        may be a candidate awaiting independent verification.
+        """
+        try:
+            verified_now = False
+            incident = _safe_id(incident_id)
+            ledger = self._ledger(); journal = self._journal()
+            if not journal:
+                if incident in ledger["finished"]:
+                    return ledger["finished"][incident]
+                journal = self._start(incident, ledger)
+            if journal["phase"] in ("allocating", "allocation_unknown"):
+                return {"status": "deferred", "code": "provider_allocation_requires_reconciliation"}
+            if journal["phase"].startswith("rollback_"):
+                return self._rollback(journal, update_dns)
+            if journal["phase"] == "detach_old":
+                if not self._prepare_old(journal):
+                    return {"status": "pending", "code": journal.get("code", "provider_action_pending")}
+                journal["phase"] = "assign_new"; self._save(journal)
+            if journal["phase"] == "assign_new":
+                if not self._assignment(journal, journal["new_ip"], self.instance, "assign_new"):
+                    return {"status": "pending", "code": journal.get("code", "provider_action_pending")}
+                journal["phase"] = "verify_new"; self._save(journal)
+            if journal["phase"] == "verify_new":
+                self._prepare_candidate(journal)
+                if self.clock() < journal.get("next_verify_at", 0):
+                    return {"status": "pending", "code": "provider_candidate_verification_pending"}
+                try:
+                    verified = verify_ip(journal["new_ip"]) is True
+                except Exception:
+                    verified = False
+                if not verified:
+                    journal["verify_failures"] = journal.get("verify_failures", 0) + 1
+                    journal["next_verify_at"] = int(self.clock()) + 30
+                    self._save(journal)
+                    if journal["verify_failures"] < 3:
+                        return {"status": "pending", "code": "provider_candidate_verification_pending"}
+                    raise ProviderError("provider_candidate_unreachable")
+                verified_now = True
+                journal["phase"] = "commit_dns"; self._save(journal)
+            if journal["phase"] == "commit_dns":
+                if not verified_now:
+                    self._prepare_candidate(journal)
+                    try:
+                        verified_now = verify_ip(journal["new_ip"]) is True
+                    except Exception:
+                        verified_now = False
+                    if not verified_now:
+                        raise ProviderError("provider_candidate_unreachable")
+                journal["dns_attempted"] = True; self._save(journal)
+                try:
+                    committed = update_dns(journal["new_ip"]) is True
+                except Exception:
+                    committed = False
+                if not committed:
+                    raise ProviderError("provider_dns_commit_failed")
+                journal["phase"] = "cleanup_old"; self._save(journal)
+            if journal["phase"] == "cleanup_old":
+                if journal["old_reserved"] and journal["old_owned"] and self.config.get("cleanup_owned_old_ip") is True:
+                    if not self._delete_created(journal, journal["old_ip"]):
+                        return {"status": "pending", "code": "provider_old_ip_cleanup_pending"}
+                    journal["old_deleted"] = True; self._save(journal)
+                return self._finish(journal, "rotated", "provider_ip_rotated")
+            raise ProviderError("provider_transaction_phase_invalid")
+        except ProviderError as error:
+            code = str(error)
+            try:
+                journal = self._journal()
+            except ProviderError:
+                return {"status": "failed", "code": code}
+            if journal and journal.get("new_ip") and not journal.get("action") and not journal.get("phase", "").startswith("rollback_") and journal.get("phase") != "cleanup_old":
+                journal.update(phase="rollback_detach", failure=code); self._save(journal)
+                return {"status": "pending", "code": "provider_rollback_required"}
+            return {"status": "deferred" if journal else "failed", "code": code}
+        except Exception:
+            # A provider or callback may include a Key in its exception. Do not echo it.
+            return {"status": "deferred", "code": "provider_operation_failed"}
+
+
+class HetznerAPI(DigitalOceanAPI):
+    origin = "https://api.hetzner.cloud/v1"
+    patterns = {
+        "GET": r"(?:/servers/[1-9][0-9]*|/floating_ips\?per_page=50&page=[1-9][0-9]*|/floating_ips/[1-9][0-9]*|/actions/[1-9][0-9]*)",
+        "POST": r"(?:/floating_ips|/floating_ips/[1-9][0-9]*/actions/(?:assign|unassign))",
+        "DELETE": r"/floating_ips/[1-9][0-9]*",
+    }
+    missing_pattern = r"/floating_ips/[1-9][0-9]*"
+    missing_key = "floating_ip"
+
+
+class LocalIPv4Alias:
+    """Only /32 aliases on an explicitly selected interface; never restart networking."""
+    def __init__(self, interface, run=None):
+        if not isinstance(interface, str) or not re.fullmatch(r"[a-zA-Z0-9_.:-]{1,15}", interface) or interface.startswith("-"):
+            raise ProviderError("provider_interface_invalid")
+        self.interface = interface
+        self.run = run or subprocess.run
+        self.executable = next((x for x in ("/usr/sbin/ip", "/sbin/ip", "/usr/bin/ip", "/bin/ip") if Path(x).is_file()), "/usr/sbin/ip")
+
+    def _command(self, args):
+        try:
+            result = self.run([self.executable, *args], check=False, capture_output=True, text=True, timeout=10)
+        except Exception:
+            raise ProviderError("provider_guest_network_command_failed") from None
+        if result.returncode != 0:
+            raise ProviderError("provider_guest_network_command_failed")
+        return result.stdout
+
+    def addresses(self):
+        try:
+            data = json.loads(self._command(["-j", "-4", "address", "show", "dev", self.interface]))
+            if len(data) != 1 or data[0].get("ifname") != self.interface:
+                raise ValueError()
+            return {x["local"]: x["prefixlen"] for x in data[0]["addr_info"] if x.get("family") == "inet"}
+        except ProviderError:
+            raise
+        except Exception:
+            raise ProviderError("provider_guest_network_response_invalid") from None
+
+    def ensure(self, ip):
+        ip = _ipv4(ip)
+        values = self.addresses()
+        if ip in values:
+            if values[ip] != 32:
+                raise ProviderError("provider_guest_address_conflict")
+            return
+        self._command(["-4", "address", "add", ip + "/32", "dev", self.interface])
+        if self.addresses().get(ip) != 32:
+            raise ProviderError("provider_guest_address_not_installed")
+
+    def remove(self, ip):
+        ip = _ipv4(ip)
+        values = self.addresses()
+        if ip not in values:
+            return
+        if values[ip] != 32:
+            raise ProviderError("provider_guest_address_conflict")
+        self._command(["-4", "address", "del", ip + "/32", "dev", self.interface])
+        if ip in self.addresses():
+            raise ProviderError("provider_guest_address_not_removed")
+
+
+class HetznerFloatingRotator(DigitalOceanRotator):
+    """Online replacement, preserving primary and existing Floating IP bindings.
+
+    Official contract: https://github.com/hetznercloud/hcloud-python/blob/main/hcloud/floating_ips/client.py
+    Guest setup: https://docs.hetzner.com/cloud/floating-ips/persistent-configuration/
+    The maintenance timer calls restore_local_address() after reboot. Only a new
+    /32 address owned by this transaction is ever added/removed locally.
+    """
+    def __init__(self, config, state_dir, request=None, clock=time.time, local=None):
+        self.config = dict(config)
+        self.instance = _integer(config.get("instance_id"), 1, 2**63-1, "provider_instance_invalid")
+        self.region = config.get("region", "")
+        if not isinstance(self.region, str) or not re.fullmatch(r"[a-z]{2,8}[1-9][0-9]?", self.region):
+            raise ProviderError("provider_region_invalid")
+        self.request = request if request is not None else HetznerAPI(config.get("token"))
+        self.clock = clock
+        self.scope = "hetzner_floating:" + str(self.instance) + ":" + self.region
+        self.store = _Store(Path(state_dir) / "hetzner-floating")
+        self.local = local if local is not None else LocalIPv4Alias(config.get("interface"))
+
+    def _droplet(self):
+        value = self.request("GET", "/servers/" + str(self.instance)).get("server")
+        if (not isinstance(value, dict) or value.get("id") != self.instance or value.get("status") != "running"
+                or value.get("datacenter", {}).get("location", {}).get("name") != self.region):
+            raise ProviderError("provider_instance_identity_or_state_mismatch")
+        primary = _ipv4(value.get("public_net", {}).get("ipv4", {}).get("ip"))
+        return {"id": self.instance, "status": "active", "region": {"slug": self.region},
+                "networks": {"v4": [{"type": "public", "ip_address": primary}]}}
+
+    def _normalize(self, row):
+        if not isinstance(row, dict) or type(row.get("id")) is not int or row["id"] < 1 or row.get("type") != "ipv4":
+            raise ProviderError("provider_ip_identity_mismatch")
+        ip = _ipv4(row.get("ip")); server = row.get("server")
+        if server is not None and (type(server) is not int or server < 1):
+            raise ProviderError("provider_ip_assignment_invalid")
+        location = row.get("home_location", {}).get("name")
+        labels = row.get("labels", {})
+        if not isinstance(location, str) or not isinstance(labels, dict):
+            raise ProviderError("provider_ip_identity_mismatch")
+        return {"id": row["id"], "ip": ip, "region": {"slug": location},
+                "droplet": None if server is None else {"id": server}, "labels": labels}
+
+    def _ips(self):
+        rows = []
+        for page in range(1, 21):
+            data = self.request("GET", "/floating_ips?per_page=50&page=" + str(page))
+            values = data.get("floating_ips")
+            if not isinstance(values, list):
+                raise ProviderError("provider_ip_list_invalid")
+            rows.extend(self._normalize(row) for row in values if isinstance(row, dict) and row.get("type") == "ipv4")
+            if not data.get("meta", {}).get("pagination", {}).get("next_page"):
+                return rows
+        raise ProviderError("provider_ip_list_limit")
+
+    def _get(self, ip):
+        rows = [row for row in self._ips() if row["ip"] == _ipv4(ip)]
+        if len(rows) > 1:
+            raise ProviderError("provider_ip_identity_mismatch")
+        return rows[0] if rows else None
+
+    def get_inbound_addresses(self):
+        d = self._droplet(); ledger = self._ledger()
+        selected = ledger.get("active_ip") or self.config.get("managed_ip")
+        if selected:
+            selected = _ipv4(selected); row = self._get(selected)
+            if not row or self._assigned(row) != self.instance:
+                raise ProviderError("provider_managed_ip_binding_mismatch")
+            return {"A": selected}
+        return {"A": d["networks"]["v4"][0]["ip_address"]}
+
+    def _authorization(self, ledger, rows):
+        for key in ("auto_rotate", "allow_floating_ip_allocation", "allow_guest_network_changes"):
+            if self.config.get(key) is not True:
+                raise ProviderError("provider_" + key + "_not_authorized")
+        maximum = _integer(self.config.get("max_attempts_per_day", 1), 1, 3, "provider_attempt_limit_invalid")
+        limit = _integer(self.config.get("max_floating_ips", 2), 1, 20, "provider_floating_limit_invalid")
+        budget = self.config.get("max_monthly_floating_eur", 6)
+        if type(budget) not in (int, float) or not math.isfinite(budget) or not 0 < budget <= 300:
+            raise ProviderError("provider_budget_invalid")
+        recent = [t for t in ledger["attempts"] if type(t) in (int, float) and t > self.clock() - 86400]
+        if len(recent) >= maximum:
+            raise ProviderError("provider_daily_attempt_limit")
+        # EUR 3/month excluding tax, price verified 2026-11-18. Count every
+        # project IPv4, including unrelated ones; this is a conservative estimate.
+        if len(rows) + 1 > limit or (len(rows) + 1) * 3 > budget:
+            raise ProviderError("provider_floating_budget_exceeded")
+        ledger["attempts"] = recent + [int(self.clock())]
+
+    def _adopt_allocation(self, journal, answer):
+        return self._adopt_normalized(journal, self._normalize(answer))
+
+    def _adopt_normalized(self, journal, new):
+        labels = {"huarun-instance": str(self.instance), "huarun-operation": journal["incident"][:32]}
+        if (new["ip"] == journal["old_ip"] or new["ip"] in journal["before_ips"]
+                or new["region"]["slug"] != self.region or self._assigned(new) is not None
+                or any(new["labels"].get(k) != v for k, v in labels.items())):
+            raise ProviderError("provider_allocation_identity_invalid")
+        journal.update(new_ip=new["ip"], new_id=new["id"], new_owned=True, phase="detach_old")
+        self._save(journal)
+        ledger = self._ledger()
+        ledger["owned"][new["ip"]] = {"id": new["id"], "incident": journal["incident"], "created_at": journal["created_at"]}
+        self.store.write("ledger.json", ledger)
+        return journal
+
+    def _start(self, incident, ledger):
+        self._droplet(); rows = self._ips(); old = self.current_ip()
+        self._authorization(ledger, rows)
+        journal = {"scope": self.scope, "incident": incident, "phase": "allocating", "created_at": int(self.clock()),
+                   "old_ip": old, "old_reserved": any(r["ip"] == old for r in rows), "old_owned": old in ledger["owned"],
+                   "before_ips": [r["ip"] for r in rows], "dns_attempted": False, "new_ip": None}
+        self.store.write("ledger.json", ledger); self._save(journal)
+        labels = {"huarun-instance": str(self.instance), "huarun-operation": incident[:32]}
+        try:
+            answer = self.request("POST", "/floating_ips", {"type": "ipv4", "home_location": self.region,
+                "name": "huarun-" + incident[:16], "labels": labels}).get("floating_ip")
+            return self._adopt_allocation(journal, answer)
+        except Exception:
+            journal.update(phase="allocation_unknown", code="provider_allocation_requires_reconciliation"); self._save(journal)
+            return journal
+
+    def _prepare_old(self, journal):
+        return True  # Multiple Floating IPs coexist; primary/old remain reachable.
+
+    def _prepare_candidate(self, journal):
+        if self.config.get("allow_guest_network_changes") is not True:
+            raise ProviderError("provider_allow_guest_network_changes_not_authorized")
+        if not journal.get("local_add_intent"):
+            if journal["new_ip"] in self.local.addresses():
+                raise ProviderError("provider_guest_address_conflict")
+            journal["local_add_intent"] = True; self._save(journal)
+        self.local.ensure(journal["new_ip"])
+        ledger = self._ledger()
+        ledger["owned"].setdefault(journal["new_ip"], {"id": journal["new_id"], "incident": journal["incident"], "created_at": journal["created_at"]})["alias_owned"] = True
+        self.store.write("ledger.json", ledger)
+
+    def _remove_candidate_local(self, journal):
+        if journal.get("local_add_intent"):
+            self.local.remove(journal["new_ip"])
+
+    def restore_local_address(self):
+        journal = self._journal()
+        if journal:
+            if journal.get("phase") in ("verify_new", "commit_dns", "cleanup_old") and journal.get("new_owned") and journal.get("local_add_intent"):
+                row = self._get(journal["new_ip"])
+                if not row or row["id"] != journal.get("new_id") or self._assigned(row) != self.instance:
+                    raise ProviderError("provider_managed_ip_binding_mismatch")
+                self._prepare_candidate(journal)
+            return {"status": "pending"}
+        ledger = self._ledger(); ip = ledger.get("active_ip")
+        if not ip:
+            return {"status": "not_needed"}
+        if self.config.get("allow_guest_network_changes") is not True:
+            raise ProviderError("provider_allow_guest_network_changes_not_authorized")
+        owned = ledger["owned"].get(ip)
+        if not owned:
+            raise ProviderError("provider_active_address_not_owned")
+        row = self._get(ip)
+        if not row or row["id"] != owned.get("id") or self._assigned(row) != self.instance:
+            raise ProviderError("provider_managed_ip_binding_mismatch")
+        self.local.ensure(ip)
+        return {"status": "restored", "addresses": {"A": ip}}
+
+    def _assignment(self, journal, ip, target, label):
+        value = self._get(ip)
+        if value is None:
+            raise ProviderError("provider_reserved_ip_disappeared")
+        current = self._assigned(value)
+        if current not in (None, self.instance):
+            raise ProviderError("provider_ip_assigned_elsewhere")
+        action = journal.get("action")
+        if action:
+            if action.get("ip") != ip or action.get("target") != target:
+                raise ProviderError("provider_action_conflict")
+            if action.get("id"):
+                result = self.request("GET", "/actions/" + str(action["id"])).get("action", {})
+                if result.get("id") != action["id"]:
+                    raise ProviderError("provider_action_identity_mismatch")
+                if result.get("status") == "error":
+                    journal.pop("action", None); self._save(journal)
+                    raise ProviderError("provider_action_failed")
+                if result.get("status") != "success":
+                    if self.clock() - action["started_at"] > 900:
+                        journal["code"] = "provider_action_requires_reconciliation"; self._save(journal)
+                    return False
+            if current != target:
+                if not action.get("id") or self.clock() - action["started_at"] > 900:
+                    journal["code"] = "provider_action_requires_reconciliation"; self._save(journal)
+                return False
+            journal.pop("action", None); self._save(journal)
+            return True
+        if current == target:
+            return True
+        journal["action"] = {"ip": ip, "target": target, "label": label, "started_at": int(self.clock())}; self._save(journal)
+        action_name = "assign" if target is not None else "unassign"
+        data = {"server": target} if target is not None else None
+        try:
+            action = self.request("POST", "/floating_ips/" + str(value["id"]) + "/actions/" + action_name, data).get("action")
+            if not isinstance(action, dict) or type(action.get("id")) is not int or action["id"] < 1:
+                raise ProviderError("provider_action_response_invalid")
+            journal["action"]["id"] = action["id"]; self._save(journal)
+        except Exception:
+            journal["code"] = "provider_action_requires_reconciliation"; self._save(journal)
+        return False
+
+    def _delete_created(self, journal, ip):
+        ledger = self._ledger(); owned = ledger["owned"].get(ip)
+        if owned is None and ip == journal.get("new_ip") and journal.get("new_owned"):
+            owned = {"id": journal["new_id"], "incident": journal["incident"]}
+        if not owned:
+            raise ProviderError("provider_delete_not_owned")
+        row = self._get(ip)
+        if row:
+            if row["id"] != owned["id"] or row["labels"].get("huarun-instance") != str(self.instance) or row["labels"].get("huarun-operation") != owned["incident"][:32]:
+                raise ProviderError("provider_delete_identity_mismatch")
+            if self._assigned(row) is not None:
+                if ip == journal.get("old_ip") and journal.get("old_owned") and self.config.get("cleanup_owned_old_ip") is True:
+                    if not self._assignment(journal, ip, None, "cleanup_old"):
+                        return False
+                    row = self._get(ip)
+                else:
+                    raise ProviderError("provider_delete_still_assigned")
+            if owned.get("alias_owned") or (ip == journal.get("new_ip") and journal.get("local_add_intent")):
+                self.local.remove(ip)
+            self._release_resource(row)
+            if self._get(ip) is not None:
+                return False
+        ledger["owned"].pop(ip, None); self.store.write("ledger.json", ledger)
+        return True
+
+    def _release_resource(self, row):
+        self.request("DELETE", "/floating_ips/" + str(row["id"]))
+
+    def _finish(self, journal, status, code):
+        ledger = self._ledger()
+        if status == "rotated":
+            ledger["active_ip"] = journal["new_ip"]
+            ledger["owned"].setdefault(journal["new_ip"], {"id": journal["new_id"], "incident": journal["incident"], "created_at": journal["created_at"]})
+            self.store.write("ledger.json", ledger)
+        return super()._finish(journal, status, code)
+
+    def rotate(self, incident_id, verify_ip, update_dns):
+        try:
+            journal = self._journal()
+            if journal.get("phase") in ("allocating", "allocation_unknown"):
+                # The label was part of allocation itself; recover a lost response
+                # without issuing a second billable POST or adopting unrelated IPs.
+                matching = [r for r in self._ips() if r["labels"].get("huarun-instance") == str(self.instance)
+                            and r["labels"].get("huarun-operation") == journal["incident"][:32]]
+                if len(matching) == 1:
+                    row = matching[0]
+                    self._adopt_normalized(journal, row)
+            return super().rotate(incident_id, verify_ip, update_dns)
+        except ProviderError as error:
+            return {"status": "deferred", "code": str(error)}
+        except Exception:
+            return {"status": "deferred", "code": "provider_operation_failed"}
+
+
+_UUID_PATTERN = r"[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}"
+
+
+def _uuid(value):
+    if not isinstance(value, str) or not re.fullmatch(_UUID_PATTERN, value):
+        raise ProviderError("provider_resource_id_invalid")
+    return value
+
+
+class VultrAPI(DigitalOceanAPI):
+    origin = "https://api.vultr.com/v2"
+    patterns = {
+        "GET": r"(?:/instances/" + _UUID_PATTERN + r"|/reserved-ips\?per_page=100|/reserved-ips/" + _UUID_PATTERN + r")",
+        "POST": r"(?:/reserved-ips|/reserved-ips/" + _UUID_PATTERN + r"/(?:attach|detach))",
+        "DELETE": r"/reserved-ips/" + _UUID_PATTERN,
+    }
+    missing_pattern = r"/reserved-ips/" + _UUID_PATTERN
+    missing_key = "reserved_ip"
+
+
+class VultrReservedRotator(HetznerFloatingRotator):
+    """Cloud Compute additional Reserved IPv4; no reboot or primary-IP replacement.
+
+    https://docs.vultr.com/products/network/reserved-ips/management/attachment
+    https://github.com/vultr/govultr/blob/master/reserved_ip.go
+    Bare Metal is intentionally excluded: its documented attach requires reboot.
+    """
+    def __init__(self, config, state_dir, request=None, clock=time.time, local=None):
+        self.config = dict(config)
+        self.instance = _uuid(config.get("instance_id"))
+        self.region = config.get("region", "")
+        if not isinstance(self.region, str) or not re.fullmatch(r"[a-z][a-z0-9-]{1,15}", self.region):
+            raise ProviderError("provider_region_invalid")
+        self.request = request if request is not None else VultrAPI(config.get("token"))
+        self.clock = clock
+        self.scope = "vultr:" + self.instance + ":" + self.region
+        self.store = _Store(Path(state_dir) / "vultr")
+        self.local = local if local is not None else LocalIPv4Alias(config.get("interface"))
+
+    def _droplet(self):
+        value = self.request("GET", "/instances/" + self.instance).get("instance")
+        if (not isinstance(value, dict) or value.get("id") != self.instance or value.get("region") != self.region
+                or value.get("status") != "active" or value.get("power_status") != "running"):
+            raise ProviderError("provider_instance_identity_or_state_mismatch")
+        primary = _ipv4(value.get("main_ip"))
+        return {"id": self.instance, "status": "active", "region": {"slug": self.region},
+                "networks": {"v4": [{"type": "public", "ip_address": primary}]}}
+
+    def _normalize(self, row):
+        if not isinstance(row, dict) or row.get("ip_type") != "v4" or row.get("subnet_size") != 32:
+            raise ProviderError("provider_ip_identity_mismatch")
+        ident = _uuid(row.get("id")); ip = _ipv4(row.get("subnet"))
+        target = row.get("instance_id") or None
+        if target is not None:
+            _uuid(target)
+        region = row.get("region")
+        if not isinstance(region, str):
+            raise ProviderError("provider_ip_identity_mismatch")
+        labels = {}; label = row.get("label", "")
+        if isinstance(label, str) and label.startswith("huarun:"):
+            bits = label.split(":")
+            if len(bits) == 3:
+                labels = {"huarun-instance": bits[1], "huarun-operation": bits[2]}
+        return {"id": ident, "ip": ip, "region": {"slug": region},
+                "droplet": None if target is None else {"id": target}, "labels": labels}
+
+    def _ips(self):
+        data = self.request("GET", "/reserved-ips?per_page=100")
+        values = data.get("reserved_ips")
+        if not isinstance(values, list):
+            raise ProviderError("provider_ip_list_invalid")
+        # Reject incomplete inventory before billable operations. This adapter is
+        # bounded to <=100 project IPs; no provider-supplied URL is followed.
+        if data.get("meta", {}).get("links", {}).get("next"):
+            raise ProviderError("provider_ip_list_limit")
+        return [self._normalize(row) for row in values if isinstance(row, dict) and row.get("ip_type") == "v4"]
+
+    def _authorization(self, ledger, rows):
+        for key in ("auto_rotate", "allow_reserved_ip_allocation", "allow_guest_network_changes"):
+            if self.config.get(key) is not True:
+                raise ProviderError("provider_" + key + "_not_authorized")
+        maximum = _integer(self.config.get("max_attempts_per_day", 1), 1, 3, "provider_attempt_limit_invalid")
+        limit = _integer(self.config.get("max_reserved_ips", 2), 1, 20, "provider_reserved_limit_invalid")
+        budget = self.config.get("max_monthly_reserved_usd", 6)
+        if type(budget) not in (int, float) or not math.isfinite(budget) or not 0 < budget <= 300:
+            raise ProviderError("provider_budget_invalid")
+        recent = [t for t in ledger["attempts"] if type(t) in (int,float) and t > self.clock()-86400]
+        if len(recent) >= maximum:
+            raise ProviderError("provider_daily_attempt_limit")
+        # USD 3/month per Reserved IP, whether attached or idle, snapshot 2026-11-18.
+        if len(rows)+1 > limit or (len(rows)+1)*3 > budget:
+            raise ProviderError("provider_reserved_budget_exceeded")
+        ledger["attempts"] = recent + [int(self.clock())]
+
+    def _start(self, incident, ledger):
+        self._droplet(); rows=self._ips(); old=self.current_ip()
+        self._authorization(ledger,rows)
+        journal={"scope":self.scope,"incident":incident,"phase":"allocating","created_at":int(self.clock()),
+                 "old_ip":old,"old_reserved":any(r["ip"]==old for r in rows),"old_owned":old in ledger["owned"],
+                 "before_ips":[r["ip"] for r in rows],"dns_attempted":False,"new_ip":None}
+        self.store.write("ledger.json",ledger); self._save(journal)
+        try:
+            answer=self.request("POST","/reserved-ips",{"region":self.region,"ip_type":"v4",
+                "label":"huarun:"+self.instance+":"+incident[:32]}).get("reserved_ip")
+            return self._adopt_allocation(journal,answer)
+        except Exception:
+            journal.update(phase="allocation_unknown",code="provider_allocation_requires_reconciliation"); self._save(journal)
+            return journal
+
+    def _assignment(self,journal,ip,target,label):
+        value=self._get(ip)
+        if value is None:
+            raise ProviderError("provider_reserved_ip_disappeared")
+        current=self._assigned(value)
+        if current not in (None,self.instance):
+            raise ProviderError("provider_ip_assigned_elsewhere")
+        action=journal.get("action")
+        if action:
+            if action.get("ip")!=ip or action.get("target")!=target:
+                raise ProviderError("provider_action_conflict")
+            if current==target:
+                journal.pop("action",None); self._save(journal); return True
+            if not action.get("acknowledged") or self.clock()-action["started_at"]>900:
+                journal["code"]="provider_action_requires_reconciliation"; self._save(journal)
+            return False
+        if current==target:
+            return True
+        journal["action"]={"ip":ip,"target":target,"label":label,"started_at":int(self.clock())}; self._save(journal)
+        try:
+            if target is None:
+                self.request("POST","/reserved-ips/"+value["id"]+"/detach")
+            else:
+                self.request("POST","/reserved-ips/"+value["id"]+"/attach",{"instance_id":target})
+            journal["action"]["acknowledged"]=True; self._save(journal)
+        except Exception:
+            journal["code"]="provider_action_requires_reconciliation"; self._save(journal)
+        return False
+
+    def _release_resource(self,row):
+        self.request("DELETE","/reserved-ips/"+row["id"])
+
+
+class UnsupportedProvider:
+    def __init__(self, kind):
+        self.kind = kind
+    def pending(self):
+        return False
+    def get_inbound_addresses(self):
+        raise ProviderError("provider_adapter_unavailable")
+    def rotate(self, incident_id, verify_ip, update_dns):
+        external = self.kind in ("aws_primary", "hetzner_primary", "vultr_bare_metal")
+        return {"status": "unsupported", "code": "external_controller_required" if external else "provider_adapter_unavailable"}
+
+
+def get_provider(config, state_dir, request=None, clock=time.time):
+    if config.get("kind", config.get("provider")) == "digitalocean":
+        return DigitalOceanRotator(config, state_dir, request=request, clock=clock)
+    if config.get("kind", config.get("provider")) == "hetzner_floating":
+        return HetznerFloatingRotator(config, state_dir, request=request, clock=clock)
+    if config.get("kind", config.get("provider")) == "vultr":
+        return VultrReservedRotator(config, state_dir, request=request, clock=clock)
+    if config.get("kind", config.get("provider")) == "aws_eip":
+        from aws_provider import AWSElasticRotator
+        return AWSElasticRotator(config, state_dir, request=request, clock=clock)
+    return UnsupportedProvider(config.get("kind", config.get("provider", "other")))
+PROVIDEREOF
+    chmod 0755 /usr/local/lib/huarun/ip_provider.py.new && mv -f /usr/local/lib/huarun/ip_provider.py.new /usr/local/lib/huarun/ip_provider.py || return 1
+    cat > /usr/local/lib/huarun/egress.py.new << 'EGRESSEOF' || return 1
+"""Managed TCP exit profiles. Explicit changes preserve inbound nodes and policy.
+
+Credentials remain in root-only local files. The model can select an existing
+profile; it cannot read its secret or silently fall back to a direct exit.
+"""
+from __future__ import annotations
+import argparse,contextlib,copy,getpass,grp,hashlib,ipaddress,json,os,pathlib,pwd,re,socket,stat,subprocess,sys,tempfile,time
+BASE=pathlib.Path('/etc/huarun/egress.json')
+STATE=pathlib.Path('/var/lib/huarun-egress')
+XRAY=pathlib.Path('/usr/local/etc/xray/config.json')
+INFO=pathlib.Path('/etc/huarun/info.json')
+TAG='huarun-egress'
+class EgressError(Exception):pass
+
+def load(path,default=None):
+    if path.is_symlink():raise EgressError('symlink_refused')
+    if not path.exists():return copy.deepcopy(default)
+    if not path.is_file() or path.stat().st_size>1024*1024:raise EgressError('invalid_local_file')
+    return json.loads(path.read_text())
+def write(path,value,mode=0o600,*,uid=None,gid=None):
+    path.parent.mkdir(parents=True,exist_ok=True,mode=0o700)
+    if path.is_symlink():raise EgressError('symlink_refused')
+    raw=value if isinstance(value,bytes) else (json.dumps(value,ensure_ascii=False,sort_keys=True,indent=2)+'\n').encode()
+    fd,name=tempfile.mkstemp(prefix='.'+path.name+'.',dir=path.parent)
+    try:
+        with os.fdopen(fd,'wb') as out:
+            if uid is not None or gid is not None:
+                current=os.fstat(out.fileno())
+                if current.st_uid!=uid or current.st_gid!=gid:os.fchown(out.fileno(),uid,gid)
+            os.fchmod(out.fileno(),mode)
+            out.write(raw);out.flush();os.fsync(out.fileno())
+        os.replace(name,path)
+        parent=os.open(path.parent,os.O_RDONLY|os.O_DIRECTORY)
+        try:os.fsync(parent)
+        finally:os.close(parent)
+    finally:
+        if os.path.exists(name):os.unlink(name)
+def command(args,timeout=30):
+    return subprocess.run(args,capture_output=True,timeout=timeout,check=False)
+def xray_config_identity(runner=command):
+    """Read the configured systemd identity; never grant world-readable secrets."""
+    def property_value(name):
+        try:
+            result=runner(['systemctl','show','xray.service','--property='+name,'--value'])
+            if result.returncode:raise EgressError('xray_service_identity_unavailable')
+            value=result.stdout.decode('utf-8') if isinstance(result.stdout,bytes) else result.stdout
+            if not isinstance(value,str) or len(value)>256:raise EgressError('xray_service_identity_invalid')
+            return value.strip()
+        except (OSError,UnicodeError,subprocess.SubprocessError):
+            raise EgressError('xray_service_identity_unavailable') from None
+    user,group,dynamic=property_value('User'),property_value('Group'),property_value('DynamicUser')
+    if dynamic not in ('','no'):raise EgressError('xray_dynamic_identity_unsupported')
+    try:
+        account=pwd.getpwuid(int(user)) if user.isdigit() else pwd.getpwnam(user or 'root')
+        group_id=(int(group) if group.isdigit() else grp.getgrnam(group).gr_gid) if group else account.pw_gid
+    except (KeyError,ValueError,OverflowError):
+        raise EgressError('xray_service_identity_invalid') from None
+    if type(group_id) is not int or not 0<=group_id<2**32-1:raise EgressError('xray_service_identity_invalid')
+    # Root owns the installed configuration; only the service group may read it.
+    return (0,group_id,0o600 if account.pw_uid==0 else 0o640)
+
+
+def install_xray_config(path,raw,*,uid,gid,mode):
+    """Atomically install checked config bytes with explicit owner/group/mode.
+
+    Ordinary writes use xray_config_identity(); rollback supplies the metadata
+    recorded before its transaction. Secret store files still use write(...).
+    """
+    if (type(uid) is not int or type(gid) is not int or not 0<=uid<2**32-1 or not 0<=gid<2**32-1
+            or type(mode) is not int or not 0<=mode<=0o777):
+        raise EgressError('xray_configuration_metadata_invalid')
+    write(pathlib.Path(path),raw,mode,uid=uid,gid=gid)
+
+
+def operation_lock():
+    sys.path.insert(0,str(pathlib.Path(__file__).resolve().parent))
+    from network import MaintenanceLock as lock
+    return lock()
+def profile(value):
+    if not isinstance(value,dict) or value.get('protocol') not in ('socks5','http-connect'):raise EgressError('unsupported_exit_protocol')
+    host=value.get('host','');port=value.get('port')
+    if not isinstance(host,str) or not host or len(host)>253 or any(c in host for c in '/@?#\\ \t\n\r'):raise EgressError('invalid_exit_host')
+    try:ipaddress.ip_address(host)
+    except ValueError:
+        if not re.fullmatch(r'[A-Za-z0-9](?:[A-Za-z0-9.-]*[A-Za-z0-9])?',host):raise EgressError('invalid_exit_host')
+    if type(port) is not int or not 1<=port<=65535:raise EgressError('invalid_exit_port')
+    for key in ('username','password'):
+        if not isinstance(value.get(key,''),str) or len(value.get(key,''))>512 or any(ord(c)<32 for c in value.get(key,'')):raise EgressError('invalid_exit_credentials')
+    if bool(value.get('username'))!=bool(value.get('password')):raise EgressError('incomplete_exit_credentials')
+    if type(value.get('tls',False)) is not bool:raise EgressError('invalid_exit_tls')
+    if value.get('tls') and value['protocol']!='http-connect':raise EgressError('tls_requires_http_connect')
+    return {k:value[k] for k in ('protocol','host','port','username','password','tls') if k in value}
+def outbound(value):
+    p=profile(value);server={'address':p['host'],'port':p['port']}
+    if p.get('username'):server.update(user=p['username'],**{'pass':p['password']})
+    result={'tag':TAG,'protocol':'socks' if p['protocol']=='socks5' else 'http','settings':server}
+    if p.get('tls'):result['streamSettings']={'network':'tcp','security':'tls','tlsSettings':{'serverName':p['host'],'allowInsecure':False}}
+    return result
+def patch_configuration(original,selected):
+    cfg=copy.deepcopy(original)
+    if not isinstance(cfg,dict) or not isinstance(cfg.get('outbounds'),list) or not isinstance(cfg.get('routing',{}).get('rules'),list):raise EgressError('unsupported_xray_configuration')
+    if not any(x.get('tag')=='direct' and x.get('protocol')=='freedom' for x in cfg['outbounds']):raise EgressError('direct_outbound_missing')
+    if not any(x.get('tag')=='blocked' and x.get('protocol')=='blackhole' for x in cfg['outbounds']):raise EgressError('whitelist_block_outbound_missing')
+    rules=cfg['routing']['rules']
+    if not rules or rules[-1].get('outboundTag')!='blocked' or rules[-1].get('port')!='0-65535':raise EgressError('whitelist_default_deny_missing')
+    managed=[r for r in rules if r.get('type')=='field' and isinstance(r.get('domain'),list) and r['domain'] and r.get('outboundTag') in ('direct',TAG)]
+    if not managed:raise EgressError('whitelist_rule_missing')
+    cfg['outbounds']=[o for o in cfg['outbounds'] if o.get('tag')!=TAG]
+    if selected is not None:cfg['outbounds'].append(outbound(selected))
+    for rule in managed:rule['outboundTag']=TAG if selected is not None else 'direct'
+    # No new routing rule, fallback, or inbound mutation is introduced.
+    if cfg['inbounds']!=original['inbounds']:raise EgressError('inbound_changed')
+    return cfg
+
+def check_xray(path):
+    if command(['/usr/local/bin/xray','run','-test','-config',str(path)]).returncode:raise EgressError('xray_configuration_invalid')
+def run_probe(out,*,node=False):
+    with tempfile.TemporaryDirectory(prefix='huarun-egress-probe-') as tmp:
+        root=pathlib.Path(tmp);root.chmod(0o700)
+        sock=socket.socket();sock.bind(('127.0.0.1',0));port=sock.getsockname()[1];sock.close()
+        cfg={'log':{'loglevel':'error'},'inbounds':[{'listen':'127.0.0.1','port':port,'protocol':'socks','settings':{'auth':'noauth','udp':False}}],'outbounds':[out]}
+        path=root/'client.json';write(path,cfg);check_xray(path)
+        with (root/'private.log').open('wb') as log:
+            child=subprocess.Popen(['/usr/local/bin/xray','run','-config',str(path)],stdout=log,stderr=subprocess.STDOUT)
+            try:
+                for _ in range(50):
+                    if child.poll() is not None:raise EgressError('exit_probe_client_failed')
+                    try:
+                        with socket.create_connection(('127.0.0.1',port),timeout=.1):break
+                    except OSError:time.sleep(.1)
+                else:raise EgressError('exit_probe_timeout')
+                url='https://www.cloudflare.com/cdn-cgi/trace'
+                result=command(['curl','--fail','--silent','--show-error','--max-time','15','--max-filesize','4096','--noproxy','','--proxy',f'socks5h://127.0.0.1:{port}',url],timeout=20)
+                if result.returncode:raise EgressError('exit_connectivity_failed')
+                found=re.search(rb'^ip=([^\r\n]+)',result.stdout,re.M)
+                if not found:raise EgressError('exit_ip_unavailable')
+                try:addr=ipaddress.ip_address(found[1].decode())
+                except ValueError:raise EgressError('exit_ip_invalid') from None
+                if not addr.is_global:raise EgressError('exit_ip_not_public')
+                return {'ok':True,'exit_ip':str(addr),'transport':'tcp','residential_status':'not_verified','path':'installed_node' if node else 'upstream_profile'}
+            finally:
+                child.terminate()
+                try:child.wait(timeout=5)
+                except subprocess.TimeoutExpired:child.kill();child.wait()
+def probe_node(info=INFO):
+    d=load(info)
+    if not isinstance(d,dict) or any(not d.get(k) for k in ('uuid','domain','wsPath')):raise EgressError('node_information_missing')
+    out={'protocol':'vmess','settings':{'vnext':[{'address':'127.0.0.1','port':443,'users':[{'id':d['uuid'],'alterId':0,'security':'auto'}]}]},'streamSettings':{'network':'ws','security':'tls','tlsSettings':{'serverName':d['domain'],'allowInsecure':False},'wsSettings':{'path':d['wsPath'],'headers':{'Host':d['domain']}}}}
+    return run_probe(out,node=True)
+
+class Egress:
+    def __init__(self,config=BASE,state=STATE,xray=XRAY,runner=command,probe=run_probe,node_probe=probe_node,lock=operation_lock,check=check_xray,identity_fn=xray_config_identity):
+        self.config,self.state,self.xray=config,state,xray;self.runner,self.probe,self.node_probe,self.lock,self.check=runner,probe,node_probe,lock,check
+        self.journal=state/'transaction.json';self.status_path=state/'state.json';self.backup=state/'config.backup'
+        self.identity_fn=identity_fn
+    def status(self):
+        config=load(self.config,{'profiles':{}});cfg=load(self.xray,{});state=load(self.status_path,{})
+        chain=any(r.get('outboundTag')==TAG for r in cfg.get('routing',{}).get('rules',[]))
+        return {'configured':bool(config.get('profiles')),'profiles':[{ 'name':name,'protocol':p['protocol']} for name,p in config.get('profiles',{}).items()], 'active':state.get('active','unknown') if chain else 'direct','chain_enabled':chain,'fallback_to_direct':False,'pending_recovery':self.journal.exists(),'last_verified_exit_ip':state.get('exit_ip'),'transport':'tcp','residential_status':'not_verified'}
+    def add(self,name,value):
+        if not re.fullmatch(r'[a-z0-9][a-z0-9_-]{0,31}',name):raise EgressError('invalid_profile_name')
+        with self.lock():
+            if self.journal.exists():raise EgressError('recovery_pending')
+            c=load(self.config,{'schema_version':1,'profiles':{}})
+            if c.get('schema_version')!=1 or not isinstance(c.get('profiles'),dict):raise EgressError('invalid_egress_configuration')
+            c['profiles'][name]=profile(value);write(self.config,c)
+        return {'saved':True,'profile':name}
+    def recover_locked(self):
+        journal=load(self.journal)
+        if journal is None:return {'status':'no_recovery_needed'}
+        if journal.get('schema_version')!=1 or not self.backup.is_file() or self.backup.is_symlink():raise EgressError('recovery_backup_missing')
+        raw=self.backup.read_bytes()
+        if hashlib.sha256(raw).hexdigest()!=journal.get('before_sha256'):raise EgressError('recovery_backup_mismatch')
+        if 'uid' in journal and 'gid' in journal:
+            uid,gid,mode=journal['uid'],journal['gid'],journal['mode']
+        else:
+            # Pre-release journals did not record ownership. Recover readable,
+            # private service permissions instead of repeating root-only failure.
+            uid,gid,mode=self.identity_fn()
+        install_xray_config(self.xray,raw,uid=uid,gid=gid,mode=mode);self.check(self.xray)
+        if self.runner(['systemctl','restart','xray']).returncode or self.runner(['systemctl','is-active','--quiet','xray']).returncode:raise EgressError('recovery_service_failed')
+        write(self.status_path,journal['previous_status']);self.journal.unlink();self.backup.unlink()
+        return {'status':'rolled_back'}
+    def recover(self):
+        with self.lock():return self.recover_locked()
+    def use(self,name):
+        with self.lock():
+            if self.journal.exists():self.recover_locked()
+            c=load(self.config,{'profiles':{}})
+            selected=None if name=='direct' else c.get('profiles',{}).get(name)
+            if name!='direct' and selected is None:raise EgressError('profile_not_found')
+            if selected is not None:self.probe(outbound(selected))
+            if self.xray.is_symlink():raise EgressError('symlink_refused')
+            raw=self.xray.read_bytes();candidate=patch_configuration(json.loads(raw),selected)
+            metadata=self.xray.stat();mode=stat.S_IMODE(metadata.st_mode)
+            applied_uid,applied_gid,applied_mode=self.identity_fn()
+            self.state.mkdir(parents=True,exist_ok=True,mode=0o700);os.chmod(self.state,0o700)
+            with tempfile.TemporaryDirectory(prefix='candidate-',dir=self.state) as folder:
+                path=pathlib.Path(folder)/'config.json';write(path,candidate);self.check(path)
+                before=load(self.status_path,{})
+                write(self.backup,raw)
+                write(self.journal,{'schema_version':1,'before_sha256':hashlib.sha256(raw).hexdigest(),'mode':mode,
+                                    'uid':metadata.st_uid,'gid':metadata.st_gid,'previous_status':before})
+                try:
+                    install_xray_config(self.xray,path.read_bytes(),uid=applied_uid,gid=applied_gid,mode=applied_mode)
+                    if self.runner(['systemctl','restart','xray']).returncode or self.runner(['systemctl','is-active','--quiet','xray']).returncode:raise EgressError('xray_restart_failed')
+                    observed=self.node_probe()
+                    if observed.get('ok') is not True:raise EgressError('installed_node_probe_failed')
+                    state={'active':name,'exit_ip':observed['exit_ip'],'verified_at':int(time.time())}
+                    write(self.status_path,state)
+                    self.journal.unlink();self.backup.unlink()
+                    return {'status':'verified','active':name,**observed,'fallback_to_direct':False}
+                except Exception:
+                    self.recover_locked()
+                    raise EgressError('exit_change_failed_rolled_back') from None
+    def probe_current(self):
+        with self.lock():
+            if self.journal.exists():raise EgressError('recovery_pending')
+            return {**self.node_probe(),'active':self.status()['active']}
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__);s=p.add_subparsers(dest='action',required=True)
+    for name in ('status','probe','recover','direct'):s.add_parser(name)
+    use=s.add_parser('use');use.add_argument('profile')
+    setup=s.add_parser('setup');setup.add_argument('profile');setup.add_argument('--stdin',action='store_true')
+    args=p.parse_args()
+    if os.geteuid()!=0:raise EgressError('root_required')
+    manager=Egress()
+    if args.action=='status':result=manager.status()
+    elif args.action=='probe':result=manager.probe_current()
+    elif args.action=='recover':result=manager.recover()
+    elif args.action in ('use','direct'):result=manager.use(args.profile if args.action=='use' else 'direct')
+    elif args.stdin:
+        raw=sys.stdin.read(8193)
+        if len(raw)>8192:raise EgressError('profile_input_too_large')
+        result=manager.add(args.profile,json.loads(raw))
+    else:
+        if not sys.stdin.isatty():raise EgressError('terminal_required')
+        value={'protocol':input('出口类型 socks5 / http-connect: ').strip(),'host':input('出口主机: ').strip(),'port':int(input('端口: ').strip()),'username':input('用户名（可空）: ').strip(),'password':getpass.getpass('密码（隐藏，可空）: ')}
+        if value['protocol']=='http-connect':value['tls']=input('连接 HTTP 代理时使用 TLS？[y/N]: ').strip().lower()=='y'
+        result=manager.add(args.profile,value)
+    print(json.dumps(result,ensure_ascii=False))
+if __name__=='__main__':
+    try:main()
+    except (EgressError,OSError,ValueError,KeyError,subprocess.SubprocessError) as error:
+        print(json.dumps({'error':str(error) if isinstance(error,EgressError) else type(error).__name__}),file=sys.stderr);sys.exit(1)
+EGRESSEOF
+    chmod 0755 /usr/local/lib/huarun/egress.py.new && mv -f /usr/local/lib/huarun/egress.py.new /usr/local/lib/huarun/egress.py || return 1
+    cat > /usr/local/lib/huarun/network_setup.py.new << 'NETWORKSETUPEOF' || return 1
+"""Explicit fixed-domain migration; ordinary upgrades never invoke this module."""
+from __future__ import annotations
+import argparse,hashlib,json,os,pathlib,re,stat,subprocess,sys,time
+from network import Network,MaintenanceLock,NetworkError,interactive_config,hostname,load_private,private_file,MAX_BYTES
+from egress import write,probe_node
+INFO=pathlib.Path('/etc/huarun/info.json')
+NGINX=pathlib.Path('/etc/nginx/conf.d/huarun.conf')
+CONFIG=pathlib.Path('/etc/huarun/network.json')
+STATE=pathlib.Path('/var/lib/huarun-network/setup')
+ACME='/usr/local/lib/huarun/acme.sh'
+ACME_HOME='/etc/huarun/acme'
+
+def nginx_domain(raw,old,new,cert):
+    text=raw.decode(); old=hostname(old);new=hostname(new)
+    text,count=re.subn(r'(?m)^(\s*server_name\s+)'+re.escape(old)+r';',lambda m:m[1]+new+';',text)
+    if count!=2:raise NetworkError('nginx_domain_layout_unsupported')
+    text,c1=re.subn(r'(?m)^(\s*ssl_certificate\s+)[^;]+;',lambda m:m[1]+str(cert/'fullchain.cer')+';',text)
+    text,c2=re.subn(r'(?m)^(\s*ssl_certificate_key\s+)[^;]+;',lambda m:m[1]+str(cert/(new+'.key'))+';',text)
+    if (c1,c2)!=(1,1):raise NetworkError('nginx_certificate_layout_unsupported')
+    return text.encode()
+
+class Setup:
+    def __init__(self,info=INFO,nginx=NGINX,config=CONFIG,state=STATE,runner=subprocess.run,probe=probe_node,cert_root=pathlib.Path('/etc/nginx/ssl/huarun'),network_state=pathlib.Path('/var/lib/huarun-network')):
+        self.info,self.nginx,self.config,self.state=info,nginx,config,state
+        self.cert_root,self.network_state=cert_root,network_state
+        self.provider_state=network_state/'provider'
+        self.runner,self.probe=runner,probe;self.journal=state/'transaction.json'
+    def invoke(self,args,lock,timeout=60,acceptable=(0,)):
+        env=os.environ.copy();env['HUARUN_NETWORK_LOCK_FD']=str(lock.network_fd)
+        if lock.inherited:env['HUARUN_UPDATE_LOCK_FD']=str(lock.fd)
+        else:env.pop('HUARUN_UPDATE_LOCK_FD',None)
+        result=self.runner(args,capture_output=True,env=env,pass_fds=(lock.fd,lock.network_fd),timeout=timeout)
+        if result.returncode not in acceptable:raise NetworkError('domain_setup_command_failed')
+        return result
+    def snapshot(self):
+        if self.provider_state.is_symlink():raise NetworkError("provider_state_symlink")
+        if self.provider_state.exists() and any(self.provider_state.rglob('transaction.json')):
+            raise NetworkError("provider_recovery_pending")
+        if self.journal.exists():raise NetworkError('domain_recovery_pending')
+        self.state.mkdir(parents=True,exist_ok=True,mode=0o700);os.chmod(self.state,0o700)
+        entries=[]
+        for i,path in enumerate((self.info,self.nginx,self.config,self.network_state/'state.json')):
+            if path.is_symlink():raise NetworkError('symlink_refused')
+            entry={'slot':i,'exists':path.exists()}
+            if path.exists():
+                entry['mode']=stat.S_IMODE(path.stat().st_mode)
+                raw=path.read_bytes();entry['sha256']=hashlib.sha256(raw).hexdigest()
+                write(self.state/f'backup-{i}',raw)
+            entries.append(entry)
+        write(self.journal,{'schema_version':1,'entries':entries,'started_at':int(time.time())})
+    def recover(self,lock):
+        if not self.journal.exists():return {'status':'no_recovery_needed'}
+        j=load_private(self.journal)
+        if j.get('schema_version')!=1 or [e.get('slot') for e in j.get('entries',[])]!=[0,1,2,3]:raise NetworkError('domain_recovery_invalid')
+        restored={}
+        for entry in j['entries']:
+            if type(entry.get('exists')) is not bool:raise NetworkError('domain_recovery_invalid')
+            if entry['exists']:
+                backup=self.state/f"backup-{entry['slot']}"
+                if private_file(backup,limit=MAX_BYTES) is None:raise NetworkError('domain_recovery_backup_missing')
+                raw=backup.read_bytes()
+                if hashlib.sha256(raw).hexdigest()!=entry.get('sha256'):raise NetworkError('domain_recovery_backup_mismatch')
+                if type(entry.get('mode')) is not int or not 0<=entry['mode']<=0o777:raise NetworkError('domain_recovery_invalid')
+                restored[entry['slot']]=raw
+        for e,path in zip(j['entries'],(self.info,self.nginx,self.config,self.network_state/'state.json')):
+            if path.is_symlink():raise NetworkError('symlink_refused')
+            if e['exists']:write(path,restored[e['slot']],e['mode'])
+            elif path.exists():path.unlink()
+        self.invoke(['nginx','-t'],lock)
+        self.invoke(['systemctl','reload','nginx'],lock)
+        if self.probe().get('ok') is not True:raise NetworkError('restored_node_probe_failed')
+        self.clear()
+        return {'status':'rolled_back','dns_records':'retained_for_owner_review'}
+    def clear(self):
+        self.journal.unlink()
+        for i in range(4):
+            p=self.state/f'backup-{i}'
+            if p.exists():p.unlink()
+    def certificate_valid(self,cert,domain,lock):
+        paths=(cert/'fullchain.cer',cert/(domain+'.key'))
+        if any(not p.is_file() or p.is_symlink() for p in paths):return False
+        try:
+            self.invoke(['openssl','x509','-in',str(paths[0]),'-noout','-checkhost',domain,'-checkend','0'],lock)
+        except NetworkError:return False
+        return True
+    def apply(self,value,lock):
+        if self.journal.exists():self.recover(lock)
+        old=json.loads(self.info.read_bytes());new=hostname(value['domain'])
+        same=new==hostname(old['domain'])
+        old_cert=pathlib.Path(old.get('certDir') or self.cert_root)
+        reuse_current=same and self.certificate_valid(old_cert,new,lock)
+        cert=old_cert if reuse_current else self.cert_root/new
+        candidate=None if reuse_current else nginx_domain(self.nginx.read_bytes(),old['domain'],new,cert)
+        self.snapshot()
+        try:
+            network=Network(config_path=self.config,state_dir=self.network_state)
+            network.configure(value,allow_domain_change=True,info_path=str(self.info))
+            network.prepare(new)
+            if not reuse_current:
+                cert.mkdir(parents=True,exist_ok=True,mode=0o700)
+                if not self.certificate_valid(cert,new,lock):
+                    # acme.sh returns 2 when a cached certificate is not due.
+                    # Install that cached certificate and verify it below.
+                    self.invoke([ACME,'--home',ACME_HOME,'--issue','-d',new,'--keylength','ec-256','--dns','dns_huarun','--server','letsencrypt'],lock,timeout=900,acceptable=(0,2))
+                    self.invoke([ACME,'--home',ACME_HOME,'--install-cert','-d',new,'--ecc','--key-file',str(cert/(new+'.key')),'--fullchain-file',str(cert/'fullchain.cer'),'--reloadcmd','systemctl is-active --quiet nginx && systemctl reload nginx || true'],lock)
+                if not self.certificate_valid(cert,new,lock):
+                    raise NetworkError('domain_certificate_invalid')
+                write(self.nginx,candidate,0o644)
+                self.invoke(['nginx','-t'],lock)
+                updated={**old,'domain':new,'certDir':str(cert)}
+                write(self.info,updated,stat.S_IMODE(self.info.stat().st_mode))
+                self.invoke(['systemctl','reload','nginx'],lock)
+            observed=self.probe()
+            if observed.get('ok') is not True:raise NetworkError('domain_node_probe_failed')
+            self.clear()
+            return {'status':'verified','domain':new,'node_identity_preserved':True,'whitelist_preserved':True,'key_preserved':True,'probe':observed}
+        except Exception:
+            try:self.recover(lock)
+            except Exception:raise NetworkError('domain_setup_failed_recovery_pending') from None
+            raise NetworkError('domain_setup_failed_local_configuration_restored') from None
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('command',choices=['setup','recover']);p.add_argument('--stdin',action='store_true');p.add_argument('--domain');a=p.parse_args()
+    if os.geteuid()!=0:raise NetworkError('root_required')
+    with MaintenanceLock() as lock:
+        setup=Setup()
+        if a.command=='recover':result=setup.recover(lock)
+        else:
+            if a.stdin:
+                raw=sys.stdin.buffer.read(65537)
+                if len(raw)>65536:raise NetworkError('configuration_too_large')
+                value=json.loads(raw)
+            else:value=interactive_config(a.domain)
+            result=setup.apply(value,lock)
+    print(json.dumps(result,ensure_ascii=False))
+if __name__=='__main__':
+    try:main()
+    except (NetworkError,OSError,ValueError,KeyError,subprocess.SubprocessError) as error:
+        print(json.dumps({'error':str(error) if isinstance(error,NetworkError) else type(error).__name__}),file=sys.stderr);sys.exit(1)
+NETWORKSETUPEOF
+    chmod 0755 /usr/local/lib/huarun/network_setup.py.new && mv -f /usr/local/lib/huarun/network_setup.py.new /usr/local/lib/huarun/network_setup.py || return 1
+    cat > "$ACME_HOME/dnsapi/dns_huarun.sh" << 'HUARUNDNS' || return 1
+#!/bin/sh
+dns_huarun_add() { /usr/bin/python3 /usr/local/lib/huarun/network.py dns-add -- "$1" "$2" >/dev/null; }
+dns_huarun_rm() { /usr/bin/python3 /usr/local/lib/huarun/network.py dns-remove -- "$1" "$2" >/dev/null; }
+HUARUNDNS
+    chmod 0700 "$ACME_HOME/dnsapi/dns_huarun.sh" || return 1
+}
+prepareNetwork() {
+    if [[ $OPT_LEGACY_DIRECT -eq 1 ]]; then return 0; fi
+    command -v python3 >/dev/null || $CMD_INSTALL python3 >/dev/null 2>&1 || return 1
+    installNetworkPrograms || return 1
+    if [[ $OPT_NETWORK_STDIN -eq 1 ]]; then
+        python3 /usr/local/lib/huarun/network.py --configure-stdin || return 1
+    elif [[ ! -f /etc/huarun/network.json ]]; then
+        python3 /usr/local/lib/huarun/network.py configure --domain "$DOMAIN" || return 1
+    fi
+    python3 /usr/local/lib/huarun/network.py prepare --domain "$DOMAIN" || return 1
+}
+installNetworkTimer() {
+    local existed=0 enabled=0 active=0
+    [[ ! -e /etc/systemd/system/huarun-network.timer ]] || existed=1
+    systemctl is-enabled --quiet huarun-network.timer 2>/dev/null && enabled=1 || true
+    systemctl is-active --quiet huarun-network.timer 2>/dev/null && active=1 || true
+    cat > /etc/systemd/system/huarun-network.service <<'NETSERVICE' || return 1
+[Unit]
+Description=HuaRun domain, DNS and network recovery
+After=network-online.target nginx.service xray.service
+Wants=network-online.target
+[Service]
+Type=oneshot
+UMask=0077
+ExecStartPre=/usr/bin/python3 /usr/local/lib/huarun/network_setup.py recover
+ExecStartPre=/usr/bin/python3 /usr/local/lib/huarun/egress.py recover
+ExecStart=/usr/bin/python3 /usr/local/lib/huarun/network.py run
+TimeoutStartSec=300
+NETSERVICE
+    cat > /etc/systemd/system/huarun-network.timer <<'NETTIMER' || return 1
+[Unit]
+Description=Check HuaRun DNS and network every five minutes
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+RandomizedDelaySec=30s
+Persistent=true
+Unit=huarun-network.service
+[Install]
+WantedBy=timers.target
+NETTIMER
+    systemctl daemon-reload || return 1
+    if [[ $existed -eq 0 || $enabled -eq 1 ]]; then
+        systemctl enable huarun-network.timer >/dev/null || return 1
+        if [[ $existed -eq 0 || $active -eq 1 ]]; then systemctl start huarun-network.timer || return 1; fi
+    fi
+}
+
 installCert() {
     say "$BLUE" ""; say "$BLUE" "申请证书..."
     systemctl stop nginx 2>/dev/null || true
@@ -420,10 +3293,14 @@ installCert() {
     rm -f "$tmp_acme"
     mkdir -p "$ACME_HOME"
     "$ACME_BIN" --home "$ACME_HOME" --set-default-ca --server letsencrypt >/dev/null 2>&1 || true
-    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "${DOMAIN}" --keylength ec-256 --standalone --force --server letsencrypt \
-        --pre-hook "systemctl stop nginx 2>/dev/null || true" \
-        --post-hook "systemctl start nginx 2>/dev/null || true" >/dev/null 2>&1; then
-        colorEcho "$RED" "证书申请失败。常见原因：域名没解析到本机、80端口被云防火墙挡住、Let's Encrypt 频率限制"
+    local -a validation
+    if [[ $OPT_LEGACY_DIRECT -eq 1 ]]; then
+        validation=(--standalone --pre-hook "systemctl stop nginx 2>/dev/null || true" --post-hook "systemctl start nginx 2>/dev/null || true")
+    else
+        validation=(--dns dns_huarun)
+    fi
+    if ! "$ACME_BIN" --home "$ACME_HOME" --issue -d "${DOMAIN}" --keylength ec-256 --force --server letsencrypt "${validation[@]}" >/dev/null 2>&1; then
+        colorEcho "$RED" "证书申请失败；检查域名、Cloudflare 配置及 ACME 日志。"
         colorEcho "$YELLOW" "详细日志：${ACME_HOME}/acme.sh.log"
         exit 1
     fi
@@ -508,6 +3385,15 @@ generateConfig() {
   }
 }
 XEOF
+    python3 - <<'FRESHXRAYPERMS'
+import pathlib,sys
+sys.path.insert(0,'/usr/local/lib/huarun')
+from egress import xray_config_identity,install_xray_config
+path=pathlib.Path('/usr/local/etc/xray/config.json')
+uid,gid,mode=xray_config_identity()
+install_xray_config(path,path.read_bytes(),uid=uid,gid=gid,mode=mode)
+FRESHXRAYPERMS
+
     writeNginxConf
     say "$GREEN" "✓ 配置生成完成"
 }
@@ -820,6 +3706,18 @@ installAssistantTemplate() {
   T:不索要或打印 API Key、SSH 密码、私钥及秘密文件；不将连接信息和私人日志发给知识站或搜索接口。
   A:为了完成任务绕过命令闸或修改自身边界⇒停止该动作并说明具体缺少的操作权限。
 
+::GENE{network_maintenance|conf:confirmed|scope:global}
+  T:新安装接入 Cloudflare 时按主人的既定选择使用 Full account and zone access 账户 API 令牌；秘密由主人在 SSH 终端 huarun network setup 隐藏输入，模型只用脱敏结果，不索要或复述令牌。
+  T:先 huarun network status，再按请求 huarun network check；DNS、TLS、通知和厂商恢复根据本机已保存配置运行。check 后读取新的 doctor、status 和 network status；network status 不返回 TLS 检查，用 doctor 核对证书、egress probe 检查完整节点通路，不把请求已提交说成网络恢复。
+  T:正常自动升级不迁移域名。旧节点接入自有域名是主人在 SSH 终端单独执行的 network setup 事务，保留 UUID、WebSocket 路径、白名单和 Key；成功后用新的连接信息指导重新导入。
+  T:Cloudflare 默认仅 DNS；橙云要求区域已有 Full (strict)，出现 cloudflare_full_strict_required 时说明具体设置，不能擅自修改全区域 TLS。
+  T:区分 VPS 入站 IP、Cloudflare CDN IP 与代理出口 IP。没有可信目标地区证据时报告可达性异常，不断言被墙；只有已适配且已授权的厂商恢复可自动换 IP。
+  T:通知未配置时明确 not_configured；队列、重试与真实送达分别报告，不能说已经通知。
+::GENE{chain_egress|conf:confirmed|scope:global}
+  T:按主人请求用 huarun egress status 和 huarun egress probe 检查链式 TCP 出口；只通过 huarun egress use PROFILE 切换本机已有命名 profile，然后复查出口 IP、白名单与服务状态。
+  T:SOCKS5 或 HTTP CONNECT 只是用户已有出口的连接方式；家宽归属需要供应商及实测证据，不宣称已经采购家宽，不把 UDP 当作已支持。
+  T:选中出口失败保持不静默回退直连；huarun egress direct 仅在主人明确要求恢复直连时执行。setup、凭据和供应商采购由主人在 SSH 终端处理。
+
 ::ILANG::COMPLETE::
 AGENTEOF
     cat > "${AI_TPL}/SOUL.md" << 'SOULEOF' || return 1
@@ -854,6 +3752,13 @@ AGENTEOF
   T:使用简体中文，先报结果，再说明关键证据、做过的变更和必要的下一步；给出能打开的资料来源。
   T:工具失效或权限不足时说明具体失败点和影响，继续可独立完成的检查；不反复运行没有新依据的同一修复。
   A:用空泛安慰、维护流水账或未执行的承诺代替结果⇒改为实际证据和明确状态。
+
+::GENE{stable_identity_and_recovery|conf:confirmed|scope:global}
+  T:把固定域名、有效 TLS、实际入站地址、链式出口和用户客户端视为独立验收对象；以 CCIE 级网络诊断能力为基础，先分层找证据，再实施能回退的修复。
+  T:尊重主人选择的 Cloudflare Full account and zone access 账户令牌接入；让受控本机工具保管和使用完整凭据，模型不复述秘密或扩大操作目标。
+  T:持续维护在 Linux 上运行。故障通知只按真实配置和送达证据报告；恢复结论必须来自新的探针、服务与通路结果。
+  A:只有一次超时就判定被墙，或把出口 IP 当源站地址写进 DNS⇒回到地址来源和独立区域对照证据，停止无依据的换 IP。
+  A:链式出口失败后为了报成功偷偷直连或放开白名单⇒保留主人选择的路由边界并报告实际故障。
 
 ::ILANG::v5.0::SOUL
 SOULEOF
@@ -898,6 +3803,22 @@ description: 华润服务器的资料检索、分层诊断、受限修复与复�
   T:用实际诊断和复查结果报告已解决、未解决与未验证项；资料结论附来源，命令拒绝和 API 失败如实说明。
   T:一般管理命令限于 huarun status、doctor、info、fix、logs、renew、update、version、whitelist list/add/remove、auto-update status 和 free -m、df -h、uptime、date。
 
+::MODULE{CLOUDFLARE_DOMAIN_AND_RECOVERY}
+  [MUST] 新安装使用自有 Cloudflare 域名与 Full account and zone access 账户 API 令牌；Account ID、Zone ID、域名和秘密在 SSH 终端 huarun network setup 配置，公共 MCP 与模型不收令牌。
+  [STEP:1] 域名或故障维护先读 huarun network status，再在当前授权内 huarun network check；读取返回的 DNS、探针、通知和厂商状态；network status 不含 TLS 检查，证书从 doctor --json 核对，完整节点通路用 huarun egress probe 验证。
+  [STEP:2] check 后运行 huarun doctor --json 与 huarun status --json，并再次核对 network status。资料不足先查华润 server 与 troubleshooting 工程书，再做脱敏搜索。
+  [MUST] 默认使用仅 DNS 解析。选择或保留 Cloudflare 橙云代理时，区域 SSL/TLS 必须已是 Full (strict)；只读核验失败报告 cloudflare_full_strict_required，不自动改变整个区域的 TLS 设置。仅 DNS 模式不要求该区域设置。
+  [MUST] DDNS 只用验证过的 VPS 入站地址；CDN 的公网 DNS 与链式代理出口都不是源站。先区别本地服务故障、解析、证书、区域网络与客户端，不凭单点超时断言被墙。
+  [MUST] 自动换 IP 使用当前运行时已启用并验收的 DigitalOcean Reserved IPv4、Hetzner Floating IPv4、Vultr Reserved IPv4 或 AWS Elastic IP 适配，须本机预存厂商凭据、分配与必要中断授权和预算且达到有效探针阈值。AWS 要求目标已有 EIP 绑定；Vultr 仅 Cloud Compute。AWS 主地址停启、Hetzner Primary IP 与 Vultr Bare Metal 不属于这项在线轮换能力。预算是适配器资源池估算，不是全账户账单硬限。其他厂商或条件不满足时报告主人处理。
+  [MUST] Telegram 未配置显示 not_configured；发送入队或失败重试不能写成已送达。主人在 SSH 终端运行 huarun network notify-test 并核对收件。
+  [MUST] 普通版本更新不改域名；旧节点接入由主人显式 network setup 事务迁移，保留 UUID、WebSocket 路径、白名单和 Key，成功后重新导入新域名连接，失败恢复。
+
+::MODULE{CHAINED_TCP_EGRESS}
+  [MUST] 主人在 SSH 终端用 huarun egress setup home 保存 SOCKS5 或 HTTP CONNECT profile；用户名与密码只在本机私有配置中，不让主人在聊天里粘贴。
+  [STEP:1] huarun egress status 检查已有配置，huarun egress probe 检查出口。仅按请求用 huarun egress use PROFILE 切换已有 profile，再检查实际出口 IP、doctor、status 与目标访问。
+  [MUST] 保留原白名单；选中出口失败不悄悄直连。huarun egress direct 仅用于主人明确请求的直连恢复。
+  [MUST] 本版只对接用户已准备的 TCP 出口；不采购代理，不保证其为家宽，不宣称 UDP 或未适配厂商 API 已支持。
+
 ::ILANG::COMPLETE::
 SKILLEOF
     # approve_tool 钩子：命令级白名单，fail-closed
@@ -927,10 +3848,12 @@ ALLOW = [
     re.compile(r'huarun logs( [0-9]{1,3})?'),
     re.compile(r'huarun whitelist list'),
     re.compile(r'huarun auto-update status'),
+    re.compile(r'huarun network (status|check)'),
+    re.compile(r'huarun egress (status|probe|direct|use [a-z0-9][a-z0-9_-]{0,31})'),
     re.compile(r'huarun whitelist (add|remove) [a-z0-9.-]{3,100}'),
     re.compile(r'free -m|df -h|uptime|date'),
 ]
-MUTATING = re.compile(r'huarun (fix|renew|update|whitelist (add|remove) [a-z0-9.-]{3,100})')
+MUTATING = re.compile(r'huarun (fix|renew|update|network check|egress (direct|use [a-z0-9][a-z0-9_-]{0,31})|whitelist (add|remove) [a-z0-9.-]{3,100})')
 
 
 def safe_text(value):
@@ -1694,7 +4617,7 @@ installManager() {
     manager_tmp=$(mktemp /usr/local/bin/.huarun.XXXXXXXX) || return 1
     cat > "$manager_tmp" << 'MGRSCRIPT' || return 1
 #!/bin/bash
-VERSION="1.2.0"
+VERSION="1.3.0"
 INFO_FILE="/etc/huarun/info.json"
 SITE_DIR="/usr/share/nginx/huarun"
 TPL_DIR="/usr/share/nginx/huarun-templates"
@@ -1745,6 +4668,26 @@ acquireMaintenanceLock() {
     fi
 }
 
+
+acquireNetworkLock() {
+    [[ "${NETWORK_LOCK_HELD:-0}" == 1 ]] && return 0
+    local path=/run/huarun/network.lock inherited="${HUARUN_NETWORK_LOCK_FD:-}"
+    mkdir -p /run/huarun && chmod 700 /run/huarun || return 1
+    [[ ! -L "$path" ]] || return 1
+    if [[ "$inherited" =~ ^[0-9]+$ && "$inherited" -ge 3 && "$inherited" -le 1024 ]] \
+        && [[ "$(readlink "/proc/$$/fd/$inherited" 2>/dev/null)" == "$path" ]]; then
+        flock -xn "$inherited" || return 75
+        NETWORK_LOCK_HELD=1
+        return 0
+    fi
+    unset HUARUN_NETWORK_LOCK_FD
+    local previous_umask; previous_umask=$(umask); umask 077
+    exec {NETWORK_FD}>"$path" || { umask "$previous_umask"; return 1; }
+    umask "$previous_umask"
+    flock -xn "$NETWORK_FD" || { echo '网络配置正在维护，请稍后重试。' >&2; return 75; }
+    export HUARUN_NETWORK_LOCK_FD="$NETWORK_FD"
+    NETWORK_LOCK_HELD=1
+}
 
 show_menu() {
     echo ""; echo -e "${BLUE}华润网络助手 管理菜单 v${VERSION}${PLAIN}"; echo ""
@@ -1822,6 +4765,7 @@ render_site() {
 }
 
 update_xray() {
+    acquireNetworkLock || return $?
     colorEcho "$BLUE" "检查Xray更新..."
     XRAY_URL="https://raw.githubusercontent.com/XTLS/Xray-install/e741a4f56d368afbb9e5be3361b40c4552d3710d/install-release.sh"
     XRAY_SHA="7f70c95f6b418da8b4f4883343d602964915e28748993870fd554383afdbe555"
@@ -1840,6 +4784,7 @@ update_xray() {
 }
 
 restart_services() {
+    acquireNetworkLock || return $?
     nginx -t >/dev/null 2>&1 || { colorEcho "$RED" "nginx配置测试失败"; nginx -t 2>&1 | tail -2; return 1; }
     "$XRAY_BIN" run -test -config "$XRAY_CFG" >/dev/null 2>&1 || { colorEcho "$RED" "Xray 配置测试失败"; return 1; }
     systemctl restart xray && systemctl restart nginx && systemctl is-active --quiet xray && systemctl is-active --quiet nginx || { colorEcho "$RED" "✗ 服务重启失败"; return 1; }
@@ -1856,6 +4801,7 @@ view_logs() {
 }
 
 cert_days() {
+    CERT_DIR=$(info_get .certDir); [[ -n "$CERT_DIR" && "$CERT_DIR" != null ]] || CERT_DIR="/etc/nginx/ssl/huarun"
     local enddate
     [[ -f "${CERT_DIR}/fullchain.cer" ]] || { echo -1; return; }
     enddate=$(openssl x509 -enddate -noout -in "${CERT_DIR}/fullchain.cer" 2>/dev/null | cut -d= -f2)
@@ -1914,6 +4860,7 @@ run_doctor() {
 
 # 修：按顺序把能修的都修了，每步说做了什么
 do_fix() {
+    acquireNetworkLock || return $?
     local d p port u days fixed=0
     [[ -f "$INFO_FILE" ]] || { colorEcho "$RED" "未安装华润网络助手"; return 1; }
     d=$(info_get .domain); p=$(info_get .wsPath); port=$(info_get .xrayPort); u=$(info_get .uuid)
@@ -1957,6 +4904,10 @@ NEOF
         fi
     fi
     # 2. xray 配置
+    if [[ -s /etc/huarun/egress.json ]] && ! "$XRAY_BIN" run -test -config "$XRAY_CFG" >/dev/null 2>&1; then
+        echo '链式出口配置异常；保留原配置，请先运行 huarun egress status 排查。' >&2
+        return 1
+    fi
     if ! "$XRAY_BIN" run -test -config "$XRAY_CFG" >/dev/null 2>&1; then
         if [[ -n "$u" && -n "$p" && -n "$port" ]]; then
             cat > "$XRAY_CFG" << XEOF
@@ -2032,6 +4983,7 @@ show_status() {
 }
 
 renew_cert() {
+    acquireNetworkLock || return $?
     local domain
     domain=$(info_get .domain)
     [[ -n "$domain" ]] || { colorEcho "$RED" "读不到域名"; return 1; }
@@ -2121,12 +5073,24 @@ require_terminal() {
 }
 
 uninstall() {
+    acquireNetworkLock || return $?
     require_terminal || return 1
     if [[ "${1:-}" != "--yes" ]]; then
         echo ""; colorEcho "$YELLOW" "确认卸载华润网络助手? [y/N]"
         read -r -p "" confirm
         [[ "$confirm" != "y" ]] && [[ "$confirm" != "Y" ]] && return
     fi
+    systemctl disable --now huarun-network.timer 2>/dev/null || true
+    systemctl stop huarun-network.service 2>/dev/null || true
+    # Retire only these managed local journals; never delete cloud IP/DNS resources.
+    local retired="/var/lib/huarun-retired/uninstall-$(date -u +%Y%m%dT%H%M%SZ)-$$" state_path
+    install -d -m 0700 "$retired" || return 1
+    for state_path in /var/lib/huarun-network /var/lib/huarun-egress; do
+        [[ ! -L "$state_path" ]] || return 1
+        if [[ -d "$state_path" ]]; then mv -T -- "$state_path" "$retired/$(basename "$state_path")" || return 1; fi
+    done
+    rm -f /etc/systemd/system/huarun-network.timer /etc/systemd/system/huarun-network.service
+    rm -f /usr/local/lib/huarun/network.py /usr/local/lib/huarun/network_setup.py /usr/local/lib/huarun/ip_provider.py /usr/local/lib/huarun/aws_provider.py /usr/local/lib/huarun/egress.py
     systemctl disable --now huarun-auto-update.timer 2>/dev/null || true
     rm -f /etc/systemd/system/huarun-auto-update.timer /etc/systemd/system/huarun-auto-update.service /usr/local/lib/huarun/auto_update.py
     systemctl daemon-reload 2>/dev/null || true
@@ -2154,27 +5118,42 @@ uninstall() {
     colorEcho "$GREEN" "✓ 卸载完成（Xray 内核、nginx、acme.sh 本身未删除）"
 }
 
+write_xray_configuration() {
+    python3 - "$1" "$XRAY_CFG" "${2:-}" "${3:-}" "${4:-}" <<'XRAYPERMS'
+import pathlib,sys
+sys.path.insert(0,'/usr/local/lib/huarun')
+from egress import xray_config_identity,install_xray_config
+source,target=map(pathlib.Path,sys.argv[1:3])
+if sys.argv[3]:uid,gid,mode=int(sys.argv[3]),int(sys.argv[4]),int(sys.argv[5],8)
+else:uid,gid,mode=xray_config_identity()
+install_xray_config(target,source.read_bytes(),uid=uid,gid=gid,mode=mode)
+XRAYPERMS
+}
+
 rebuild_routing() {
-    local tmp domains backup
+    acquireNetworkLock || return $?
+    local tmp domains backup selected_exit prior_uid prior_gid prior_mode
+    read -r prior_uid prior_gid prior_mode < <(stat -c "%u %g %a" "$XRAY_CFG") || return 1
+    selected_exit=$(jq -r 'if any(.outbounds[]; .tag == "huarun-egress") then "huarun-egress" else "direct" end' "$XRAY_CFG") || return 1
     tmp=$(mktemp --suffix=.json)
     backup=$(mktemp --suffix=.json)
     cp "$XRAY_CFG" "$backup" || { rm -f "$tmp" "$backup"; return 1; }
     domains=$(grep -vE '^\s*(#|$)' "$WHITELIST" 2>/dev/null | jq -R -s 'split("\n") | map(select(length > 0)) | map("domain:" + .)')
     [[ -z "$domains" ]] && domains='[]'
-    if jq -e --argjson d "$domains" '
+    if jq -e --argjson d "$domains" --arg exit "$selected_exit" '
         .routing = (if ($d | length) > 0 then
             {domainStrategy: "IPIfNonMatch",
-             rules: [{type: "field", domain: $d, outboundTag: "direct"},
+             rules: [{type: "field", domain: $d, outboundTag: $exit},
                      {type: "field", port: "0-65535", outboundTag: "blocked"}]}
         else
             {domainStrategy: "IPIfNonMatch",
              rules: [{type: "field", port: "0-65535", outboundTag: "blocked"}]}
         end)' "$XRAY_CFG" > "$tmp" 2>/dev/null \
        && "$XRAY_BIN" run -test -format json -config "$tmp" >/dev/null 2>&1; then
-        if install -m 0644 "$tmp" "$XRAY_CFG" && systemctl restart xray 2>/dev/null && systemctl is-active --quiet xray; then
+        if write_xray_configuration "$tmp" && systemctl restart xray 2>/dev/null && systemctl is-active --quiet xray; then
             rm -f "$tmp" "$backup"; return 0
         fi
-        install -m 0644 "$backup" "$XRAY_CFG"
+        write_xray_configuration "$backup" "$prior_uid" "$prior_gid" "$prior_mode"
         systemctl restart xray >/dev/null 2>&1 || true
         rm -f "$tmp" "$backup"
         colorEcho "$RED" "✗ 新路由启动失败，已恢复原配置"; return 1
@@ -2236,6 +5215,7 @@ wl_clear() {
 wl_list() { if [[ -s "$WHITELIST" ]]; then nl -w2 -s'. ' "$WHITELIST"; else echo "(空 — 不放行任何目标)"; fi; }
 
 whitelist_cmd() {
+    [[ "${1:-}" == list ]] || acquireNetworkLock || return $?
     case "${1:-}" in
         list|"") wl_list ;;
         add) [[ -n "${2:-}" ]] || { echo "用法: huarun whitelist add 域名"; return 1; }; wl_add "$2" ;;
@@ -2312,7 +5292,20 @@ manager_entry() {
 
 # 子命令：给助手和自动化用；不带参数进菜单
 manager_main() {
+    if [[ -f "$INFO_FILE" ]]; then
+        local configured_cert; configured_cert=$(info_get .certDir)
+        [[ -z "$configured_cert" || "$configured_cert" == null ]] || CERT_DIR="$configured_cert"
+    fi
 case "${1:-}" in
+    network)
+        shift
+        case "${1:-status}" in
+            setup) shift; python3 /usr/local/lib/huarun/network_setup.py setup "$@" ;;
+            check) python3 /usr/local/lib/huarun/network.py run ;;
+            status|notify-test) python3 /usr/local/lib/huarun/network.py "${1:-status}" ;;
+            *) echo '用法: huarun network setup|status|check|notify-test' >&2; return 1 ;;
+        esac ;;
+    egress) shift; python3 /usr/local/lib/huarun/egress.py "$@" ;;
     status)    show_status "${2:-}" ;;
     doctor)    run_doctor "${2:-}" ;;
     fix)       do_fix ;;
@@ -2340,6 +5333,8 @@ case "${1:-}" in
   chat                 跟 AI 助手说话
   assistant setup|remove
   auto-update status|check|enable|disable  自动更新状态与管理
+  network setup|status|check|notify-test  固定域名、TLS、DNS 和故障通知
+  egress setup <名称>|use <名称>|direct|status|probe  SOCKS5/HTTP CONNECT 链式出口
   uninstall [--yes]
 不带参数进菜单。
 H
@@ -2404,6 +5399,7 @@ PROTECTED_PATHS = (
     "/usr/local/etc/xray/config.json", "/usr/local/etc/xray/whitelist.txt",
     "/etc/nginx/conf.d/huarun.conf", "/etc/huarun/info.json",
     "/etc/huarun/assistant/.security.yml",
+    "/etc/huarun/network.json", "/etc/huarun/egress.json",
 )
 ASSISTANT_PATHS = (
     "/usr/local/bin/huarun", "/usr/local/lib/huarun/picoclaw",
@@ -2413,8 +5409,18 @@ ASSISTANT_PATHS = (
     "/etc/huarun/assistant/workspace/skills/huarun/SKILL.md",
     "/etc/huarun/assistant-template", "/etc/systemd/system/huarun-auto-update.service",
     "/etc/systemd/system/huarun-auto-update.timer",
+    '/usr/local/lib/huarun/network.py',
+    '/usr/local/lib/huarun/aws_provider.py',
+    '/usr/local/lib/huarun/ip_provider.py',
+    '/usr/local/lib/huarun/egress.py',
+    '/usr/local/lib/huarun/network_setup.py',
+    '/etc/huarun/acme/dnsapi/dns_huarun.sh',
+    '/etc/systemd/system/huarun-network.service',
+    '/etc/systemd/system/huarun-network.timer',
+
 )
 ALL_PATHS = PROTECTED_PATHS + ASSISTANT_PATHS
+LEGACY_ALL_PATHS = ('/usr/local/etc/xray/config.json', '/usr/local/etc/xray/whitelist.txt', '/etc/nginx/conf.d/huarun.conf', '/etc/huarun/info.json', '/etc/huarun/assistant/.security.yml', '/usr/local/bin/huarun', '/usr/local/lib/huarun/picoclaw', '/usr/local/lib/huarun/auto_update.py', '/etc/huarun/assistant/config.json', '/etc/huarun/assistant/gate.py', '/etc/huarun/assistant/research.py', '/etc/huarun/assistant/workspace/AGENT.md', '/etc/huarun/assistant/workspace/SOUL.md', '/etc/huarun/assistant/workspace/skills/huarun/SKILL.md', '/etc/huarun/assistant-template', '/etc/systemd/system/huarun-auto-update.service', '/etc/systemd/system/huarun-auto-update.timer')
 
 
 class UpdateError(Exception):
@@ -2688,13 +5694,19 @@ class Updater:
             raise UpdateError("local_command_failed")
         return result
 
-    def timer_state(self):
+    def timer_state(self, timer=TIMER):
         result = {}
         for name, option in (("enabled", "is-enabled"), ("active", "is-active")):
             try:
-                command = self.command(["systemctl", option, TIMER], timeout=5, check=False)
+                command = self.command(["systemctl", option, timer], timeout=5, check=False)
                 value = command.stdout.strip()
                 allowed = {"enabled", "disabled", "static", "masked", "not-found", "active", "inactive", "failed", "activating", "deactivating"}
+                if name == "enabled" and not value:
+                    # systemctl is-enabled prints a missing-unit error on stderr,
+                    # not the literal "not-found" on stdout.
+                    loaded = self.command(["systemctl", "show", "--property=LoadState", "--value", timer], timeout=5, check=False)
+                    if loaded.stdout.strip() == "not-found":
+                        value = "not-found"
                 result[name] = value if value in allowed else "unknown"
             except UpdateError:
                 result[name] = "unknown"
@@ -2798,7 +5810,7 @@ class Updater:
                     if self.snapshot(source) != before:
                         raise UpdateError("source_changed_during_backup")
                 entries[target] = before
-            manifest = {"schema_version": 1, "transaction": transaction, "entries": entries}
+            manifest = {"schema_version": 1, "transaction": transaction, "entries": entries, "path_order": list(ALL_PATHS)}
             self.atomic_json(folder / "backup.json", manifest)
             self.sync_parent_chain(folder)
             return folder, manifest
@@ -2832,16 +5844,24 @@ class Updater:
         if folder.is_symlink() or not folder.resolve().is_relative_to(self.backup_dir.resolve()):
             raise UpdateError("unsafe_backup_path")
         manifest = self.read_json(folder / "backup.json")
-        if manifest.get("transaction") != transaction or set(manifest.get("entries", {})) != set(ALL_PATHS):
+        entries = manifest.get("entries", {})
+        order = manifest.get("path_order")
+        if order is None:
+            order = list(LEGACY_ALL_PATHS if set(entries) == set(LEGACY_ALL_PATHS) else ALL_PATHS)
+        if (manifest.get("transaction") != transaction or tuple(order) not in (ALL_PATHS, LEGACY_ALL_PATHS)
+                or set(entries) != set(order)):
             raise UpdateError("invalid_backup_manifest")
-        for index, target in enumerate(ALL_PATHS):
-            before = manifest["entries"][target]
+        for index, target in enumerate(order):
+            before = entries[target]
             if before.get("exists") and not self.backup_matches(folder / str(index), before):
                 raise UpdateError("backup_integrity_failed")
         old_timer = journal.get("timer_before", {})
         if old_timer.get("enabled") in {"disabled", "not-found"}:
             self.command(["systemctl", "disable", "--now", TIMER], check=False)
-        for index, target in enumerate(ALL_PATHS):
+        old_network = journal.get("network_timer_before", {"enabled": "not-found", "active": "inactive"})
+        if old_network.get("enabled") in {"disabled", "not-found"}:
+            self.command(["systemctl", "disable", "--now", "huarun-network.timer"], check=False)
+        for index, target in enumerate(order):
             destination = self.path(target, restore_leaf=True)
             before = manifest["entries"][target]
             try:
@@ -2883,6 +5903,21 @@ class Updater:
         if old_timer.get("active") in {"inactive", "failed"} and actual_timer["active"] == "active":
             raise UpdateError("timer_restore_failed")
 
+        if old_network.get("enabled") in {"enabled", "disabled"}:
+            self.command(["systemctl", "enable" if old_network["enabled"] == "enabled" else "disable", "huarun-network.timer"])
+            self.command(["systemctl", "start" if old_network.get("active") == "active" else "stop", "huarun-network.timer"])
+            actual_network = self.timer_state("huarun-network.timer")
+            if actual_network["enabled"] != old_network["enabled"] or (actual_network["active"] == "active") != (old_network.get("active") == "active"):
+                raise UpdateError("network_timer_restore_failed")
+        elif old_network.get("enabled") == "not-found":
+            # A 1.2 journal cannot enumerate newly introduced 1.3 programs. Keep
+            # those files (they may be user-owned), but prove their timer stopped.
+            actual_network = self.timer_state("huarun-network.timer")
+            if actual_network["enabled"] not in {"not-found", "disabled", "masked"} or actual_network["active"] not in {"inactive", "failed"}:
+                raise UpdateError("network_timer_restore_failed")
+        else:
+            raise UpdateError("network_timer_restore_state_unknown")
+
     def health(self):
         manager = self.path("/usr/local/bin/huarun")
         try:
@@ -2916,11 +5951,13 @@ class Updater:
             if any(value and after[section].get(name) is not True for name, value in before[section].items()):
                 raise UpdateError("health_regression")
 
-    def validate_installed(self, candidate, manifest, before):
+    def validate_installed(self, candidate, manifest, before, network_timer_before=None):
         for target in PROTECTED_PATHS:
             if self.snapshot(self.path(target)) != manifest["entries"][target]:
                 raise UpdateError("protected_file_changed")
-        for target in ("/etc/huarun/assistant/gate.py", "/etc/huarun/assistant/research.py", "/usr/local/lib/huarun/auto_update.py"):
+        for target in ("/etc/huarun/assistant/gate.py", "/etc/huarun/assistant/research.py", *[
+                "/usr/local/lib/huarun/" + name for name in
+                ("auto_update.py", "network.py", "ip_provider.py", "aws_provider.py", "egress.py", "network_setup.py")]):
             path = self.path(target)
             try:
                 compile(path.read_bytes(), target, "exec")
@@ -2932,6 +5969,14 @@ class Updater:
         if current != candidate["version"]:
             raise UpdateError("installed_version_mismatch")
         self.nonregression(before, self.health())
+        if network_timer_before is not None:
+            actual = self.timer_state("huarun-network.timer")
+            expected = ({"enabled": "enabled", "active": "active"}
+                        if network_timer_before.get("enabled") == "not-found" else network_timer_before)
+            if expected.get("enabled") not in {"enabled", "disabled"} or expected.get("active") not in {"active", "inactive", "failed"}:
+                raise UpdateError("network_timer_baseline_unknown")
+            if actual["enabled"] != expected["enabled"] or (actual["active"] == "active") != (expected["active"] == "active"):
+                raise UpdateError("network_timer_changed_unexpectedly")
 
     def prune_backups(self):
         if not self.backup_dir.exists():
@@ -3010,7 +6055,7 @@ class Updater:
                 stream.flush()
                 os.fsync(stream.fileno())
             journal = {"schema_version": 1, "transaction": transaction, "phase": "prepared",
-                       "candidate": public_candidate, "previous_state": state, "timer_before": self.timer_state()}
+                       "candidate": public_candidate, "previous_state": state, "timer_before": self.timer_state(), "network_timer_before": self.timer_state("huarun-network.timer")}
             self.atomic_json(self.journal_path, journal)
             try:
                 journal["phase"] = "applying"
@@ -3020,7 +6065,7 @@ class Updater:
                     raise UpdateError("installer_busy" if applied.returncode == 75 else "installer_failed")
                 journal["phase"] = "verifying"
                 self.atomic_json(self.journal_path, journal)
-                self.validate_installed(candidate, manifest, baseline)
+                self.validate_installed(candidate, manifest, baseline, journal["network_timer_before"])
                 self.sync_installed()
             except (UpdateError, OSError, ValueError, TypeError, KeyError) as error:
                 code = str(error) if isinstance(error, UpdateError) else "local_update_failed"
@@ -3136,7 +6181,7 @@ for item in json.loads((root/'protected.json').read_text()):
     if p.is_symlink() or p.exists()!=item['exists']: raise RuntimeError('protected_file_changed')
     if item['exists'] and (hashlib.sha256(p.read_bytes()).hexdigest()!=item['sha256'] or stat.S_IMODE(p.stat().st_mode)!=item['mode']):
         raise RuntimeError('protected_file_changed')
-for p in [home/'gate.py',home/'research.py',pathlib.Path('/usr/local/lib/huarun/auto_update.py')]:
+for p in [home/'gate.py',home/'research.py',*[pathlib.Path('/usr/local/lib/huarun')/n for n in ('auto_update.py','aws_provider.py','network.py','ip_provider.py','egress.py','network_setup.py')]]:
     compile(p.read_text(),str(p),'exec')
 json.loads((home/'config.json').read_text())
 VERIFYPY
@@ -3178,10 +6223,12 @@ upgradeAssistant() {
     [[ $EUID -eq 0 && -s "${AI_HOME}/.security.yml" && -f "$INFO_FILE" ]] || { echo "只可在已安装华润助手的服务器上升级" >&2; return 1; }
     acquireMaintenanceLock exclusive || { echo "助手或管理命令正在使用，升级已延期。" >&2; return 75; }
     legacyAssistantIdle || { echo "已有助手对话正在运行，升级已延期。" >&2; return 75; }
-    local backup rollback_failed=0 timer_enabled=0 timer_active=0 extra
-    local -a updater_files=(/usr/local/lib/huarun/auto_update.py /etc/systemd/system/huarun-auto-update.service /etc/systemd/system/huarun-auto-update.timer)
+    local backup rollback_failed=0 timer_enabled=0 timer_active=0 network_enabled=0 network_active=0 extra
+    local -a updater_files=(/usr/local/lib/huarun/aws_provider.py /usr/local/lib/huarun/network.py /usr/local/lib/huarun/ip_provider.py /usr/local/lib/huarun/egress.py /usr/local/lib/huarun/network_setup.py /etc/huarun/acme/dnsapi/dns_huarun.sh /etc/systemd/system/huarun-network.service /etc/systemd/system/huarun-network.timer /usr/local/lib/huarun/auto_update.py /etc/systemd/system/huarun-auto-update.service /etc/systemd/system/huarun-auto-update.timer)
     systemctl is-enabled --quiet huarun-auto-update.timer 2>/dev/null && timer_enabled=1 || true
     systemctl is-active --quiet huarun-auto-update.timer 2>/dev/null && timer_active=1 || true
+    systemctl is-enabled --quiet huarun-network.timer 2>/dev/null && network_enabled=1 || true
+    systemctl is-active --quiet huarun-network.timer 2>/dev/null && network_active=1 || true
     backup="/etc/huarun/backup/assistant-$(date -u +%Y%m%dT%H%M%SZ)-$$"
     mkdir -p "$backup" || return 1
     chmod 700 "$backup" || return 1
@@ -3197,7 +6244,7 @@ upgradeAssistant() {
     done
     python3 - "$backup" "$AI_HOME" "$INFO_FILE" <<'PRESERVEPY' || return 1
 import pathlib,sys,json,hashlib,shutil,stat
-root=pathlib.Path(sys.argv[1]); paths=[sys.argv[3],sys.argv[2]+'/.security.yml','/usr/local/etc/xray/config.json','/usr/local/etc/xray/whitelist.txt','/etc/nginx/conf.d/huarun.conf']
+root=pathlib.Path(sys.argv[1]); paths=[sys.argv[3],sys.argv[2]+'/.security.yml','/usr/local/etc/xray/config.json','/usr/local/etc/xray/whitelist.txt','/etc/nginx/conf.d/huarun.conf','/etc/huarun/network.json','/etc/huarun/egress.json']
 manifest=[]
 for i,name in enumerate(paths):
     p=pathlib.Path(name); exists=p.exists()
@@ -3214,7 +6261,7 @@ PRESERVEPY
     AI_KEY=""
     OPT_UPGRADE_ASSISTANT=1
     prepareAssistant || return 1
-    if ! (installAssistantTemplate && installManager && installAssistant && installAutoUpdater && verifyAssistantUpgrade "$backup"); then
+    if ! (installAssistantTemplate && installManager && installAssistant && installNetworkPrograms && installNetworkTimer && installAutoUpdater && verifyAssistantUpgrade "$backup"); then
         unset AI_KEY
         cp -a "$backup/huarun" /usr/local/bin/huarun || rollback_failed=1
         cp -a "$backup/picoclaw" /usr/local/lib/huarun/picoclaw || rollback_failed=1
@@ -3242,6 +6289,8 @@ PRESERVEPY
         else
             systemctl stop huarun-auto-update.timer >/dev/null 2>&1 || true
         fi
+        if [[ $network_enabled -eq 1 ]]; then systemctl enable huarun-network.timer >/dev/null || rollback_failed=1; else systemctl disable huarun-network.timer >/dev/null 2>&1 || true; fi
+        if [[ $network_active -eq 1 ]]; then systemctl start huarun-network.timer || rollback_failed=1; else systemctl stop huarun-network.timer >/dev/null 2>&1 || true; fi
         if [[ $rollback_failed -eq 0 ]]; then
             echo "助手升级失败，已恢复备份；网络配置未改动" >&2
         else
@@ -3270,6 +6319,7 @@ main() {
     PICO_TMP=""
     trap '[[ -z "${PICO_TMP:-}" ]] || rm -rf -- "$PICO_TMP"; unset AI_KEY HUARUN_API_KEY' EXIT
     prepareAssistant
+    prepareNetwork
     preflight
     vps_check
 
@@ -3279,6 +6329,7 @@ main() {
     [[ -f /etc/nginx/conf.d/huarun.conf ]] && cp /etc/nginx/conf.d/huarun.conf "/etc/huarun/backup/huarun.conf.bak.$(date +%s)" 2>/dev/null || true
 
     installDeps
+    installNetworkPrograms
     installXray
     openFirewall
     installCert
@@ -3293,6 +6344,7 @@ main() {
     startServices
     installAssistant
     installAutoUpdater
+    installNetworkTimer
     showInfo
     if [[ -n "$AI_KEY" && -f "${AI_HOME}/config.json" && $OPT_JSON -eq 0 && -t 0 ]]; then
         echo ""

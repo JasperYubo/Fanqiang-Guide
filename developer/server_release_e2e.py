@@ -95,7 +95,8 @@ class Runner:
             time.sleep(.2)
         else:raise AcceptanceError('systemd_not_ready')
         self.command(['docker','cp',str(FIXTURES),name+':/opt/e2e'],timeout=30)
-        self.guest(name,'bash','-c','install -m 755 /opt/e2e/curl /usr/local/bin/curl; printf "127.0.0.1 qa.release.invalid preserve.example\\n" >> /etc/hosts')
+        self.command(['docker','cp',str(ROOT/'apps/server/tests/egress_live_probe.py'),name+':/opt/e2e/exit_fixture.py'],timeout=30)
+        self.guest(name,'bash','-c','install -m 755 /opt/e2e/curl /usr/local/bin/curl; install -m 644 /opt/e2e/sitecustomize.py /usr/lib/python3.11/sitecustomize.py; printf "127.0.0.1 qa.release.invalid migrated.release.invalid rollback.release.invalid preserve.example\\n" >> /etc/hosts')
         self.command(['docker','exec','-d',name,'bash','-c','exec python3 /opt/e2e/provider_fixture.py >/opt/provider-fixture.log 2>&1'])
         for attempt in range(100):
             if self.guest(name,'/usr/bin/curl','-fsS','http://127.0.0.1:14000/directory',check=False).returncode==0:break
@@ -105,7 +106,10 @@ class Runner:
     def install(self,name,raw,label):
         script=self.work/(label+'.sh');script.write_bytes(raw);script.chmod(0o600)
         self.command(['docker','cp',str(script),name+':/opt/installer.sh'])
-        self.guest(name,'bash','-c','export HUARUN_API_KEY=sk-release-test-fixture-not-a-production-key; exec bash /opt/installer.sh --yes --no-swap --domain qa.release.invalid --site 4',timeout=720,log=label+'-install.log')
+        new_network=tuple(int(x) for x in version(raw).split('.'))>=(1,3,0)
+        config={'schema_version':1,'domain':'qa.release.invalid','cloudflare':{'account_id':'1'*32,'zone_id':'2'*32,'api_token':'synthetic-cloudflare-token-fixture-only','proxied':False},'address_source':{'mode':'static','addresses':{'A':'8.8.8.8'}},'notification':{'kind':'none'},'probes':[]}
+        flags=' --network-config-stdin' if new_network else ''
+        self.guest(name,'bash','-c','export HUARUN_API_KEY=sk-release-test-fixture-not-a-production-key; exec bash /opt/installer.sh --yes --no-swap --domain qa.release.invalid --site 4'+flags,timeout=720,log=label+'-install.log',input=json.dumps(config).encode() if new_network else None)
         actual=self.guest(name,'sha256sum','/opt/installer.sh').stdout.decode().split()[0]
         if actual!=sha(raw):raise AcceptanceError('executed_installer_digest_mismatch')
     def probe(self,name):return json.loads(self.guest(name,'python3','/opt/e2e/guest.py','probe',timeout=90).stdout)
@@ -115,18 +119,23 @@ class Runner:
             self.install(name,raw,'fresh');probe=self.probe(name)
             result={k:probe[k] for k in ['version','timer_enabled','timer_active','services_healthy','proxy_allowed','proxy_blocked','tls_verified','blocked_target_reachable','proxy_block_route_verified','doctor_checks']}
             result['installed_version']=result['version']
+            if tuple(int(x) for x in version(raw).split('.'))>=(1,3,0):
+                result['network_features']=json.loads(self.guest(name,'python3','/opt/e2e/network_features.py',timeout=900,log='network-features.log').stdout)
+                if result['network_features'].get('passed') is not True:raise AcceptanceError('network_feature_checks_failed')
             result['passed']=result['version']==version(raw) and all(result[k] is True for k in ['timer_enabled','timer_active','services_healthy','proxy_allowed','proxy_blocked','tls_verified','blocked_target_reachable','proxy_block_route_verified'])
             if not result['passed']:raise AcceptanceError('fresh_install_checks_failed:'+json.dumps(result,sort_keys=True))
             return result
         finally:self.remove(name)
-    def upgrade(self,candidate,baseline):
+    def upgrade(self,candidate,baseline,*,seed_network=True):
         name=self.start('upgrade')
         label='upgrade-'+baseline['version']
         try:
             self.install(name,baseline['raw'],label)
             before_version=self.guest(name,'/usr/local/bin/huarun','version').stdout.decode().strip()
             if before_version!=baseline['version']:raise AcceptanceError('installed_baseline_version_mismatch')
-            before=json.loads(self.guest(name,'python3','/opt/e2e/guest.py','customize',timeout=60).stdout)
+            new_network=tuple(int(x) for x in version(candidate).split('.'))>=(1,3,0)
+            extras=['--network-configs'] if seed_network and new_network else []
+            before=json.loads(self.guest(name,'python3','/opt/e2e/guest.py','customize',*extras,timeout=60).stdout)
             # Verify that the custom baseline already has an operational proxy.
             baseline_probe=self.probe(name)
             if not all(baseline_probe[k] is True for k in ['services_healthy','proxy_allowed','proxy_blocked','tls_verified','blocked_target_reachable','proxy_block_route_verified']):raise AcceptanceError('legacy_baseline_unhealthy:'+json.dumps(baseline_probe,sort_keys=True))
@@ -139,6 +148,13 @@ class Runner:
             if 'release_id' in baseline:result['baseline_release_id']=baseline['release_id']
             result.update({k:probe[k] for k in ['timer_enabled','timer_active','services_healthy','proxy_allowed','proxy_blocked','tls_verified','blocked_target_reachable','proxy_block_route_verified','doctor_checks']})
             result['passed']=result['to_version']==version(candidate) and all(preserved.values()) and all(result[k] is True for k in ['network_processes_unchanged','timer_enabled','timer_active','services_healthy','proxy_allowed','proxy_blocked','tls_verified','blocked_target_reachable','proxy_block_route_verified'])
+            if new_network:
+                result.update({k:probe[k] for k in ['network_timer_enabled','network_timer_active']})
+                result['passed']=result['passed'] and result['network_timer_enabled'] and result['network_timer_active']
+                if not seed_network:
+                    status=json.loads(self.guest(name,'/usr/local/bin/huarun','network','status').stdout)
+                    result.update(network_config_absent=not after['snapshot']['network_config']['exists'],egress_config_absent=not after['snapshot']['egress_config']['exists'],network_status_not_configured=status.get('configured') is False and status.get('status')=='not_configured')
+                    result['passed']=result['passed'] and all(result[k] is True for k in ['network_config_absent','egress_config_absent','network_status_not_configured'])
             if not result['passed']:raise AcceptanceError('upgrade_checks_failed:'+json.dumps(result,sort_keys=True))
             return result
         finally:self.remove(name)
@@ -154,7 +170,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--source-sha',required=True);parser.add_argument('--output',required=True,type=pathlib.Path);parser.add_argument('--allow-dirty',action='store_true',help='Local development only; emitted evidence cannot authorize publication')
     args=parser.parse_args();output=args.output.resolve();output.parent.mkdir(parents=True,exist_ok=True)
     raw=(ROOT/'apps/server/install.sh').read_bytes()
-    report={'schema_version':1,'kind':'huarun-linux-release-e2e','source_sha':args.source_sha,'installer_sha256':sha(raw),'candidate_version':version(raw),'platform':'linux','run_id':os.environ.get('GITHUB_RUN_ID','local'),'run_attempt':int(os.environ.get('GITHUB_RUN_ATTEMPT','1')),'skipped':0,'started_at':datetime.now(timezone.utc).isoformat(),'passed':False,'fresh_install':None,'upgrades':[],'limitations':['DeepSeek account authentication uses a synthetic Key and local model-list fixture; paid model inference is outside this release gate.','Public ACME issuance uses an isolated test CA; the real hash-pinned acme.sh validates local HTTP-01 and submits a real CSR.','Linux Debian 12 amd64 systemd containers; other OS/architectures and public DNS propagation are outside this acceptance run.']}
+    report={'schema_version':1,'kind':'huarun-linux-release-e2e','source_sha':args.source_sha,'installer_sha256':sha(raw),'candidate_version':version(raw),'platform':'linux','run_id':os.environ.get('GITHUB_RUN_ID','local'),'run_attempt':int(os.environ.get('GITHUB_RUN_ATTEMPT','1')),'skipped':0,'started_at':datetime.now(timezone.utc).isoformat(),'passed':False,'fresh_install':None,'upgrades':[],'limitations':['DeepSeek account authentication uses a synthetic Key and local model-list fixture; paid model inference is outside this release gate.','Public ACME issuance uses an isolated test CA; real hash-pinned acme.sh validates HTTP-01 or Cloudflare DNS-01 fixture records and submits a real CSR. Cloudflare HTTP contracts use a synthetic account and token. For loopback .release.invalid node probes only, the harness adds its test CA to the original real-Xray probe; unknown-CA and wrong-SAN negative controls must reject.','Notification failure/recovery and two-region probes use local signed HTTP contracts; no live Telegram delivery or live regional observer claim. SOCKS5/HTTP CONNECT use real authenticated local proxy servers and external HTTPS targets.','Linux Debian 12 amd64 systemd containers; other OS/architectures and public DNS propagation are outside this acceptance run.']}
     if args.allow_dirty:report['development_only']=True
     runner=None
     try:
@@ -170,9 +186,17 @@ def main():
         with tempfile.TemporaryDirectory(prefix='huarun-release-e2e-') as temp:
             work=pathlib.Path(temp);work.chmod(0o700);runner=Runner(work)
             try:
+                if tuple(int(x) for x in version(raw).split('.'))>=(1,3,0):
+                    report['network_fault_tests']=json.loads(runner.command([sys.executable,str(FIXTURES/'fault_suites.py')],timeout=300,log='network-fault-suites.log').stdout)
+                    if report['network_fault_tests'].get('passed') is not True or report['network_fault_tests'].get('skipped')!=0:raise AcceptanceError('network_fault_suite_failed')
+                    print('network fault suites passed without skips',flush=True)
                 runner.build();report['fresh_install']=runner.fresh(raw);print('fresh_install passed',flush=True)
                 for baseline in selected:
                     report['upgrades'].append(runner.upgrade(raw,baseline));print('upgrade '+baseline['version']+' passed',flush=True)
+                if tuple(int(x) for x in version(raw).split('.'))>=(1,3,0):
+                    legacy=next(b for b in selected if 'legacy-1.0' in b['roles'])
+                    report['unconfigured_upgrade']=runner.upgrade(raw,legacy,seed_network=False)
+                    print('unconfigured legacy upgrade passed',flush=True)
                 report['passed']=True
             except Exception:
                 # The logs contain synthetic test credentials only. Keep private logs

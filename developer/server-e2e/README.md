@@ -50,3 +50,41 @@ in an owner-only sibling directory. The public JSON contains checks, hashes and
 booleans, not Key values or node configurations. Containers are removed by their
 exact generated names, including after a failed or timed-out test. No production
 host ports are published, and no customer configuration is mounted.
+
+
+## Version 1.3 network acceptance
+
+For candidates at or above 1.3.0 the same source/run/attempt-bound report also
+requires the five network/provider fault suites to run with zero skipped tests.
+The new-install guest exercises these additional paths before it is discarded:
+
+- Real acme.sh DNS-01 issuance through local Cloudflare HTTP contracts, including
+  TXT creation, challenge validation, certificate CSR signing, and TXT cleanup.
+- Address-change DDNS with an independent API readback and state identity check.
+- Authenticated local two-region probe contracts and a synthetic Telegram HTTP
+  contract: failed notification queues, delayed retry, and recovery delivery.
+  These prove application behavior, not live Telegram delivery or regional reachability.
+- Explicit domain migration with a real certificate and installed-node probe,
+  preservation of UUID/WebSocket path/whitelist/Key, and failed issuance rollback.
+- The installed Xray node routes through real authenticated SOCKS5 and HTTP
+  CONNECT proxy servers to an external TLS target. The whitelist must still
+  reject excluded destinations. Bad credentials and an unavailable active exit
+  must fail closed while a direct control request succeeds.
+
+Each ordinary upgrade now preserves eight files, including private
+`network.json` and `egress.json` with synthetic secrets. Their before/after
+SHA256, existence and permission modes are mandatory release evidence. A
+separate clean 1.0 installation is upgraded with neither new configuration file
+present: neither file may be invented, the network status must remain
+`not_configured`, and the network timer must be enabled and running. Historical
+1.2 release reports retain their original validation rules; they cannot satisfy
+the 1.3 candidate gate.
+
+
+Xray now uses bundled public roots by default. In this isolated CA fixture only,
+the probe adapter adds the fixture CA for VMess connections to `127.0.0.1:443`
+whose server name is one of the three fixed `.release.invalid` test domains.
+The original production `run_probe` function and actual Xray binary execute;
+certificate-chain and SAN verification remain enabled. Every run must also reject
+the same node with an unknown CA and with a deliberately incorrect SAN. No
+production trust setting or `allowInsecure` behavior is changed.

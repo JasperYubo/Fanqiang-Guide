@@ -8,7 +8,12 @@ PAYLOADS = {'AGENTEOF':'apps/server/assistant/AGENT.md',
             'SKILLEOF':'apps/server/assistant/skills/huarun/SKILL.md',
             'GATEEOF':'apps/server/assistant/hook.py',
             'RESEARCHEOF':'apps/server/research.py',
-            'AUTOUPDATEEOF':'apps/server/auto_update.py'}
+            'AUTOUPDATEEOF':'apps/server/auto_update.py',
+            'AWSPROVIDEREOF':'apps/server/aws_provider.py',
+            'NETWORKEOF':'apps/server/network.py',
+            'PROVIDEREOF':'apps/server/ip_provider.py',
+            'EGRESSEOF':'apps/server/egress.py',
+            'NETWORKSETUPEOF':'apps/server/network_setup.py'}
 
 def render(source):
     for delimiter, relative in PAYLOADS.items():

@@ -6,6 +6,8 @@ args=sys.argv[1:]
 for i,arg in enumerate(args):
     if arg == 'https://api.deepseek.com/v1/models':
         args[i]='http://127.0.0.1:14000/deepseek/models'
+    elif arg.startswith(('https://cloudflare-dns.com/dns-query','https://dns.google/resolve')):
+        args[i]='http://127.0.0.1:14000/dns-query?'+urlsplit(arg).query
     elif arg.startswith('https://acme-v02.api.letsencrypt.org/'):
         part=urlsplit(arg)
         if part.hostname=='acme-v02.api.letsencrypt.org' and not part.username and not part.password:

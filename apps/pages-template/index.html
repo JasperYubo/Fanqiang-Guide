@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，先查本站资料、必要时搜索、修复后复查，助手自动更新。">
+  <meta name="description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
   <meta name="theme-color" content="#f5f5f7">
   <meta property="og:type" content="website">
   <meta property="og:title" content="翻墙指南 Fanqiang Guide｜科学上网工具、路由器与 AI 配置">
-  <meta property="og:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，先查本站资料、必要时搜索、修复后复查，助手自动更新。">
+  <meta property="og:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
   <meta property="og:url" content="{{PAGES_URL}}">
   <link rel="canonical" href="{{PAGES_URL}}">
   <link rel="icon" type="image/png" sizes="96x96" href="./favicon.png">
@@ -24,7 +24,7 @@
   <meta property="og:image:alt" content="Fanqiang Guide：工具资料、设备配置与服务器助手，交给自己的 AI。">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="翻墙指南 Fanqiang Guide｜科学上网工具、路由器与 AI 配置">
-  <meta name="twitter:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，先查本站资料、必要时搜索、修复后复查，助手自动更新。">
+  <meta name="twitter:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
   <meta name="twitter:image" content="{{PAGES_URL}}social-card-v2.png">
   <meta name="twitter:image:alt" content="Fanqiang Guide：工具资料、设备配置与服务器助手，交给自己的 AI。">
   <link rel="sitemap" type="application/xml" title="Sitemap" href="./sitemap.xml">
@@ -35,7 +35,7 @@
   "@id": "{{PAGES_URL}}#webpage",
   "url": "{{PAGES_URL}}",
   "name": "翻墙指南 Fanqiang Guide｜科学上网工具、路由器与 AI 配置",
-  "description": "Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，先查本站资料、必要时搜索、修复后复查，助手自动更新。",
+  "description": "Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。",
   "inLanguage": "zh-CN",
   "isAccessibleForFree": true,
   "relatedLink": [
@@ -121,11 +121,14 @@
       <p class="eyebrow">自己的服务器，自带 AI 助手</p>
       <h2 id="server-heading">搭好网络，有问题直接说</h2>
       <ol class="steps">
-        <li><span class="step-number" aria-hidden="true">01</span><div><h3>准备 DeepSeek Key</h3><p>到 <a href="{{API_URL}}">DeepSeek 开放平台</a>充值 {{PRICE_AMOUNT}} 元，创建自己的 API Key。</p></div></li>
+        <li><span class="step-number" aria-hidden="true">01</span><div><h3>准备域名与 DeepSeek Key</h3><p>到 <a href="{{API_URL}}">DeepSeek 开放平台</a>充值 {{PRICE_AMOUNT}} 元，创建自己的 API Key；准备已接入 Cloudflare 的自有域名，以及 Full account and zone access 账户 API 令牌。</p></div></li>
         <li><span class="step-number" aria-hidden="true">02</span><div><h3>连接自己的 VPS</h3><p>在{{OS_LABEL}}运行安装命令，装好网络服务和内置 {{RUNTIME}} AI 助手。</p></div></li>
         <li><span class="step-number" aria-hidden="true">03</span><div><h3>导入连接，开始使用</h3><p>把链接导入手机或电脑。以后连不上，用中文描述问题，让助手查资料、定位原因并复查修复结果。</p></div></li>
       </ol>
-      <p>{{PRICE_SENTENCE}}Key 只在自己的服务器终端输入。</p>
+      <p>{{PRICE_SENTENCE}}Key 和完整 Cloudflare 令牌只在自己的服务器终端隐藏输入。</p>
+      <p>{{NETWORK_SENTENCE}}</p>
+      <p>{{NETWORK_PROXY_SENTENCE}}</p>
+      <p>{{EGRESS_SENTENCE}}</p>
       <p class="muted">{{KNOWLEDGE_SENTENCE}}</p>
       <p class="muted">{{AUTOMATIC_UPDATE_SENTENCE}}</p>
       <a class="light-link" href="{{SERVER_ENTRY_URL}}">开始安装华润服务器助手 <span aria-hidden="true">→</span></a>
@@ -138,7 +141,8 @@
           <p id="install-copy-status" class="copy-status" role="status" aria-live="polite">也可选中完整命令，手动复制。Key 只在自己的服务器终端输入。</p>
           <p><a href="{{INSTALLER_URL}}">查看安装脚本</a> · 完整步骤与使用说明在<a href="{{SERVER_ENTRY_URL}}">华润主站服务器助手</a>。</p>
           <p>安装后运行 <code>{{CHAT_COMMAND}}</code> 与助手对话。内置 {{RUNTIME}} v{{RUNTIME_VERSION}}，使用 {{PROVIDER}} 的 <code>{{MODEL}}</code> 模型。</p>
-          <p>旧版用户：<a href="{{SERVER_ENTRY_URL}}#upgrade">一次启用自动更新</a>，以后不用每次手工升级。</p>
+          <p>旧版用户：<a href="{{SERVER_ENTRY_URL}}#upgrade">一次启用自动更新</a>。程序升级保留原节点、白名单和 Key；接入自有域名单独运行 <code>huarun network setup</code>，成功后重新导入连接。</p>
+          <p>通知用 Telegram，在终端配置后测试收件；家宽等出口由你准备，通过 <code>huarun egress setup home</code> 保存后，可让 Agent 切换已有出口。</p>
           <p>已连接华润 MCP 的 AI 可调用 <code>{{SERVER_TOOL}}</code>，选择提示 <code>{{SERVER_PROMPT}}</code>，或读取资源 <code>{{SERVER_RESOURCE}}</code> 获取同一套安装说明。</p>
         </div>
       </details>

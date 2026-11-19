@@ -19,7 +19,7 @@ INSTALL_COMMAND = SERVER["install_command"]
 CSS_PATH = "/assets/server-assistant-v1.0-2026-11-13.css"
 BOOK_PATH = urlsplit(SERVER["download_url"]).path
 TITLE = "华润服务器助手：自己的 VPS，自带 AI 助手"
-DESCRIPTION = "华润 Linux VPS 服务器助手：PicoClaw 与 DeepSeek 先查华润 MCP 文档，资料不足再联网搜索，诊断和修复后复查；提供 iLang 运维技能、安装指南与助手自动更新。"
+DESCRIPTION = "华润 Linux VPS 服务器助手：Cloudflare 固定域名、TLS、动态 IP 同步、故障通知与链式 TCP 出口；PicoClaw 和 DeepSeek 先查 MCP 文档、修复后复查，配置保留并自动更新。"
 NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 
 
@@ -46,15 +46,15 @@ def build_server_page(public: Path, page, server_source: Path) -> None:
     body = r'''
 <main class="wrap guide-main server-page" id="main">
 <nav class="breadcrumb" aria-label="面包屑"><a href="/">首页</a><span aria-hidden="true"> / </span><span>服务器助手</span></nav>
-<header class="server-hero"><p class="eyebrow">华润 / 服务器助手</p><h1>自己的服务器，<br><span>自带 AI 助手。</span></h1><p class="server-lead">已经有一台海外 VPS，想让手机和电脑都能用上？<br>在服务器安装一次，拿到连接信息，再用内置 AI 帮你检查网络、证书和服务。</p><div class="server-actions"><a class="button button-primary" href="#prepare">开始准备 →</a><a class="button button-secondary" href="#install">已有 Key 和服务器，直接安装</a></div><p class="server-caption">{{RUNTIME}} + {{PROVIDER}} · 在你自己的 Linux 服务器上运行</p></header>
-<div class="server-overview"><div><span class="mini-label">准备这些就能开始</span><h2>一台 VPS，一把自己的 Key。</h2><p>准备一台<strong>{{OS_LABEL}}</strong>，能够以 root 登录，且 80、443 端口可用。{{PRICE_SENTENCE}}</p><p>安装后，你会得到 VMess 连接信息和 <code>huarun</code> 管理命令。API Key 在服务器终端里输入，网页无需填写。</p></div><ol class="server-route" aria-label="安装步骤"><li><a href="#prepare"><span>01</span>准备 {{PROVIDER}}</a></li><li><a href="#connect"><span>02</span>连接自己的 VPS</a></li><li><a href="#install"><span>03</span>安装服务器助手</a></li><li><a href="#client"><span>04</span>导入手机或电脑</a></li><li><a href="#assistant"><span>05</span>让 AI 帮你维护</a></li></ol></div>
-<section class="server-step" id="prepare" aria-labelledby="prepare-title"><div class="server-step-number" aria-hidden="true">01</div><div><p class="eyebrow">准备 DEEPSEEK</p><h2 id="prepare-title">充值 {{PRICE_AMOUNT}} 元，创建 API Key。</h2><p>打开 {{PROVIDER}} 开放平台，登录后充值 {{PRICE_AMOUNT}} 元，再创建并保存自己的 API Key。充值 {{PRICE_AMOUNT}} 元，即可开始使用 AI 维护。</p><p><a class="button button-primary" href="{{API_URL}}" target="_blank" rel="noopener noreferrer">打开 {{PROVIDER}} 开放平台 ↗</a></p><p class="server-note">到第 3 步时，在自己的服务器终端输入 Key。终端隐藏输入内容，不显示星号也属于正常现象。</p></div></section>
+<header class="server-hero"><p class="eyebrow">华润 / 服务器助手</p><h1>自己的服务器，<br><span>自带 AI 助手。</span></h1><p class="server-lead">已经有一台海外 VPS，想让手机和电脑都能用上？<br>在服务器安装一次，用自己的固定域名连接。IP 变动自动同步，证书、故障通知和已配置的出口交给本机工具与 AI 维护。</p><div class="server-actions"><a class="button button-primary" href="#prepare">开始准备 →</a><a class="button button-secondary" href="#install">已有域名、Key 和服务器，直接安装</a></div><p class="server-caption">{{RUNTIME}} + {{PROVIDER}} · 在你自己的 Linux 服务器上运行</p></header>
+<div class="server-overview"><div><span class="mini-label">准备这些就能开始</span><h2>自己的 VPS、域名与 Key。</h2><p>准备一台<strong>{{OS_LABEL}}</strong>，能够以 root 登录，且 80、443 端口可用。{{PRICE_SENTENCE}}</p><p>安装后，你会得到 VMess 连接信息和 <code>huarun</code> 管理命令。Cloudflare 全权限账户令牌与 API Key 在服务器终端里隐藏输入，网页无需填写。</p></div><ol class="server-route" aria-label="安装步骤"><li><a href="#prepare"><span>01</span>准备域名与 {{PROVIDER}}</a></li><li><a href="#connect"><span>02</span>连接自己的 VPS</a></li><li><a href="#install"><span>03</span>安装服务器助手</a></li><li><a href="#client"><span>04</span>导入手机或电脑</a></li><li><a href="#assistant"><span>05</span>让 AI 帮你维护</a></li></ol></div>
+<section class="server-step" id="prepare" aria-labelledby="prepare-title"><div class="server-step-number" aria-hidden="true">01</div><div><p class="eyebrow">准备自己的域名与 KEY</p><h2 id="prepare-title">连接 Cloudflare，再准备 DeepSeek。</h2><p>将自己的域名接入 Cloudflare 并确认已激活。在账户的 <strong>Manage account → Account API tokens → Create Token</strong> 中选择 <strong>Full account and zone access</strong>，创建完整账户令牌；安装时自动识别 Account ID 与 Zone ID。准备要使用的完整域名，例如 <code>node.example.com</code>。</p><p><a class="text-link" href="https://dash.cloudflare.com/" target="_blank" rel="noopener noreferrer">打开 Cloudflare 账户 ↗</a></p><p>打开 {{PROVIDER}} 开放平台，登录后充值 {{PRICE_AMOUNT}} 元，再创建并保存自己的 API Key。充值 {{PRICE_AMOUNT}} 元，即可开始使用 AI 维护。</p><p><a class="button button-primary" href="{{API_URL}}" target="_blank" rel="noopener noreferrer">打开 {{PROVIDER}} 开放平台 ↗</a></p><p class="server-note">到第 3 步时，在自己的服务器终端隐藏输入完整 Cloudflare 令牌与 DeepSeek Key。终端隐藏输入内容，不显示星号也属于正常现象。</p></div></section>
 <section class="server-step" id="connect" aria-labelledby="connect-title"><div class="server-step-number" aria-hidden="true">02</div><div><p class="eyebrow">连接自己的 VPS</p><h2 id="connect-title">打开终端，SSH 登录。</h2><p>Windows 使用终端或 PowerShell，macOS、Linux 使用终端。把下面的示例 IP 换成你的 VPS 公网 IP，再执行：</p>
 ''' + code("ssh root@203.0.113.10") + r'''
 <p>按提示完成 SSH 登录。看到服务器终端后，下面的安装命令都在这台 VPS 上运行。若你的服务器使用其他 SSH 端口，请按服务商提供的连接方式登录。</p><p class="server-note">本页不会连接你的服务器；SSH 密码、私钥和 {{PROVIDER}} Key 都在你自己的终端中使用。</p></div></section>
 <section class="server-step" id="install" aria-labelledby="install-title"><div class="server-step-number" aria-hidden="true">03</div><div><p class="eyebrow">安装服务器助手</p><h2 id="install-title">复制命令，跟着终端完成安装。</h2><p>确认已经以 root 登录{{OS_LABEL}}。命令从华润主站下载安装脚本，然后启动交互安装。</p>
 ''' + code(INSTALL_COMMAND) + r'''
-<ol class="server-checklist"><li>输入你的 {{PROVIDER}} API Key，安装器会先验证是否可用。</li><li>按提示设置连接信息。没有域名时，可按安装器提示使用 sslip.io 域名。</li><li>等待安装完成，保存终端输出的 VMess 连接信息。</li></ol><p>安装内容包括代理服务、证书与续期任务，以及内置 {{RUNTIME}} AI 助手。当前安装版本为 {{RUNTIME}} v{{RUNTIME_VERSION}}，默认使用 {{PROVIDER}} 的 <code>{{MODEL}}</code> 模型。</p><details class="server-details"><summary>终端提示找不到 curl？</summary><p>先安装 curl 和证书，再重新执行上面的安装命令：</p>
+<ol class="server-checklist"><li>输入你的 {{PROVIDER}} API Key，安装器会先验证是否可用。</li><li>隐藏输入 Cloudflare 的 Full account and zone access 账户令牌，输入固定域名，自动识别并验证 Account ID 与 Zone ID。</li><li>安装器通过 DNS-01 配置有效 TLS、证书续期和动态 IP 同步。</li><li>等待安装完成，保存终端输出的 VMess 连接信息。</li></ol><p>安装内容包括固定域名、TLS、动态 IP 维护、代理服务，以及内置 {{RUNTIME}} AI 助手。当前安装版本为 {{RUNTIME}} v{{RUNTIME_VERSION}}，默认使用 {{PROVIDER}} 的 <code>{{MODEL}}</code> 模型。</p><details class="server-details"><summary>终端提示找不到 curl？</summary><p>先安装 curl 和证书，再重新执行上面的安装命令：</p>
 ''' + code("apt-get update && apt-get install -y curl ca-certificates") + r'''
 </details><p class="server-note">如果安装中途报错，先保留错误信息，检查提示对应的端口、域名或 Key。已有业务或旧配置的服务器，请先备份并确认兼容性。</p><a class="text-link" href="/server/install.sh">查看安装脚本 →</a></div></section>
 <section class="server-step" id="client" aria-labelledby="client-title"><div class="server-step-number" aria-hidden="true">04</div><div><p class="eyebrow">导入手机或电脑</p><h2 id="client-title">把连接信息，带到你的设备上。</h2><p>安装结束后复制 VMess 链接，在设备上的客户端选择“从剪贴板导入”或对应的导入功能。之后可随时在服务器查看：</p>
@@ -65,9 +65,11 @@ def build_server_page(public: Path, page, server_source: Path) -> None:
 <div class="server-examples" aria-label="可以问助手的问题"><p>“手机连不上，帮我检查服务和证书。”</p><p>“把连接信息再给我看一下。”</p><p>“检查 example.com 能否访问，需要的话加入白名单。”</p><p>“证书还有多少天到期？”</p></div><p>{{KNOWLEDGE_SENTENCE}}AI 会结合这台服务器的真实检查结果定位问题，修复后报告复查结果和资料来源。对话与搜索会使用你的 {{PROVIDER}} API 余额。</p><details class="server-details"><summary>查看状态、诊断和修复命令</summary><p>这些命令在 SSH 终端直接运行。先查看状态与诊断结果，再按提示决定是否修复。</p>
 ''' + code("huarun status\nhuarun doctor\nhuarun fix") + r'''
 </details></div></section>
+<section class="server-step" id="network" aria-labelledby="network-title"><div class="server-step-number" aria-hidden="true">↔</div><div><p class="eyebrow">域名与故障维护</p><h2 id="network-title">IP 会变，连接仍用同一个域名。</h2><p>{{NETWORK_SENTENCE}}</p><p>{{NETWORK_PROXY_SENTENCE}}</p><p>在自己的 SSH 终端运行 <code>huarun network setup</code> 配置 Telegram Bot Token 与 Chat ID，然后用 <code>huarun network notify-test</code> 测试并确认收件。用 <code>huarun network status</code> 查看状态，<code>huarun network check</code> 立即检查。证书状态用 <code>huarun doctor --json</code> 核对；<code>huarun egress probe</code> 验证完整节点的 TLS 与访问通路。</p><p>未配置通知会明确显示 <code>not_configured</code>；发送失败会保留队列重试。自动换 IP 需要所选厂商的本机配置、分配与必要的短暂中断授权、预算，以及独立地区探针证据；其他厂商或条件不满足时通知你处理。</p><p class="server-note">本机超时不会直接判定“被墙”。动态 IP 同步识别 VPS 入站地址，区分 Cloudflare CDN 和链式出口；DNS 更新后仍要核对缓存与实际连通。真实云 API 换 IP 的实测范围见<a href="/api/agent/books/server">本版工程书元数据</a>。</p></div></section>
+<section class="server-step" id="egress" aria-labelledby="egress-title"><div class="server-step-number" aria-hidden="true">⇢</div><div><p class="eyebrow">已有家宽等出口</p><h2 id="egress-title">把自己的出口代理，接到服务器后面。</h2><p>{{EGRESS_SENTENCE}}</p><p>先准备你自己的出口服务，在 SSH 终端运行 <code>huarun egress setup home</code> 保存带名称的 profile。之后可以告诉助手：“切换到 home 出口，并复查出口 IP。”或使用 <code>huarun egress use home</code>。</p><p><code>huarun egress status</code> 查看配置，<code>huarun egress probe</code> 检查实际出口。支持 SOCKS5 与 HTTP CONNECT 的 TCP 通路，家宽服务由你自行准备。</p><p class="server-note">链式出口不改变 VPS 入站域名，也不放开白名单；出口失效时保持所选路由。需要直连时，明确告诉助手或运行 <code>huarun egress direct</code>。</p></div></section>
 <section class="server-step" id="upgrade" aria-labelledby="upgrade-title"><div class="server-step-number" aria-hidden="true">↻</div><div><p class="eyebrow">自动维护</p><h2 id="upgrade-title">启用一次，以后自动更新。</h2><p>{{AUTOMATIC_UPDATE_SENTENCE}}</p><p>旧版 1.0 / 1.1 没有自动更新程序，需要你 SSH 登录原来的 VPS，执行一次下面的命令；新安装已经默认开启，无需重复执行：</p>
 ''' + code(SERVER["upgrade_command"]) + r'''
-<p>更新内置助手和 <code>huarun</code> 管理命令，并启用 VPS 本机定时更新。保留原节点配置、连接信息、白名单、DeepSeek Key 和聊天记忆，不重装网络，也不重启 Xray 或 Nginx。</p><p>每 6 小时检查，开机 10 分钟后检查，另有最多 30 分钟随机错峰。只安装 GitHub 已正式发布且主站与 .io 页面一致的版本；升级前备份，失败回滚，聊天或管理操作正在使用时延期。</p><p>查看自动更新的真实状态：</p>
+<p>更新内置助手和 <code>huarun</code> 管理命令，并启用 VPS 本机定时更新。保留原节点配置、连接信息、白名单、DeepSeek Key 和聊天记忆，不重装网络，也不重启 Xray 或 Nginx。</p><p>每 6 小时检查，开机 10 分钟后检查，另有最多 30 分钟随机错峰。只安装 GitHub 已正式发布且主站与 .io 页面一致的版本；升级前备份，失败回滚，聊天或管理操作正在使用时延期。</p><p>旧节点接入自有 Cloudflare 域名时，单独执行 <code>huarun network setup</code>：先申请新证书，再迁移域名并验收，失败恢复原配置，保留 UUID、WebSocket 路径、白名单和 Key。成功后重新导入 <code>huarun info</code> 给出的连接。普通版本更新不会替你迁移域名。</p><p>查看自动更新的真实状态：</p>
 ''' + code(SERVER["automatic_updates"]["commands"]["status"]) + r'''
 <details class="server-details"><summary>管理员：立即检查、暂停或恢复</summary><p>下面三条命令分别用于立即检查、暂停和恢复；由你在 SSH 终端按需要执行。内置 Agent 只允许查询状态，不能改动更新设置。</p>
 ''' + code("huarun auto-update check\nhuarun auto-update disable\nhuarun auto-update enable") + r'''
@@ -79,6 +81,7 @@ def build_server_page(public: Path, page, server_source: Path) -> None:
 '''
     values = {
         "PRICE_SENTENCE": FACTS["price_sentence"], "KNOWLEDGE_SENTENCE": FACTS["knowledge_sentence"],
+        "NETWORK_SENTENCE": FACTS["network_sentence"], "NETWORK_PROXY_SENTENCE": FACTS["network_proxy_sentence"], "EGRESS_SENTENCE": FACTS["egress_sentence"],
         "AUTOMATIC_UPDATE_SENTENCE": FACTS["automatic_update_sentence"], "OS_LABEL": FACTS["os_label"],
         "API_URL": SERVER["api_url"], "RUNTIME": SERVER["assistant"]["runtime"],
         "PROVIDER": SERVER["assistant"]["provider"],
@@ -129,7 +132,7 @@ def add_server_discovery(public: Path) -> None:
         card = (
             '<section class="wrap server-home" id="server-home" aria-labelledby="server-home-title">'
             '<div><p class="eyebrow">华润 / 服务器助手</p><h2 id="server-home-title">自己的服务器，自带 AI 助手。</h2>'
-            '<p>已经有一台 VPS？准备 DeepSeek Key，运行安装命令，再把连接导入手机和电脑。之后让内置 AI 帮你检查和排障。</p></div>'
+            '<p>已经有一台 VPS？准备自有 Cloudflare 域名和 DeepSeek Key，安装固定域名与 TLS。动态 IP、故障通知和已有出口由本机工具与 AI 维护。</p></div>'
             '<div class="server-home-action"><a class="button button-primary" href="/server/">开始安装服务器助手 →</a>'
             f'<span>{html.escape(FACTS["os_label"])} · {html.escape(SERVER["assistant"]["runtime"])} + {html.escape(SERVER["assistant"]["provider"])}</span></div></section>'
         )
@@ -141,7 +144,7 @@ def add_server_discovery(public: Path) -> None:
             raise RuntimeError("Homepage hero actions missing; cannot place installation shortcut.")
     write(public, "index.html", add_styles(raw))
 
-    description = "- [华润服务器助手](" + ENTRY_URL + ")：准备 DeepSeek Key → SSH 自己的 VPS → 安装 → 导入客户端 → huarun chat 排障。"
+    description = "- [华润服务器助手](" + ENTRY_URL + ")：Cloudflare 固定域名与 DeepSeek Key → SSH 安装 TLS → 导入客户端 → 动态 IP、通知与链式出口维护。"
     for name in ("index.md", "llms.txt", "ai/index.md", "llms-full.txt"):
         target = public / name
         if target.exists():
@@ -166,6 +169,9 @@ def add_server_discovery(public: Path) -> None:
         "内置 " + SERVER["assistant"]["runtime"] + " v" + SERVER["assistant"]["runtime_version"] +
         "，默认模型 " + SERVER["assistant"]["model"] + "，对话命令 " + SERVER["assistant"]["command"] + "。\n\n"
         + FACTS["knowledge_sentence"] + "\n\n"
+        + FACTS["network_sentence"] + "\n\n"
+        + FACTS["network_proxy_sentence"] + "\n\n"
+        + FACTS["egress_sentence"] + "\n\n"
         + FACTS["automatic_update_sentence"] + "[一次启用自动更新](" + ENTRY_URL + "#upgrade)。\n\n"
         "安装工具：" + SERVER["tool"] + "；提示：" + SERVER["prompt"] +
         "；资源：" + SERVER["resource_uri"] + "。Key 在自己的服务器终端配置，公共 MCP 提供只读说明。\n"
@@ -191,5 +197,5 @@ def add_server_discovery(public: Path) -> None:
             sitemap.remove(node)
     node = ET.SubElement(sitemap, "{" + NS + "}url")
     ET.SubElement(node, "{" + NS + "}loc").text = ENTRY_URL
-    ET.SubElement(node, "{" + NS + "}lastmod").text = "2026-11-15"
+    ET.SubElement(node, "{" + NS + "}lastmod").text = "2026-11-18"
     write(public, "sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n' + ET.tostring(sitemap, encoding="unicode"))

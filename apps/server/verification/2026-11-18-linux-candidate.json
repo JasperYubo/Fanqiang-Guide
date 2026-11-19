@@ -1,0 +1,736 @@
+{
+  "candidate_version": "1.3.0",
+  "completed_at": "2026-11-19T03:03:17.058243+00:00",
+  "development_only": true,
+  "fresh_install": {
+    "blocked_target_reachable": true,
+    "doctor_checks": {
+      "cert": true,
+      "cron": true,
+      "disk": true,
+      "dns": true,
+      "firewall": true,
+      "nginx": true,
+      "nginx_config": true,
+      "port443": true,
+      "swap": true,
+      "xray": true,
+      "xray_config": true
+    },
+    "installed_version": "1.3.0",
+    "network_features": {
+      "chain_failure_closed": true,
+      "chain_whitelist_enforced": true,
+      "cloudflare_dns01": true,
+      "cloudflare_txt_created": true,
+      "cloudflare_txt_removed": true,
+      "ddns_address_changed": true,
+      "ddns_readback_verified": true,
+      "dns01_leading_dash_value": true,
+      "domain_identity_preserved": true,
+      "domain_migration_rollback": true,
+      "domain_migration_verified": true,
+      "fixture_unknown_ca_rejected": true,
+      "fixture_wrong_san_rejected": true,
+      "http_connect_chain_verified": true,
+      "network_timer_active": true,
+      "network_timer_enabled": true,
+      "notification_recovered_delivered": true,
+      "notification_retry_queued": true,
+      "passed": true,
+      "scope": "installed-runtime-real-tls-and-xray; local Cloudflare/ACME/Telegram/two-region contracts; no live provider or Telegram claim",
+      "socks5_chain_verified": true
+    },
+    "passed": true,
+    "proxy_allowed": true,
+    "proxy_block_route_verified": true,
+    "proxy_blocked": true,
+    "services_healthy": true,
+    "timer_active": true,
+    "timer_enabled": true,
+    "tls_verified": true,
+    "version": "1.3.0"
+  },
+  "installer_sha256": "db9d67e1b667f8a817e619111fdc95e40a43c89e142ee3ea3d5fe26e4029951d",
+  "kind": "huarun-linux-release-e2e",
+  "limitations": [
+    "DeepSeek account authentication uses a synthetic Key and local model-list fixture; paid model inference is outside this release gate.",
+    "Public ACME issuance uses an isolated test CA; real hash-pinned acme.sh validates HTTP-01 or Cloudflare DNS-01 fixture records and submits a real CSR. Cloudflare HTTP contracts use a synthetic account and token. For loopback .release.invalid node probes only, the harness adds its test CA to the original real-Xray probe; unknown-CA and wrong-SAN negative controls must reject.",
+    "Notification failure/recovery and two-region probes use local signed HTTP contracts; no live Telegram delivery or live regional observer claim. SOCKS5/HTTP CONNECT use real authenticated local proxy servers and external HTTPS targets.",
+    "Linux Debian 12 amd64 systemd containers; other OS/architectures and public DNS propagation are outside this acceptance run."
+  ],
+  "network_fault_tests": {
+    "passed": true,
+    "skipped": 0,
+    "suites": [
+      "test_network.py",
+      "test_ip_provider.py",
+      "test_aws_provider.py",
+      "test_egress.py",
+      "test_network_setup.py"
+    ],
+    "tests": 147
+  },
+  "passed": true,
+  "platform": "linux",
+  "run_attempt": 1,
+  "run_id": "local",
+  "schema_version": 1,
+  "skipped": 0,
+  "source_sha": "5164144f4784f3b5041872f05c0e3a14f63c32b3",
+  "started_at": "2026-11-19T02:59:01.486271+00:00",
+  "unconfigured_upgrade": {
+    "baseline_installer_sha256": "0a8dd67be1838b0fe674edc51ed75636bd41843e6b9ece8cf26ba38ba380e7c1",
+    "baseline_source_sha": "c89b724428683237d037239fd17f8a08473d16a1",
+    "blocked_target_reachable": true,
+    "doctor_checks": {
+      "cert": true,
+      "cron": true,
+      "disk": true,
+      "dns": true,
+      "firewall": true,
+      "nginx": true,
+      "nginx_config": true,
+      "port443": true,
+      "swap": true,
+      "xray": true,
+      "xray_config": true
+    },
+    "egress_config_absent": true,
+    "from_version": "1.0.0",
+    "network_config_absent": true,
+    "network_processes_unchanged": true,
+    "network_status_not_configured": true,
+    "network_timer_active": true,
+    "network_timer_enabled": true,
+    "passed": true,
+    "preservation_checks": {
+      "after": {
+        "connection_info": {
+          "exists": true,
+          "gid": 0,
+          "mode": 384,
+          "sha256": "0ed8f22001d1f5d39e12695c3297bd3c4642f40ce0ce714e65413711f390706b",
+          "uid": 0
+        },
+        "egress_config": {
+          "exists": false,
+          "gid": null,
+          "mode": null,
+          "sha256": null,
+          "uid": null
+        },
+        "key": {
+          "exists": true,
+          "gid": 0,
+          "mode": 416,
+          "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+          "uid": 0
+        },
+        "memory": {
+          "exists": true,
+          "gid": 0,
+          "mode": 416,
+          "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+          "uid": 0
+        },
+        "network_config": {
+          "exists": false,
+          "gid": null,
+          "mode": null,
+          "sha256": null,
+          "uid": null
+        },
+        "nginx_config": {
+          "exists": true,
+          "gid": 0,
+          "mode": 420,
+          "sha256": "1cc4a3dd048724a9f33a09d2d61aaa47a6baa4867e66eebe34d1f39b070fdefb",
+          "uid": 0
+        },
+        "node_config": {
+          "exists": true,
+          "gid": 0,
+          "mode": 420,
+          "sha256": "77234287bfa330e2ee1219e81686c2ec69c7bc101c3f5359e4f85c2ba83a5606",
+          "uid": 0
+        },
+        "whitelist": {
+          "exists": true,
+          "gid": 0,
+          "mode": 384,
+          "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+          "uid": 0
+        }
+      },
+      "before": {
+        "connection_info": {
+          "exists": true,
+          "gid": 0,
+          "mode": 384,
+          "sha256": "0ed8f22001d1f5d39e12695c3297bd3c4642f40ce0ce714e65413711f390706b",
+          "uid": 0
+        },
+        "egress_config": {
+          "exists": false,
+          "gid": null,
+          "mode": null,
+          "sha256": null,
+          "uid": null
+        },
+        "key": {
+          "exists": true,
+          "gid": 0,
+          "mode": 416,
+          "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+          "uid": 0
+        },
+        "memory": {
+          "exists": true,
+          "gid": 0,
+          "mode": 416,
+          "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+          "uid": 0
+        },
+        "network_config": {
+          "exists": false,
+          "gid": null,
+          "mode": null,
+          "sha256": null,
+          "uid": null
+        },
+        "nginx_config": {
+          "exists": true,
+          "gid": 0,
+          "mode": 420,
+          "sha256": "1cc4a3dd048724a9f33a09d2d61aaa47a6baa4867e66eebe34d1f39b070fdefb",
+          "uid": 0
+        },
+        "node_config": {
+          "exists": true,
+          "gid": 0,
+          "mode": 420,
+          "sha256": "77234287bfa330e2ee1219e81686c2ec69c7bc101c3f5359e4f85c2ba83a5606",
+          "uid": 0
+        },
+        "whitelist": {
+          "exists": true,
+          "gid": 0,
+          "mode": 384,
+          "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+          "uid": 0
+        }
+      }
+    },
+    "preserved": {
+      "connection_info": true,
+      "egress_config": true,
+      "key": true,
+      "memory": true,
+      "network_config": true,
+      "nginx_config": true,
+      "node_config": true,
+      "whitelist": true
+    },
+    "proxy_allowed": true,
+    "proxy_block_route_verified": true,
+    "proxy_blocked": true,
+    "roles": [
+      "legacy-1.0"
+    ],
+    "services_healthy": true,
+    "timer_active": true,
+    "timer_enabled": true,
+    "tls_verified": true,
+    "to_version": "1.3.0"
+  },
+  "upgrades": [
+    {
+      "baseline_installer_sha256": "0a8dd67be1838b0fe674edc51ed75636bd41843e6b9ece8cf26ba38ba380e7c1",
+      "baseline_source_sha": "c89b724428683237d037239fd17f8a08473d16a1",
+      "blocked_target_reachable": true,
+      "doctor_checks": {
+        "cert": true,
+        "cron": true,
+        "disk": true,
+        "dns": true,
+        "firewall": true,
+        "nginx": true,
+        "nginx_config": true,
+        "port443": true,
+        "swap": true,
+        "xray": true,
+        "xray_config": true
+      },
+      "from_version": "1.0.0",
+      "network_processes_unchanged": true,
+      "network_timer_active": true,
+      "network_timer_enabled": true,
+      "passed": true,
+      "preservation_checks": {
+        "after": {
+          "connection_info": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "b83b4971d96d91e091f8ab327717247f2cad681da9c4d064304404f5246d2eef",
+            "uid": 0
+          },
+          "egress_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "06a6828d3a1aa8b48b444a58de25d1c86024a8837b424e3fdb02cdbab9820eaa",
+            "uid": 0
+          },
+          "key": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+            "uid": 0
+          },
+          "memory": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+            "uid": 0
+          },
+          "network_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "1c6019fe7a3d0a14ee7510c4c63f5920c063c45ac4cbc4f73ad6b608c41e8973",
+            "uid": 0
+          },
+          "nginx_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "15f6af7ec81a32cd10990478e4d6167d1ed866f00681b9390ec15be77f917c6e",
+            "uid": 0
+          },
+          "node_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "99b4ab0ec710287001f2c1c8fa3457ffe51e89b1f3e363aa10a76132ed471fec",
+            "uid": 0
+          },
+          "whitelist": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+            "uid": 0
+          }
+        },
+        "before": {
+          "connection_info": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "b83b4971d96d91e091f8ab327717247f2cad681da9c4d064304404f5246d2eef",
+            "uid": 0
+          },
+          "egress_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "06a6828d3a1aa8b48b444a58de25d1c86024a8837b424e3fdb02cdbab9820eaa",
+            "uid": 0
+          },
+          "key": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+            "uid": 0
+          },
+          "memory": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+            "uid": 0
+          },
+          "network_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "1c6019fe7a3d0a14ee7510c4c63f5920c063c45ac4cbc4f73ad6b608c41e8973",
+            "uid": 0
+          },
+          "nginx_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "15f6af7ec81a32cd10990478e4d6167d1ed866f00681b9390ec15be77f917c6e",
+            "uid": 0
+          },
+          "node_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "99b4ab0ec710287001f2c1c8fa3457ffe51e89b1f3e363aa10a76132ed471fec",
+            "uid": 0
+          },
+          "whitelist": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+            "uid": 0
+          }
+        }
+      },
+      "preserved": {
+        "connection_info": true,
+        "egress_config": true,
+        "key": true,
+        "memory": true,
+        "network_config": true,
+        "nginx_config": true,
+        "node_config": true,
+        "whitelist": true
+      },
+      "proxy_allowed": true,
+      "proxy_block_route_verified": true,
+      "proxy_blocked": true,
+      "roles": [
+        "legacy-1.0"
+      ],
+      "services_healthy": true,
+      "timer_active": true,
+      "timer_enabled": true,
+      "tls_verified": true,
+      "to_version": "1.3.0"
+    },
+    {
+      "baseline_installer_sha256": "cdb22951eb5c34053fd99863e1d38bafec200217cdc426adfb8c3b7f5b368f6c",
+      "baseline_source_sha": "e3d9a186ce961fb12c3b3401e00bc22621fe7242",
+      "blocked_target_reachable": true,
+      "doctor_checks": {
+        "cert": true,
+        "cron": true,
+        "disk": true,
+        "dns": true,
+        "firewall": true,
+        "nginx": true,
+        "nginx_config": true,
+        "port443": true,
+        "swap": true,
+        "xray": true,
+        "xray_config": true
+      },
+      "from_version": "1.1.0",
+      "network_processes_unchanged": true,
+      "network_timer_active": true,
+      "network_timer_enabled": true,
+      "passed": true,
+      "preservation_checks": {
+        "after": {
+          "connection_info": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "6aa17ffa59ae00f729c2bb8f63ea931e11e18cbcbd8aca17cdf18afd83d9f587",
+            "uid": 0
+          },
+          "egress_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "06a6828d3a1aa8b48b444a58de25d1c86024a8837b424e3fdb02cdbab9820eaa",
+            "uid": 0
+          },
+          "key": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+            "uid": 0
+          },
+          "memory": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+            "uid": 0
+          },
+          "network_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "1c6019fe7a3d0a14ee7510c4c63f5920c063c45ac4cbc4f73ad6b608c41e8973",
+            "uid": 0
+          },
+          "nginx_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "f7954958d68c976a4ae9fede9947f6ef24bd198e60e19a6434c1a18534b187c1",
+            "uid": 0
+          },
+          "node_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "ec7cbdd656426b0b479321deba758df8218fabf5278fd8466643a08664d9615f",
+            "uid": 0
+          },
+          "whitelist": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+            "uid": 0
+          }
+        },
+        "before": {
+          "connection_info": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "6aa17ffa59ae00f729c2bb8f63ea931e11e18cbcbd8aca17cdf18afd83d9f587",
+            "uid": 0
+          },
+          "egress_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "06a6828d3a1aa8b48b444a58de25d1c86024a8837b424e3fdb02cdbab9820eaa",
+            "uid": 0
+          },
+          "key": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+            "uid": 0
+          },
+          "memory": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+            "uid": 0
+          },
+          "network_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "1c6019fe7a3d0a14ee7510c4c63f5920c063c45ac4cbc4f73ad6b608c41e8973",
+            "uid": 0
+          },
+          "nginx_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "f7954958d68c976a4ae9fede9947f6ef24bd198e60e19a6434c1a18534b187c1",
+            "uid": 0
+          },
+          "node_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "ec7cbdd656426b0b479321deba758df8218fabf5278fd8466643a08664d9615f",
+            "uid": 0
+          },
+          "whitelist": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+            "uid": 0
+          }
+        }
+      },
+      "preserved": {
+        "connection_info": true,
+        "egress_config": true,
+        "key": true,
+        "memory": true,
+        "network_config": true,
+        "nginx_config": true,
+        "node_config": true,
+        "whitelist": true
+      },
+      "proxy_allowed": true,
+      "proxy_block_route_verified": true,
+      "proxy_blocked": true,
+      "roles": [
+        "legacy-1.1"
+      ],
+      "services_healthy": true,
+      "timer_active": true,
+      "timer_enabled": true,
+      "tls_verified": true,
+      "to_version": "1.3.0"
+    },
+    {
+      "baseline_installer_sha256": "9a2c61f4b9338801a404388675bc1b6754e48f445986d24524480b660ba6b73c",
+      "baseline_release_id": 446003371,
+      "baseline_source_sha": "eb97d143b0544ffe915792f72156787d55fee6ee",
+      "blocked_target_reachable": true,
+      "doctor_checks": {
+        "cert": true,
+        "cron": true,
+        "disk": true,
+        "dns": true,
+        "firewall": true,
+        "nginx": true,
+        "nginx_config": true,
+        "port443": true,
+        "swap": true,
+        "xray": true,
+        "xray_config": true
+      },
+      "from_version": "1.2.0",
+      "network_processes_unchanged": true,
+      "network_timer_active": true,
+      "network_timer_enabled": true,
+      "passed": true,
+      "preservation_checks": {
+        "after": {
+          "connection_info": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "7e59b9f2704b218a4ed3140e83430561a4542920f4bbd96dd5dd391d4d5397a4",
+            "uid": 0
+          },
+          "egress_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "06a6828d3a1aa8b48b444a58de25d1c86024a8837b424e3fdb02cdbab9820eaa",
+            "uid": 0
+          },
+          "key": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+            "uid": 0
+          },
+          "memory": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+            "uid": 0
+          },
+          "network_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "1c6019fe7a3d0a14ee7510c4c63f5920c063c45ac4cbc4f73ad6b608c41e8973",
+            "uid": 0
+          },
+          "nginx_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "5bc2e77cd391c290b639ade7dca065aa1a9b190c5fa34080b57237f72aa7c7a2",
+            "uid": 0
+          },
+          "node_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "99e4c4860392b1bb75f1269ceb6cd52cff904cbca5ae236b6b9e070d268e224c",
+            "uid": 0
+          },
+          "whitelist": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+            "uid": 0
+          }
+        },
+        "before": {
+          "connection_info": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "7e59b9f2704b218a4ed3140e83430561a4542920f4bbd96dd5dd391d4d5397a4",
+            "uid": 0
+          },
+          "egress_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "06a6828d3a1aa8b48b444a58de25d1c86024a8837b424e3fdb02cdbab9820eaa",
+            "uid": 0
+          },
+          "key": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "42f2dce31b7dad461e61cbd82db0516191c29d04b4e91ef895a5983a81a15ae1",
+            "uid": 0
+          },
+          "memory": {
+            "exists": true,
+            "gid": 0,
+            "mode": 416,
+            "sha256": "7b8757685a54a84dfa7582d3b3418f658a656498f9da24c5e754ec0dde6efbd8",
+            "uid": 0
+          },
+          "network_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "1c6019fe7a3d0a14ee7510c4c63f5920c063c45ac4cbc4f73ad6b608c41e8973",
+            "uid": 0
+          },
+          "nginx_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "5bc2e77cd391c290b639ade7dca065aa1a9b190c5fa34080b57237f72aa7c7a2",
+            "uid": 0
+          },
+          "node_config": {
+            "exists": true,
+            "gid": 0,
+            "mode": 420,
+            "sha256": "99e4c4860392b1bb75f1269ceb6cd52cff904cbca5ae236b6b9e070d268e224c",
+            "uid": 0
+          },
+          "whitelist": {
+            "exists": true,
+            "gid": 0,
+            "mode": 384,
+            "sha256": "f9df6957bc698e8ccade97ad3705dca330988f60af5814a3c56f3ac244d20207",
+            "uid": 0
+          }
+        }
+      },
+      "preserved": {
+        "connection_info": true,
+        "egress_config": true,
+        "key": true,
+        "memory": true,
+        "network_config": true,
+        "nginx_config": true,
+        "node_config": true,
+        "whitelist": true
+      },
+      "proxy_allowed": true,
+      "proxy_block_route_verified": true,
+      "proxy_blocked": true,
+      "roles": [
+        "previous-stable"
+      ],
+      "services_healthy": true,
+      "timer_active": true,
+      "timer_enabled": true,
+      "tls_verified": true,
+      "to_version": "1.3.0"
+    }
+  ]
+}

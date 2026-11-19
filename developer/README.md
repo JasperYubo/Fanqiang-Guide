@@ -8,10 +8,10 @@
 
 | 入口 | 当前内容 | 实现或资料 |
 | --- | --- | --- |
-| 公共 MCP | 2.4.0；`search`、`get`、`query`、`get_server_setup` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
+| 公共 MCP | 2.5.0；`search`、`get`、`query`、`get_server_setup` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
 | 设备配置工程书 | autosetup 2.1 | [正文](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.evidence.json) |
 | 梅林路由器工程书 | merlin 1.0 | [正文](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.evidence.json) |
-| 服务器安装工程书 | server 1.2；MCP 优先、DeepSeek 搜索后备、修复复查与 VPS 本机自动更新 | [正文](../apps/lookup/runtime/books/fanqiang-server-v1.2.ilang.md) · [助手实现](../apps/server/README.md) |
+| 服务器安装工程书 | server 1.3；Cloudflare 固定域名、TLS、动态 IP、通知与链式出口 | [正文](../apps/lookup/runtime/books/fanqiang-server-v1.3.ilang.md) · [助手实现](../apps/server/README.md) |
 | 服务器排障工程书 | troubleshooting 1.0；通过 MCP 资源直接读取 | [正文](../apps/lookup/runtime/books/fanqiang-troubleshooting-v1.0.ilang.md) |
 | 工程书注册与完整性 | 版本、资源 URI、摘要和验证元数据 | [统一注册表](../apps/lookup/runtime/setup_book.py) · [公开工程书目录](https://fanqiang.guide/api/agent/books) |
 | HTTP 查询 | 搜索、条目、条件筛选、工程书与时效 | [OpenAPI](../apps/lookup/runtime/openapi.json) |
@@ -61,6 +61,10 @@ python scripts/build_catalog.py
 验收运行真实安装器、PicoClaw、Xray、Nginx 和升级代码。DeepSeek 账户校验与 ACME 签证使用隔离测试服务及测试 CA，不使用客户 Key，也不把这些结果当作生产账户余额或公网证书签发的验证。测试不修改候选安装器字节。正式发布仍需双站身份与实际安装器摘要一致。
 
 通过报告作为 `linux-install-upgrade-proof.json` 附在 Release 中，记录完整 `source_sha`、`installer_sha256`、工作流 `run_id` / `run_attempt`、基线来源和每项结果；不公开 Key、节点内容或私有配置。发布脚本在转为正式 Release 前再次核对证据，失败版本不能进入客户端自动更新渠道。相同安装器摘要不会让已安装用户重复升级。
+
+## 网络维护与出口对接
+
+[网络维护 v1.3 工程交接](SERVER-NETWORK-v1.3-2026-11-18.ilang.md)定义 Full account and zone access 账户令牌、固定域名与 TLS、入站 IP 同步、通知、DigitalOcean、Hetzner、Vultr 与 AWS 弹性地址恢复及链式 TCP 出口的共同约定。当前真实验收范围以 [v1.3 元数据](../apps/lookup/runtime/books/fanqiang-server-v1.3.evidence.json)为准。普通程序升级和显式域名迁移分别验收；旧工程书的字节与网址保留。
 
 ## 历史交接记录
 

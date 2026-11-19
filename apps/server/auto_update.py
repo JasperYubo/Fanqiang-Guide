@@ -37,6 +37,7 @@ PROTECTED_PATHS = (
     "/usr/local/etc/xray/config.json", "/usr/local/etc/xray/whitelist.txt",
     "/etc/nginx/conf.d/huarun.conf", "/etc/huarun/info.json",
     "/etc/huarun/assistant/.security.yml",
+    "/etc/huarun/network.json", "/etc/huarun/egress.json",
 )
 ASSISTANT_PATHS = (
     "/usr/local/bin/huarun", "/usr/local/lib/huarun/picoclaw",
@@ -46,8 +47,18 @@ ASSISTANT_PATHS = (
     "/etc/huarun/assistant/workspace/skills/huarun/SKILL.md",
     "/etc/huarun/assistant-template", "/etc/systemd/system/huarun-auto-update.service",
     "/etc/systemd/system/huarun-auto-update.timer",
+    '/usr/local/lib/huarun/network.py',
+    '/usr/local/lib/huarun/aws_provider.py',
+    '/usr/local/lib/huarun/ip_provider.py',
+    '/usr/local/lib/huarun/egress.py',
+    '/usr/local/lib/huarun/network_setup.py',
+    '/etc/huarun/acme/dnsapi/dns_huarun.sh',
+    '/etc/systemd/system/huarun-network.service',
+    '/etc/systemd/system/huarun-network.timer',
+
 )
 ALL_PATHS = PROTECTED_PATHS + ASSISTANT_PATHS
+LEGACY_ALL_PATHS = ('/usr/local/etc/xray/config.json', '/usr/local/etc/xray/whitelist.txt', '/etc/nginx/conf.d/huarun.conf', '/etc/huarun/info.json', '/etc/huarun/assistant/.security.yml', '/usr/local/bin/huarun', '/usr/local/lib/huarun/picoclaw', '/usr/local/lib/huarun/auto_update.py', '/etc/huarun/assistant/config.json', '/etc/huarun/assistant/gate.py', '/etc/huarun/assistant/research.py', '/etc/huarun/assistant/workspace/AGENT.md', '/etc/huarun/assistant/workspace/SOUL.md', '/etc/huarun/assistant/workspace/skills/huarun/SKILL.md', '/etc/huarun/assistant-template', '/etc/systemd/system/huarun-auto-update.service', '/etc/systemd/system/huarun-auto-update.timer')
 
 
 class UpdateError(Exception):
@@ -321,13 +332,19 @@ class Updater:
             raise UpdateError("local_command_failed")
         return result
 
-    def timer_state(self):
+    def timer_state(self, timer=TIMER):
         result = {}
         for name, option in (("enabled", "is-enabled"), ("active", "is-active")):
             try:
-                command = self.command(["systemctl", option, TIMER], timeout=5, check=False)
+                command = self.command(["systemctl", option, timer], timeout=5, check=False)
                 value = command.stdout.strip()
                 allowed = {"enabled", "disabled", "static", "masked", "not-found", "active", "inactive", "failed", "activating", "deactivating"}
+                if name == "enabled" and not value:
+                    # systemctl is-enabled prints a missing-unit error on stderr,
+                    # not the literal "not-found" on stdout.
+                    loaded = self.command(["systemctl", "show", "--property=LoadState", "--value", timer], timeout=5, check=False)
+                    if loaded.stdout.strip() == "not-found":
+                        value = "not-found"
                 result[name] = value if value in allowed else "unknown"
             except UpdateError:
                 result[name] = "unknown"
@@ -431,7 +448,7 @@ class Updater:
                     if self.snapshot(source) != before:
                         raise UpdateError("source_changed_during_backup")
                 entries[target] = before
-            manifest = {"schema_version": 1, "transaction": transaction, "entries": entries}
+            manifest = {"schema_version": 1, "transaction": transaction, "entries": entries, "path_order": list(ALL_PATHS)}
             self.atomic_json(folder / "backup.json", manifest)
             self.sync_parent_chain(folder)
             return folder, manifest
@@ -465,16 +482,24 @@ class Updater:
         if folder.is_symlink() or not folder.resolve().is_relative_to(self.backup_dir.resolve()):
             raise UpdateError("unsafe_backup_path")
         manifest = self.read_json(folder / "backup.json")
-        if manifest.get("transaction") != transaction or set(manifest.get("entries", {})) != set(ALL_PATHS):
+        entries = manifest.get("entries", {})
+        order = manifest.get("path_order")
+        if order is None:
+            order = list(LEGACY_ALL_PATHS if set(entries) == set(LEGACY_ALL_PATHS) else ALL_PATHS)
+        if (manifest.get("transaction") != transaction or tuple(order) not in (ALL_PATHS, LEGACY_ALL_PATHS)
+                or set(entries) != set(order)):
             raise UpdateError("invalid_backup_manifest")
-        for index, target in enumerate(ALL_PATHS):
-            before = manifest["entries"][target]
+        for index, target in enumerate(order):
+            before = entries[target]
             if before.get("exists") and not self.backup_matches(folder / str(index), before):
                 raise UpdateError("backup_integrity_failed")
         old_timer = journal.get("timer_before", {})
         if old_timer.get("enabled") in {"disabled", "not-found"}:
             self.command(["systemctl", "disable", "--now", TIMER], check=False)
-        for index, target in enumerate(ALL_PATHS):
+        old_network = journal.get("network_timer_before", {"enabled": "not-found", "active": "inactive"})
+        if old_network.get("enabled") in {"disabled", "not-found"}:
+            self.command(["systemctl", "disable", "--now", "huarun-network.timer"], check=False)
+        for index, target in enumerate(order):
             destination = self.path(target, restore_leaf=True)
             before = manifest["entries"][target]
             try:
@@ -516,6 +541,21 @@ class Updater:
         if old_timer.get("active") in {"inactive", "failed"} and actual_timer["active"] == "active":
             raise UpdateError("timer_restore_failed")
 
+        if old_network.get("enabled") in {"enabled", "disabled"}:
+            self.command(["systemctl", "enable" if old_network["enabled"] == "enabled" else "disable", "huarun-network.timer"])
+            self.command(["systemctl", "start" if old_network.get("active") == "active" else "stop", "huarun-network.timer"])
+            actual_network = self.timer_state("huarun-network.timer")
+            if actual_network["enabled"] != old_network["enabled"] or (actual_network["active"] == "active") != (old_network.get("active") == "active"):
+                raise UpdateError("network_timer_restore_failed")
+        elif old_network.get("enabled") == "not-found":
+            # A 1.2 journal cannot enumerate newly introduced 1.3 programs. Keep
+            # those files (they may be user-owned), but prove their timer stopped.
+            actual_network = self.timer_state("huarun-network.timer")
+            if actual_network["enabled"] not in {"not-found", "disabled", "masked"} or actual_network["active"] not in {"inactive", "failed"}:
+                raise UpdateError("network_timer_restore_failed")
+        else:
+            raise UpdateError("network_timer_restore_state_unknown")
+
     def health(self):
         manager = self.path("/usr/local/bin/huarun")
         try:
@@ -549,11 +589,13 @@ class Updater:
             if any(value and after[section].get(name) is not True for name, value in before[section].items()):
                 raise UpdateError("health_regression")
 
-    def validate_installed(self, candidate, manifest, before):
+    def validate_installed(self, candidate, manifest, before, network_timer_before=None):
         for target in PROTECTED_PATHS:
             if self.snapshot(self.path(target)) != manifest["entries"][target]:
                 raise UpdateError("protected_file_changed")
-        for target in ("/etc/huarun/assistant/gate.py", "/etc/huarun/assistant/research.py", "/usr/local/lib/huarun/auto_update.py"):
+        for target in ("/etc/huarun/assistant/gate.py", "/etc/huarun/assistant/research.py", *[
+                "/usr/local/lib/huarun/" + name for name in
+                ("auto_update.py", "network.py", "ip_provider.py", "aws_provider.py", "egress.py", "network_setup.py")]):
             path = self.path(target)
             try:
                 compile(path.read_bytes(), target, "exec")
@@ -565,6 +607,14 @@ class Updater:
         if current != candidate["version"]:
             raise UpdateError("installed_version_mismatch")
         self.nonregression(before, self.health())
+        if network_timer_before is not None:
+            actual = self.timer_state("huarun-network.timer")
+            expected = ({"enabled": "enabled", "active": "active"}
+                        if network_timer_before.get("enabled") == "not-found" else network_timer_before)
+            if expected.get("enabled") not in {"enabled", "disabled"} or expected.get("active") not in {"active", "inactive", "failed"}:
+                raise UpdateError("network_timer_baseline_unknown")
+            if actual["enabled"] != expected["enabled"] or (actual["active"] == "active") != (expected["active"] == "active"):
+                raise UpdateError("network_timer_changed_unexpectedly")
 
     def prune_backups(self):
         if not self.backup_dir.exists():
@@ -643,7 +693,7 @@ class Updater:
                 stream.flush()
                 os.fsync(stream.fileno())
             journal = {"schema_version": 1, "transaction": transaction, "phase": "prepared",
-                       "candidate": public_candidate, "previous_state": state, "timer_before": self.timer_state()}
+                       "candidate": public_candidate, "previous_state": state, "timer_before": self.timer_state(), "network_timer_before": self.timer_state("huarun-network.timer")}
             self.atomic_json(self.journal_path, journal)
             try:
                 journal["phase"] = "applying"
@@ -653,7 +703,7 @@ class Updater:
                     raise UpdateError("installer_busy" if applied.returncode == 75 else "installer_failed")
                 journal["phase"] = "verifying"
                 self.atomic_json(self.journal_path, journal)
-                self.validate_installed(candidate, manifest, baseline)
+                self.validate_installed(candidate, manifest, baseline, journal["network_timer_before"])
                 self.sync_installed()
             except (UpdateError, OSError, ValueError, TypeError, KeyError) as error:
                 code = str(error) if isinstance(error, UpdateError) else "local_update_failed"

@@ -47,7 +47,19 @@ class InstallerTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.manager_path = self.root / "manager.sh"
-        self.manager_path.write_text(self.manager_library)
+        # Whitelist behavior runs unprivileged with an injected service identity;
+        # real systemd ownership is covered separately by the Linux release gate.
+        lib = self.root / "lib"
+        lib.mkdir()
+        real_egress = INSTALLER.parent / "egress.py"
+        (lib / "egress.py").write_text(
+            "import importlib.util,os\n"
+            + "spec=importlib.util.spec_from_file_location('real_egress'," + repr(str(real_egress)) + ")\n"
+            + "module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\n"
+            + "install_xray_config=module.install_xray_config\n"
+            + "def xray_config_identity():return os.getuid(),os.getgid(),0o600\n")
+        isolated = self.manager_library.replace("/usr/local/lib/huarun", str(lib)).replace("/run/huarun", str(self.root / "run"))
+        self.manager_path.write_text(isolated)
         self.gate_path = self.root / "gate.py"
         self.gate_path.write_text(self.gate)
 

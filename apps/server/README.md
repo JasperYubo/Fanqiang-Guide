@@ -4,9 +4,15 @@
 
 把自己的 VPS 配成可用的网络通道，再给它装上一位能用中文排错的 AI 助手。
 
-你买好了一台海外服务器，想在手机或电脑上稳定使用跨境业务平台：先准备 DeepSeek Key，再连接服务器运行安装命令，最后把生成的连接链接导入客户端。以后连不上，直接对助手说“帮我看看哪里出了问题”。
+你买好了一台海外服务器，想在手机或电脑上稳定使用跨境业务平台：先准备自己的 Cloudflare 域名与 DeepSeek Key，再连接服务器运行安装命令，把固定域名连接导入客户端。IP 改变后由 VPS 同步解析，证书和故障通知也在服务器上维护。以后连不上，直接对助手说“帮我看看哪里出了问题”。
 
-## 1. 给 DeepSeek 充值 10 元，创建 Key
+## 1. 准备 Cloudflare 域名与全权限账户令牌
+
+将自己的域名接入 [Cloudflare](https://dash.cloudflare.com)，确认 DNS 区域已激活。进入该账户的 **Manage account → Account API tokens（账户 API 令牌）→ Create Token**，选择 **Full account and zone access**，创建并保管完整令牌。
+
+准备要使用的完整域名，例如 `node.example.com`。安装时在 VPS 终端隐藏输入令牌，由本机工具自动识别 Account ID 与 Zone ID，并配置对应记录与 TLS；网页和 AI 聊天不需要粘贴令牌。
+
+## 2. 给 DeepSeek 充值 10 元，创建 Key
 
 打开 [DeepSeek 开放平台](https://platform.deepseek.com)，登录后充值 **10 元**，再在 API Keys 页面创建自己的 API Key。
 
@@ -14,7 +20,7 @@
 
 先保管好 Key，稍后在自己的服务器终端里粘贴。华润网页不收集 Key，也不用把它发进聊天。
 
-## 2. 连接自己的服务器
+## 3. 连接自己的服务器
 
 准备一台**全新的 Debian 12 x64 VPS**，可以使用 root 登录，公网 80、443 端口可用。服务商控制台若有防火墙或安全组，也要放行这两个端口。
 
@@ -26,7 +32,7 @@ ssh root@203.0.113.10
 
 按终端提示完成服务器登录。已有网站或其他网络服务的机器，请先另备一台空白 VPS；安装器会在发现冲突时停止。
 
-## 3. 安装网络服务和 AI 助手
+## 4. 安装网络服务和 AI 助手
 
 在刚连上的服务器里执行：
 
@@ -42,11 +48,11 @@ apt-get update && apt-get install -y curl ca-certificates
 
 按提示粘贴 DeepSeek Key，输入时不会回显。安装器先检查 Key，再安装网络服务和内置的 **PicoClaw AI 助手**。
 
-有域名就填已经解析到这台服务器的域名；没有域名可以直接回车，安装器会使用公网 IP 对应的 `sslip.io` 域名申请 HTTPS 证书。选择首页样式后，等待终端显示安装结果。
+按提示输入 Cloudflare 的 Full account and zone access 账户令牌与自己的固定域名，安装器自动识别并验证 Account ID 与 Zone ID。安装器用 DNS-01 申请有效 TLS 证书并配置续期。选择首页样式后，等待终端显示安装结果。
 
 安装完成会给出一整行 `vmess://` 连接链接。证书续期已由服务器定时处理。
 
-## 4. 导入手机或电脑，打开连接
+## 5. 导入手机或电脑，打开连接
 
 在服务器运行下面的命令，可以重新查看连接链接：
 
@@ -64,9 +70,61 @@ huarun info
 
 打开白名单里的业务平台，例如 `x.com` 或 `google.com`，检查实际访问是否正常。默认允许 383 个业务根域名及其子域名；进入通道的名单外请求会被拒绝。需要添加网站，可以告诉助手。
 
+## 固定域名、动态 IP 与故障通知
+
+使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，自动维护 TLS、动态 IP 解析和故障通知；符合证据、授权与预算条件时，DigitalOcean Reserved IPv4、Hetzner Floating IPv4、Vultr Cloud Compute Reserved IPv4 与已绑定 AWS Elastic IP 的实例可自动更换，其他厂商通知处理。
+
+默认使用 Cloudflare 仅 DNS 解析；选择橙云代理时，区域的 SSL/TLS 必须已是 Full (strict)。助手只核对该设置，不改动整个域名区域的 TLS 模式。
+
+在自己的 SSH 终端配置或查看：
+
+```bash
+huarun network setup
+huarun network status
+huarun network check
+huarun network notify-test
+```
+
+通知使用 Telegram；在 setup 中输入自己的 Bot Token 与 Chat ID，发送测试并确认实际收件。未配置会显示 `not_configured`；发送失败会保留队列重试，不会显示成已送达。
+
+证书有效期用 `huarun doctor --json` 查看，完整节点的 TLS 和访问通路用 `huarun egress probe` 验证。`network status` 返回网络维护状态，不包含证书检查结果。
+
+动态 IP 同步读取 VPS 的真实入站地址；Cloudflare CDN 地址或链式出口 IP 不会被当作源站。DNS 同步后仍需等待客户端缓存刷新，并复查实际连接。
+
+自动换 IP 对接下列厂商地址类型：
+
+| 厂商 | 地址与条件 |
+| --- | --- |
+| DigitalOcean | Reserved IPv4；更换时需授权短暂解绑旧地址 |
+| Hetzner | Floating IPv4；保留原主地址与旧绑定 |
+| Vultr | Cloud Compute Reserved IPv4；Bare Metal 需外部控制器 |
+| AWS | 目标已绑定 Elastic IP；普通自动分配公网 IP 仅做 DDNS，先接入 EIP 后再开启自动更换 |
+
+按所选厂商配置本机凭据、实例与区域、自动更换和分配授权，以及预算；发生短暂中断的操作还需对应授权。预算约束的是适配器地址池的预计月费，AWS 为本 region EIP 池，不是全账户账单硬限。独立地区探针证据达到条件后才运行；其他厂商、证据不足或预算受限时通知你处理。真实云 API 换 IP 的验证范围见[本版工程书元数据](https://fanqiang.guide/api/agent/books/server)，与隔离测试分别记录。单点超时不会直接判定“IP 被墙”。
+
+## 接入已有家宽等出口代理
+
+已有家宽等出口代理时，可接入 SOCKS5 或 HTTP CONNECT 链式 TCP 出口；Agent 按请求切换已配置出口并复查出口 IP，保留白名单，故障时不悄悄直连。
+
+先准备你自己的出口代理服务，在 SSH 终端保存带名称的配置：
+
+```bash
+huarun egress setup home
+huarun egress status
+huarun egress probe
+```
+
+上面的命令会保存名为 `home` 的出口；完成后，可以对助手说“切换到 home 出口，再检查出口 IP”。也可以在终端运行：
+
+```bash
+huarun egress use home
+```
+
+这里只对接你已准备的 SOCKS5 或 HTTP CONNECT **TCP** 出口，不代购家宽，也不改变 VPS 的入站域名。原白名单继续生效；选中出口失效时不悄悄改为直连。需要恢复直连时，明确告诉助手，或运行 `huarun egress direct`。
+
 ## 一次启用，以后自动更新
 
-新安装默认开启自动更新；VPS 每 6 小时检查正式发布的新版本，保留原节点配置、白名单、Key 和聊天记忆。旧版只需 SSH 一次启用，以后自动维护。
+新安装默认开启自动更新；VPS 每 6 小时检查正式发布的新版本，保留原节点配置、白名单、Key 和聊天记忆。旧版只需 SSH 一次启用，以后自动维护。每次更新先通过 Linux 新安装和旧版升级验收，再进入自动更新渠道。
 
 旧版 1.0 / 1.1 没有自动更新程序，需要你 SSH 登录原来的 VPS，执行一次下面的命令；新安装已经默认开启，无需重复执行：
 
@@ -77,6 +135,8 @@ curl -fsSLo huarun-install.sh https://fanqiang.guide/server/install.sh && bash h
 这会更新内置助手和 `huarun` 管理命令，并启用 VPS 本机定时更新。保留原节点配置、连接信息、白名单、DeepSeek Key 和聊天记忆，不重装网络，也不重启 Xray 或 Nginx。
 
 更新只采用 GitHub 已正式发布且主站与 .io 页面一致的版本。每 6 小时检查一次，开机 10 分钟后检查，另有最多 30 分钟随机错峰。升级前先备份，失败则回滚；正在聊天或运行管理操作时延期。
+
+已有用户接入 Cloudflare 固定域名时，单独运行 `huarun network setup`。程序先申请新证书，再迁移域名并复查，失败恢复原配置；UUID、WebSocket 路径、白名单和 DeepSeek Key 保留。成功后用 `huarun info` 获取新域名连接，重新导入客户端。普通自动升级不会替你改域名。
 
 查看当前版本、定时器和最近检查结果：
 
@@ -108,6 +168,8 @@ huarun chat
 - “把连接信息给我，告诉我怎么导入。”
 - “把 example.com 加进白名单。”
 - “证书还剩多少天？”
+- “检查固定域名解析和故障通知是否正常。”
+- “切换到已经配置的 home 出口，并复查出口 IP。”
 
 每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。它会结合服务器上的检查、修复和查询结果，给出所用资料来源和实际结果。服务端检查正常后，仍需用你的手机或电脑打开目标网站，确认本地连接也已恢复。
 
@@ -128,7 +190,7 @@ huarun fix
 - 安装工具：get_server_setup
 - 安装提示：setup_server
 - 工程书资源：fanqiang://books/server
-- [服务器助手工程书](https://fanqiang.guide/ai/books/fanqiang-server-v1.2.ilang.md)
+- [服务器助手工程书](https://fanqiang.guide/ai/books/fanqiang-server-v1.3.ilang.md)
 - [安装脚本](https://fanqiang.guide/server/install.sh)
 
 搜索和对话均使用你自己的 DeepSeek API Key，按官方实际用量计费。

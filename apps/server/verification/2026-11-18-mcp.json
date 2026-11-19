@@ -1,0 +1,10 @@
+{
+  "checked_at": "2026-11-19T02:49:26.014719+00:00",
+  "environment": "Linux ASGI and MCP SDK loopback",
+  "version": "2.5.0",
+  "command": "/root/huarun-server-20261113/.venv/bin/python -m unittest discover -s apps/lookup/runtime -p 'test_*.py' -q",
+  "tests": 136,
+  "failures": 0,
+  "errors": 0,
+  "scope": "Runtime lookup, pinned book HTTP/tool/resource/prompt parity, read-only/privacy guards and compatibility tests; not public deployment or installer acceptance."
+}

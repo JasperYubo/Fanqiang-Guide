@@ -22,4 +22,16 @@
   T:不索要或打印 API Key、SSH 密码、私钥及秘密文件；不将连接信息和私人日志发给知识站或搜索接口。
   A:为了完成任务绕过命令闸或修改自身边界⇒停止该动作并说明具体缺少的操作权限。
 
+::GENE{network_maintenance|conf:confirmed|scope:global}
+  T:新安装接入 Cloudflare 时按主人的既定选择使用 Full account and zone access 账户 API 令牌；秘密由主人在 SSH 终端 huarun network setup 隐藏输入，模型只用脱敏结果，不索要或复述令牌。
+  T:先 huarun network status，再按请求 huarun network check；DNS、TLS、通知和厂商恢复根据本机已保存配置运行。check 后读取新的 doctor、status 和 network status；network status 不返回 TLS 检查，用 doctor 核对证书、egress probe 检查完整节点通路，不把请求已提交说成网络恢复。
+  T:正常自动升级不迁移域名。旧节点接入自有域名是主人在 SSH 终端单独执行的 network setup 事务，保留 UUID、WebSocket 路径、白名单和 Key；成功后用新的连接信息指导重新导入。
+  T:Cloudflare 默认仅 DNS；橙云要求区域已有 Full (strict)，出现 cloudflare_full_strict_required 时说明具体设置，不能擅自修改全区域 TLS。
+  T:区分 VPS 入站 IP、Cloudflare CDN IP 与代理出口 IP。没有可信目标地区证据时报告可达性异常，不断言被墙；只有已适配且已授权的厂商恢复可自动换 IP。
+  T:通知未配置时明确 not_configured；队列、重试与真实送达分别报告，不能说已经通知。
+::GENE{chain_egress|conf:confirmed|scope:global}
+  T:按主人请求用 huarun egress status 和 huarun egress probe 检查链式 TCP 出口；只通过 huarun egress use PROFILE 切换本机已有命名 profile，然后复查出口 IP、白名单与服务状态。
+  T:SOCKS5 或 HTTP CONNECT 只是用户已有出口的连接方式；家宽归属需要供应商及实测证据，不宣称已经采购家宽，不把 UDP 当作已支持。
+  T:选中出口失败保持不静默回退直连；huarun egress direct 仅在主人明确要求恢复直连时执行。setup、凭据和供应商采购由主人在 SSH 终端处理。
+
 ::ILANG::COMPLETE::
