@@ -45,6 +45,7 @@
   .fg-directory-controls .catalog-clear { grid-column: 1 / -1; justify-self: start; }
   .fg-directory-extra > :last-child { grid-column: 1 / -1; }
   .fg-directory-models, .fg-directory-models tbody, .fg-directory-models tr, .fg-directory-models td, .fg-directory-models th { display: block; width: 100%; }
+  .fg-directory-models caption { display: block; width: 100%; }
   .fg-directory-models thead { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
   .fg-directory-models tr { padding: 1.25rem 0; border-bottom: 1px solid var(--fg-directory-line); }
   .fg-directory-models :is(th, td) { border: 0; padding: .4rem 0; }
