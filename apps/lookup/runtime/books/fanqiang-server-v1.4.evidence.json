@@ -1,0 +1,150 @@
+{
+  "schema_version": "1.0",
+  "book_id": "server",
+  "book_version": "1.4",
+  "date": "2026-11-18",
+  "timezone": "America/New_York",
+  "document": {
+    "path": "books/fanqiang-server-v1.4.ilang.md",
+    "sha256": "367e3c92a3729cfeaf5dcf79fdcae1949c27c5626bcf828ade080840cd5aff92",
+    "byte_length": 15742
+  },
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "book_sha256": "367e3c92a3729cfeaf5dcf79fdcae1949c27c5626bcf828ade080840cd5aff92",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "checked_at": "2026-11-19T04:10:59.045413+00:00",
+      "evidence": "apps/server/verification/2026-11-18-provider-discovery-ilang.json",
+      "evidence_sha256": "5b3225f796d69f50287a252c7995c3b20093790c24a8208234e7c6cead2d72b8"
+    },
+    "service_interface": {
+      "status": "verified",
+      "version": "2.6.0",
+      "checked_at": "2026-11-19T04:30:49.111107+00:00",
+      "environment": "linux_asgi_and_sdk_loopback",
+      "scope": "MCP HTTP/tools/resources/prompt book parity, open-ended provider discovery metadata, read-only/privacy boundaries and existing device/router regressions; not cloud IP rotation or installer acceptance.",
+      "evidence": "apps/server/verification/2026-11-18-provider-discovery-mcp.json",
+      "evidence_sha256": "92cc888cd1a5118761a726f3a9c51194fcce4d71fdb89a194c888ed972e009ca",
+      "tests": 137
+    },
+    "installer_acceptance": {
+      "status": "validated",
+      "version": "1.4.0",
+      "checked_at": "2026-11-19T04:28:55.017052+00:00",
+      "environment": "linux_debian12_amd64_systemd_containers",
+      "development_only": true,
+      "scope": "Candidate Linux fresh installation, upgrades from 1.0/1.1/previous stable 1.3, and an unconfigured legacy upgrade passed. The original 8 files and recursive discovered-provider state tree retained bytes, entry types, ownership and permissions. This local development report does not substitute for the exact final-commit GitHub publication gate.",
+      "installer_sha256": "c24e04ed5739d2dfad70193f976c71e98451a9ec88419408d3652716e1a9b1f0",
+      "development_report": "apps/server/verification/2026-11-18-provider-discovery-linux.json",
+      "development_report_sha256": "5f1e711020e1b039b51abcc8d8639bab0b7ba86821741e2395d9de405ae9a27b",
+      "fresh_install_passed": true,
+      "network_features": {
+        "chain_failure_closed": true,
+        "chain_whitelist_enforced": true,
+        "cloudflare_dns01": true,
+        "cloudflare_txt_created": true,
+        "cloudflare_txt_removed": true,
+        "ddns_address_changed": true,
+        "ddns_readback_verified": true,
+        "dns01_leading_dash_value": true,
+        "domain_identity_preserved": true,
+        "domain_migration_rollback": true,
+        "domain_migration_verified": true,
+        "fixture_unknown_ca_rejected": true,
+        "fixture_wrong_san_rejected": true,
+        "http_connect_chain_verified": true,
+        "network_timer_active": true,
+        "network_timer_enabled": true,
+        "notification_recovered_delivered": true,
+        "notification_retry_queued": true,
+        "passed": true,
+        "scope": "installed-runtime-real-tls-and-xray; local Cloudflare/ACME/Telegram/two-region contracts; no live provider or Telegram claim",
+        "socks5_chain_verified": true
+      },
+      "upgrade_versions": [
+        "1.0.0",
+        "1.1.0",
+        "1.3.0"
+      ],
+      "protected_files_per_upgrade": 8,
+      "protected_state_directory": {
+        "path": "/var/lib/huarun-network/provider/discovered",
+        "recursive": true,
+        "checks": [
+          "entry_type",
+          "sha256",
+          "uid",
+          "gid",
+          "mode"
+        ],
+        "before_after_equal": true,
+        "unconfigured_remained_absent": true
+      },
+      "unconfigured_upgrade_passed": true,
+      "network_fault_tests": {
+        "passed": true,
+        "skipped": 0,
+        "suites": [
+          "test_network.py",
+          "test_ip_provider.py",
+          "test_aws_provider.py",
+          "test_egress.py",
+          "test_network_setup.py",
+          "test_generic_provider.py",
+          "test_provider_discovery.py",
+          "test_network_discovery.py",
+          "test_generic_updater.py"
+        ],
+        "tests": 215
+      },
+      "skipped": 0,
+      "formal_publication_proof_asset": "linux-install-upgrade-proof.json"
+    },
+    "provider_discovery": {
+      "status": "validated",
+      "checked_at": "2026-11-19T04:30:28.365297+00:00",
+      "development_only": true,
+      "evidence": "apps/server/verification/2026-11-18-provider-discovery-functional.json",
+      "evidence_sha256": "aab766bcd074be02fd2cce4c419f66b4c2d5836eb33ebfc877721f1b07256740",
+      "scope": "Installed Linux discovery/interpreter/network pipeline passed with 2 random unknown-vendor HTTP fixtures. Separately, the configured real DeepSeek model generated and executed an adapter against a synthetic vendor HTTP fixture. Actual official Scaleway research ended documentation_incomplete. These scopes do not establish live cloud-provider mutation.",
+      "installed_http_fixtures": {
+        "providers": 2,
+        "api_shapes": [
+          "json_bearer",
+          "query_key"
+        ],
+        "passed": true,
+        "real_model_inference": false,
+        "real_cloud_rotation": false
+      },
+      "real_model_fixture": {
+        "model": "deepseek-flash",
+        "real_inference": true,
+        "model_calls": 1,
+        "schema_repairs": 0,
+        "passed": true,
+        "rotation_status": "rotated",
+        "real_cloud_allocation": false
+      },
+      "official_research_smoke": {
+        "vendor": "Scaleway",
+        "model": "deepseek-flash",
+        "status": "documentation_incomplete",
+        "model_calls": 2,
+        "source_count": 4,
+        "cloud_reads": 0,
+        "cloud_writes": 0
+      }
+    },
+    "provider_live": {
+      "status": "not_tested",
+      "scope": "No real cloud-provider address allocation, attachment, billing or replacement was performed for this version. Installed HTTP fixtures, a real model using synthetic vendor contracts, and read-only official-document research are separate evidence; none proves live cloud IP rotation."
+    }
+  }
+}

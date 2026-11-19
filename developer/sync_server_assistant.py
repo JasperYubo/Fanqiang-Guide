@@ -13,7 +13,9 @@ PAYLOADS = {'AGENTEOF':'apps/server/assistant/AGENT.md',
             'NETWORKEOF':'apps/server/network.py',
             'PROVIDEREOF':'apps/server/ip_provider.py',
             'EGRESSEOF':'apps/server/egress.py',
-            'NETWORKSETUPEOF':'apps/server/network_setup.py'}
+            'NETWORKSETUPEOF':'apps/server/network_setup.py',
+            'DISCOVERYEOF':'apps/server/provider_discovery.py',
+            'GENERICEOF':'apps/server/generic_provider.py'}
 
 def render(source):
     for delimiter, relative in PAYLOADS.items():

@@ -10,7 +10,7 @@ ROOT=pathlib.Path('/opt/e2e-state'); ROOT.mkdir(mode=0o700,exist_ok=True)
 BASE='https://acme-v02.api.letsencrypt.org'
 records={}
 events=[]
-control={'telegram_fail':False,'probe_reachable':True,'fail_order_domain':None}
+control={'telegram_fail':False,'probe_reachable':True,'probe_candidate_reachable':None,'fail_order_domain':None}
 PROBE_KEY='synthetic-release-probe-key-32-bytes-minimum'
 CF_ACCOUNT='1'*32
 CF_ZONE='2'*32
@@ -83,7 +83,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             payload=json.loads(self.rfile.read(int(self.headers.get('Content-Length','0'))))
             def sign(value):return hmac.new(PROBE_KEY.encode(),(json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(',',':'))+'\n').encode(),hashlib.sha256).hexdigest()
             if not hmac.compare_digest(self.headers.get('X-HuaRun-Signature',''),sign(payload)):return self.reply(403,{'error':'probe signature mismatch'})
-            result={**payload,'tcp_ok':control['probe_reachable'],'tls_ok':control['probe_reachable'],'websocket_ok':control['probe_reachable']}
+            reachable=control['probe_candidate_reachable'] if payload.get('connect_ip') and control['probe_candidate_reachable'] is not None else control['probe_reachable']
+            result={**payload,'tcp_ok':reachable,'tls_ok':reachable,'websocket_ok':reachable}
             return self.reply(200,{'result':result,'signature':sign(result)})
         try:
             body=json.loads(self.rfile.read(int(self.headers.get('Content-Length','0'))))

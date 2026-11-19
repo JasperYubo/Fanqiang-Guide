@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-11-19T04:30:49.111107+00:00",
+  "environment": "linux_asgi_and_sdk_loopback",
+  "candidate_worktree": true,
+  "command": "/root/huarun-server-20261113/.venv/bin/python -m unittest discover -s apps/lookup/runtime -p test_*.py -q",
+  "tests": 137,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "scope": "MCP HTTP/tools/resources/prompt book parity, open-ended provider discovery metadata, read-only/privacy boundaries and existing device/router regressions; not cloud IP rotation or installer acceptance.",
+  "source_files": {
+    "apps/lookup/runtime/app.py": "54bb217d0ff64c2004bfda6bf7a93d7e86a506d206f271696d40638198f99e91",
+    "apps/lookup/runtime/library_core.py": "2273920b30d171447646b05fd16b31c4f3adc1ecf5c4cde49fde766518ca1a47",
+    "apps/lookup/runtime/test_server_setup.py": "d112d6e3c9e9283491c652677b6e17bc7dd8ecda20b748821c5e94e74ab31419",
+    "apps/lookup/runtime/books/fanqiang-server-v1.4.ilang.md": "367e3c92a3729cfeaf5dcf79fdcae1949c27c5626bcf828ade080840cd5aff92"
+  },
+  "log_sha256": "e2e92d6804ca4ee2e6e2262bb3ee6963b52c3e3a591a7c3900162dcfce162b56"
+}

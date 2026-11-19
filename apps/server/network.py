@@ -19,6 +19,7 @@ import http.client
 import http.server
 import ipaddress
 import json
+import math
 import os
 from pathlib import Path
 import re
@@ -234,7 +235,8 @@ def validate_config(value):
     provider = result.get("provider", {})
     if not isinstance(provider, dict):
         raise NetworkError("provider_configuration_invalid")
-    if provider.get("auto_rotate") is True and source["mode"] not in ("provider", "digitalocean", "hetzner_floating"):
+    if (provider.get("auto_rotate") is True and provider.get("kind") in ("digitalocean", "hetzner_floating", "vultr", "aws_eip")
+            and source["mode"] not in ("provider", "digitalocean", "hetzner_floating")):
         raise NetworkError("automatic_rotation_requires_provider_address_source")
     probes = result.get("probes", [])
     if not isinstance(probes, list) or len(probes) > 8:
@@ -577,8 +579,21 @@ class Network:
             factory = get_provider
         return factory(settings, self.state_dir / "provider")
 
-    def inbound(self, config):
+    def inbound(self, config, provider=None):
         source = config["address_source"]
+        kind = config.get("provider", {}).get("kind", "manual")
+        if provider is None and kind not in (None, "none", "manual"):
+            provider = self.provider(config)
+        if provider is not None and hasattr(provider, "discover"):
+            # Until discovery succeeds, keep the independently selected address
+            # source. Once bound to an API, never overwrite it with stale fallback.
+            observed = provider.safe_status()
+            ready = observed.get("status") == "ready" or observed.get("has_active_profile") is True
+            if ready:
+                try:
+                    return addresses(provider.get_inbound_addresses())
+                except Exception:
+                    raise NetworkError("provider_address_unavailable") from None
         if source["mode"] == "static":
             return source["addresses"]
         if source["mode"] in ("provider", "digitalocean", "hetzner_floating"):
@@ -610,8 +625,110 @@ class Network:
                 "last_check": state.get("last_check"), "last_error": state.get("last_error"),
                 "last_notification": state.get("last_notification"),
                 "provider_result": state.get("provider_result"),
+                "provider_discovery": state.get("provider_discovery"),
                 "notification_status": state.get("notification_status", "not_configured"),
                 "addresses": {k: v.get("content") for k, v in state.get("records", {}).items()}}
+
+    def provider_status(self):
+        config = self.config()
+        if config is None:
+            return {"status": "not_configured"}
+        provider = self.provider(config)
+        if hasattr(provider, "safe_status"):
+            return provider.safe_status()
+        kind = config.get("provider", {}).get("kind", "manual")
+        return {"status": "manual" if kind in ("manual", "none") else "builtin_adapter", "kind": kind}
+
+    def _discover(self, provider, config, state, force=False):
+        previous = state.get("provider_discovery") or {}
+        provider.discover(force=force)
+        result = provider.safe_status()
+        # The provider is responsible for a redacted, fixed-schema receipt.
+        state["provider_discovery"] = result
+        status = result.get("refresh_status", result.get("status"))
+        current_code = result.get("refresh_code", result.get("code"))
+        prior_status = previous.get("refresh_status", previous.get("status"))
+        prior_code = previous.get("refresh_code", previous.get("code"))
+        if (prior_status, prior_code) != (status, current_code):
+            messages = {
+                "ready": "已根据厂商官方文档完成 API 适配和实例只读核验；故障时将按已保存授权恢复并复查。",
+                "no_api_documented": "已查阅厂商官方文档，未提供可用的换 IP API；发生入口故障时需在 VPS 面板或联系厂商更换，DNS 会继续同步。",
+                "credentials_required": "已发现厂商 API，仍缺所需凭据；请在 VPS 本地运行 huarun network provider-setup 补充，勿把密钥写进聊天。",
+                "parameters_required": "已发现厂商 API，仍缺实例或地域等必要参数；请查看 huarun network provider-status，并用 provider-setup 补充。",
+                "identity_unconfirmed": "尚未确认厂商官网身份；请用 huarun network provider-setup 补充厂商名称或官网，不能据此认定没有 API。",
+                "documentation_unavailable": "厂商官方资料暂时无法读取，系统会自动重试；当前尚未确认有无换 IP API。",
+                "documentation_incomplete": "已补查厂商官方资料，仍缺必要的接口或返回字段说明；系统会重试，当前不能据此认定没有换 IP API。",
+                "adapter_contract_unsupported": "厂商 API 存在，但当前接口机制尚不能安全执行；具体缺口见 huarun network provider-status，当前节点和 Key 保留。",
+                "adapter_validation_failed": "厂商适配尚未通过接口或实例核验，未执行换 IP；系统会重试，具体原因见 huarun network provider-status。",
+                "model_credentials_required": "缺少可用的 DeepSeek 配置，暂时无法分析厂商官方文档；请先完成助手 Key 配置。",
+            }
+            if current_code == "provider_api_origin_not_official":
+                messages[status] = "已找到使用独立域名的 API，仍需核对其官方地址；请查看厂商官方文档，并在 provider-setup 的跨域 API 地址中补充，不能据此认定没有换 IP API。"
+            if str(current_code or "").startswith("provider_ai_"):
+                messages[status] = "DeepSeek 配置暂不可用，尚无法完成厂商文档分析；请检查助手 Key 和模型配置，不能据此认定厂商没有 API。"
+            if status in messages:
+                self.event(state, "provider_discovery_" + status, "华润网络助手：" + config["domain"] + " " + messages[status])
+        return result
+
+    def provider_discover(self, force=False):
+        config = self.config()
+        if config is None:
+            raise NetworkError("configuration_required")
+        provider = self.provider(config)
+        if not hasattr(provider, "discover"):
+            return self.provider_status()
+        state = self.state()
+        result = self._discover(provider, config, state, force=force)
+        self.deliver(config, state)
+        self.save(state)
+        return result
+
+    def provider_setup(self):
+        config = self.config()
+        if config is None:
+            raise NetworkError("configuration_required")
+        original = self.provider(config)
+        journals = list((self.state_dir / "provider").rglob("transaction.json")) if (self.state_dir / "provider").exists() else []
+        if journals:
+            # A pending transaction pins provider, instance, endpoints and budget.
+            # Refresh only credentials, and bind the new Key with read-only API
+            # evidence before saving it. Another provider's journal cannot move.
+            if not hasattr(original, "discover") or not original.pending():
+                raise NetworkError("provider_recovery_pending")
+            updated = copy.deepcopy(config)
+            print("存在待恢复的换 IP 事务；此处只补充厂商凭据，厂商、实例和恢复流程保持不变。", file=sys.stderr)
+            updated["provider"]["credentials"] = interactive_credentials(config["provider"].get("credentials", {}))
+            candidate = self.provider(updated)
+            result = candidate.discover(force=True)
+            if result.get("status") != "ready":
+                return result
+            atomic_private(self.config_path, validate_config(updated))
+            state = self.state()
+            state["provider_discovery"] = result
+            self.save(state)
+            return result
+        try:
+            current = self.inbound(config)
+        except NetworkError as error:
+            if str(error) != "provider_address_unavailable":
+                raise
+            # An expired provider Key must not prevent entering this credential
+            # repair flow. Read the existing owned DNS record; never rewrite DNS.
+            cf = Cloudflare(config, self.transport)
+            cf.verify()
+            rows = [row for row in cf.records(config["domain"]) if row.get("type") == "A"]
+            if len(rows) != 1:
+                raise NetworkError("provider_current_address_binding_required")
+            current = {"A": address(rows[0].get("content"), "A")}
+        provider = interactive_provider("auto", config.get("provider"))
+        if "A" in current:
+            provider["expected_current_ipv4"] = current["A"]
+        updated = copy.deepcopy(config)
+        updated["provider"] = provider
+        if config["address_source"]["mode"] != "consensus":
+            updated["address_source"] = {"mode": "static", "addresses": current}
+        atomic_private(self.config_path, validate_config(updated))
+        return self.provider_discover(force=True)
 
     def event(self, state, code, text, force=False):
         # One notification per incident/code. Time-bounded non-incident events
@@ -753,6 +870,8 @@ class Network:
                 provider = self.provider(config)
                 if hasattr(provider, "restore_local_address"):
                     provider.restore_local_address()
+                if hasattr(provider, "discover") and not provider.pending():
+                    self._discover(provider, config, state)
 
             def commit(ip):
                 result = cf.sync({"A": address(ip, "A")})
@@ -778,7 +897,7 @@ class Network:
                 self.deliver(config, state)
                 self.save(state)
                 return self.status()
-            synced = cf.sync(self.inbound(config))
+            synced = cf.sync(self.inbound(config, provider=provider))
             state["records"] = synced["records"]
             if synced["changed"]:
                 self.event(state, "dns_changed", "华润网络助手：" + config["domain"] + " 已同步新的入站 IP，原节点配置和 Key 保留。")
@@ -851,7 +970,7 @@ def discover_zone(token, domain, transport=request):
 
 
 def provider_choices():
-    """Only advertise implemented provider adapters in terminal onboarding."""
+    """Prebuilt adapters are shortcuts; every other vendor uses discovery."""
     labels = {"digitalocean": "DigitalOcean Reserved IPv4",
               "hetzner_floating": "Hetzner Floating IPv4",
               "vultr": "Vultr Reserved IPv4", "aws_eip": "AWS EC2 Elastic IPv4"}
@@ -863,7 +982,84 @@ def provider_choices():
     return [(kind, label) for kind, label in labels.items() if kind in available]
 
 
-def interactive_provider(kind):
+def interactive_credentials(existing):
+    if not sys.stdin.isatty():
+        raise NetworkError("terminal_required")
+    values = copy.deepcopy(existing)
+    while True:
+        name = input("凭据字段名（如 token / api_key / secret_key，留空完成）: ").strip()
+        if not name:
+            break
+        if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", name):
+            raise NetworkError("provider_credential_name_invalid")
+        value = getpass.getpass(name + "（隐藏输入；留空保留已有值）: ").strip()
+        if value:
+            secret_string(value, "provider_credential", minimum=1)
+            values[name] = value
+    return values
+
+def interactive_provider(kind, existing=None):
+    if kind == "auto":
+        if not sys.stdin.isatty():
+            raise NetworkError("terminal_required")
+        previous = existing if isinstance(existing, dict) and existing.get("kind") == "auto" else {}
+        def field(label, key):
+            old = str(previous.get(key, ""))
+            return input(label + (" [" + old + "]" if old else "") + ": ").strip() or old
+        vendor = field("VPS 厂商名称（Agent 会查官方 API 文档）", "vendor_name")
+        if not vendor or len(vendor) > 120:
+            raise NetworkError("provider_name_required")
+        result = {"kind": "auto", "vendor_name": vendor,
+                  "official_url": field("官网或控制台 HTTPS 网址（可留空，由 Agent 查找）", "official_url"),
+                  "instance_id": field("本台 VPS 实例 ID", "instance_id"),
+                  "region": field("地域标识（没有可留空）", "region"),
+                  "credentials": copy.deepcopy(previous.get("credentials", {})),
+                  "parameters": copy.deepcopy(previous.get("parameters", {})),
+                  "approved_api_origins": copy.deepcopy(previous.get("approved_api_origins", [])),
+                  "auto_rotate": previous.get("auto_rotate", False)}
+        extra = input("厂商官网跨域的官方 API 地址（可留空；有明确来源时填完整 https://api.example.com，多项逗号分隔）: ").strip()
+        if extra:
+            selected = []
+            for raw in extra.split(","):
+                endpoint = urlsplit(raw.strip())
+                if (endpoint.scheme != "https" or not endpoint.hostname or endpoint.username or endpoint.password
+                        or endpoint.port not in (None, 443) or endpoint.path not in ("", "/") or endpoint.query or endpoint.fragment):
+                    raise NetworkError("provider_api_origin_invalid")
+                selected.append("https://" + hostname(endpoint.hostname))
+            result["approved_api_origins"] = sorted(set(selected))
+        while True:
+            name = input("官方 API 需要的其他非秘密参数名（如 project_id / zone，留空完成）: ").strip()
+            if not name:
+                break
+            if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", name) or name in ("instance_id", "region", "incident", "old_ip"):
+                raise NetworkError("provider_parameter_name_invalid")
+            raw = input(name + "（输入值；已有值留空保留）: ").strip()
+            if raw:
+                try:
+                    parameter = json.loads(raw)
+                except ValueError:
+                    parameter = raw
+                if type(parameter) not in (str, int, float, bool) or (type(parameter) is float and not math.isfinite(parameter)):
+                    raise NetworkError("provider_parameter_value_invalid")
+                result["parameters"][name] = parameter
+        print("API 凭据只保存在本机。可先留空，让 Agent 查明所需字段后再补充；已有字段留空保留。")
+        result["credentials"] = interactive_credentials(result["credentials"])
+        if input("授权 Agent 核验官方 API 后，在确认故障时自动换 IP 并复查（可能短暂中断或收费）？[y/N]: ").strip().lower() == "y":
+            result["auto_rotate"] = True
+            result["allow_downtime"] = True
+        elif previous.get("allow_downtime") is True:
+            result["allow_downtime"] = True
+        result["max_attempts_per_day"] = int(input("每日最多换 IP 次数 [" + str(previous.get("max_attempts_per_day", 1)) + "]: ").strip() or previous.get("max_attempts_per_day", 1))
+        result["cost_currency"] = (input("费用上限币种（按厂商账单，例 USD / EUR / CNY）[" + str(previous.get("cost_currency", "USD")) + "]: ").strip() or previous.get("cost_currency", "USD")).upper()
+        if not re.fullmatch(r"[A-Z]{3}", result["cost_currency"]):
+            raise NetworkError("provider_cost_currency_invalid")
+        result["max_cost_per_rotation"] = float(input("本次变更及本工具已分配 IP 的预计 31 天费用上限（0 为仅免费）[" + str(previous.get("max_cost_per_rotation", 0)) + "]: ").strip() or previous.get("max_cost_per_rotation", 0))
+        result["max_owned_allocations"] = int(input("本工具最多保留新分配 IP 数 [" + str(previous.get("max_owned_allocations", 2)) + "]: ").strip() or previous.get("max_owned_allocations", 2))
+        if not 1 <= result["max_attempts_per_day"] <= 3 or not 1 <= result["max_owned_allocations"] <= 10:
+            raise NetworkError("provider_limit_invalid")
+        if not math.isfinite(result["max_cost_per_rotation"]) or not 0 <= result["max_cost_per_rotation"] <= 100:
+            raise NetworkError("provider_budget_invalid")
+        return result
     if kind == "aws_eip":
         provider = {"kind": kind, "account_id": input("AWS Account ID（12 位）: ").strip(),
                     "region": input("AWS Region（如 us-east-1）: ").strip(),
@@ -928,6 +1124,7 @@ def interactive_config(domain=None):
     options = provider_choices()
     available = {str(index + 3): kind for index, (kind, label) in enumerate(options)}
     menu = "入站地址来源：1 固定 IP，2 本机动态公网 IP（无 NAT）"
+    menu += "，A 其他 VPS：Agent 查官方文档并自动适配"
     menu += "".join("，" + str(index + 3) + " " + label for index, (_, label) in enumerate(options))
     choice = input(menu + " [2]: ").strip() or "2"
     value = {"schema_version": 1, "domain": domain,
@@ -943,6 +1140,11 @@ def interactive_config(domain=None):
         if yes != "y":
             raise NetworkError("inbound_ip_confirmation_required")
         value["address_source"] = {"mode": "consensus", "no_nat_confirmed": True}
+    elif choice.lower() == "a":
+        value["provider"] = interactive_provider("auto")
+        current_ip = input("本台 VPS 当前可访问入站公网 IPv4: ").strip()
+        value["address_source"] = {"mode": "static", "addresses": {"A": address(current_ip, "A")}}
+        value["provider"]["expected_current_ipv4"] = current_ip
     elif choice in available:
         value["address_source"] = {"mode": "provider"}
         value["provider"] = interactive_provider(available[choice])
@@ -1070,7 +1272,8 @@ def make_probe_handler(config, observer=observe_target, clock=time.time):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("configure", "prepare", "status", "run", "config-domain",
-                                           "dns-add", "dns-remove", "notify-test", "probe-server"), nargs="?")
+                                           "dns-add", "dns-remove", "notify-test", "probe-server",
+                                           "provider-discover", "provider-status", "provider-setup"), nargs="?")
     parser.add_argument("challenge_name", nargs="?")
     parser.add_argument("challenge_value", nargs="?")
     parser.add_argument("--domain")
@@ -1088,6 +1291,8 @@ def main():
     network = Network()
     if operation == "status":
         result = network.status()
+    elif operation == "provider-status":
+        result = network.provider_status()
     elif operation == "config-domain":
         config = network.config()
         if config is None:
@@ -1127,6 +1332,10 @@ def main():
                 result = network.challenge(operation, args.challenge_name, args.challenge_value)
             elif operation == "notify-test":
                 result = network.notify_test()
+            elif operation == "provider-discover":
+                result = network.provider_discover(force=True)
+            elif operation == "provider-setup":
+                result = network.provider_setup()
             else:
                 result = network.run()
     print(json.dumps(result, ensure_ascii=False, sort_keys=True))

@@ -81,6 +81,11 @@ class Machine:
 
     def setup(self):
         for target in m.PROTECTED_PATHS:
+            if target.endswith('/provider/discovered'):
+                self.put(target + '/fixture/profile.json', b'{"private_adapter":"unchanged"}')
+                self.path(target).chmod(0o700)
+                self.path(target + '/fixture').chmod(0o700)
+                continue
             self.put(target, ('secret-node-or-key\n' + target).encode(), 0o640 if target.endswith('whitelist.txt') else 0o600)
         for target in m.ASSISTANT_PATHS:
             if target.endswith('assistant-template'):

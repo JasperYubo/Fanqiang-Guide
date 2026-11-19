@@ -94,4 +94,16 @@ class HookTests(unittest.TestCase):
         retrieved=json.dumps(self.client.queries)+r['request']['messages'][-1]['content']
         self.assertNotIn('sk-secretABC123',retrieved);self.assertNotIn('connection-secret',retrieved)
 
+    def test_generic_provider_discovery_is_available_after_mcp_attempt_even_when_docs_are_missing(self):
+        self.client.docs=False;self.start()
+        self.assertTrue(self.engine.approve(self.params('huarun network provider-status'))['approved'])
+        self.assertTrue(self.engine.approve(self.params('huarun network provider-discover'))['approved'])
+        self.assertTrue(self.engine.turns['one']['pending_verification'])
+        self.engine.after_tool(self.params('huarun network provider-discover'))
+        self.assertEqual(self.checks,['doctor','status'])
+    def test_agent_does_not_accept_credentials_or_arbitrary_commands_in_discovery(self):
+        self.start()
+        for command in ['huarun network provider-setup','huarun network provider-discover --token secret','huarun network provider-discover; id']:
+            self.assertFalse(self.engine.approve(self.params(command))['approved'])
+
 if __name__=='__main__':unittest.main()

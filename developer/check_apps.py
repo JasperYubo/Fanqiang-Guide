@@ -125,7 +125,8 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
                     failures.append(prefix + entry["evidence_path"].name + ":evidence_mismatch")
         for name in ("fanqiang-server-v1.0.ilang.md", "fanqiang-server-v1.0.evidence.json",
                      "fanqiang-server-v1.1.ilang.md", "fanqiang-server-v1.1.evidence.json",
-                     "fanqiang-server-v1.2.ilang.md", "fanqiang-server-v1.2.evidence.json"):
+                     "fanqiang-server-v1.2.ilang.md", "fanqiang-server-v1.2.evidence.json",
+                     "fanqiang-server-v1.3.ilang.md", "fanqiang-server-v1.3.evidence.json"):
             if (release / ("site/ai/books/" + name)).read_bytes() != (source / "apps/lookup/runtime/books" / name).read_bytes():
                 failures.append("server:legacy_v1_download_mismatch")
         # Previously distributed versioned links must keep their exact content.
@@ -154,7 +155,7 @@ def validate_autosetup_release(source: Path, release: Path) -> list[str]:
                 failures.append(relative + ":answer_rules_incomplete")
         for relative in ("lookup/server-card.json", "site/.well-known/mcp/server-card.json"):
             card = json.loads((release / relative).read_text(encoding="utf-8"))
-            if (card["serverInfo"]["version"] != "2.5.0"
+            if (card["serverInfo"]["version"] != "2.6.0"
                     or not {"tools", "resources", "prompts"} <= set(card["capabilities"])
                     or card.get("setupBook") != expected
                     or card.get("serverAssistant") != contract["book_manifest"]("server")

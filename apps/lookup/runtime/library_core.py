@@ -17,7 +17,7 @@ from router_matching import RouterMatcher, ROUTER_QUERY_FIELDS
 from library_query import LibraryQuery, QUERY_INPUT_SCHEMA, QUERY_DESCRIPTION, QueryValidationError, normalize_query
 from freshness import SourceFreshness
 
-VERSION = "2.5.0"
+VERSION = "2.6.0"
 ORIGIN = "https://fanqiang.guide"
 PROTOCOLS = ("2025-03-26", "2025-06-18", "2025-11-25")
 MAX_BODY = 16384
@@ -68,6 +68,7 @@ INSTRUCTIONS = """::ILANG::v5.0
   [MUST] For an existing 1.0 or 1.1 server, perform only the book's one-time --upgrade-assistant migration to enable local automatic updates. Preserve node configuration, whitelist and API Key; do not reinstall the network or ask for another Key.
   [MUST] Read-only MCP does not access servers or receive credentials. Secrets are entered only in the user's target-server terminal; installation requires tools actually connected to that authorized server.
   [MUST] For server troubleshooting, read fanqiang://books/troubleshooting and relevant HuaRun records first; use DeepSeek search only for a concrete knowledge gap, then recheck doctor and status after any repair.
+  [MUST] VPS vendors are not a closed allowlist. Reuse built-in adapters or follow official-document discovery, generated adapter validation and read-only instance checks before activation; distinguish no documented API from missing credentials, unavailable docs or unsupported request signing.
 ::MODULE{DEVICE_SETUP}
   [MUST] For phone, desktop client, tethering or router configuration rather than server-assistant installation, read fanqiang://books/autosetup using resources/read; then the user's AI follows the book using its own tools bound to the actual target device.
   [MUST] This service provides knowledge only; it cannot inspect, install, configure or repair devices. A remote MCP connection does not supply local device access.

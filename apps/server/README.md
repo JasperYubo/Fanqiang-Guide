@@ -72,7 +72,7 @@ huarun info
 
 ## 固定域名、动态 IP 与故障通知
 
-使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，自动维护 TLS、动态 IP 解析和故障通知；符合证据、授权与预算条件时，DigitalOcean Reserved IPv4、Hetzner Floating IPv4、Vultr Cloud Compute Reserved IPv4 与已绑定 AWS Elastic IP 的实例可自动更换，其他厂商通知处理。
+使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，自动维护 TLS、动态 IP 解析和故障通知；Agent 先查 VPS 厂商官方文档，有换 IP API 就自动对接、验证并按授权恢复，无 API 才通知你换 IP，已有适配器不是厂商范围上限。
 
 默认使用 Cloudflare 仅 DNS 解析；选择橙云代理时，区域的 SSL/TLS 必须已是 Full (strict)。助手只核对该设置，不改动整个域名区域的 TLS 模式。
 
@@ -91,16 +91,28 @@ huarun network notify-test
 
 动态 IP 同步读取 VPS 的真实入站地址；Cloudflare CDN 地址或链式出口 IP 不会被当作源站。DNS 同步后仍需等待客户端缓存刷新，并复查实际连接。
 
-自动换 IP 对接下列厂商地址类型：
+自动换 IP 不限制 VPS 厂商。比如你使用一家没有现成适配器的服务商，新安装在 `huarun network setup` 选择自动发现；已有用户只需运行 `huarun network provider-setup`，补充厂商名称、可选官网、实例和已有 API 凭据，保留原 Cloudflare 令牌、域名与节点，不必重装。保存后，Agent 会先查华润 MCP，再查并读取厂商官方文档。发现可用的换 IP API 后，自动生成适配、校验请求与官方依据，并只读核对实例和当前地址，验证通过后启用，不需要你自己写接口代码。
 
-| 厂商 | 地址与条件 |
+可以直接告诉助手：“检查这家 VPS 的官方换 IP API，能对接就接好并验证。”也可在 SSH 终端查看过程和结果：
+
+```bash
+huarun network provider-setup
+huarun network provider-discover
+huarun network provider-status
+```
+
+`network check` 和 Linux 定时维护也会自动执行发现，复用已经验证的适配结果。确实没有 API 时通知你到厂商面板处理；文档暂时不可访问、缺少凭据、权限或预算不足，以及签名方式暂不支持，会分别说明缺少的条件，不会把它们当作“厂商没有 API”。
+
+以下是可直接复用的现成适配器，不是厂商支持名单的上限：
+
+| 现成适配器 | 地址与条件 |
 | --- | --- |
 | DigitalOcean | Reserved IPv4；更换时需授权短暂解绑旧地址 |
 | Hetzner | Floating IPv4；保留原主地址与旧绑定 |
 | Vultr | Cloud Compute Reserved IPv4；Bare Metal 需外部控制器 |
-| AWS | 目标已绑定 Elastic IP；普通自动分配公网 IP 仅做 DDNS，先接入 EIP 后再开启自动更换 |
+| AWS | 目标已绑定 Elastic IP；普通自动分配公网 IP 的停启恢复需外部控制器 |
 
-按所选厂商配置本机凭据、实例与区域、自动更换和分配授权，以及预算；发生短暂中断的操作还需对应授权。预算约束的是适配器地址池的预计月费，AWS 为本 region EIP 池，不是全账户账单硬限。独立地区探针证据达到条件后才运行；其他厂商、证据不足或预算受限时通知你处理。真实云 API 换 IP 的验证范围见[本版工程书元数据](https://fanqiang.guide/api/agent/books/server)，与隔离测试分别记录。单点超时不会直接判定“IP 被墙”。
+实际更换仍须本机已保存自动更换和适用的分配、中断授权，费用与次数符合预算，并达到独立地区探针的故障条件。API 受理之后要验证新地址、同步并读回 DNS，再复查通路；失败保留恢复事务或回滚，不会重复申请未知结果的付费地址。预算是适配器资源估算，不是全账户账单硬限。真实云 API 换 IP 的验证范围见[本版工程书元数据](https://fanqiang.guide/api/agent/books/server)，与隔离测试分别记录。单点超时不会直接判定“IP 被墙”。
 
 ## 接入已有家宽等出口代理
 
@@ -169,6 +181,7 @@ huarun chat
 - “把 example.com 加进白名单。”
 - “证书还剩多少天？”
 - “检查固定域名解析和故障通知是否正常。”
+- “查这家 VPS 的官方换 IP API，能对接就接好并验证。”
 - “切换到已经配置的 home 出口，并复查出口 IP。”
 
 每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。它会结合服务器上的检查、修复和查询结果，给出所用资料来源和实际结果。服务端检查正常后，仍需用你的手机或电脑打开目标网站，确认本地连接也已恢复。
@@ -190,7 +203,7 @@ huarun fix
 - 安装工具：get_server_setup
 - 安装提示：setup_server
 - 工程书资源：fanqiang://books/server
-- [服务器助手工程书](https://fanqiang.guide/ai/books/fanqiang-server-v1.3.ilang.md)
+- [服务器助手工程书](https://fanqiang.guide/ai/books/fanqiang-server-v1.4.ilang.md)
 - [安装脚本](https://fanqiang.guide/server/install.sh)
 
 搜索和对话均使用你自己的 DeepSeek API Key，按官方实际用量计费。

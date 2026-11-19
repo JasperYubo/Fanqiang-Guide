@@ -25,7 +25,7 @@ REQUIRED_TOKENS = {
 BOOK_DESCRIPTIONS = {
     "autosetup": "手机与电脑配置、手机共享、路由器流程入口",
     "merlin": "兼容固件、fancyss 选包、安装检查与恢复流程",
-    "server": "Cloudflare 固定域名、TLS、动态 IP、故障通知、链式出口与中文排错",
+    "server": "固定域名、TLS、VPS 官方 API 自动发现与对接、链式出口及中文排错",
     "troubleshooting": "华润 MCP 优先、资料不足再搜索、分层排障与修复复查",
 }
 

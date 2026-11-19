@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
+  <meta name="description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、VPS 厂商官方 API 自动对接、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
   <meta name="theme-color" content="#f5f5f7">
   <meta property="og:type" content="website">
   <meta property="og:title" content="翻墙指南 Fanqiang Guide｜科学上网工具、路由器与 AI 配置">
-  <meta property="og:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
+  <meta property="og:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、VPS 厂商官方 API 自动对接、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
   <meta property="og:url" content="{{PAGES_URL}}">
   <link rel="canonical" href="{{PAGES_URL}}">
   <link rel="icon" type="image/png" sizes="96x96" href="./favicon.png">
@@ -24,7 +24,7 @@
   <meta property="og:image:alt" content="Fanqiang Guide：工具资料、设备配置与服务器助手，交给自己的 AI。">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="翻墙指南 Fanqiang Guide｜科学上网工具、路由器与 AI 配置">
-  <meta name="twitter:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
+  <meta name="twitter:description" content="Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、VPS 厂商官方 API 自动对接、故障通知和链式出口，先查本站资料、修复后复查并自动更新。">
   <meta name="twitter:image" content="{{PAGES_URL}}social-card-v2.png">
   <meta name="twitter:image:alt" content="Fanqiang Guide：工具资料、设备配置与服务器助手，交给自己的 AI。">
   <link rel="sitemap" type="application/xml" title="Sitemap" href="./sitemap.xml">
@@ -35,7 +35,7 @@
   "@id": "{{PAGES_URL}}#webpage",
   "url": "{{PAGES_URL}}",
   "name": "翻墙指南 Fanqiang Guide｜科学上网工具、路由器与 AI 配置",
-  "description": "Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、故障通知和链式出口，先查本站资料、修复后复查并自动更新。",
+  "description": "Fanqiang Guide 华润开源翻墙指南与 AI 服务器助手：按设备查工具，通过 MCP 和 iLang 工程书配置网络；Linux VPS 内置 PicoClaw 与 DeepSeek，Cloudflare 固定域名、TLS、动态 IP 同步、VPS 厂商官方 API 自动对接、故障通知和链式出口，先查本站资料、修复后复查并自动更新。",
   "inLanguage": "zh-CN",
   "isAccessibleForFree": true,
   "relatedLink": [
@@ -126,7 +126,7 @@
         <li><span class="step-number" aria-hidden="true">03</span><div><h3>导入连接，开始使用</h3><p>把链接导入手机或电脑。以后连不上，用中文描述问题，让助手查资料、定位原因并复查修复结果。</p></div></li>
       </ol>
       <p>{{PRICE_SENTENCE}}Key 和完整 Cloudflare 令牌只在自己的服务器终端隐藏输入。</p>
-      <p>{{NETWORK_SENTENCE}}</p>
+      <p>{{NETWORK_SENTENCE}}</p><p>已有用户在服务器终端运行 <code>huarun network provider-setup</code>，补充厂商名称、可选官网和已有 API 凭据，保留原节点与 Cloudflare 令牌；Agent 自动完成官方资料查询、适配生成与验证。文档不可达、缺凭据和接口暂不支持会分别说明，不会当作没有 API。<a href="{{SERVER_ENTRY_URL}}#network">查看配置与验证范围 →</a></p>
       <p>{{NETWORK_PROXY_SENTENCE}}</p>
       <p>{{EGRESS_SENTENCE}}</p>
       <p class="muted">{{KNOWLEDGE_SENTENCE}}</p>

@@ -8,10 +8,10 @@
 
 | 入口 | 当前内容 | 实现或资料 |
 | --- | --- | --- |
-| 公共 MCP | 2.5.0；`search`、`get`、`query`、`get_server_setup` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
+| 公共 MCP | 2.6.0；`search`、`get`、`query`、`get_server_setup` | [服务声明](../apps/lookup/runtime/server-card.json) · [接口实现](../apps/lookup/runtime/app.py) |
 | 设备配置工程书 | autosetup 2.1 | [正文](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-autosetup-v2.1.evidence.json) |
 | 梅林路由器工程书 | merlin 1.0 | [正文](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) · [验证范围](../apps/lookup/runtime/books/fanqiang-merlin-v1.0.evidence.json) |
-| 服务器安装工程书 | server 1.3；Cloudflare 固定域名、TLS、动态 IP、通知与链式出口 | [正文](../apps/lookup/runtime/books/fanqiang-server-v1.3.ilang.md) · [助手实现](../apps/server/README.md) |
+| 服务器安装工程书 | server 1.4；固定域名、TLS、厂商官方 API 自动发现与对接、通知和链式出口 | [正文](../apps/lookup/runtime/books/fanqiang-server-v1.4.ilang.md) · [助手实现](../apps/server/README.md) |
 | 服务器排障工程书 | troubleshooting 1.0；通过 MCP 资源直接读取 | [正文](../apps/lookup/runtime/books/fanqiang-troubleshooting-v1.0.ilang.md) |
 | 工程书注册与完整性 | 版本、资源 URI、摘要和验证元数据 | [统一注册表](../apps/lookup/runtime/setup_book.py) · [公开工程书目录](https://fanqiang.guide/api/agent/books) |
 | HTTP 查询 | 搜索、条目、条件筛选、工程书与时效 | [OpenAPI](../apps/lookup/runtime/openapi.json) |
@@ -64,7 +64,7 @@ python scripts/build_catalog.py
 
 ## 网络维护与出口对接
 
-[网络维护 v1.3 工程交接](SERVER-NETWORK-v1.3-2026-11-18.ilang.md)定义 Full account and zone access 账户令牌、固定域名与 TLS、入站 IP 同步、通知、DigitalOcean、Hetzner、Vultr 与 AWS 弹性地址恢复及链式 TCP 出口的共同约定。当前真实验收范围以 [v1.3 元数据](../apps/lookup/runtime/books/fanqiang-server-v1.3.evidence.json)为准。普通程序升级和显式域名迁移分别验收；旧工程书的字节与网址保留。
+[网络维护 v1.3 工程交接](SERVER-NETWORK-v1.3-2026-11-18.ilang.md)定义 Full account and zone access 账户令牌、固定域名与 TLS、入站 IP 同步、通知、DigitalOcean、Hetzner、Vultr 与 AWS 弹性地址恢复及链式 TCP 出口的共同约定。当前版本增加不限厂商名称的官方文档发现与声明式适配，详见[通用厂商 v1.4 工程交接](SERVER-PROVIDER-DISCOVERY-v1.4-2026-11-18.ilang.md)。当前真实验收范围以 [v1.4 元数据](../apps/lookup/runtime/books/fanqiang-server-v1.4.evidence.json)为准。普通程序升级和显式域名迁移分别验收；旧工程书的字节与网址保留。
 
 ## 历史交接记录
 

@@ -38,6 +38,7 @@ PROTECTED_PATHS = (
     "/etc/nginx/conf.d/huarun.conf", "/etc/huarun/info.json",
     "/etc/huarun/assistant/.security.yml",
     "/etc/huarun/network.json", "/etc/huarun/egress.json",
+    "/var/lib/huarun-network/provider/discovered",
 )
 ASSISTANT_PATHS = (
     "/usr/local/bin/huarun", "/usr/local/lib/huarun/picoclaw",
@@ -52,12 +53,15 @@ ASSISTANT_PATHS = (
     '/usr/local/lib/huarun/ip_provider.py',
     '/usr/local/lib/huarun/egress.py',
     '/usr/local/lib/huarun/network_setup.py',
+    '/usr/local/lib/huarun/provider_discovery.py',
+    '/usr/local/lib/huarun/generic_provider.py',
     '/etc/huarun/acme/dnsapi/dns_huarun.sh',
     '/etc/systemd/system/huarun-network.service',
     '/etc/systemd/system/huarun-network.timer',
 
 )
 ALL_PATHS = PROTECTED_PATHS + ASSISTANT_PATHS
+V13_ALL_PATHS = ('/usr/local/etc/xray/config.json', '/usr/local/etc/xray/whitelist.txt', '/etc/nginx/conf.d/huarun.conf', '/etc/huarun/info.json', '/etc/huarun/assistant/.security.yml', '/etc/huarun/network.json', '/etc/huarun/egress.json', '/usr/local/bin/huarun', '/usr/local/lib/huarun/picoclaw', '/usr/local/lib/huarun/auto_update.py', '/etc/huarun/assistant/config.json', '/etc/huarun/assistant/gate.py', '/etc/huarun/assistant/research.py', '/etc/huarun/assistant/workspace/AGENT.md', '/etc/huarun/assistant/workspace/SOUL.md', '/etc/huarun/assistant/workspace/skills/huarun/SKILL.md', '/etc/huarun/assistant-template', '/etc/systemd/system/huarun-auto-update.service', '/etc/systemd/system/huarun-auto-update.timer', '/usr/local/lib/huarun/network.py', '/usr/local/lib/huarun/aws_provider.py', '/usr/local/lib/huarun/ip_provider.py', '/usr/local/lib/huarun/egress.py', '/usr/local/lib/huarun/network_setup.py', '/etc/huarun/acme/dnsapi/dns_huarun.sh', '/etc/systemd/system/huarun-network.service', '/etc/systemd/system/huarun-network.timer')
 LEGACY_ALL_PATHS = ('/usr/local/etc/xray/config.json', '/usr/local/etc/xray/whitelist.txt', '/etc/nginx/conf.d/huarun.conf', '/etc/huarun/info.json', '/etc/huarun/assistant/.security.yml', '/usr/local/bin/huarun', '/usr/local/lib/huarun/picoclaw', '/usr/local/lib/huarun/auto_update.py', '/etc/huarun/assistant/config.json', '/etc/huarun/assistant/gate.py', '/etc/huarun/assistant/research.py', '/etc/huarun/assistant/workspace/AGENT.md', '/etc/huarun/assistant/workspace/SOUL.md', '/etc/huarun/assistant/workspace/skills/huarun/SKILL.md', '/etc/huarun/assistant-template', '/etc/systemd/system/huarun-auto-update.service', '/etc/systemd/system/huarun-auto-update.timer')
 
 
@@ -485,8 +489,8 @@ class Updater:
         entries = manifest.get("entries", {})
         order = manifest.get("path_order")
         if order is None:
-            order = list(LEGACY_ALL_PATHS if set(entries) == set(LEGACY_ALL_PATHS) else ALL_PATHS)
-        if (manifest.get("transaction") != transaction or tuple(order) not in (ALL_PATHS, LEGACY_ALL_PATHS)
+            order = list(next((paths for paths in (LEGACY_ALL_PATHS, V13_ALL_PATHS, ALL_PATHS) if set(entries) == set(paths)), ()))
+        if (manifest.get("transaction") != transaction or tuple(order) not in (ALL_PATHS, V13_ALL_PATHS, LEGACY_ALL_PATHS)
                 or set(entries) != set(order)):
             raise UpdateError("invalid_backup_manifest")
         for index, target in enumerate(order):
@@ -595,7 +599,7 @@ class Updater:
                 raise UpdateError("protected_file_changed")
         for target in ("/etc/huarun/assistant/gate.py", "/etc/huarun/assistant/research.py", *[
                 "/usr/local/lib/huarun/" + name for name in
-                ("auto_update.py", "network.py", "ip_provider.py", "aws_provider.py", "egress.py", "network_setup.py")]):
+                ("auto_update.py", "network.py", "ip_provider.py", "aws_provider.py", "egress.py", "network_setup.py", "provider_discovery.py", "generic_provider.py")]):
             path = self.path(target)
             try:
                 compile(path.read_bytes(), target, "exec")

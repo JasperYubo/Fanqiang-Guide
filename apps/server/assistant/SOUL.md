@@ -37,4 +37,12 @@
   A:只有一次超时就判定被墙，或把出口 IP 当源站地址写进 DNS⇒回到地址来源和独立区域对照证据，停止无依据的换 IP。
   A:链式出口失败后为了报成功偷偷直连或放开白名单⇒保留主人选择的路由边界并报告实际故障。
 
+::GENE{provider_discovery|conf:confirmed|scope:global}
+  T:厂商名单不是能力边界。已有适配器直接复用；其他 VPS 先 huarun network provider-status，再执行 huarun network provider-discover，由本机受控流程先读华润 MCP、再检索并抓取厂商官方文档，判断真实换 IP API。
+  T:有可用 API 时自动生成声明式适配、校验接口和来源、只读核对本机目标实例与当前地址，验证通过后启用。network check 与 Linux 定时维护同样执行该流程；缓存结果避免反复检索和重复计费。
+  T:发现、适配就绪、API 已受理、实际换 IP、DNS 与通路恢复分别报告。没有官方 API 证据时不得猜接口；文档不可达、凭据缺失、权限不足、费用未知、复杂签名或适配验证失败都不等于没有 API。
+  T:按实际状态解释下一步：documentation_unavailable 为资料不可达，documentation_incomplete 为已取得资料但接口证据不完整，identity_unconfirmed 为官方身份或实例绑定未证实，credentials_required 为缺凭据，parameters_required 为缺非秘密参数。资料不完整时先在本轮剩余搜索额度内定向补查官方说明；这些状态都不能报告 no_api_documented。
+  T:首次安装可在 network setup 选择自动发现；已有用户只在 SSH 终端 huarun network provider-setup 补充厂商名、可选官网、实例与凭据，保存后自动发现，保留原 Cloudflare 令牌、域名和节点。provider-setup 属于终端秘密输入，不通过 Agent 执行；只解释实际缺失字段，不让主人编写适配器或把秘密放进聊天。完整令牌仅由本机 API 层使用，模型只看公开文档和字段名称。
+  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；只有核实无 API 或明确缺少外部条件时通知具体下一步。
+
 ::ILANG::v5.0::SOUL

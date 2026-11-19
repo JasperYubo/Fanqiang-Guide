@@ -43,7 +43,7 @@ description: 华润服务器的资料检索、分层诊断、受限修复与复�
   [STEP:2] check 后运行 huarun doctor --json 与 huarun status --json，并再次核对 network status。资料不足先查华润 server 与 troubleshooting 工程书，再做脱敏搜索。
   [MUST] 默认使用仅 DNS 解析。选择或保留 Cloudflare 橙云代理时，区域 SSL/TLS 必须已是 Full (strict)；只读核验失败报告 cloudflare_full_strict_required，不自动改变整个区域的 TLS 设置。仅 DNS 模式不要求该区域设置。
   [MUST] DDNS 只用验证过的 VPS 入站地址；CDN 的公网 DNS 与链式代理出口都不是源站。先区别本地服务故障、解析、证书、区域网络与客户端，不凭单点超时断言被墙。
-  [MUST] 自动换 IP 使用当前运行时已启用并验收的 DigitalOcean Reserved IPv4、Hetzner Floating IPv4、Vultr Reserved IPv4 或 AWS Elastic IP 适配，须本机预存厂商凭据、分配与必要中断授权和预算且达到有效探针阈值。AWS 要求目标已有 EIP 绑定；Vultr 仅 Cloud Compute。AWS 主地址停启、Hetzner Primary IP 与 Vultr Bare Metal 不属于这项在线轮换能力。预算是适配器资源池估算，不是全账户账单硬限。其他厂商或条件不满足时报告主人处理。
+  [MUST] 自动换 IP 不限厂商名单。DigitalOcean、Hetzner、Vultr 与 AWS 的现成适配只是快速路径；其他 VPS 自动先查官方文档、生成与验证适配，再按本机预存凭据、分配与必要中断授权、预算和有效探针阈值执行。只读获取实例地址不等于授权分配；预算是适配器资源估算，不是全账户账单硬限。
   [MUST] Telegram 未配置显示 not_configured；发送入队或失败重试不能写成已送达。主人在 SSH 终端运行 huarun network notify-test 并核对收件。
   [MUST] 普通版本更新不改域名；旧节点接入由主人显式 network setup 事务迁移，保留 UUID、WebSocket 路径、白名单和 Key，成功后重新导入新域名连接，失败恢复。
 
@@ -52,5 +52,13 @@ description: 华润服务器的资料检索、分层诊断、受限修复与复�
   [STEP:1] huarun egress status 检查已有配置，huarun egress probe 检查出口。仅按请求用 huarun egress use PROFILE 切换已有 profile，再检查实际出口 IP、doctor、status 与目标访问。
   [MUST] 保留原白名单；选中出口失败不悄悄直连。huarun egress direct 仅用于主人明确请求的直连恢复。
   [MUST] 本版只对接用户已准备的 TCP 出口；不采购代理，不保证其为家宽，不宣称 UDP 或未适配厂商 API 已支持。
+
+::GENE{provider_discovery|conf:confirmed|scope:global}
+  T:厂商名单不是能力边界。已有适配器直接复用；其他 VPS 先 huarun network provider-status，再执行 huarun network provider-discover，由本机受控流程先读华润 MCP、再检索并抓取厂商官方文档，判断真实换 IP API。
+  T:有可用 API 时自动生成声明式适配、校验接口和来源、只读核对本机目标实例与当前地址，验证通过后启用。network check 与 Linux 定时维护同样执行该流程；缓存结果避免反复检索和重复计费。
+  T:发现、适配就绪、API 已受理、实际换 IP、DNS 与通路恢复分别报告。没有官方 API 证据时不得猜接口；文档不可达、凭据缺失、权限不足、费用未知、复杂签名或适配验证失败都不等于没有 API。
+  T:按实际状态解释下一步：documentation_unavailable 为资料不可达，documentation_incomplete 为已取得资料但接口证据不完整，identity_unconfirmed 为官方身份或实例绑定未证实，credentials_required 为缺凭据，parameters_required 为缺非秘密参数。资料不完整时先在本轮剩余搜索额度内定向补查官方说明；这些状态都不能报告 no_api_documented。
+  T:首次安装可在 network setup 选择自动发现；已有用户只在 SSH 终端 huarun network provider-setup 补充厂商名、可选官网、实例与凭据，保存后自动发现，保留原 Cloudflare 令牌、域名和节点。provider-setup 属于终端秘密输入，不通过 Agent 执行；只解释实际缺失字段，不让主人编写适配器或把秘密放进聊天。完整令牌仅由本机 API 层使用，模型只看公开文档和字段名称。
+  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；只有核实无 API 或明确缺少外部条件时通知具体下一步。
 
 ::ILANG::COMPLETE::

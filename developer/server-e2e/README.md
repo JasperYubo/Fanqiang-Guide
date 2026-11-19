@@ -88,3 +88,31 @@ The original production `run_probe` function and actual Xray binary execute;
 certificate-chain and SAN verification remain enabled. Every run must also reject
 the same node with an unknown CA and with a deliberately incorrect SAN. No
 production trust setting or `allowInsecure` behavior is changed.
+
+
+## Version 1.4 generic provider acceptance
+
+A 1.4 candidate must additionally run the installed discovery and generic HTTP
+interpreter against two independently generated provider names absent from the
+product registry. One contract uses JSON with Bearer authentication, and the
+other uses query API-key authentication with form-encoded mutations. HTTP
+fixtures provide official pages, search and model answers, cloud APIs, regional
+observers, and notification delivery; neither paid model inference nor a real
+cloud allocation is claimed.
+
+`generic_provider_features.py` verifies automatic discovery from `Network.run`,
+MCP before fallback search, fetched source hashes, generated-profile validation,
+read-only instance/IP binding before activation, local-only credentials, a
+replacement followed by Cloudflare DNS write/readback, and a recovery recheck.
+Separate cases distinguish an explicit official no-API statement, inaccessible
+documentation, missing credentials, and malicious generated requests. An
+ambiguous allocation response must be reconciled without repeating a billable
+POST. Failure after the DNS write must restore the previous IP and DNS state.
+
+All prior node/whitelist/Key/network/egress preservation checks remain. Each
+upgrade also seeds and snapshots the entire
+`/var/lib/huarun-network/provider/discovered` tree, including nested profiles,
+receipts and transactions. Per-entry type, content hash, permissions and owner
+are bound into its tree digest and must remain identical. An unconfigured legacy
+installation must leave that tree absent. The 1.4 gate also requires generic
+provider, discovery, network integration and updater fault suites, without skips; a historical 1.3 report cannot satisfy it.

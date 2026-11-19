@@ -84,9 +84,9 @@ def capabilities():
          "live_verified": False, "source": "https://docs.hetzner.com/cloud/servers/primary-ips/faq/"},
         {"kind": "vultr_bare_metal", "automatic_rotation": False, "reason": "external_controller_required",
          "live_verified": False, "source": "https://docs.vultr.com/products/compute/instances/bare-metal/networking/reserved-ips"},
-        {"kind": "bandwagonhost", "automatic_rotation": False, "reason": "replacement_api_not_verified",
+        {"kind": "bandwagonhost", "automatic_rotation": "after_official_discovery_and_validation", "reason": "official_discovery_required",
          "validation": "official_documentation_unavailable", "live_verified": False, "source": "https://kiwivm.64clouds.com/api/"},
-        {"kind": "other", "automatic_rotation": False, "reason": "provider_adapter_unavailable", "live_verified": False},
+        {"kind": "auto", "automatic_rotation": "after_official_discovery_and_validation", "mechanism": "official_documentation_generated_http_contract", "reason": "provider_documentation_discovery", "live_verified": False},
     ]
 
 
@@ -1021,4 +1021,8 @@ def get_provider(config, state_dir, request=None, clock=time.time):
     if config.get("kind", config.get("provider")) == "aws_eip":
         from aws_provider import AWSElasticRotator
         return AWSElasticRotator(config, state_dir, request=request, clock=clock)
-    return UnsupportedProvider(config.get("kind", config.get("provider", "other")))
+    kind=config.get("kind", config.get("provider", "other"))
+    if kind in ("manual", "none"):
+        return UnsupportedProvider(kind)
+    from provider_discovery import DiscoveryProvider
+    return DiscoveryProvider(config,state_dir,request=request,clock=clock)

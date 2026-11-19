@@ -281,7 +281,7 @@ class LookupTests(unittest.TestCase):
     def test_setup_book_discovery_and_version(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25",
             "capabilities": {}, "clientInfo": {"name": "book-test", "version": "1"}}).json()["result"]
-        self.assertEqual(result["serverInfo"]["version"], "2.5.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.6.0")
         self.assertTrue({"tools", "resources", "prompts"} <= set(result["capabilities"]))
         self.assertIn("fanqiang://books/autosetup", result["instructions"])
         self.assertIn("grants no extra authorization", result["instructions"])
@@ -428,7 +428,7 @@ class LookupTests(unittest.TestCase):
         card = self.client.get("/.well-known/mcp/server-card.json").json()
         health = self.client.get("/api/agent/health").json()
         for metadata in (spec["info"], card["serverInfo"], health):
-            self.assertEqual(metadata["version"], "2.5.0")
+            self.assertEqual(metadata["version"], "2.6.0")
         self.assertEqual(card["version"], "1.0")
         self.assertEqual(card["setupBook"], setup_book.setup_book_manifest())
         self.assertEqual(spec["paths"]["/api/agent/setup-book"]["get"]["parameters"], [])

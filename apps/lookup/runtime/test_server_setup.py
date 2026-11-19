@@ -52,13 +52,34 @@ class ServerSetupTests(unittest.TestCase):
 
     def test_server_metadata_declares_mcp_first_search_fallback_and_recheck(self):
         meta = setup_book.book_manifest("server")
-        self.assertEqual(meta["version"], "1.3")
+        self.assertEqual(meta["version"], "1.4")
         policy = meta["knowledge_policy"]
         self.assertEqual(policy["primary"], "huarun_mcp")
         self.assertEqual(policy["fallback"], "deepseek_search_when_insufficient")
         self.assertIn("fanqiang://books/troubleshooting", policy["resources"])
         self.assertEqual(policy["recheck"], ["huarun doctor --json", "huarun status --json"])
         self.assertEqual(policy["instruction_format"], "iLang")
+
+    def test_provider_discovery_is_open_ended_and_statuses_do_not_conflate_unknown_with_absent_api(self):
+        meta = setup_book.book_manifest("server")
+        rotation = meta["network_maintenance"]["automatic_ip_rotation"]
+        self.assertEqual(rotation["provider_scope"], "open_ended_official_document_discovery")
+        self.assertEqual(rotation["unknown_provider"], "discover_validate_then_activate")
+        self.assertEqual(rotation["no_api"], "notify_owner_only_after_official_evidence")
+        self.assertNotIn("providers", rotation, "Built-in adapters are not a closed provider allowlist")
+        self.assertIn("aws_elastic_ip", rotation["built_in_adapters"])
+        self.assertEqual(rotation["discovery_commands"], {"discover": "huarun network provider-discover", "status": "huarun network provider-status"})
+        self.assertEqual(rotation["provider_setup_command"], "huarun network provider-setup")
+        self.assertIn("cloudflare_token", rotation["provider_setup_preserves"])
+        self.assertNotIn(rotation["provider_setup_command"], rotation["agent_allowed_commands"])
+        self.assertEqual(rotation["discovery_order"][0], "huarun_mcp")
+        self.assertIn("official_document_fetch", rotation["discovery_order"])
+        self.assertTrue({"no_api_documented", "credentials_required", "parameters_required", "documentation_unavailable", "documentation_incomplete", "identity_unconfirmed", "adapter_contract_unsupported", "adapter_validation_failed"} <= set(rotation["separate_action_required_states"]))
+        self.assertEqual(rotation["credentials"], "local_private_secret_references_never_sent_to_model")
+        self.assertIn("validated_provider_profiles", meta["automatic_updates"]["preserves"])
+        book = setup_book.book_payload("server")["content"]
+        for phrase in ("PROVIDER_DISCOVERY_AND_ADAPTERS", "huarun network provider-discover", "声明式", "只读核对"):
+            self.assertIn(phrase, book)
 
     def test_existing_server_handoff_never_routes_to_fresh_installation(self):
         initialized = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
@@ -82,7 +103,7 @@ class ServerSetupTests(unittest.TestCase):
 
     def test_automatic_update_metadata_preserves_existing_server_and_admin_boundary(self):
         meta = setup_book.book_manifest("server")
-        self.assertEqual(meta["assistant"]["version"], "1.3.0")
+        self.assertEqual(meta["assistant"]["version"], "1.4.0")
         update = meta["automatic_updates"]
         self.assertTrue(update["enabled_by_default"])
         self.assertEqual((update["interval_hours"], update["boot_delay_minutes"], update["random_delay_max_minutes"]), (6, 10, 30))
@@ -100,7 +121,7 @@ class ServerSetupTests(unittest.TestCase):
     def test_initialize_routes_server_and_client_flows_separately(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
             "clientInfo": {"name": "server-test", "version": "1"}})
-        self.assertEqual(result["serverInfo"]["version"], "2.5.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.6.0")
         instructions = result["instructions"]
         server = instructions.split("::MODULE{SERVER_SETUP}")[1].split("::MODULE{DEVICE_SETUP}")[0]
         for value in ("get_server_setup", "fanqiang://books/server", "setup_server", "https://platform.deepseek.com",

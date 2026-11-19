@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-19T04:30:28.365297+00:00",
+  "development_only": true,
+  "scope": "Separate evidence for installed HTTP contract fixtures, real DeepSeek inference against synthetic vendor documentation/API, and read-only real official-document research. No real cloud IP rotation.",
+  "runtime_sources": {
+    "apps/server/generic_provider.py": "8bdfebbb92503bbbc8ed293065794721aa036aa715bd3cb9d60e32f17f1da6ae",
+    "apps/server/provider_discovery.py": "ff032f0d8652f2bb27c3f694e7c73b4e75135b2a352d0ea31cb41c7aed3beb60",
+    "apps/server/ip_provider.py": "42f0e907c14fa11e0c979d1caa79871de7f2d73dc5c2128e4a075e883f34aacc",
+    "apps/server/network.py": "1bc175910728a96f68a672a668408e9dcf80e41591e320418171372898184623",
+    "apps/server/research.py": "c145842647d10e0ea855b8a0ad02a4e19daf910d6a487a3e0056f53895337dd4"
+  },
+  "installed_contract_fixtures": {
+    "evidence": "apps/server/verification/2026-11-18-provider-discovery-linux.json",
+    "evidence_sha256": "5f1e711020e1b039b51abcc8d8639bab0b7ba86821741e2395d9de405ae9a27b",
+    "scope": "installed_runtime_http_fixtures",
+    "result": {
+      "ambiguous_replace_not_repeated": true,
+      "dns_readback_verified": true,
+      "docs_unavailable_distinguished": true,
+      "failed_replacement_rolled_back": true,
+      "generated_adapter_validated": true,
+      "ip_replacement_verified": true,
+      "live_cloud_rotation": false,
+      "malicious_document_rejected": true,
+      "missing_credentials_distinguished": true,
+      "no_api_notified": true,
+      "no_vendor_allowlist": true,
+      "official_docs_digest_bound": true,
+      "official_docs_read": true,
+      "passed": true,
+      "provider_credentials_not_sent_to_model": true,
+      "providers": [
+        {
+          "api_shape": "json_bearer",
+          "dns_readback_verified": true,
+          "document_sha256": "0a806a08f4f831475b9d5012099b923cf5fd526fbfba3321b9c202676aa407f6",
+          "mutation_requests": 2,
+          "name": "qa-vps-ffafd0f30fb7",
+          "passed": true,
+          "profile_sha256": "741802bf321e61ed2fedccb1e22162bfb14b8e881d6cefbf399b2525a7abd072",
+          "read_before_mutation": true,
+          "read_requests": 6
+        },
+        {
+          "api_shape": "query_key",
+          "dns_readback_verified": true,
+          "document_sha256": "d440d63750ca5fca95cea72621019d00f36bfe95ff6ef1db9241a526c3df17d5",
+          "mutation_requests": 2,
+          "name": "qa-vps-02a9870503d8",
+          "passed": true,
+          "profile_sha256": "161b4453c6ee6b52e288260b5cbb6ec7a869ebfcfcba9a926850eb850627e3d2",
+          "read_before_mutation": true,
+          "read_requests": 6
+        }
+      ],
+      "read_only_probe_before_activation": true,
+      "scope": "installed_runtime_http_fixtures",
+      "unknown_json_provider_auto_connected": true,
+      "unknown_query_provider_auto_connected": true
+    },
+    "fault_tests": {
+      "passed": true,
+      "skipped": 0,
+      "suites": [
+        "test_network.py",
+        "test_ip_provider.py",
+        "test_aws_provider.py",
+        "test_egress.py",
+        "test_network_setup.py",
+        "test_generic_provider.py",
+        "test_provider_discovery.py",
+        "test_network_discovery.py",
+        "test_generic_updater.py"
+      ],
+      "tests": 215
+    },
+    "real_model_inference": false,
+    "real_cloud_rotation": false
+  },
+  "real_model_fixture": {
+    "source_receipt_sha256": "0b893e2d6fda5baee42510cfebf5e8d705b24c9cb2066de979918982252e73bf",
+    "scope": "Actual configured DeepSeek model generated a declarative adapter from synthetic unknown-vendor official-document fixtures; real local HTTP API calls and a synthetic DNS callback verified the pipeline. This is not a live vendor API or real cloud allocation.",
+    "result": {
+      "scope": "synthetic_vendor_http_with_real_llm",
+      "checked_at": "2026-11-19T04:22:52.161198+00:00",
+      "model": "deepseek-flash",
+      "real_deepseek_inference": true,
+      "real_cloud_provider": false,
+      "real_cloud_allocation": false,
+      "name": "qa-vps-d3e4ba5fc343",
+      "api_shape": "json_bearer",
+      "discovery_status": "ready",
+      "discovery_code": "provider_adapter_ready",
+      "model_calls": 1,
+      "requests": [
+        {
+          "phase": "compile",
+          "schema_repair_attempt": 0,
+          "validation_error": null,
+          "timeout": 80
+        }
+      ],
+      "response_metadata": [
+        {
+          "seconds": 4.615,
+          "finish_reason": "stop",
+          "content_chars": 2803,
+          "reasoning_chars": 0,
+          "usage": {
+            "prompt_tokens": 1946,
+            "completion_tokens": 823,
+            "total_tokens": 2769,
+            "prompt_cache_hit_tokens": 512,
+            "prompt_cache_miss_tokens": 1434
+          }
+        }
+      ],
+      "default_model_transport": true,
+      "doc_sha256": "ff8ad89be1f6484d96c23cdc19b630c74dbca1634e2b174c49e8adb0bda40fcc",
+      "runtime_sha256": "ff032f0d8652f2bb27c3f694e7c73b4e75135b2a352d0ea31cb41c7aed3beb60",
+      "external_origin_attempts": 0,
+      "provider_secret_sent_to_model": false,
+      "validation": {
+        "live_write_tested": false,
+        "schema_and_evidence": true,
+        "schema_repairs": 0,
+        "synthetic_identity_guard_passed": true,
+        "synthetic_protocol_passed": true
+      },
+      "rotation_status": "rotated",
+      "rotation_code": "provider_ip_rotated",
+      "generic_runtime_sha256": "8bdfebbb92503bbbc8ed293065794721aa036aa715bd3cb9d60e32f17f1da6ae",
+      "synthetic_api_mutations": [
+        "allocate",
+        "attach"
+      ],
+      "synthetic_dns_callback_verified": true,
+      "read_binding_verified": true,
+      "passed": true
+    }
+  },
+  "official_research_smoke": {
+    "source_receipt_sha256": "ba476887271e49bbbb921e535c80251c38fc1e243e5966e344491e06cfcaa327",
+    "scope": "Actual public Scaleway documentation and configured DeepSeek inference. The result remained documentation_incomplete; no provider credentials, cloud reads, cloud writes, activated adapter, or live rotation.",
+    "result": {
+      "mode": "real_official_docs_and_deepseek_read_only",
+      "configured_model": "deepseek-flash",
+      "default_model_loader_verified": true,
+      "vendor": "Scaleway",
+      "provider_credentials_supplied": false,
+      "counts": {
+        "model": 2,
+        "cloud_reads": 0,
+        "cloud_writes": 0
+      },
+      "duration_seconds": 25.05,
+      "result": {
+        "status": "documentation_incomplete",
+        "code": "provider_official_documentation_incomplete",
+        "checked_at": 1795062229,
+        "next_check": 1795064029,
+        "official_url": "https://www.scaleway.com/en/developers/api/instance",
+        "sources": [
+          {
+            "sha256": "51c6385dacbf097499e9cb38053b0eb08c8c4f92d12572e4d522928fb95bf1d1",
+            "url": "https://www.scaleway.com/en/developers/api/instance"
+          },
+          {
+            "sha256": "c76103f8a1864d6117f37c33b49151e386befdeb550934bac2ea41424e950180",
+            "url": "https://www.scaleway.com/en/developers/api/public-gateway"
+          },
+          {
+            "sha256": "a4e4677f811834bb6b2cba8771b34b5821f6866a2ef9ed8fd297c543ee28b56c",
+            "url": "https://www.scaleway.com/en/developers/api/ipam"
+          },
+          {
+            "sha256": "da006cf27d3939a3caf1e1c470fffbc82139ee7d4eb998f21d9523e5189f0238",
+            "url": "https://www.scaleway.com/en/developers/api"
+          }
+        ],
+        "required_capability": "officialscalewayinstanceapireferenceforflexibleipoperationsexactendpointandschem",
+        "vendor": "Scaleway",
+        "has_active_profile": false,
+        "required_configuration": [],
+        "automatic_rotation_ready": false
+      },
+      "source_module_sha256": {
+        "ip_provider.py": "42f0e907c14fa11e0c979d1caa79871de7f2d73dc5c2128e4a075e883f34aacc",
+        "research.py": "c145842647d10e0ea855b8a0ad02a4e19daf910d6a487a3e0056f53895337dd4",
+        "generic_provider.py": "8bdfebbb92503bbbc8ed293065794721aa036aa715bd3cb9d60e32f17f1da6ae",
+        "provider_discovery.py": "ff032f0d8652f2bb27c3f694e7c73b4e75135b2a352d0ea31cb41c7aed3beb60"
+      }
+    }
+  },
+  "builder": {
+    "summary_sha256": "6c1aa30372a88ef85fa4b617bb790738270bf4b6e53561eb5d8b84be4db9d670",
+    "passed": true,
+    "checks_run": 15,
+    "skipped": 0,
+    "failed_checks": [],
+    "server_unit_tests": 327,
+    "server_unit_skipped": 0,
+    "server_log_sha256": "c0efdb7f4b07ebafbb28daf60d845471d88410643a791ce90ea2d2c9f4dc0804",
+    "scope": "Linux candidate application/build checks and server unit tests. Test counts reflect this recorded run, not later CI additions."
+  },
+  "publication": {
+    "status": "pending_exact_commit_release_gate",
+    "formal_proof_asset": "linux-install-upgrade-proof.json"
+  }
+}
