@@ -193,7 +193,8 @@ class Runner:
                 result['network_features']=json.loads(self.guest(name,'python3','/opt/e2e/network_features.py',timeout=900,log='network-features.log').stdout)
                 if result['network_features'].get('passed') is not True:raise AcceptanceError('network_feature_checks_failed')
             if tuple(int(x) for x in version(raw).split('.'))>=(1,4,0):
-                result['generic_provider_features']=json.loads(self.guest(name,'python3','/opt/e2e/generic_provider_features.py',timeout=600,log='generic-provider-features.log').stdout)
+                assisted_args=['--assisted'] if tuple(int(x) for x in version(raw).split('.'))>=(1,4,1) else []
+                result['generic_provider_features']=json.loads(self.guest(name,'python3','/opt/e2e/generic_provider_features.py',*assisted_args,timeout=600,log='generic-provider-features.log').stdout)
                 if result['generic_provider_features'].get('passed') is not True:raise AcceptanceError('generic_provider_feature_checks_failed')
             result['passed']=result['version']==version(raw) and all(result[k] is True for k in ['timer_enabled','timer_active','services_healthy','proxy_allowed','proxy_blocked','tls_verified','blocked_target_reachable','proxy_block_route_verified'])
             if not result['passed']:raise AcceptanceError('fresh_install_checks_failed:'+json.dumps(result,sort_keys=True))
@@ -268,7 +269,7 @@ def main():
             work=pathlib.Path(temp);work.chmod(0o700);runner=Runner(work)
             try:
                 if tuple(int(x) for x in version(raw).split('.'))>=(1,3,0):
-                    fault_args=['--generic'] if tuple(int(x) for x in version(raw).split('.'))>=(1,4,0) else []
+                    fault_args=['--assisted'] if tuple(int(x) for x in version(raw).split('.'))>=(1,4,1) else ['--generic'] if tuple(int(x) for x in version(raw).split('.'))>=(1,4,0) else []
                     report['network_fault_tests']=json.loads(runner.command([sys.executable,str(FIXTURES/'fault_suites.py'),*fault_args],timeout=300,log='network-fault-suites.log').stdout)
                     if report['network_fault_tests'].get('passed') is not True or report['network_fault_tests'].get('skipped')!=0:raise AcceptanceError('network_fault_suite_failed')
                     print('network fault suites passed without skips',flush=True)

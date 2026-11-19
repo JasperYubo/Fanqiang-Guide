@@ -5,7 +5,7 @@ Production discovery, profile validation, transactions, network orchestration an
 Cloudflare write/readback code execute from the installed distribution. This is
 not evidence of a live cloud allocation or of paid model inference.
 """
-import hashlib,json,pathlib,subprocess,sys,time,urllib.request
+import argparse,copy,hashlib,json,pathlib,stat,subprocess,sys,time,urllib.request
 sys.path.insert(0,'/usr/local/lib/huarun')
 import network,provider_discovery,generic_provider,ip_provider
 from generic_provider_fixture import VendorFixture,ResearchFixture
@@ -122,7 +122,75 @@ def recovery_cases():
     finally:case.close()
     return result
 
-def run_cases():
+
+def assisted_cases():
+    result={};protected=guest.snapshot()
+    def immutable_config(case):
+        value=copy.deepcopy(network.load_private(case.path));value['address_source']['addresses'].pop('A',None)
+        value.get('provider',{}).pop('expected_current_ipv4',None)
+        st=case.path.stat()
+        return {'config':value,'mode':stat.S_IMODE(st.st_mode),'uid':st.st_uid,'gid':st.st_gid}
+    def denied(case,ip,expected):
+        before=case.path.read_bytes();previous_dns=cloud_address(case.config['domain'])
+        try:case.net.confirm_ip(ip)
+        except network.NetworkError as error:code=str(error)
+        else:raise RuntimeError('assisted_unverified_change_accepted')
+        require(code==expected,'assisted_wrong_rejection:'+code)
+        require(case.path.read_bytes()==before,'assisted_rejection_modified_config')
+        require(cloud_address(case.config['domain'])==previous_dns,'assisted_rejection_modified_dns')
+        require(not case.mutation_events(),'assisted_confirmation_called_cloud_mutation')
+        return code
+    # No API is documented. The owner changes the external VPS address; confirm_ip
+    # validates signed regional TLS/WS observations and the installed local node.
+    case=Case(mode='no_api')
+    try:
+        control(True,True);case.commit(case.f.old_ip)
+        require(case.discover().get('status')=='no_api_documented','assisted_no_api_fixture_wrong')
+        original=immutable_config(case);case.f.current_ip=case.f.new_ip
+        accepted=case.net.confirm_ip(case.f.new_ip)
+        result['manual_ip_validated']=(accepted.get('status')=='assisted_ip_confirmed' and accepted.get('ip')==case.f.new_ip and accepted.get('server_verified') is True and accepted.get('client_connectivity')=='not_tested')
+        result['static_address_persisted']=(network.load_private(case.path)['address_source']['addresses']['A']==case.f.new_ip and network.load_private(case.path)['provider']['expected_current_ipv4']==case.f.new_ip)
+        result['dns_readback_verified']=accepted.get('dns_verified') is True and cloud_address(case.config['domain'])==case.f.new_ip
+        case.clock[0]+=1000;case.net.run()
+        result['next_timer_keeps_new_ip']=cloud_address(case.config['domain'])==case.f.new_ip and network.load_private(case.path)['address_source']['addresses']['A']==case.f.new_ip
+        require(immutable_config(case)==original and not case.mutation_events(),'assisted_changed_credentials_or_called_provider_write')
+    finally:case.close()
+    case=Case(mode='no_api')
+    try:
+        control(True,False);case.commit(case.f.old_ip)
+        denied(case,case.f.new_ip,'assisted_new_ip_not_verified');result['unverified_ip_rejected']=True
+        control(True,True)
+        for name,relative,expected in (('pending_setup_rejected','setup/transaction.json','domain_recovery_pending'),('pending_provider_rejected','provider/discovered/held/transaction.json','provider_recovery_pending')):
+            marker=case.net.state_dir/relative;network.atomic_private(marker,{'fixture_pending':True})
+            try:denied(case,case.f.new_ip,expected);result[name]=True
+            finally:marker.unlink()
+    finally:case.close()
+    # A verified API cannot be bypassed by confirming an unrelated public IP.
+    case=Case()
+    try:
+        control(True,True);case.ready();case.commit(case.f.old_ip)
+        denied(case,case.f.new_ip,'confirmed_ip_provider_mismatch');result['api_binding_cannot_be_bypassed']=True
+    finally:case.close()
+    case=Case(mode='no_api')
+    try:
+        control(True,True);case.commit(case.f.old_ip);case.discover()
+        original=immutable_config(case);fixture('fixture-control',{'dns_write_failures':1})
+        try:case.net.confirm_ip(case.f.new_ip)
+        except network.NetworkError as error:require(str(error)=='assisted_dns_update_pending','assisted_wrong_transient_dns_error')
+        else:raise RuntimeError('assisted_dns_outage_not_exercised')
+        state=case.net.state()
+        result['dns_failure_keeps_new_ip']=(network.load_private(case.path)['address_source']['addresses']['A']==case.f.new_ip and network.load_private(case.path)['provider']['expected_current_ipv4']==case.f.new_ip and cloud_address(case.config['domain'])==case.f.old_ip and state.get('status')=='assisted_dns_pending' and state.get('assisted_recovery',{}).get('status')=='dns_pending')
+        fixture('fixture-control',{'dns_write_failures':0});case.clock[0]+=1000;case.net.run()
+        result['dns_retry_recovers_new_ip']=(cloud_address(case.config['domain'])==case.f.new_ip and network.load_private(case.path)['address_source']['addresses']['A']==case.f.new_ip and case.net.state().get('assisted_recovery',{}).get('status')=='dns_verified')
+        require(immutable_config(case)==original and not case.mutation_events(),'assisted_dns_retry_changed_credentials')
+    finally:
+        fixture('fixture-control',{'dns_write_failures':0});case.close()
+    result['configuration_and_keys_preserved']=guest.snapshot()==protected
+    result['passed']=all(value is True for value in result.values())
+    require(result['passed'],'assisted_recovery_acceptance_failed:'+str({k:v for k,v in result.items() if v is not True}))
+    return result
+
+def run_cases(assisted=False):
     result={};protected=guest.snapshot()
     cases=[connected_case(shape) for shape in ('json_bearer','query_key')]
     result.update(unknown_json_provider_auto_connected=cases[0]['passed'],unknown_query_provider_auto_connected=cases[1]['passed'],official_docs_read=True,official_docs_digest_bound=True,read_only_probe_before_activation=True,generated_adapter_validated=True,provider_credentials_not_sent_to_model=True,ip_replacement_verified=True,dns_readback_verified=all(x['dns_readback_verified'] for x in cases),no_vendor_allowlist=len({x['name'] for x in cases})==2)
@@ -134,15 +202,17 @@ def run_cases():
     require(guest.snapshot()==protected,'generic_tests_changed_owner_files')
     result['passed']=all(x is True for x in result.values())
     result.update(providers=cases,scope='installed_runtime_http_fixtures',live_cloud_rotation=False)
+    if assisted:result['assisted']=assisted_cases()
     require(result['passed'],'generic_provider_acceptance_failed')
     return result
 
 def main():
+    parser=argparse.ArgumentParser();parser.add_argument('--assisted',action='store_true');args=parser.parse_args()
     for module in (network,provider_discovery,generic_provider,ip_provider):
         require(pathlib.Path(module.__file__).parent==pathlib.Path('/usr/local/lib/huarun'),'generic_test_not_using_installed_modules')
     guest.cmd(['systemctl','stop','huarun-network.timer']);guest.cmd(['systemctl','stop','huarun-network.service'],check=False)
     try:
-        with network.MaintenanceLock():result=run_cases()
+        with network.MaintenanceLock():result=run_cases(assisted=args.assisted)
     finally:
         control(True,None);guest.cmd(['systemctl','start','huarun-network.timer'])
     observed=guest.probe();require(all(observed[k] is True for k in ('services_healthy','proxy_allowed','proxy_blocked','tls_verified')),'generic_final_installed_node_unhealthy')

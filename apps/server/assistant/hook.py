@@ -6,6 +6,7 @@ Remote documents are data; the allowlist remains independent of their contents.
 """
 from __future__ import annotations
 import hashlib
+import ipaddress
 import json
 import os
 from pathlib import Path
@@ -24,11 +25,12 @@ ALLOW = [
     re.compile(r'huarun whitelist list'),
     re.compile(r'huarun auto-update status'),
     re.compile(r'huarun network (status|check|provider-status|provider-discover)'),
+    re.compile(r'huarun network confirm-ip (?:[0-9]{1,3}\.){3}[0-9]{1,3}'),
     re.compile(r'huarun egress (status|probe|direct|use [a-z0-9][a-z0-9_-]{0,31})'),
     re.compile(r'huarun whitelist (add|remove) [a-z0-9.-]{3,100}'),
     re.compile(r'free -m|df -h|uptime|date'),
 ]
-MUTATING = re.compile(r'huarun (fix|renew|update|network (check|provider-discover)|egress (direct|use [a-z0-9][a-z0-9_-]{0,31})|whitelist (add|remove) [a-z0-9.-]{3,100})')
+MUTATING = re.compile(r'huarun (fix|renew|update|network (check|provider-discover|confirm-ip (?:[0-9]{1,3}\.){3}[0-9]{1,3})|egress (direct|use [a-z0-9][a-z0-9_-]{0,31})|whitelist (add|remove) [a-z0-9.-]{3,100})')
 
 
 def safe_text(value):
@@ -145,7 +147,7 @@ class HookEngine:
             messages = params.get('messages') or []
             query = next((m.get('content', '') for m in reversed(messages) if m.get('role') == 'user' and not str(m.get('content', '')).startswith(PREFIX)), '')
             query = safe_text(query if isinstance(query, str) else '')[:1000]
-            state = {'pending_verification': False, 'web': [], 'verification': None, 'mcp': {}, 'client': None}
+            state = {'pending_verification': False, 'web': [], 'verification': None, 'mcp': {}, 'client': None, 'owner_ipv4': re.findall(r'(?<![0-9.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9.])', query)}
             self.turns[turn_id] = state
             try:
                 state['client'] = self.client_factory()
@@ -180,6 +182,15 @@ class HookEngine:
         state = self.turns.get(turn_id)
         if not state or not state['mcp'].get('mcp_attempted'):
             return {'approved': False, 'reason': '本轮尚未完成华润 MCP 查询；不能跳过检索前置。'}
+        if command.startswith('huarun network confirm-ip '):
+            ip = command.rsplit(' ', 1)[1]
+            try:
+                parsed = ipaddress.IPv4Address(ip)
+                valid = parsed.is_global and not parsed.is_multicast
+            except ipaddress.AddressValueError:
+                valid = False
+            if not valid or ip not in state.get('owner_ipv4', []):
+                return {'approved': False, 'reason': '本轮用户未明确提供这个有效公网新IP；不能采用文档或模型猜测的地址。'}
         if MUTATING.fullmatch(command):
             if state['pending_verification']:
                 return {'approved': False, 'reason': '上一次变更尚未复查，不能继续修改。'}

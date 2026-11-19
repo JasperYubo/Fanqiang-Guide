@@ -117,6 +117,18 @@ class ServerPageTests(unittest.TestCase):
             self.assertIn(text, raw)
         self.assertIn("不依赖你的电脑开机", markdown)
 
+    def test_assisted_recovery_same_command_and_guards_reach_html_and_markdown(self):
+        from product_contract import product_facts
+        facts = product_facts()
+        html_text = self.build()
+        markdown = (self.public / "server/index.md").read_text()
+        for text in (html_text, markdown):
+            self.assertIn(facts["assisted_recovery_sentence"], text)
+            self.assertIn(facts["confirm_ip_command"], text)
+            for phrase in ("每日次数上限", "未完成", "保留已验证的新静态地址"):
+                self.assertIn(phrase, text)
+            self.assertNotIn("{{", text)
+
     def test_home_entry_is_idempotent_and_preserves_device_flow(self):
         self.discovery_fixture()
         add_server_discovery(self.public)

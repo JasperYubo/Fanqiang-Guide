@@ -331,6 +331,8 @@ for legacy_name, legacy_sha in {
     'fanqiang-server-v1.2.evidence.json': '2972bde0982c8c1f81072641bbb939095856d34e734bad26c95ca994cdcbfe55',
     'fanqiang-server-v1.3.ilang.md': 'b7244f37e594f2c80fce53a5fbdc96b80a33603afa402bf78a31db9c6287f2de',
     'fanqiang-server-v1.3.evidence.json': 'bce8a0304f522509dff49f673eee393477fa522c5eb8844fe974c0dd5d74adc4',
+    'fanqiang-server-v1.4.ilang.md': '367e3c92a3729cfeaf5dcf79fdcae1949c27c5626bcf828ade080840cd5aff92',
+    'fanqiang-server-v1.4.evidence.json': '36f39a985053c3dfb65f04f0ca42cc55649a0b904dc025bbf53370278825340c',
 }.items():
     legacy_data = (setup_runtime.parent / 'books' / legacy_name).read_bytes()
     if hashlib.sha256(legacy_data).hexdigest() != legacy_sha:

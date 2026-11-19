@@ -626,6 +626,7 @@ class Network:
                 "last_notification": state.get("last_notification"),
                 "provider_result": state.get("provider_result"),
                 "provider_discovery": state.get("provider_discovery"),
+                "assisted_recovery": state.get("assisted_recovery"),
                 "notification_status": state.get("notification_status", "not_configured"),
                 "addresses": {k: v.get("content") for k, v in state.get("records", {}).items()}}
 
@@ -638,6 +639,75 @@ class Network:
             return provider.safe_status()
         kind = config.get("provider", {}).get("kind", "manual")
         return {"status": "manual" if kind in ("manual", "none") else "builtin_adapter", "kind": kind}
+
+    def confirm_ip(self, value):
+        """Adopt an owner-supplied, independently verified ingress after assisted replacement.
+
+        The new static source is durable before DNS writes. A lost Cloudflare
+        acknowledgement can therefore retry the verified address without ever
+        restoring a stale address that the owner has already replaced.
+        """
+        ip = address(value, "A")
+        config = self.config()
+        if config is None:
+            raise NetworkError("configuration_required")
+        if (self.state_dir / "setup" / "transaction.json").exists():
+            raise NetworkError("domain_recovery_pending")
+        if any((self.state_dir / "provider").rglob("transaction.json")):
+            raise NetworkError("provider_recovery_pending")
+        provider = None
+        rebind_discovery = False
+        kind = config.get("provider", {}).get("kind", "manual")
+        if kind not in (None, "none", "manual"):
+            provider = self.provider(config)
+            if provider.pending():
+                raise NetworkError("provider_recovery_pending")
+            observed = provider.safe_status() if hasattr(provider, "safe_status") else {}
+            authoritative = not hasattr(provider, "discover") or observed.get("has_active_profile") is True or observed.get("status") == "ready"
+            rebind_discovery = hasattr(provider, "discover") and not authoritative
+            if authoritative:
+                try:
+                    actual = addresses(provider.get_inbound_addresses()).get("A")
+                except Exception:
+                    raise NetworkError("provider_address_unavailable") from None
+                if actual != ip:
+                    raise NetworkError("confirmed_ip_provider_mismatch")
+        source = config["address_source"]["mode"]
+        if source != "static" and self.inbound(config, provider).get("A") != ip:
+            raise NetworkError("confirmed_ip_source_mismatch")
+        if not self.doctor_fn(self.lock_fd):
+            raise NetworkError("assisted_local_service_unhealthy")
+        if not self.confirmed(self.observations(config, ip), True):
+            raise NetworkError("assisted_new_ip_not_verified")
+        cf = Cloudflare(config, self.transport)
+        if source == "static" or rebind_discovery:
+            updated = copy.deepcopy(config)
+            if source == "static":
+                updated["address_source"]["addresses"]["A"] = ip
+            if rebind_discovery:
+                updated["provider"]["expected_current_ipv4"] = ip
+            atomic_private(self.config_path, validate_config(updated))
+        state = self.state()
+        state["assisted_recovery"] = {"status": "dns_pending", "ip": ip, "verified_at": int(self.clock())}
+        state["status"] = "assisted_dns_pending"
+        self.save(state)
+        try:
+            cf.verify()
+            synced = cf.sync({"A": ip})
+        except Exception:
+            state["last_error"] = "assisted_dns_update_pending"
+            self.event(state, "assisted_dns_pending", "华润网络助手：" + config["domain"] + " 新入站 IP 已通过核验，DNS 尚待更新；已保存新地址，Linux 定时维护会重试，不会回填旧 IP。")
+            self.deliver(config, state)
+            self.save(state)
+            raise NetworkError("assisted_dns_update_pending") from None
+        state.setdefault("records", {}).update(synced["records"])
+        state["assisted_recovery"]["status"] = "dns_verified"
+        state.update(status="assisted_ip_confirmed", failures=0, last_error=None, dns_settle_until=int(self.clock()) + 900)
+        self.event(state, "assisted_ip_confirmed", "华润网络助手：" + config["domain"] + " 已核验人工更换的新 IP，并同步、读回 DNS；节点配置、白名单和 Key 保留。请再用实际客户端确认连接。")
+        self.deliver(config, state)
+        self.save(state)
+        return {"status": "assisted_ip_confirmed", "ip": ip, "dns_verified": True,
+                "server_verified": True, "client_connectivity": "not_tested"}
 
     def _discover(self, provider, config, state, force=False):
         previous = state.get("provider_discovery") or {}
@@ -652,7 +722,7 @@ class Network:
         if (prior_status, prior_code) != (status, current_code):
             messages = {
                 "ready": "已根据厂商官方文档完成 API 适配和实例只读核验；故障时将按已保存授权恢复并复查。",
-                "no_api_documented": "已查阅厂商官方文档，未提供可用的换 IP API；发生入口故障时需在 VPS 面板或联系厂商更换，DNS 会继续同步。",
+                "no_api_documented": "已查阅厂商官方文档，未提供可用的换 IP API；助手会查官方面板或工单步骤协助更换。取得新入站地址后执行 huarun network confirm-ip 新IP，核验后同步 DNS 并复查。",
                 "credentials_required": "已发现厂商 API，仍缺所需凭据；请在 VPS 本地运行 huarun network provider-setup 补充，勿把密钥写进聊天。",
                 "parameters_required": "已发现厂商 API，仍缺实例或地域等必要参数；请查看 huarun network provider-status，并用 provider-setup 补充。",
                 "identity_unconfirmed": "尚未确认厂商官网身份；请用 huarun network provider-setup 补充厂商名称或官网，不能据此认定没有 API。",
@@ -662,10 +732,12 @@ class Network:
                 "adapter_validation_failed": "厂商适配尚未通过接口或实例核验，未执行换 IP；系统会重试，具体原因见 huarun network provider-status。",
                 "model_credentials_required": "缺少可用的 DeepSeek 配置，暂时无法分析厂商官方文档；请先完成助手 Key 配置。",
             }
-            if current_code == "provider_api_origin_not_official":
+            if current_code in ("provider_api_origin_not_official", "provider_api_origin_requires_owner_scope"):
                 messages[status] = "已找到使用独立域名的 API，仍需核对其官方地址；请查看厂商官方文档，并在 provider-setup 的跨域 API 地址中补充，不能据此认定没有换 IP API。"
             if str(current_code or "").startswith("provider_ai_"):
                 messages[status] = "DeepSeek 配置暂不可用，尚无法完成厂商文档分析；请检查助手 Key 和模型配置，不能据此认定厂商没有 API。"
+            if status == "ready" and result.get("automatic_rotation_ready") is False:
+                messages[status] = "API 适配已完成，当前仍有条件待满足；查看 huarun network provider-status，助手会按缺口补查或协助操作。"
             if status in messages:
                 self.event(state, "provider_discovery_" + status, "华润网络助手：" + config["domain"] + " " + messages[status])
         return result
@@ -892,13 +964,18 @@ class Network:
                     state["dns_settle_until"] = int(self.clock()) + 900
                     self.event(state, "ip_recovered", "华润网络助手：" + config["domain"] + " 已自动更换 IP，DNS 与双地区连接复查通过。")
                 elif result.get("status") in ("deferred", "failed", "rolled_back"):
-                    self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 自动换 IP 未完成，请查看 huarun network status，并到 VPS 面板处理；原配置与 Key 保留。")
+                    self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 自动换 IP 未完成，请先查看 huarun network status 的恢复事务；事务未结束时不要同时在面板再次换 IP，助手会继续核验并协助恢复，原配置与 Key 保留。")
                 state["last_error"] = None
                 self.deliver(config, state)
                 self.save(state)
                 return self.status()
             synced = cf.sync(self.inbound(config, provider=provider))
             state["records"] = synced["records"]
+            assisted = state.get("assisted_recovery") or {}
+            if assisted.get("status") == "dns_pending" and state["records"].get("A", {}).get("content") == assisted.get("ip"):
+                assisted["status"] = "dns_verified"
+                state["dns_settle_until"] = int(self.clock()) + 900
+                self.event(state, "assisted_dns_recovered", "华润网络助手：" + config["domain"] + " 人工更换的新 IP 已完成 DNS 重试与读回，请复查实际客户端连接。")
             if synced["changed"]:
                 self.event(state, "dns_changed", "华润网络助手：" + config["domain"] + " 已同步新的入站 IP，原节点配置和 Key 保留。")
             healthy = self.doctor_fn(self.lock_fd)
@@ -936,10 +1013,10 @@ class Network:
                             state["dns_settle_until"] = int(self.clock()) + 900
                             self.event(state, "ip_recovered", "华润网络助手：" + config["domain"] + " 已自动更换 IP，DNS 与双地区连接复查通过。")
                         elif result.get("status") in ("deferred", "failed", "rolled_back"):
-                            self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 无法按当前厂商授权完成自动换 IP，请查看 huarun network status，并到 VPS 面板处理；新 IP 就绪后会继续同步 DNS。")
+                            self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 无法按当前厂商授权完成自动换 IP，请查看 huarun network provider-status；助手会判断是补充条件、等待恢复，还是协助官方面板/工单操作。人工更换后用 confirm-ip 核验并同步新地址。")
                     else:
                         state["status"] = "manual_ip_change_required"
-                        self.event(state, "manual_ip_change_required", "华润网络助手：" + config["domain"] + " 持续访问异常，当前厂商未接入自动换 IP。请到 VPS 面板或联系厂商更换 IP；系统会继续检测并同步 DNS。")
+                        self.event(state, "manual_ip_change_required", "华润网络助手：" + config["domain"] + " 持续访问异常，当前需协助换 IP。可让助手查官方面板或工单步骤、费用和停机影响；更换后提供新入站 IP，由 confirm-ip 核验、同步 DNS 并复查。")
             else:
                 state["failures"], state["status"] = 0, "reachability_unconfirmed"
                 self.event(state, "probe_setup_required", "华润网络助手：" + config["domain"] + " 尚缺两个独立地区的有效探针结果；本机检查正常，无法据此认定被墙，未自动更换 IP。")
@@ -1273,7 +1350,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("configure", "prepare", "status", "run", "config-domain",
                                            "dns-add", "dns-remove", "notify-test", "probe-server",
-                                           "provider-discover", "provider-status", "provider-setup"), nargs="?")
+                                           "provider-discover", "provider-status", "provider-setup", "confirm-ip"), nargs="?")
     parser.add_argument("challenge_name", nargs="?")
     parser.add_argument("challenge_value", nargs="?")
     parser.add_argument("--domain")
@@ -1334,6 +1411,10 @@ def main():
                 result = network.notify_test()
             elif operation == "provider-discover":
                 result = network.provider_discover(force=True)
+            elif operation == "confirm-ip":
+                if args.challenge_value is not None or args.challenge_name is None:
+                    raise NetworkError("confirmed_ip_argument_required")
+                result = network.confirm_ip(args.challenge_name)
             elif operation == "provider-setup":
                 result = network.provider_setup()
             else:

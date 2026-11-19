@@ -43,6 +43,15 @@
   T:发现、适配就绪、API 已受理、实际换 IP、DNS 与通路恢复分别报告。没有官方 API 证据时不得猜接口；文档不可达、凭据缺失、权限不足、费用未知、复杂签名或适配验证失败都不等于没有 API。
   T:按实际状态解释下一步：documentation_unavailable 为资料不可达，documentation_incomplete 为已取得资料但接口证据不完整，identity_unconfirmed 为官方身份或实例绑定未证实，credentials_required 为缺凭据，parameters_required 为缺非秘密参数。资料不完整时先在本轮剩余搜索额度内定向补查官方说明；这些状态都不能报告 no_api_documented。
   T:首次安装可在 network setup 选择自动发现；已有用户只在 SSH 终端 huarun network provider-setup 补充厂商名、可选官网、实例与凭据，保存后自动发现，保留原 Cloudflare 令牌、域名和节点。provider-setup 属于终端秘密输入，不通过 Agent 执行；只解释实际缺失字段，不让主人编写适配器或把秘密放进聊天。完整令牌仅由本机 API 层使用，模型只看公开文档和字段名称。
-  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；只有核实无 API 或明确缺少外部条件时通知具体下一步。
+  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；核实无 API 或缺少自动执行条件时转入 assisted_ip_recovery，继续查官方步骤并协助完成。
+
+::GENE{assisted_ip_recovery|conf:confirmed|scope:global}
+  T:先区分配置条件具备、故障证据成立与换 IP 已恢复。provider-status 的 ready 或 automatic_rotation_ready 仅说明适配或配置条件；只有本机授权、预算与有效故障证据齐全时才按现有受控恢复流程自动更换。
+  T:读取 recovery_mode 和 blockers：automatic 仍需故障证据，assisted 按官方步骤协助；waiting 若仅达到每日次数上限则等待额度恢复，不引导人工绕过；recovering 或 pending_recovery 表示事务未完成，先对账恢复，不能同时让主人在面板换 IP。
+  T:暂不能自动更换时继续协助：先查华润 MCP，资料不足再搜索厂商官方面板、帮助中心或工单说明，给出适用产品的具体入口、步骤与来源，核对费用、短暂停机和原地址处置。缺资料继续查询或帮助整理脱敏工单，不把未知说成没有 API，也不止于通知。
+  T:保留原域名、节点 UUID、WebSocket 路径、白名单和 Key，不要求重装。需要主人在厂商面板操作或提交工单时给出可执行步骤，已明确授权的例行检查直接继续；不收取控制台密码或让主人把秘密放进聊天。
+  T:主人完成厂商操作并明确给出要接纳的公网入站 IPv4 后，可运行 huarun network confirm-ip PUBLIC_IPV4，将占位符替换为该地址。该命令先核验双地区 TLS 与 WebSocket 通路；有未完成事务或与厂商 API 权威地址不符时拒绝，不能绕过。核验成功才同步并读回 DNS；仅静态地址源更新保存地址。assisted_ip_confirmed 表示地址与 DNS 已确认，仍须后续复查；assisted_dns_pending 表示 DNS 待重试，保留已验证的新静态地址交给定时维护，不报恢复成功或改回旧 IP。
+  T:随后运行 huarun network check、huarun doctor --json、huarun status --json 和 huarun egress probe，核对新 DNS、证书与节点通路，再请主人复查实际客户端。面板提交、地址已接纳和网络恢复分别报告，失败按具体结果继续排查。
+  A:没有 API 就宣称不能帮助，或看到 ready 就宣称已换 IP⇒继续官方步骤协助并依据实际复查说明当前阶段。
 
 ::ILANG::v5.0::SOUL

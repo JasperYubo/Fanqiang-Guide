@@ -120,6 +120,68 @@ class DiscoveryIntegrationTests(unittest.TestCase):
         self.instance.provider_discover(force=True)
         codes=[e['code'] for e in self.instance.state()['events']]
         self.assertIn('provider_discovery_credentials_required',codes)
+    def manual(self):
+        self.cfg['probes']=probes();self.instance.probe_transport=signer();self.install()
+        self.cf.add(content='8.8.8.8');self.cf.calls=[]
+    def test_assisted_confirmation_updates_only_verified_static_ip(self):
+        self.manual();before=self.instance.config();result=self.instance.confirm_ip('9.9.9.9')
+        expected=copy.deepcopy(before);expected['address_source']['addresses']['A']='9.9.9.9'
+        self.assertEqual(self.instance.config(),expected);self.assertEqual(result['status'],'assisted_ip_confirmed')
+        self.assertTrue(result['dns_verified']);self.assertEqual(result['client_connectivity'],'not_tested')
+        self.instance.run();self.assertEqual(self.instance.status()['addresses']['A'],'9.9.9.9')
+        self.assertEqual(self.instance.config_path.stat().st_mode & 0o777,0o600)
+    def test_assisted_unverified_new_ip_never_changes_configuration_or_dns(self):
+        self.manual();self.instance.probe_transport=signer(False);original=self.instance.config_path.read_bytes()
+        with self.assertRaisesRegex(n.NetworkError,'assisted_new_ip_not_verified'):self.instance.confirm_ip('9.9.9.9')
+        self.assertEqual(self.instance.config_path.read_bytes(),original);self.assertEqual(self.cf.mutations(),[])
+    def test_assisted_missing_second_region_is_not_verified(self):
+        self.manual();config=self.instance.config();config['probes']=config['probes'][:1];n.atomic_private(self.instance.config_path,config)
+        with self.assertRaisesRegex(n.NetworkError,'assisted_new_ip_not_verified'):self.instance.confirm_ip('9.9.9.9')
+        self.assertEqual(self.cf.mutations(),[])
+    def test_assisted_pending_setup_or_provider_blocks_changes(self):
+        self.manual();before=self.instance.config_path.read_bytes()
+        for relative,code in [('setup/transaction.json','domain_recovery_pending'),('provider/discovered/old/transaction.json','provider_recovery_pending')]:
+            p=self.instance.state_dir/relative;p.parent.mkdir(parents=True,exist_ok=True);p.write_text('{}')
+            with self.assertRaisesRegex(n.NetworkError,code):self.instance.confirm_ip('9.9.9.9')
+            p.unlink()
+        self.assertEqual(self.instance.config_path.read_bytes(),before);self.assertEqual(self.cf.mutations(),[])
+    def test_assisted_local_service_failure_never_mutates(self):
+        self.manual();self.instance.doctor_fn=lambda fd:False
+        with self.assertRaisesRegex(n.NetworkError,'assisted_local_service_unhealthy'):self.instance.confirm_ip('9.9.9.9')
+        self.assertEqual(self.cf.mutations(),[])
+    def test_assisted_active_provider_cannot_be_bypassed(self):
+        self.setup_provider();self.provider.current='ready';self.cfg['probes']=probes();self.install()
+        self.instance.probe_transport=signer();self.cf.calls=[]
+        with self.assertRaisesRegex(n.NetworkError,'confirmed_ip_provider_mismatch'):self.instance.confirm_ip('8.8.4.4')
+        self.assertEqual(self.cf.mutations(),[])
+    def test_assisted_inactive_discovery_binds_future_adapter_to_verified_new_ip(self):
+        self.setup_provider('no_api_documented');self.cfg['probes']=probes();self.install()
+        self.instance.probe_transport=signer();self.instance.confirm_ip('8.8.4.4')
+        actual=self.instance.config()
+        self.assertEqual(actual['provider']['expected_current_ipv4'],'8.8.4.4')
+        self.assertEqual(actual['provider']['credentials'],{'token':'private-credential'})
+        self.assertEqual(actual['address_source']['addresses']['A'],'8.8.4.4')
+    def test_assisted_consensus_source_must_agree_with_new_ip(self):
+        self.manual();config=self.instance.config();config['address_source']={'mode':'consensus','no_nat_confirmed':True};n.atomic_private(self.instance.config_path,config)
+        with self.assertRaisesRegex(n.NetworkError,'confirmed_ip_source_mismatch'):self.instance.confirm_ip('9.9.9.9')
+        self.assertEqual(self.cf.mutations(),[])
+    def test_assisted_dns_failure_retries_verified_ip_without_restoring_stale_ip(self):
+        self.manual();original=self.instance.transport;failure=[True]
+        def request(method,url,body=None,headers=None):
+            if failure[0] and method=='PATCH':raise n.NetworkError('upstream_http_503')
+            return original(method,url,body,headers)
+        self.instance.transport=request
+        with self.assertRaisesRegex(n.NetworkError,'assisted_dns_update_pending'):self.instance.confirm_ip('9.9.9.9')
+        self.assertEqual(self.instance.config()['address_source']['addresses']['A'],'9.9.9.9')
+        self.assertEqual(self.instance.status()['assisted_recovery']['status'],'dns_pending')
+        failure[0]=False;self.instance.run()
+        self.assertEqual(self.instance.status()['addresses']['A'],'9.9.9.9')
+        self.assertEqual(self.instance.status()['assisted_recovery']['status'],'dns_verified')
+    def test_assisted_private_ip_rejected_before_any_provider_or_dns_call(self):
+        self.manual();before=self.instance.config_path.read_bytes()
+        for ip in ['127.0.0.1','10.0.0.1','224.0.0.1','not-an-ip','2001:4860:4860::8888']:
+            with self.assertRaises(n.NetworkError):self.instance.confirm_ip(ip)
+        self.assertEqual(self.cf.calls,[]);self.assertEqual(self.instance.config_path.read_bytes(),before)
     def test_provider_setup_refuses_to_replace_credentials_during_pending_recovery(self):
         self.setup_provider();original=self.instance.config_path.read_bytes()
         journal=self.instance.state_dir/'provider'/'discovered'/'any-vendor'/'transaction.json'

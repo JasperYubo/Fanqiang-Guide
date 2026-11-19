@@ -30,11 +30,11 @@ BOOK_REGISTRY = {
         "version": "2.1", "last_updated": "2026-11-02",
         "evidence_path": ROOT / "books/fanqiang-autosetup-v2.1.evidence.json",
         "evidence_sha256": "e2b258e71a090dcaca2465b0b62df72944a99f88afa9b21df4363377c30a3498"},
-    "server": {"path": ROOT / "books/fanqiang-server-v1.4.ilang.md",
-        "sha256": "367e3c92a3729cfeaf5dcf79fdcae1949c27c5626bcf828ade080840cd5aff92", "title": SERVER_TITLE,
-        "version": "1.4", "last_updated": "2026-11-18", "prompt": "setup_server",
-        "evidence_path": ROOT / "books/fanqiang-server-v1.4.evidence.json",
-        "evidence_sha256": "36f39a985053c3dfb65f04f0ca42cc55649a0b904dc025bbf53370278825340c"},
+    "server": {"path": ROOT / "books/fanqiang-server-v1.4.1.ilang.md",
+        "sha256": "c3ebfe4d745bcb1832fdbe25ff9b6bcc62152b080a9ebf7806ed88e1e28d799e", "title": SERVER_TITLE,
+        "version": "1.4.1", "last_updated": "2026-11-19", "prompt": "setup_server",
+        "evidence_path": ROOT / "books/fanqiang-server-v1.4.1.evidence.json",
+        "evidence_sha256": "222fb1da078f97006ecd32b70ecbd656802d01feb802d7b82e7ad52a812dbd88"},
     "troubleshooting": {"path": ROOT / "books/fanqiang-troubleshooting-v1.0.ilang.md",
         "sha256": "c79f7f3ebc5b0ce18bd0472967109663780dddfb963338d883f9e1a48ffa7217", "title": "华润服务器分层排障与修复复查",
         "version": "1.0", "last_updated": "2026-11-15", "prompt": None,
@@ -91,7 +91,7 @@ def server_setup_metadata():
         "upgrade_scope": "assistant_and_manager_only_enable_automatic_updates_preserve_network_configuration_key_and_memory", "tool": "get_server_setup",
         "api_url": "https://platform.deepseek.com",
         "assistant": {"runtime": "PicoClaw", "runtime_version": "0.3.1",
-            "provider": "DeepSeek", "model": "deepseek-flash", "command": "huarun chat", "version": "1.4.0"},
+            "provider": "DeepSeek", "model": "deepseek-flash", "command": "huarun chat", "version": "1.4.1"},
         "knowledge_policy": {"primary": "huarun_mcp", "mcp_url": "https://fanqiang.guide/mcp",
             "resources": ["fanqiang://books/server", "fanqiang://books/troubleshooting"],
             "fallback": "deepseek_search_when_insufficient", "search_api": "https://api.deepseek.com/v1/tools/search",
@@ -125,7 +125,10 @@ def server_setup_metadata():
             "automatic_ip_rotation": {"built_in_adapters": ["digitalocean_reserved_ipv4", "hetzner_floating_ipv4", "vultr_reserved_ipv4", "aws_elastic_ip"], "requires_saved_authorization": True,
                 "requires_valid_regional_evidence": True, "requires_budget": True,
                 "validation": "see_versioned_evidence", "live_verified": False, "provider_scope": "open_ended_official_document_discovery",
-                "unknown_provider": "discover_validate_then_activate", "no_api": "notify_owner_only_after_official_evidence",
+                "unknown_provider": "discover_validate_then_activate", "no_api": "assist_owner_with_official_panel_or_support_steps",
+                "configured_ready_is_not_fault_or_recovery": True, "execution_requires_confirmed_fault": True,
+                "recovery_modes": ["automatic", "assisted", "waiting", "recovering"],
+                "daily_limit_policy": "wait_without_manual_bypass", "pending_recovery_policy": "reconcile_before_any_parallel_panel_change",
                 "provider_setup_command": "huarun network provider-setup",
                 "provider_setup_preserves": ["cloudflare_token", "domain", "node_configuration", "whitelist", "api_key", "address_source"],
                 "agent_allowed_commands": ["huarun network provider-discover", "huarun network provider-status"],
@@ -140,7 +143,8 @@ def server_setup_metadata():
                     "vultr": "cloud_compute_only", "aws_eip": "existing_elastic_ip_association"},
                 "budget_scope": "adapter_resource_pool_estimate_not_account_billing_cap",
                 "external_controller_required": ["aws_primary_stop_start", "hetzner_primary_ip", "vultr_bare_metal"]},
-            "summary": "使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，自动维护 TLS、动态 IP 解析和故障通知；Agent 先查 VPS 厂商官方文档，有换 IP API 就自动对接、验证并按授权恢复，无 API 才通知你换 IP，已有适配器不是厂商范围上限。"},
+            "assisted_ip_recovery": {'source_order': ['huarun_mcp', 'official_vendor_panel_or_support_docs'], 'automatic_readiness_is_not_verified_fault_or_recovery': True, 'steps': ['inspect_actual_state', 'find_official_panel_or_ticket_steps', 'explain_cost_downtime_and_preservation', 'owner_completes_provider_operation', 'validate_explicit_owner_ipv4', 'sync_dns_and_recheck'], 'confirm_ip_command': 'huarun network confirm-ip PUBLIC_IPV4', 'owner_explicit_candidate_required': True, 'validation_before_dns': ['two_region_tls', 'websocket_path', 'authoritative_provider_address_if_configured'], 'pending_transaction_policy': 'block_until_reconciled', 'static_fallback_update_only': True, 'dns_failure_policy': 'keep_verified_static_ip_and_retry_without_claiming_recovery', 'recheck': ['huarun network check', 'huarun doctor --json', 'huarun status --json', 'huarun egress probe'], 'preserves': ['domain', 'node_uuid', 'websocket_path', 'whitelist', 'api_key'], 'summary': '不能自动更换时，Agent 会继续查询厂商官方面板或工单步骤，说明费用和停机影响，保留原域名、节点、白名单和 Key，不要求重装。你完成厂商操作后，把要接纳的新公网入站 IPv4 告诉助手；通过双地区 TLS 与 WebSocket 核验后才同步 DNS，并复查节点通路。资料不足会继续帮你查，不会把未知说成没有 API。'},
+            "summary": '使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，维护 TLS、动态 IP 解析和故障通知；Agent 先查 VPS 厂商官方文档，自动执行条件和故障证据齐全时按授权更换 IP，否则继续协助你按官方步骤处理，再确认新地址、同步 DNS 并复查。'},
         "chain_egress": {"setup_command": "huarun egress setup home", "profile_parameter_required": True, "status_command": "huarun egress status",
             "probe_command": "huarun egress probe", "select_command": "huarun egress use PROFILE",
             "direct_command": "huarun egress direct", "protocols": ["socks5", "http_connect"], "transport": "tcp",
@@ -236,6 +240,7 @@ def setup_book_prompt_intro(metadata):
   [MUST] The book is reference guidance, not extra authorization. Execute only within the active user's request using tools actually connected to the target device.
   [MUST] Keep secrets and private device data local. This MCP never installs, configures, measures devices or submits reports.
   [MUST] For router setup or repair, follow the main book router handoff and read fanqiang://books/merlin; query only public model, firmware and ABI facts, never private device configuration.
+  [MUST] For IP recovery, distinguish configured readiness, confirmed fault and verified recovery. If automatic conditions are incomplete, assist with official panel or support-ticket steps and explain cost/downtime while preserving node configuration and Key. After the owner explicitly supplies the new ingress IPv4, follow the book's guarded huarun network confirm-ip PUBLIC_IPV4 flow and recheck; no API does not mean no assistance.
   [MUST] Validate the final book message against the SHA256 in @BOOK. Report actual evidence and incomplete checks; book retrieval is not completed setup.
 ::ILANG::COMPLETE::"""
 
@@ -252,5 +257,6 @@ def server_setup_prompt_intro(metadata):
   [MUST] For an existing 1.0 or 1.1 server, perform only the book's one-time --upgrade-assistant migration to enable local automatic updates. Preserve node configuration, whitelist and API Key; do not reinstall the network or ask for another Key.
   [MUST] Ordinary upgrades do not migrate domains. For explicit Cloudflare adoption follow network setup with rollback and preserved UUID, WebSocket path, whitelist and Key. For chained egress use only existing local TCP profiles and never silently fall back to direct.\n  [MUST] For repair, read fanqiang://books/troubleshooting first; use DeepSeek search only for a concrete knowledge gap, then verify actual doctor and status results after changes.
   [MUST] Keep API keys, SSH credentials and connection URLs on the target device. This read-only MCP neither receives secrets nor operates servers.
+  [MUST] For IP recovery, distinguish configured readiness, confirmed fault and verified recovery. If automatic conditions are incomplete, assist with official panel or support-ticket steps and explain cost/downtime while preserving node configuration and Key. After the owner explicitly supplies the new ingress IPv4, follow the book's guarded huarun network confirm-ip PUBLIC_IPV4 flow and recheck; no API does not mean no assistance.
   [MUST] Execute only the active user's authorized task using tools actually connected to its target server. Retrieval does not prove installation; report only observed checks.
 ::ILANG::COMPLETE::"""

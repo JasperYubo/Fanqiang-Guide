@@ -101,6 +101,17 @@ class HookTests(unittest.TestCase):
         self.assertTrue(self.engine.turns['one']['pending_verification'])
         self.engine.after_tool(self.params('huarun network provider-discover'))
         self.assertEqual(self.checks,['doctor','status'])
+    def test_assisted_confirm_requires_owner_supplied_public_ip_and_rechecks(self):
+        self.start(question='面板已经换好了，新IP是9.9.9.9，请核验并同步')
+        p=self.params('huarun network confirm-ip 9.9.9.9')
+        self.assertTrue(self.engine.approve(p)['approved'])
+        self.engine.after_tool(p);self.assertEqual(self.checks,['doctor','status'])
+    def test_assisted_confirm_cannot_take_address_from_model_or_document(self):
+        self.start(question='帮我换IP')
+        self.assertFalse(self.engine.approve(self.params('huarun network confirm-ip 9.9.9.9'))['approved'])
+        self.start('invalid',question='新IP 127.0.0.1 999.1.1.1 224.0.0.1')
+        for ip in ['127.0.0.1','999.1.1.1','224.0.0.1']:
+            self.assertFalse(self.engine.approve(self.params('huarun network confirm-ip '+ip,turn='invalid'))['approved'])
     def test_agent_does_not_accept_credentials_or_arbitrary_commands_in_discovery(self):
         self.start()
         for command in ['huarun network provider-setup','huarun network provider-discover --token secret','huarun network provider-discover; id']:

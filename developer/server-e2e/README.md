@@ -116,3 +116,15 @@ receipts and transactions. Per-entry type, content hash, permissions and owner
 are bound into its tree digest and must remain identical. An unconfigured legacy
 installation must leave that tree absent. The 1.4 gate also requires generic
 provider, discovery, network integration and updater fault suites, without skips; a historical 1.3 report cannot satisfy it.
+
+
+For assistant 1.4.1 and later, the same installed generic-provider check includes
+mandatory assisted recovery. After an external/manual IP change it verifies the
+new address through the signed observer fixtures and real installed local-node
+diagnostics, commits the static address and Cloudflare readback, and runs the
+next timer iteration to prove the old address is not restored. Rejected probes,
+pending setup/provider transactions and mismatched active API bindings must
+leave config bytes and DNS unchanged. A transient DNS write failure must retain
+the verified new address for retry while preserving all other config values,
+credential bytes, node files and file permissions. Historical 1.4.0 reports do
+not require this newly introduced evidence.

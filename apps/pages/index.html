@@ -126,7 +126,7 @@
         <li><span class="step-number" aria-hidden="true">03</span><div><h3>导入连接，开始使用</h3><p>把链接导入手机或电脑。以后连不上，用中文描述问题，让助手查资料、定位原因并复查修复结果。</p></div></li>
       </ol>
       <p>充值 10 元，即可开始使用 AI 维护。VPS 自备，费用另计。Key 和完整 Cloudflare 令牌只在自己的服务器终端隐藏输入。</p>
-      <p>使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，自动维护 TLS、动态 IP 解析和故障通知；Agent 先查 VPS 厂商官方文档，有换 IP API 就自动对接、验证并按授权恢复，无 API 才通知你换 IP，已有适配器不是厂商范围上限。</p><p>已有用户在服务器终端运行 <code>huarun network provider-setup</code>，补充厂商名称、可选官网和已有 API 凭据，保留原节点与 Cloudflare 令牌；Agent 自动完成官方资料查询、适配生成与验证。文档不可达、缺凭据和接口暂不支持会分别说明，不会当作没有 API。<a href="https://fanqiang.guide/server/#network">查看配置与验证范围 →</a></p>
+      <p>使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，维护 TLS、动态 IP 解析和故障通知；Agent 先查 VPS 厂商官方文档，自动执行条件和故障证据齐全时按授权更换 IP，否则继续协助你按官方步骤处理，再确认新地址、同步 DNS 并复查。</p><p>不能自动更换时，Agent 会继续查询厂商官方面板或工单步骤，说明费用和停机影响，保留原域名、节点、白名单和 Key，不要求重装。你完成厂商操作后，把要接纳的新公网入站 IPv4 告诉助手；通过双地区 TLS 与 WebSocket 核验后才同步 DNS，并复查节点通路。资料不足会继续帮你查，不会把未知说成没有 API。</p><p>新入站地址确认命令：<code>huarun network confirm-ip PUBLIC_IPV4</code>。配置就绪、故障成立和恢复成功分开判断；未完成事务先恢复，达到每日次数上限时等待。</p><p>已有用户在服务器终端运行 <code>huarun network provider-setup</code>，补充厂商名称、可选官网和已有 API 凭据，保留原节点与 Cloudflare 令牌；Agent 自动完成官方资料查询、适配生成与验证。文档不可达、缺凭据和接口暂不支持会分别说明，不会当作没有 API。<a href="https://fanqiang.guide/server/#network">查看配置与验证范围 →</a></p>
       <p>默认使用 Cloudflare 仅 DNS 解析；选择橙云代理时，区域的 SSL/TLS 必须已是 Full (strict)。助手只核对该设置，不改动整个域名区域的 TLS 模式。</p>
       <p>已有家宽等出口代理时，可接入 SOCKS5 或 HTTP CONNECT 链式 TCP 出口；Agent 按请求切换已配置出口并复查出口 IP，保留白名单，故障时不悄悄直连。</p>
       <p class="muted">每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。</p>
@@ -192,7 +192,7 @@
             <h3 id="books-heading">4 本配置工程书，按目标选择</h3>
             <a class="book-link" href="https://fanqiang.guide/ai/books/fanqiang-autosetup-v2.1.ilang.md"><div><h4>设备配置 <span>v2.1</span></h4><p>手机与电脑配置、手机共享、路由器流程入口</p></div><span class="book-action">打开原文 <span aria-hidden="true">↗</span></span></a>
             <a class="book-link" href="https://fanqiang.guide/ai/books/fanqiang-merlin-v1.0.ilang.md"><div><h4>梅林路由器 <span>v1.0</span></h4><p>兼容固件、fancyss 选包、安装检查与恢复流程</p></div><span class="book-action">打开原文 <span aria-hidden="true">↗</span></span></a>
-            <a class="book-link" href="https://fanqiang.guide/ai/books/fanqiang-server-v1.4.ilang.md"><div><h4>服务器助手 <span>v1.4</span></h4><p>固定域名、TLS、VPS 官方 API 自动发现与对接、链式出口及中文排错</p></div><span class="book-action">打开原文 <span aria-hidden="true">↗</span></span></a>
+            <a class="book-link" href="https://fanqiang.guide/ai/books/fanqiang-server-v1.4.1.ilang.md"><div><h4>服务器助手 <span>v1.4.1</span></h4><p>固定域名、TLS、VPS 官方 API 自动发现与对接、链式出口及中文排错</p></div><span class="book-action">打开原文 <span aria-hidden="true">↗</span></span></a>
             <a class="book-link" href="https://fanqiang.guide/ai/books/fanqiang-troubleshooting-v1.0.ilang.md"><div><h4>服务器排障 <span>v1.0</span></h4><p>华润 MCP 优先、资料不足再搜索、分层排障与修复复查</p></div><span class="book-action">打开原文 <span aria-hidden="true">↗</span></span></a>
             <a class="metadata-link" href="https://fanqiang.guide/api/agent/books">查看工程书版本与验证范围 <span aria-hidden="true">↗</span></a>
           </div>

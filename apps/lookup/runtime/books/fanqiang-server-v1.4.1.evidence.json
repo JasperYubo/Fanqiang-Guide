@@ -1,0 +1,141 @@
+{
+  "schema_version": "1.0",
+  "book_id": "server",
+  "book_version": "1.4.1",
+  "date": "2026-11-19",
+  "timezone": "America/New_York",
+  "document": {
+    "path": "books/fanqiang-server-v1.4.1.ilang.md",
+    "sha256": "c3ebfe4d745bcb1832fdbe25ff9b6bcc62152b080a9ebf7806ed88e1e28d799e",
+    "byte_length": 18165
+  },
+  "validation_summary": {
+    "document": {
+      "status": "validated",
+      "book_sha256": "c3ebfe4d745bcb1832fdbe25ff9b6bcc62152b080a9ebf7806ed88e1e28d799e",
+      "checks": [
+        "ilang_validate",
+        "ilang_book_check"
+      ],
+      "errors": 0,
+      "warnings": 0,
+      "checked_at": "2026-11-19T05:11:17.130609+00:00",
+      "evidence": "apps/server/verification/2026-11-19-assisted-recovery-ilang.json",
+      "evidence_sha256": "86021e3dcc70edbc78fc44e0d18cfe37e0816dcd0479251f6f6290adc289db2f"
+    },
+    "service_interface": {
+      "status": "verified",
+      "version": "2.6.1",
+      "scope": "MCP HTTP/tool/resource/prompt parity, assisted recovery metadata and guarded IP-confirmation handoff; no installer, live cloud or actual client claim.",
+      "checked_at": "2026-11-19T05:23:18.722568+00:00",
+      "environment": "linux_asgi_and_sdk_loopback",
+      "tests": 138,
+      "evidence": "apps/server/verification/2026-11-19-assisted-recovery-mcp.json",
+      "evidence_sha256": "0acb982534f8b46435b8dd0d572eac746931b77ecef664647d5029336ab2c82d"
+    },
+    "installer_acceptance": {
+      "status": "validated",
+      "version": "1.4.1",
+      "checked_at": "2026-11-19T05:21:42.761527+00:00",
+      "environment": "linux_debian12_amd64_systemd_containers",
+      "development_only": true,
+      "scope": "Candidate fresh installation, upgrades from 1.0/1.1/previous stable 1.4.0, and unconfigured legacy upgrade passed. Eight protected files plus the complete discovered-provider directory retained bytes, entry types, permissions and ownership. This local evidence does not replace the exact final-commit GitHub publication gate.",
+      "installer_sha256": "47e57ccd97cfa0eab0850f89dad59635740b6b3429489722ac1f21eab551b7a2",
+      "development_report": "apps/server/verification/2026-11-19-assisted-recovery-linux.json",
+      "development_report_sha256": "4263a4102405cbe358786d305f72ed5fb47709c20b23bb69436e2c439666326e",
+      "fresh_install_passed": true,
+      "network_features": {
+        "chain_failure_closed": true,
+        "chain_whitelist_enforced": true,
+        "cloudflare_dns01": true,
+        "cloudflare_txt_created": true,
+        "cloudflare_txt_removed": true,
+        "ddns_address_changed": true,
+        "ddns_readback_verified": true,
+        "dns01_leading_dash_value": true,
+        "domain_identity_preserved": true,
+        "domain_migration_rollback": true,
+        "domain_migration_verified": true,
+        "fixture_unknown_ca_rejected": true,
+        "fixture_wrong_san_rejected": true,
+        "http_connect_chain_verified": true,
+        "network_timer_active": true,
+        "network_timer_enabled": true,
+        "notification_recovered_delivered": true,
+        "notification_retry_queued": true,
+        "passed": true,
+        "scope": "installed-runtime-real-tls-and-xray; local Cloudflare/ACME/Telegram/two-region contracts; no live provider or Telegram claim",
+        "socks5_chain_verified": true
+      },
+      "upgrade_versions": [
+        "1.0.0",
+        "1.1.0",
+        "1.4.0"
+      ],
+      "protected_files_per_upgrade": 8,
+      "protected_state_directory": {
+        "path": "/var/lib/huarun-network/provider/discovered",
+        "recursive": true,
+        "checks": [
+          "entry_type",
+          "sha256",
+          "uid",
+          "gid",
+          "mode"
+        ],
+        "before_after_equal": true,
+        "unconfigured_remained_absent": true
+      },
+      "unconfigured_upgrade_passed": true,
+      "network_fault_tests": {
+        "passed": true,
+        "skipped": 0,
+        "suites": [
+          "test_network.py",
+          "test_ip_provider.py",
+          "test_aws_provider.py",
+          "test_egress.py",
+          "test_network_setup.py",
+          "test_generic_provider.py",
+          "test_provider_discovery.py",
+          "test_network_discovery.py",
+          "test_generic_updater.py",
+          "test_provider_readiness.py"
+        ],
+        "tests": 235
+      },
+      "skipped": 0,
+      "formal_publication_proof_asset": "linux-install-upgrade-proof.json"
+    },
+    "assisted_ip_recovery": {
+      "status": "validated",
+      "checked_at": "2026-11-19T05:21:42.761527+00:00",
+      "development_only": true,
+      "environment": "installed_linux_runtime_with_controlled_http_contracts",
+      "evidence": "apps/server/verification/2026-11-19-assisted-recovery-functional.json",
+      "evidence_sha256": "089561fe8a8f51620366fb0ee8a67200dde768c4c14853706da3d0a1d2824728",
+      "scope": "Twelve installed assisted-recovery checks passed: confirmed manual IPv4, static persistence, DNS readback, next-timer retention, unverified candidate rejection, pending-setup/provider rejection, authoritative-API binding, configuration/Key preservation, and DNS-failure retry retaining the verified new IP. Automatic readiness and daily/pending guards are covered by fault tests. Regional/TLS-WebSocket observations and provider/Cloudflare APIs use fixtures; this does not verify live cloud operations or actual user clients.",
+      "checks": {
+        "api_binding_cannot_be_bypassed": true,
+        "configuration_and_keys_preserved": true,
+        "dns_failure_keeps_new_ip": true,
+        "dns_readback_verified": true,
+        "dns_retry_recovers_new_ip": true,
+        "manual_ip_validated": true,
+        "next_timer_keeps_new_ip": true,
+        "passed": true,
+        "pending_provider_rejected": true,
+        "pending_setup_rejected": true,
+        "static_address_persisted": true,
+        "unverified_ip_rejected": true
+      },
+      "fault_tests": 235,
+      "fault_skipped": 0,
+      "actual_client_connection": "not_tested"
+    },
+    "provider_live": {
+      "status": "not_tested",
+      "scope": "No real cloud-provider IP allocation or replacement is established for this patch. Prior version fixtures and official-document research are historical evidence, not patch-specific live verification."
+    }
+  }
+}

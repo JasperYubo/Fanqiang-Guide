@@ -34,6 +34,7 @@ UPGRADE_CHECKS = FRESH_CHECKS + ("network_processes_unchanged",)
 PRESERVED_CHECKS = ("node_config", "whitelist", "key", "memory")
 NETWORK_FAULT_SUITES = ('test_network.py','test_ip_provider.py','test_aws_provider.py','test_egress.py','test_network_setup.py')
 GENERIC_FAULT_SUITES = NETWORK_FAULT_SUITES + ('test_generic_provider.py', 'test_provider_discovery.py', 'test_network_discovery.py', 'test_generic_updater.py')
+ASSISTED_FAULT_SUITES = GENERIC_FAULT_SUITES + ('test_provider_readiness.py',)
 GENERIC_PROVIDER_CHECKS = (
     'passed', 'unknown_json_provider_auto_connected', 'unknown_query_provider_auto_connected',
     'official_docs_read', 'official_docs_digest_bound', 'read_only_probe_before_activation',
@@ -42,6 +43,13 @@ GENERIC_PROVIDER_CHECKS = (
     'docs_unavailable_distinguished', 'missing_credentials_distinguished',
     'malicious_document_rejected', 'ambiguous_replace_not_repeated',
     'failed_replacement_rolled_back', 'no_vendor_allowlist',
+)
+ASSISTED_RECOVERY_CHECKS = (
+    'passed', 'manual_ip_validated', 'static_address_persisted',
+    'dns_readback_verified', 'next_timer_keeps_new_ip', 'unverified_ip_rejected',
+    'pending_setup_rejected', 'pending_provider_rejected',
+    'api_binding_cannot_be_bypassed', 'configuration_and_keys_preserved',
+    'dns_failure_keeps_new_ip', 'dns_retry_recovers_new_ip',
 )
 NETWORK_FEATURE_CHECKS = (
     "passed", "cloudflare_dns01", "cloudflare_txt_created", "cloudflare_txt_removed", "dns01_leading_dash_value",
@@ -245,6 +253,7 @@ def validate_report(report, expected, previous_stable=None):
     _doctor(fresh.get("doctor_checks"), "fresh_install")
     network_release = candidate_parts >= (1, 3, 0)
     generic_release = candidate_parts >= (1, 4, 0)
+    assisted_release = candidate_parts >= (1, 4, 1)
     if network_release:
         _checks(fresh.get("network_features"), NETWORK_FEATURE_CHECKS, "network_features")
         _unconfigured_case(report.get("unconfigured_upgrade"), candidate_version, generic=generic_release)
@@ -253,10 +262,12 @@ def validate_report(report, expected, previous_stable=None):
         _positive_integer(faults.get("tests"), "network_fault_tests_empty")
         if type(faults.get("skipped")) is not int or faults["skipped"] != 0:
             raise AcceptanceError("network_fault_tests_skipped")
-        if faults.get("suites") != list(GENERIC_FAULT_SUITES if generic_release else NETWORK_FAULT_SUITES):
+        if faults.get("suites") != list(ASSISTED_FAULT_SUITES if assisted_release else GENERIC_FAULT_SUITES if generic_release else NETWORK_FAULT_SUITES):
             raise AcceptanceError("network_fault_suites_incomplete")
     if generic_release:
         _generic_provider_features(fresh.get("generic_provider_features"))
+    if assisted_release:
+        _checks(fresh["generic_provider_features"].get("assisted"), ASSISTED_RECOVERY_CHECKS, "assisted_recovery")
     if (network_release or "installed_version" in fresh) and fresh.get("installed_version") != candidate_version:
         raise AcceptanceError("fresh_install_version_mismatch")
     upgrades = report.get("upgrades")
@@ -305,4 +316,5 @@ def validate_report(report, expected, previous_stable=None):
             "upgrade_roles": sorted(covered), "preserved": list(GENERIC_PRESERVED_CHECKS if generic_release else NETWORK_PRESERVED_CHECKS if network_release else PRESERVED_CHECKS),
             **({"network_features": list(NETWORK_FEATURE_CHECKS), "unconfigured_upgrade": True} if network_release else {}),
             **({"generic_provider_features": list(GENERIC_PROVIDER_CHECKS)} if generic_release else {}),
+            **({"assisted_recovery": list(ASSISTED_RECOVERY_CHECKS)} if assisted_release else {}),
             "baselines": sorted(summary_cases, key=lambda case: case["roles"]), "previous_stable": previous}

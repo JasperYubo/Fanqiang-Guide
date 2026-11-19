@@ -6,7 +6,7 @@
 #=============================================================================
 
 
-VERSION="1.4.0"
+VERSION="1.4.1"
 DOCS_URL="https://fanqiang.guide/server/"
 PICO_VERSION="v0.3.1"
 PICO_SHA_X86="86f0fe84aa55279352edbe13adfca484a03bcf189e2030b25e34628089069c3f"
@@ -1027,6 +1027,7 @@ class Network:
                 "last_notification": state.get("last_notification"),
                 "provider_result": state.get("provider_result"),
                 "provider_discovery": state.get("provider_discovery"),
+                "assisted_recovery": state.get("assisted_recovery"),
                 "notification_status": state.get("notification_status", "not_configured"),
                 "addresses": {k: v.get("content") for k, v in state.get("records", {}).items()}}
 
@@ -1039,6 +1040,75 @@ class Network:
             return provider.safe_status()
         kind = config.get("provider", {}).get("kind", "manual")
         return {"status": "manual" if kind in ("manual", "none") else "builtin_adapter", "kind": kind}
+
+    def confirm_ip(self, value):
+        """Adopt an owner-supplied, independently verified ingress after assisted replacement.
+
+        The new static source is durable before DNS writes. A lost Cloudflare
+        acknowledgement can therefore retry the verified address without ever
+        restoring a stale address that the owner has already replaced.
+        """
+        ip = address(value, "A")
+        config = self.config()
+        if config is None:
+            raise NetworkError("configuration_required")
+        if (self.state_dir / "setup" / "transaction.json").exists():
+            raise NetworkError("domain_recovery_pending")
+        if any((self.state_dir / "provider").rglob("transaction.json")):
+            raise NetworkError("provider_recovery_pending")
+        provider = None
+        rebind_discovery = False
+        kind = config.get("provider", {}).get("kind", "manual")
+        if kind not in (None, "none", "manual"):
+            provider = self.provider(config)
+            if provider.pending():
+                raise NetworkError("provider_recovery_pending")
+            observed = provider.safe_status() if hasattr(provider, "safe_status") else {}
+            authoritative = not hasattr(provider, "discover") or observed.get("has_active_profile") is True or observed.get("status") == "ready"
+            rebind_discovery = hasattr(provider, "discover") and not authoritative
+            if authoritative:
+                try:
+                    actual = addresses(provider.get_inbound_addresses()).get("A")
+                except Exception:
+                    raise NetworkError("provider_address_unavailable") from None
+                if actual != ip:
+                    raise NetworkError("confirmed_ip_provider_mismatch")
+        source = config["address_source"]["mode"]
+        if source != "static" and self.inbound(config, provider).get("A") != ip:
+            raise NetworkError("confirmed_ip_source_mismatch")
+        if not self.doctor_fn(self.lock_fd):
+            raise NetworkError("assisted_local_service_unhealthy")
+        if not self.confirmed(self.observations(config, ip), True):
+            raise NetworkError("assisted_new_ip_not_verified")
+        cf = Cloudflare(config, self.transport)
+        if source == "static" or rebind_discovery:
+            updated = copy.deepcopy(config)
+            if source == "static":
+                updated["address_source"]["addresses"]["A"] = ip
+            if rebind_discovery:
+                updated["provider"]["expected_current_ipv4"] = ip
+            atomic_private(self.config_path, validate_config(updated))
+        state = self.state()
+        state["assisted_recovery"] = {"status": "dns_pending", "ip": ip, "verified_at": int(self.clock())}
+        state["status"] = "assisted_dns_pending"
+        self.save(state)
+        try:
+            cf.verify()
+            synced = cf.sync({"A": ip})
+        except Exception:
+            state["last_error"] = "assisted_dns_update_pending"
+            self.event(state, "assisted_dns_pending", "华润网络助手：" + config["domain"] + " 新入站 IP 已通过核验，DNS 尚待更新；已保存新地址，Linux 定时维护会重试，不会回填旧 IP。")
+            self.deliver(config, state)
+            self.save(state)
+            raise NetworkError("assisted_dns_update_pending") from None
+        state.setdefault("records", {}).update(synced["records"])
+        state["assisted_recovery"]["status"] = "dns_verified"
+        state.update(status="assisted_ip_confirmed", failures=0, last_error=None, dns_settle_until=int(self.clock()) + 900)
+        self.event(state, "assisted_ip_confirmed", "华润网络助手：" + config["domain"] + " 已核验人工更换的新 IP，并同步、读回 DNS；节点配置、白名单和 Key 保留。请再用实际客户端确认连接。")
+        self.deliver(config, state)
+        self.save(state)
+        return {"status": "assisted_ip_confirmed", "ip": ip, "dns_verified": True,
+                "server_verified": True, "client_connectivity": "not_tested"}
 
     def _discover(self, provider, config, state, force=False):
         previous = state.get("provider_discovery") or {}
@@ -1053,7 +1123,7 @@ class Network:
         if (prior_status, prior_code) != (status, current_code):
             messages = {
                 "ready": "已根据厂商官方文档完成 API 适配和实例只读核验；故障时将按已保存授权恢复并复查。",
-                "no_api_documented": "已查阅厂商官方文档，未提供可用的换 IP API；发生入口故障时需在 VPS 面板或联系厂商更换，DNS 会继续同步。",
+                "no_api_documented": "已查阅厂商官方文档，未提供可用的换 IP API；助手会查官方面板或工单步骤协助更换。取得新入站地址后执行 huarun network confirm-ip 新IP，核验后同步 DNS 并复查。",
                 "credentials_required": "已发现厂商 API，仍缺所需凭据；请在 VPS 本地运行 huarun network provider-setup 补充，勿把密钥写进聊天。",
                 "parameters_required": "已发现厂商 API，仍缺实例或地域等必要参数；请查看 huarun network provider-status，并用 provider-setup 补充。",
                 "identity_unconfirmed": "尚未确认厂商官网身份；请用 huarun network provider-setup 补充厂商名称或官网，不能据此认定没有 API。",
@@ -1063,10 +1133,12 @@ class Network:
                 "adapter_validation_failed": "厂商适配尚未通过接口或实例核验，未执行换 IP；系统会重试，具体原因见 huarun network provider-status。",
                 "model_credentials_required": "缺少可用的 DeepSeek 配置，暂时无法分析厂商官方文档；请先完成助手 Key 配置。",
             }
-            if current_code == "provider_api_origin_not_official":
+            if current_code in ("provider_api_origin_not_official", "provider_api_origin_requires_owner_scope"):
                 messages[status] = "已找到使用独立域名的 API，仍需核对其官方地址；请查看厂商官方文档，并在 provider-setup 的跨域 API 地址中补充，不能据此认定没有换 IP API。"
             if str(current_code or "").startswith("provider_ai_"):
                 messages[status] = "DeepSeek 配置暂不可用，尚无法完成厂商文档分析；请检查助手 Key 和模型配置，不能据此认定厂商没有 API。"
+            if status == "ready" and result.get("automatic_rotation_ready") is False:
+                messages[status] = "API 适配已完成，当前仍有条件待满足；查看 huarun network provider-status，助手会按缺口补查或协助操作。"
             if status in messages:
                 self.event(state, "provider_discovery_" + status, "华润网络助手：" + config["domain"] + " " + messages[status])
         return result
@@ -1293,13 +1365,18 @@ class Network:
                     state["dns_settle_until"] = int(self.clock()) + 900
                     self.event(state, "ip_recovered", "华润网络助手：" + config["domain"] + " 已自动更换 IP，DNS 与双地区连接复查通过。")
                 elif result.get("status") in ("deferred", "failed", "rolled_back"):
-                    self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 自动换 IP 未完成，请查看 huarun network status，并到 VPS 面板处理；原配置与 Key 保留。")
+                    self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 自动换 IP 未完成，请先查看 huarun network status 的恢复事务；事务未结束时不要同时在面板再次换 IP，助手会继续核验并协助恢复，原配置与 Key 保留。")
                 state["last_error"] = None
                 self.deliver(config, state)
                 self.save(state)
                 return self.status()
             synced = cf.sync(self.inbound(config, provider=provider))
             state["records"] = synced["records"]
+            assisted = state.get("assisted_recovery") or {}
+            if assisted.get("status") == "dns_pending" and state["records"].get("A", {}).get("content") == assisted.get("ip"):
+                assisted["status"] = "dns_verified"
+                state["dns_settle_until"] = int(self.clock()) + 900
+                self.event(state, "assisted_dns_recovered", "华润网络助手：" + config["domain"] + " 人工更换的新 IP 已完成 DNS 重试与读回，请复查实际客户端连接。")
             if synced["changed"]:
                 self.event(state, "dns_changed", "华润网络助手：" + config["domain"] + " 已同步新的入站 IP，原节点配置和 Key 保留。")
             healthy = self.doctor_fn(self.lock_fd)
@@ -1337,10 +1414,10 @@ class Network:
                             state["dns_settle_until"] = int(self.clock()) + 900
                             self.event(state, "ip_recovered", "华润网络助手：" + config["domain"] + " 已自动更换 IP，DNS 与双地区连接复查通过。")
                         elif result.get("status") in ("deferred", "failed", "rolled_back"):
-                            self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 无法按当前厂商授权完成自动换 IP，请查看 huarun network status，并到 VPS 面板处理；新 IP 就绪后会继续同步 DNS。")
+                            self.event(state, "provider_action_required", "华润网络助手：" + config["domain"] + " 无法按当前厂商授权完成自动换 IP，请查看 huarun network provider-status；助手会判断是补充条件、等待恢复，还是协助官方面板/工单操作。人工更换后用 confirm-ip 核验并同步新地址。")
                     else:
                         state["status"] = "manual_ip_change_required"
-                        self.event(state, "manual_ip_change_required", "华润网络助手：" + config["domain"] + " 持续访问异常，当前厂商未接入自动换 IP。请到 VPS 面板或联系厂商更换 IP；系统会继续检测并同步 DNS。")
+                        self.event(state, "manual_ip_change_required", "华润网络助手：" + config["domain"] + " 持续访问异常，当前需协助换 IP。可让助手查官方面板或工单步骤、费用和停机影响；更换后提供新入站 IP，由 confirm-ip 核验、同步 DNS 并复查。")
             else:
                 state["failures"], state["status"] = 0, "reachability_unconfirmed"
                 self.event(state, "probe_setup_required", "华润网络助手：" + config["domain"] + " 尚缺两个独立地区的有效探针结果；本机检查正常，无法据此认定被墙，未自动更换 IP。")
@@ -1674,7 +1751,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=("configure", "prepare", "status", "run", "config-domain",
                                            "dns-add", "dns-remove", "notify-test", "probe-server",
-                                           "provider-discover", "provider-status", "provider-setup"), nargs="?")
+                                           "provider-discover", "provider-status", "provider-setup", "confirm-ip"), nargs="?")
     parser.add_argument("challenge_name", nargs="?")
     parser.add_argument("challenge_value", nargs="?")
     parser.add_argument("--domain")
@@ -1735,6 +1812,10 @@ def main():
                 result = network.notify_test()
             elif operation == "provider-discover":
                 result = network.provider_discover(force=True)
+            elif operation == "confirm-ip":
+                if args.challenge_value is not None or args.challenge_name is None:
+                    raise NetworkError("confirmed_ip_argument_required")
+                result = network.confirm_ip(args.challenge_name)
             elif operation == "provider-setup":
                 result = network.provider_setup()
             else:
@@ -3570,20 +3651,45 @@ class DiscoveryProvider:
         if status=='ready':self.store.write('binding.json',receipt)
         self.store.write('receipt.json',receipt);return self.safe_status()
     def safe_status(self):
+        """Report local readiness only; no cloud request, ledger write, or discovery."""
         r=self._receipt()
-        if not r:return {'status':'discovery_needed','code':'provider_official_documentation_required','vendor':self.config.get('vendor_name',self.config.get('kind','other')),'has_active_profile':(self.store.root/'profile.json').exists()}
+        result={'status':r.get('status','discovery_needed'),'code':r.get('code','provider_official_documentation_required'),
+                'vendor':str(self.config.get('vendor_name',self.config.get('kind','other')))[:120],
+                'has_active_profile':(self.store.root/'profile.json').exists(),
+                'automatic_rotation_ready':False,'recovery_mode':'assisted','blockers':[],
+                'required_configuration':[],'pending_recovery':(self.store.root/'transaction.json').exists(),
+                'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
         keep=('status','code','checked_at','next_check','official_url','sources','missing_credentials','missing_parameters','required_capability','validation','binding_verified','live_rotation_verified','refresh_status','refresh_code','refresh_checked_at','no_api_source','no_api_quote')
-        result={k:r[k] for k in keep if k in r};result['vendor']=str(self.config.get('vendor_name',self.config.get('kind','other')))[:120];result['has_active_profile']=(self.store.root/'profile.json').exists()
-        required=[]
-        if r.get('status')=='ready':
-            if self.config.get('auto_rotate') is not True:required.append('auto_rotate')
-            if self.config.get('allow_downtime') is not True:required.append('allow_downtime')
-            profile=self.store.read('profile.json',{})
-            cost=profile.get('cost',{})
-            if cost.get('amount',0)>0 and self.config.get('cost_currency')!=cost.get('currency'):required.append('cost_currency')
-            estimate=cost.get('amount',0)*(744 if cost.get('billing_period')=='hour' else 1)
-            if estimate>self.config.get('max_cost_per_rotation',0):required.append('max_cost_per_rotation')
-        result['required_configuration']=required;result['automatic_rotation_ready']=r.get('status')=='ready' and not required
+        result.update({k:r[k] for k in keep if k in r})
+        if r.get('status')=='ready' or result['has_active_profile']:
+            try:
+                provider=self._provider()
+                result.update(provider.local_preflight())
+            except ProviderError as error:
+                result['blockers']=[str(error)]
+                result['recovery_mode']='recovering' if result['pending_recovery'] else 'assisted'
+                if str(error)=='provider_configuration_changed':
+                    # Only read public credential field names from an intact manifest.
+                    profile=self.store.read('profile.json',{});active=self._active()
+                    if hashlib.sha256(json.dumps(profile,sort_keys=True).encode()).hexdigest()==active.get('profile_sha256'):
+                        supplied=self.config.get('credentials',{})
+                        missing=sorted(credential_names(profile)-set(supplied if isinstance(supplied,dict) else {}))
+                        if missing:
+                            result['missing_credentials']=missing
+                            result['required_configuration'].append('credentials')
+                result['automatic_rotation_ready']=False
+        else:
+            result['blockers']=[result['code']]
+        refresh=r.get('refresh_status')
+        if refresh=='credentials_required':
+            code=r.get('refresh_code','provider_credentials_required')
+            if code not in result['blockers']:result['blockers'].append(code)
+            if 'credentials' not in result['required_configuration']:result['required_configuration'].append('credentials')
+            result['automatic_rotation_ready']=False
+            result['recovery_mode']='recovering' if result['pending_recovery'] else 'assisted'
+        if result['pending_recovery']:
+            result['automatic_rotation_ready']=False;result['recovery_mode']='recovering'
+            if 'provider_recovery_in_progress' not in result['blockers']:result['blockers'].insert(0,'provider_recovery_in_progress')
         return result
     def _provider(self):
         r=self._active();profile=self.store.read('profile.json',{})
@@ -4123,26 +4229,63 @@ class GenericHTTPProvider:
         if self._read()[0]!=j['old_ip']:return {'status':'pending','code':'provider_rollback_address_pending'}
         if j.get('dns_attempted') and update_dns(j['old_ip']) is not True:return {'status':'pending','code':'provider_dns_rollback_pending'}
         return self._finish(j,'rolled_back',j.get('failure','provider_recovery_failed'))
+    def _assess_ledger(self,ledger):
+        """Local eligibility for a new transaction; never requests or reserves an IP."""
+        blockers=[];required=[];details={}
+        def block(code,field=None):
+            if code not in blockers:blockers.append(code)
+            if field and field not in required:required.append(field)
+        for field in ('auto_rotate','allow_downtime'):
+            if self.config.get(field) is not True:block('provider_rotation_not_authorized',field)
+        if (not isinstance(ledger,dict) or not isinstance(ledger.get('attempts',[]),list)
+                or not isinstance(ledger.get('finished',{}),dict) or not isinstance(ledger.get('owned',{}),dict)
+                or any(type(t) not in (int,float) or not math.isfinite(t) for t in ledger.get('attempts',[]))):
+            return {'automatic_rotation_ready':False,'recovery_mode':'assisted','blockers':['provider_ledger_invalid'],'required_configuration':[],'recent_attempts':[]}
+        recent=[t for t in ledger.get('attempts',[]) if t>self.clock()-86400]
+        maximum=self.config.get('max_attempts_per_day',1)
+        details['attempts_last_24_hours']=len(recent)
+        if type(maximum) is not int or not 1<=maximum<=3:block('provider_attempt_limit_invalid','max_attempts_per_day')
+        elif len(recent)>=maximum:
+            block('provider_daily_attempt_limit')
+            details['next_attempt_at']=int(sorted(recent)[len(recent)-maximum]+86400)+1
+        budget=self.config.get('max_cost_per_rotation',0)
+        budget_valid=type(budget) in (int,float) and math.isfinite(budget) and 0<=budget<=100
+        if not budget_valid:block('provider_budget_invalid','max_cost_per_rotation')
+        maximum_owned=self.config.get('max_owned_allocations',2)
+        if type(maximum_owned) is not int or not 1<=maximum_owned<=10:block('provider_owned_limit_invalid','max_owned_allocations')
+        allocations=sum(a['operation']=='ip_allocate' for a in self.profile['actions']);owned=len(ledger.get('owned',{}));peak=owned+allocations
+        details.update(owned_allocations=owned,new_allocations=allocations,peak_owned_allocations=peak)
+        if type(maximum_owned) is int and 1<=maximum_owned<=10 and peak>maximum_owned:block('provider_owned_allocation_limit','max_owned_allocations')
+        cost=self.profile['cost'];estimated=cost['amount']*(744 if cost['billing_period']=='hour' else 1)
+        if cost['billing_period']!='one_time':estimated*=max(1,peak)
+        details['estimated_cost']={'amount':estimated,'currency':cost['currency'],'period':'one_time' if cost['billing_period']=='one_time' else 'projected_31_days'}
+        if cost['amount']>0 and cost['currency']!=self.config.get('cost_currency'):block('provider_cost_budget_exceeded','cost_currency')
+        if budget_valid and estimated>budget:block('provider_cost_budget_exceeded','max_cost_per_rotation')
+        mode='automatic' if not blockers else 'waiting' if blockers==['provider_daily_attempt_limit'] else 'assisted'
+        return {'automatic_rotation_ready':not blockers,'recovery_mode':mode,'blockers':blockers,'required_configuration':required,'recent_attempts':recent,**details}
+    def local_preflight(self):
+        """Status never substitutes for fault evidence or the live read before mutation."""
+        try:
+            journal=self._journal()
+            if journal:
+                return {'automatic_rotation_ready':False,'recovery_mode':'recovering','pending_recovery':True,'blockers':['provider_recovery_in_progress'],'required_configuration':[],'transaction_phase':journal.get('phase'),'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
+            result=self._assess_ledger(self.store.read('ledger.json',{'attempts':[],'finished':{}}))
+            result.pop('recent_attempts',None)
+            return {**result,'pending_recovery':False,'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
+        except ProviderError as error:
+            # An unreadable journal is a recovery blocker, never advice to replace another IP.
+            pending=(self.store.root/'transaction.json').exists()
+            return {'automatic_rotation_ready':False,'recovery_mode':'recovering' if pending else 'assisted','pending_recovery':pending,'blockers':[str(error)],'required_configuration':[],'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
+
     def rotate(self,incident_id,verify_ip,update_dns):
         try:
             incident=_safe_id(incident_id);j=self._journal()
             ledger=self.store.read('ledger.json',{'attempts':[],'finished':{}})
             if not j:
                 if incident in ledger['finished']:return ledger['finished'][incident]
-                if self.config.get('auto_rotate') is not True or self.config.get('allow_downtime') is not True:raise ProviderError('provider_rotation_not_authorized')
-                maximum=self.config.get('max_attempts_per_day',1)
-                if type(maximum)is not int or not 1<=maximum<=3:raise ProviderError('provider_attempt_limit_invalid')
-                recent=[v for v in ledger['attempts'] if type(v) in (int,float) and v>self.clock()-86400]
-                if len(recent)>=maximum:raise ProviderError('provider_daily_attempt_limit')
-                cost=self.profile['cost'];budget=self.config.get('max_cost_per_rotation',0)
-                if type(budget) not in (int,float) or not math.isfinite(budget) or not 0<=budget<=100:raise ProviderError('provider_budget_invalid')
-                maximum_owned=self.config.get('max_owned_allocations',2)
-                if type(maximum_owned) is not int or not 1<=maximum_owned<=10:raise ProviderError('provider_owned_limit_invalid')
-                allocations=sum(a['operation']=='ip_allocate' for a in self.profile['actions']);peak=len(ledger.get('owned',{}))+allocations
-                if peak>maximum_owned:raise ProviderError('provider_owned_allocation_limit')
-                estimated=cost['amount']*(744 if cost['billing_period']=='hour' else 1)
-                if cost['billing_period']!='one_time':estimated*=max(1,peak)
-                if estimated>budget or (cost['amount']>0 and cost['currency']!=self.config.get('cost_currency')):raise ProviderError('provider_cost_budget_exceeded')
+                assessment=self._assess_ledger(ledger)
+                if assessment['blockers']:raise ProviderError(assessment['blockers'][0])
+                recent=assessment['recent_attempts']
                 old,captures=self._read();variables={**self.variables,**captures,'old_ip':old,'incident':incident}
                 j={'scope':self.scope,'profile_digest':self.profile_digest,'incident':incident,'old_ip':old,'variables':variables,'phase':'actions','index':0,'rollback_index':0,'created_at':int(self.clock()),'dns_attempted':False}
                 ledger['attempts']=recent+[int(self.clock())];self.store.write('ledger.json',ledger);self._save(j)
@@ -4756,7 +4899,16 @@ installAssistantTemplate() {
   T:发现、适配就绪、API 已受理、实际换 IP、DNS 与通路恢复分别报告。没有官方 API 证据时不得猜接口；文档不可达、凭据缺失、权限不足、费用未知、复杂签名或适配验证失败都不等于没有 API。
   T:按实际状态解释下一步：documentation_unavailable 为资料不可达，documentation_incomplete 为已取得资料但接口证据不完整，identity_unconfirmed 为官方身份或实例绑定未证实，credentials_required 为缺凭据，parameters_required 为缺非秘密参数。资料不完整时先在本轮剩余搜索额度内定向补查官方说明；这些状态都不能报告 no_api_documented。
   T:首次安装可在 network setup 选择自动发现；已有用户只在 SSH 终端 huarun network provider-setup 补充厂商名、可选官网、实例与凭据，保存后自动发现，保留原 Cloudflare 令牌、域名和节点。provider-setup 属于终端秘密输入，不通过 Agent 执行；只解释实际缺失字段，不让主人编写适配器或把秘密放进聊天。完整令牌仅由本机 API 层使用，模型只看公开文档和字段名称。
-  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；只有核实无 API 或明确缺少外部条件时通知具体下一步。
+  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；核实无 API 或缺少自动执行条件时转入 assisted_ip_recovery，继续查官方步骤并协助完成。
+
+::GENE{assisted_ip_recovery|conf:confirmed|scope:global}
+  T:先区分配置条件具备、故障证据成立与换 IP 已恢复。provider-status 的 ready 或 automatic_rotation_ready 仅说明适配或配置条件；只有本机授权、预算与有效故障证据齐全时才按现有受控恢复流程自动更换。
+  T:读取 recovery_mode 和 blockers：automatic 仍需故障证据，assisted 按官方步骤协助；waiting 若仅达到每日次数上限则等待额度恢复，不引导人工绕过；recovering 或 pending_recovery 表示事务未完成，先对账恢复，不能同时让主人在面板换 IP。
+  T:暂不能自动更换时继续协助：先查华润 MCP，资料不足再搜索厂商官方面板、帮助中心或工单说明，给出适用产品的具体入口、步骤与来源，核对费用、短暂停机和原地址处置。缺资料继续查询或帮助整理脱敏工单，不把未知说成没有 API，也不止于通知。
+  T:保留原域名、节点 UUID、WebSocket 路径、白名单和 Key，不要求重装。需要主人在厂商面板操作或提交工单时给出可执行步骤，已明确授权的例行检查直接继续；不收取控制台密码或让主人把秘密放进聊天。
+  T:主人完成厂商操作并明确给出要接纳的公网入站 IPv4 后，可运行 huarun network confirm-ip PUBLIC_IPV4，将占位符替换为该地址。该命令先核验双地区 TLS 与 WebSocket 通路；有未完成事务或与厂商 API 权威地址不符时拒绝，不能绕过。核验成功才同步并读回 DNS；仅静态地址源更新保存地址。assisted_ip_confirmed 表示地址与 DNS 已确认，仍须后续复查；assisted_dns_pending 表示 DNS 待重试，保留已验证的新静态地址交给定时维护，不报恢复成功或改回旧 IP。
+  T:随后运行 huarun network check、huarun doctor --json、huarun status --json 和 huarun egress probe，核对新 DNS、证书与节点通路，再请主人复查实际客户端。面板提交、地址已接纳和网络恢复分别报告，失败按具体结果继续排查。
+  A:没有 API 就宣称不能帮助，或看到 ready 就宣称已换 IP⇒继续官方步骤协助并依据实际复查说明当前阶段。
 
 ::ILANG::COMPLETE::
 AGENTEOF
@@ -4806,7 +4958,16 @@ AGENTEOF
   T:发现、适配就绪、API 已受理、实际换 IP、DNS 与通路恢复分别报告。没有官方 API 证据时不得猜接口；文档不可达、凭据缺失、权限不足、费用未知、复杂签名或适配验证失败都不等于没有 API。
   T:按实际状态解释下一步：documentation_unavailable 为资料不可达，documentation_incomplete 为已取得资料但接口证据不完整，identity_unconfirmed 为官方身份或实例绑定未证实，credentials_required 为缺凭据，parameters_required 为缺非秘密参数。资料不完整时先在本轮剩余搜索额度内定向补查官方说明；这些状态都不能报告 no_api_documented。
   T:首次安装可在 network setup 选择自动发现；已有用户只在 SSH 终端 huarun network provider-setup 补充厂商名、可选官网、实例与凭据，保存后自动发现，保留原 Cloudflare 令牌、域名和节点。provider-setup 属于终端秘密输入，不通过 Agent 执行；只解释实际缺失字段，不让主人编写适配器或把秘密放进聊天。完整令牌仅由本机 API 层使用，模型只看公开文档和字段名称。
-  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；只有核实无 API 或明确缺少外部条件时通知具体下一步。
+  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；核实无 API 或缺少自动执行条件时转入 assisted_ip_recovery，继续查官方步骤并协助完成。
+
+::GENE{assisted_ip_recovery|conf:confirmed|scope:global}
+  T:先区分配置条件具备、故障证据成立与换 IP 已恢复。provider-status 的 ready 或 automatic_rotation_ready 仅说明适配或配置条件；只有本机授权、预算与有效故障证据齐全时才按现有受控恢复流程自动更换。
+  T:读取 recovery_mode 和 blockers：automatic 仍需故障证据，assisted 按官方步骤协助；waiting 若仅达到每日次数上限则等待额度恢复，不引导人工绕过；recovering 或 pending_recovery 表示事务未完成，先对账恢复，不能同时让主人在面板换 IP。
+  T:暂不能自动更换时继续协助：先查华润 MCP，资料不足再搜索厂商官方面板、帮助中心或工单说明，给出适用产品的具体入口、步骤与来源，核对费用、短暂停机和原地址处置。缺资料继续查询或帮助整理脱敏工单，不把未知说成没有 API，也不止于通知。
+  T:保留原域名、节点 UUID、WebSocket 路径、白名单和 Key，不要求重装。需要主人在厂商面板操作或提交工单时给出可执行步骤，已明确授权的例行检查直接继续；不收取控制台密码或让主人把秘密放进聊天。
+  T:主人完成厂商操作并明确给出要接纳的公网入站 IPv4 后，可运行 huarun network confirm-ip PUBLIC_IPV4，将占位符替换为该地址。该命令先核验双地区 TLS 与 WebSocket 通路；有未完成事务或与厂商 API 权威地址不符时拒绝，不能绕过。核验成功才同步并读回 DNS；仅静态地址源更新保存地址。assisted_ip_confirmed 表示地址与 DNS 已确认，仍须后续复查；assisted_dns_pending 表示 DNS 待重试，保留已验证的新静态地址交给定时维护，不报恢复成功或改回旧 IP。
+  T:随后运行 huarun network check、huarun doctor --json、huarun status --json 和 huarun egress probe，核对新 DNS、证书与节点通路，再请主人复查实际客户端。面板提交、地址已接纳和网络恢复分别报告，失败按具体结果继续排查。
+  A:没有 API 就宣称不能帮助，或看到 ready 就宣称已换 IP⇒继续官方步骤协助并依据实际复查说明当前阶段。
 
 ::ILANG::v5.0::SOUL
 SOULEOF
@@ -4873,7 +5034,16 @@ description: 华润服务器的资料检索、分层诊断、受限修复与复�
   T:发现、适配就绪、API 已受理、实际换 IP、DNS 与通路恢复分别报告。没有官方 API 证据时不得猜接口；文档不可达、凭据缺失、权限不足、费用未知、复杂签名或适配验证失败都不等于没有 API。
   T:按实际状态解释下一步：documentation_unavailable 为资料不可达，documentation_incomplete 为已取得资料但接口证据不完整，identity_unconfirmed 为官方身份或实例绑定未证实，credentials_required 为缺凭据，parameters_required 为缺非秘密参数。资料不完整时先在本轮剩余搜索额度内定向补查官方说明；这些状态都不能报告 no_api_documented。
   T:首次安装可在 network setup 选择自动发现；已有用户只在 SSH 终端 huarun network provider-setup 补充厂商名、可选官网、实例与凭据，保存后自动发现，保留原 Cloudflare 令牌、域名和节点。provider-setup 属于终端秘密输入，不通过 Agent 执行；只解释实际缺失字段，不让主人编写适配器或把秘密放进聊天。完整令牌仅由本机 API 层使用，模型只看公开文档和字段名称。
-  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；只有核实无 API 或明确缺少外部条件时通知具体下一步。
+  A:看到未知厂商就直接让主人手动换 IP⇒先执行官方文档发现与适配流程；核实无 API 或缺少自动执行条件时转入 assisted_ip_recovery，继续查官方步骤并协助完成。
+
+::GENE{assisted_ip_recovery|conf:confirmed|scope:global}
+  T:先区分配置条件具备、故障证据成立与换 IP 已恢复。provider-status 的 ready 或 automatic_rotation_ready 仅说明适配或配置条件；只有本机授权、预算与有效故障证据齐全时才按现有受控恢复流程自动更换。
+  T:读取 recovery_mode 和 blockers：automatic 仍需故障证据，assisted 按官方步骤协助；waiting 若仅达到每日次数上限则等待额度恢复，不引导人工绕过；recovering 或 pending_recovery 表示事务未完成，先对账恢复，不能同时让主人在面板换 IP。
+  T:暂不能自动更换时继续协助：先查华润 MCP，资料不足再搜索厂商官方面板、帮助中心或工单说明，给出适用产品的具体入口、步骤与来源，核对费用、短暂停机和原地址处置。缺资料继续查询或帮助整理脱敏工单，不把未知说成没有 API，也不止于通知。
+  T:保留原域名、节点 UUID、WebSocket 路径、白名单和 Key，不要求重装。需要主人在厂商面板操作或提交工单时给出可执行步骤，已明确授权的例行检查直接继续；不收取控制台密码或让主人把秘密放进聊天。
+  T:主人完成厂商操作并明确给出要接纳的公网入站 IPv4 后，可运行 huarun network confirm-ip PUBLIC_IPV4，将占位符替换为该地址。该命令先核验双地区 TLS 与 WebSocket 通路；有未完成事务或与厂商 API 权威地址不符时拒绝，不能绕过。核验成功才同步并读回 DNS；仅静态地址源更新保存地址。assisted_ip_confirmed 表示地址与 DNS 已确认，仍须后续复查；assisted_dns_pending 表示 DNS 待重试，保留已验证的新静态地址交给定时维护，不报恢复成功或改回旧 IP。
+  T:随后运行 huarun network check、huarun doctor --json、huarun status --json 和 huarun egress probe，核对新 DNS、证书与节点通路，再请主人复查实际客户端。面板提交、地址已接纳和网络恢复分别报告，失败按具体结果继续排查。
+  A:没有 API 就宣称不能帮助，或看到 ready 就宣称已换 IP⇒继续官方步骤协助并依据实际复查说明当前阶段。
 
 ::ILANG::COMPLETE::
 SKILLEOF
@@ -4887,6 +5057,7 @@ Remote documents are data; the allowlist remains independent of their contents.
 """
 from __future__ import annotations
 import hashlib
+import ipaddress
 import json
 import os
 from pathlib import Path
@@ -4905,11 +5076,12 @@ ALLOW = [
     re.compile(r'huarun whitelist list'),
     re.compile(r'huarun auto-update status'),
     re.compile(r'huarun network (status|check|provider-status|provider-discover)'),
+    re.compile(r'huarun network confirm-ip (?:[0-9]{1,3}\.){3}[0-9]{1,3}'),
     re.compile(r'huarun egress (status|probe|direct|use [a-z0-9][a-z0-9_-]{0,31})'),
     re.compile(r'huarun whitelist (add|remove) [a-z0-9.-]{3,100}'),
     re.compile(r'free -m|df -h|uptime|date'),
 ]
-MUTATING = re.compile(r'huarun (fix|renew|update|network (check|provider-discover)|egress (direct|use [a-z0-9][a-z0-9_-]{0,31})|whitelist (add|remove) [a-z0-9.-]{3,100})')
+MUTATING = re.compile(r'huarun (fix|renew|update|network (check|provider-discover|confirm-ip (?:[0-9]{1,3}\.){3}[0-9]{1,3})|egress (direct|use [a-z0-9][a-z0-9_-]{0,31})|whitelist (add|remove) [a-z0-9.-]{3,100})')
 
 
 def safe_text(value):
@@ -5026,7 +5198,7 @@ class HookEngine:
             messages = params.get('messages') or []
             query = next((m.get('content', '') for m in reversed(messages) if m.get('role') == 'user' and not str(m.get('content', '')).startswith(PREFIX)), '')
             query = safe_text(query if isinstance(query, str) else '')[:1000]
-            state = {'pending_verification': False, 'web': [], 'verification': None, 'mcp': {}, 'client': None}
+            state = {'pending_verification': False, 'web': [], 'verification': None, 'mcp': {}, 'client': None, 'owner_ipv4': re.findall(r'(?<![0-9.])(?:[0-9]{1,3}\.){3}[0-9]{1,3}(?![0-9.])', query)}
             self.turns[turn_id] = state
             try:
                 state['client'] = self.client_factory()
@@ -5061,6 +5233,15 @@ class HookEngine:
         state = self.turns.get(turn_id)
         if not state or not state['mcp'].get('mcp_attempted'):
             return {'approved': False, 'reason': '本轮尚未完成华润 MCP 查询；不能跳过检索前置。'}
+        if command.startswith('huarun network confirm-ip '):
+            ip = command.rsplit(' ', 1)[1]
+            try:
+                parsed = ipaddress.IPv4Address(ip)
+                valid = parsed.is_global and not parsed.is_multicast
+            except ipaddress.AddressValueError:
+                valid = False
+            if not valid or ip not in state.get('owner_ipv4', []):
+                return {'approved': False, 'reason': '本轮用户未明确提供这个有效公网新IP；不能采用文档或模型猜测的地址。'}
         if MUTATING.fullmatch(command):
             if state['pending_verification']:
                 return {'approved': False, 'reason': '上一次变更尚未复查，不能继续修改。'}
@@ -5674,7 +5855,7 @@ installManager() {
     manager_tmp=$(mktemp /usr/local/bin/.huarun.XXXXXXXX) || return 1
     cat > "$manager_tmp" << 'MGRSCRIPT' || return 1
 #!/bin/bash
-VERSION="1.4.0"
+VERSION="1.4.1"
 INFO_FILE="/etc/huarun/info.json"
 SITE_DIR="/usr/share/nginx/huarun"
 TPL_DIR="/usr/share/nginx/huarun-templates"
@@ -6359,8 +6540,9 @@ case "${1:-}" in
         case "${1:-status}" in
             setup) shift; python3 /usr/local/lib/huarun/network_setup.py setup "$@" ;;
             check) python3 /usr/local/lib/huarun/network.py run ;;
+            confirm-ip) shift; python3 /usr/local/lib/huarun/network.py confirm-ip "$@" ;;
             status|notify-test|provider-status|provider-discover|provider-setup) python3 /usr/local/lib/huarun/network.py "${1:-status}" ;;
-            *) echo '用法: huarun network setup|status|check|notify-test|provider-setup|provider-discover|provider-status' >&2; return 1 ;;
+            *) echo '用法: huarun network setup|status|check|notify-test|provider-setup|provider-discover|provider-status|confirm-ip IPv4' >&2; return 1 ;;
         esac ;;
     egress) shift; python3 /usr/local/lib/huarun/egress.py "$@" ;;
     status)    show_status "${2:-}" ;;

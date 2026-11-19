@@ -356,26 +356,63 @@ class GenericHTTPProvider:
         if self._read()[0]!=j['old_ip']:return {'status':'pending','code':'provider_rollback_address_pending'}
         if j.get('dns_attempted') and update_dns(j['old_ip']) is not True:return {'status':'pending','code':'provider_dns_rollback_pending'}
         return self._finish(j,'rolled_back',j.get('failure','provider_recovery_failed'))
+    def _assess_ledger(self,ledger):
+        """Local eligibility for a new transaction; never requests or reserves an IP."""
+        blockers=[];required=[];details={}
+        def block(code,field=None):
+            if code not in blockers:blockers.append(code)
+            if field and field not in required:required.append(field)
+        for field in ('auto_rotate','allow_downtime'):
+            if self.config.get(field) is not True:block('provider_rotation_not_authorized',field)
+        if (not isinstance(ledger,dict) or not isinstance(ledger.get('attempts',[]),list)
+                or not isinstance(ledger.get('finished',{}),dict) or not isinstance(ledger.get('owned',{}),dict)
+                or any(type(t) not in (int,float) or not math.isfinite(t) for t in ledger.get('attempts',[]))):
+            return {'automatic_rotation_ready':False,'recovery_mode':'assisted','blockers':['provider_ledger_invalid'],'required_configuration':[],'recent_attempts':[]}
+        recent=[t for t in ledger.get('attempts',[]) if t>self.clock()-86400]
+        maximum=self.config.get('max_attempts_per_day',1)
+        details['attempts_last_24_hours']=len(recent)
+        if type(maximum) is not int or not 1<=maximum<=3:block('provider_attempt_limit_invalid','max_attempts_per_day')
+        elif len(recent)>=maximum:
+            block('provider_daily_attempt_limit')
+            details['next_attempt_at']=int(sorted(recent)[len(recent)-maximum]+86400)+1
+        budget=self.config.get('max_cost_per_rotation',0)
+        budget_valid=type(budget) in (int,float) and math.isfinite(budget) and 0<=budget<=100
+        if not budget_valid:block('provider_budget_invalid','max_cost_per_rotation')
+        maximum_owned=self.config.get('max_owned_allocations',2)
+        if type(maximum_owned) is not int or not 1<=maximum_owned<=10:block('provider_owned_limit_invalid','max_owned_allocations')
+        allocations=sum(a['operation']=='ip_allocate' for a in self.profile['actions']);owned=len(ledger.get('owned',{}));peak=owned+allocations
+        details.update(owned_allocations=owned,new_allocations=allocations,peak_owned_allocations=peak)
+        if type(maximum_owned) is int and 1<=maximum_owned<=10 and peak>maximum_owned:block('provider_owned_allocation_limit','max_owned_allocations')
+        cost=self.profile['cost'];estimated=cost['amount']*(744 if cost['billing_period']=='hour' else 1)
+        if cost['billing_period']!='one_time':estimated*=max(1,peak)
+        details['estimated_cost']={'amount':estimated,'currency':cost['currency'],'period':'one_time' if cost['billing_period']=='one_time' else 'projected_31_days'}
+        if cost['amount']>0 and cost['currency']!=self.config.get('cost_currency'):block('provider_cost_budget_exceeded','cost_currency')
+        if budget_valid and estimated>budget:block('provider_cost_budget_exceeded','max_cost_per_rotation')
+        mode='automatic' if not blockers else 'waiting' if blockers==['provider_daily_attempt_limit'] else 'assisted'
+        return {'automatic_rotation_ready':not blockers,'recovery_mode':mode,'blockers':blockers,'required_configuration':required,'recent_attempts':recent,**details}
+    def local_preflight(self):
+        """Status never substitutes for fault evidence or the live read before mutation."""
+        try:
+            journal=self._journal()
+            if journal:
+                return {'automatic_rotation_ready':False,'recovery_mode':'recovering','pending_recovery':True,'blockers':['provider_recovery_in_progress'],'required_configuration':[],'transaction_phase':journal.get('phase'),'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
+            result=self._assess_ledger(self.store.read('ledger.json',{'attempts':[],'finished':{}}))
+            result.pop('recent_attempts',None)
+            return {**result,'pending_recovery':False,'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
+        except ProviderError as error:
+            # An unreadable journal is a recovery blocker, never advice to replace another IP.
+            pending=(self.store.root/'transaction.json').exists()
+            return {'automatic_rotation_ready':False,'recovery_mode':'recovering' if pending else 'assisted','pending_recovery':pending,'blockers':[str(error)],'required_configuration':[],'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
+
     def rotate(self,incident_id,verify_ip,update_dns):
         try:
             incident=_safe_id(incident_id);j=self._journal()
             ledger=self.store.read('ledger.json',{'attempts':[],'finished':{}})
             if not j:
                 if incident in ledger['finished']:return ledger['finished'][incident]
-                if self.config.get('auto_rotate') is not True or self.config.get('allow_downtime') is not True:raise ProviderError('provider_rotation_not_authorized')
-                maximum=self.config.get('max_attempts_per_day',1)
-                if type(maximum)is not int or not 1<=maximum<=3:raise ProviderError('provider_attempt_limit_invalid')
-                recent=[v for v in ledger['attempts'] if type(v) in (int,float) and v>self.clock()-86400]
-                if len(recent)>=maximum:raise ProviderError('provider_daily_attempt_limit')
-                cost=self.profile['cost'];budget=self.config.get('max_cost_per_rotation',0)
-                if type(budget) not in (int,float) or not math.isfinite(budget) or not 0<=budget<=100:raise ProviderError('provider_budget_invalid')
-                maximum_owned=self.config.get('max_owned_allocations',2)
-                if type(maximum_owned) is not int or not 1<=maximum_owned<=10:raise ProviderError('provider_owned_limit_invalid')
-                allocations=sum(a['operation']=='ip_allocate' for a in self.profile['actions']);peak=len(ledger.get('owned',{}))+allocations
-                if peak>maximum_owned:raise ProviderError('provider_owned_allocation_limit')
-                estimated=cost['amount']*(744 if cost['billing_period']=='hour' else 1)
-                if cost['billing_period']!='one_time':estimated*=max(1,peak)
-                if estimated>budget or (cost['amount']>0 and cost['currency']!=self.config.get('cost_currency')):raise ProviderError('provider_cost_budget_exceeded')
+                assessment=self._assess_ledger(ledger)
+                if assessment['blockers']:raise ProviderError(assessment['blockers'][0])
+                recent=assessment['recent_attempts']
                 old,captures=self._read();variables={**self.variables,**captures,'old_ip':old,'incident':incident}
                 j={'scope':self.scope,'profile_digest':self.profile_digest,'incident':incident,'old_ip':old,'variables':variables,'phase':'actions','index':0,'rollback_index':0,'created_at':int(self.clock()),'dns_attempted':False}
                 ledger['attempts']=recent+[int(self.clock())];self.store.write('ledger.json',ledger);self._save(j)

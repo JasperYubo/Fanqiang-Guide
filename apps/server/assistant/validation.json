@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-11-19T04:10:59.045413+00:00",
+  "checked_at": "2026-11-19T05:11:17.130609+00:00",
   "documents": [
     {
       "path": "apps/server/assistant/AGENT.md",
@@ -18,7 +18,7 @@
           "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
         }
       },
-      "sha256": "821d8412c7e3eea085348e870d863083a76314e5dea5a0727d015b964ec6a1b5"
+      "sha256": "74957f62252a79cbe24601ae5b7a8ad8bf6115b5d5de4993058771ae2367b1b3"
     },
     {
       "path": "apps/server/assistant/SOUL.md",
@@ -37,7 +37,7 @@
           "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
         }
       },
-      "sha256": "10f61d789d35663dd337e175cbcf166405a603cbec1d0aa259804ae1da204901"
+      "sha256": "c89f855e883a738fd622f33185e8b00c1c21c648982dedfc70e782a551cb44ed"
     },
     {
       "path": "apps/server/assistant/skills/huarun/SKILL.md",
@@ -56,7 +56,7 @@
           "sha256": "3c29df9089401fed742bb6448c6c7dc7b72c811cdd90eca05696d7b6db62f4ad"
         }
       },
-      "sha256": "607f51e8d0a6522b2ffaa17816a64e77a06d69756fe6b6f94f2fdcfb90eb0f69"
+      "sha256": "d9b88739be1bbe266c45a1ea459e321f51cf6dace08498371da67f43dee445a0"
     }
   ]
 }

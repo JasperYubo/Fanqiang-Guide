@@ -20,7 +20,7 @@ OUTPUT = ROOT / "apps/pages/index.html"
 REQUIRED_TOKENS = {
     "SITE_URL", "PAGES_URL", "SERVER_ENTRY_URL", "INSTALLER_URL", "INSTALL_COMMAND",
     "API_URL", "MCP_URL", "PRICE_SENTENCE", "OS_LABEL", "RUNTIME", "RUNTIME_VERSION",
-    "MODEL", "KNOWLEDGE_SENTENCE", "NETWORK_SENTENCE", "NETWORK_PROXY_SENTENCE", "EGRESS_SENTENCE", "AUTOMATIC_UPDATE_SENTENCE", "SERVER_TOOL", "SERVER_PROMPT", "SERVER_RESOURCE", "BOOK_COUNT", "BOOK_CARDS",
+    "MODEL", "KNOWLEDGE_SENTENCE", "NETWORK_SENTENCE", "ASSISTED_RECOVERY_SENTENCE", "CONFIRM_IP_COMMAND", "NETWORK_PROXY_SENTENCE", "EGRESS_SENTENCE", "AUTOMATIC_UPDATE_SENTENCE", "SERVER_TOOL", "SERVER_PROMPT", "SERVER_RESOURCE", "BOOK_COUNT", "BOOK_CARDS",
 }
 BOOK_DESCRIPTIONS = {
     "autosetup": "手机与电脑配置、手机共享、路由器流程入口",
@@ -65,7 +65,7 @@ def render(template: str, product: dict | None = None) -> str:
         "OS_LABEL": product["os_label"], "RUNTIME": assistant["runtime"],
         "RUNTIME_VERSION": assistant["runtime_version"], "PROVIDER": assistant["provider"],
         "MODEL": assistant["model"], "KNOWLEDGE_SENTENCE": product["knowledge_sentence"],
-        "NETWORK_SENTENCE": product["network_sentence"], "NETWORK_PROXY_SENTENCE": product["network_proxy_sentence"], "EGRESS_SENTENCE": product["egress_sentence"],
+        "NETWORK_SENTENCE": product["network_sentence"], "ASSISTED_RECOVERY_SENTENCE": product["assisted_recovery_sentence"], "CONFIRM_IP_COMMAND": product["confirm_ip_command"], "NETWORK_PROXY_SENTENCE": product["network_proxy_sentence"], "EGRESS_SENTENCE": product["egress_sentence"],
         "AUTOMATIC_UPDATE_SENTENCE": product["automatic_update_sentence"], "CHAT_COMMAND": assistant["command"],
         "SERVER_TOOL": server["tool"], "SERVER_PROMPT": server["prompt"],
         "SERVER_RESOURCE": server["resource_uri"], "SERVER_BOOK_URL": server["download_url"],
@@ -116,7 +116,7 @@ def validate_main_site(public: Path) -> list[str]:
     try:
         raw = (public / "server/index.html").read_text(encoding="utf-8")
         readable = html.unescape(raw)
-        required = [server["install_command"], server["upgrade_command"], product["automatic_update_sentence"], product["knowledge_sentence"], product["network_sentence"], product["network_proxy_sentence"], product["egress_sentence"], product["price_sentence"], product["os_label"],
+        required = [server["install_command"], server["upgrade_command"], product["automatic_update_sentence"], product["knowledge_sentence"], product["network_sentence"], product["assisted_recovery_sentence"], product["confirm_ip_command"], product["network_proxy_sentence"], product["egress_sentence"], product["price_sentence"], product["os_label"],
                     product["mcp_url"], server["api_url"], server["tool"], server["prompt"], server["resource_uri"],
                     *[server["assistant"][key] for key in ("runtime", "runtime_version", "model", "command")]]
         for value in required:

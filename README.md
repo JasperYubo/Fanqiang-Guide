@@ -2,7 +2,7 @@
 
 开源网络工具知识库与 Linux VPS 运维助手：按设备核对官方资料，通过 MCP（Model Context Protocol）和 iLang 工程书完成配置；PicoClaw + DeepSeek 帮你诊断、修复并复查自己的服务器。
 
-**310 条工具与知识记录 · MCP 2.6.0 · 四本配置与排障工程书**
+**310 条工具与知识记录 · MCP 2.6.1 · 四本配置与排障工程书**
 
 [打开官网](https://fanqiang.guide/) ｜ [GitHub 项目页](https://jasperyubo.github.io/Fanqiang-Guide/) ｜ [研究成果](https://fanqiang.guide/research/) ｜ [完整目录](CATALOG.md) ｜ [软件发布](https://github.com/JasperYubo/Fanqiang-Guide/releases) ｜ [版本动态](UPDATES.md) ｜ [每日免费节点与代理](free-proxies/)
 
@@ -65,7 +65,7 @@
 | --- | --- | --- |
 | [设备配置 v2.1](apps/lookup/runtime/books/fanqiang-autosetup-v2.1.ilang.md) | 手机、电脑配置，手机共享与路由器流程入口 | `fanqiang://books/autosetup` |
 | [梅林路由器 v1.0](apps/lookup/runtime/books/fanqiang-merlin-v1.0.ilang.md) | 梅林兼容固件、fancyss 选包、安装前检查与恢复流程 | `fanqiang://books/merlin` |
-| [服务器助手 v1.4](apps/lookup/runtime/books/fanqiang-server-v1.4.ilang.md) | Cloudflare 固定域名、TLS、厂商官方 API 自动发现与对接、通知和链式出口 | `fanqiang://books/server` |
+| [服务器助手 v1.4.1](apps/lookup/runtime/books/fanqiang-server-v1.4.1.ilang.md) | Cloudflare 固定域名、TLS、厂商 API 自动发现、人工换 IP 协助与核验、通知和链式出口 | `fanqiang://books/server` |
 
 | [服务器排障 v1.0](apps/lookup/runtime/books/fanqiang-troubleshooting-v1.0.ilang.md) | DNS、TLS、Nginx、Xray、CDN 与分层排障，资料不足后备搜索和修复复查 | `fanqiang://books/troubleshooting` |
 

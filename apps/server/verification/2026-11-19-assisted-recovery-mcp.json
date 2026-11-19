@@ -1,0 +1,19 @@
+{
+  "checked_at": "2026-11-19T05:23:18.722568+00:00",
+  "environment": "linux_asgi_and_sdk_loopback",
+  "candidate_worktree": true,
+  "command": "/root/huarun-server-20261113/.venv/bin/python -m unittest discover -s apps/lookup/runtime -p test_*.py -q",
+  "tests": 138,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "passed": true,
+  "scope": "MCP HTTP/tool/resource/prompt parity, assisted recovery metadata and guarded IP-confirmation handoff; no installer, live cloud or actual client claim.",
+  "source_files": {
+    "apps/lookup/runtime/app.py": "54bb217d0ff64c2004bfda6bf7a93d7e86a506d206f271696d40638198f99e91",
+    "apps/lookup/runtime/library_core.py": "1f2d990d672959cfa0575e0d55b5a2bc3e9018621077a4163160163b6e5ec255",
+    "apps/lookup/runtime/test_server_setup.py": "13d42c9c238b3b30c56d896008a16ec4f22b80a30b8b48e5e0ecdbe48c37705b",
+    "apps/lookup/runtime/books/fanqiang-server-v1.4.1.ilang.md": "c3ebfe4d745bcb1832fdbe25ff9b6bcc62152b080a9ebf7806ed88e1e28d799e"
+  },
+  "log_sha256": "23c09b003a7cb0142f0c06ca6805c0fa6284e8647c6a016de25df23a07f51b90"
+}

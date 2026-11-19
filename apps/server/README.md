@@ -72,7 +72,7 @@ huarun info
 
 ## 固定域名、动态 IP 与故障通知
 
-使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，自动维护 TLS、动态 IP 解析和故障通知；Agent 先查 VPS 厂商官方文档，有换 IP API 就自动对接、验证并按授权恢复，无 API 才通知你换 IP，已有适配器不是厂商范围上限。
+使用自己的 Cloudflare 域名和 Full account and zone access 账户令牌，维护 TLS、动态 IP 解析和故障通知；Agent 先查 VPS 厂商官方文档，自动执行条件和故障证据齐全时按授权更换 IP，否则继续协助你按官方步骤处理，再确认新地址、同步 DNS 并复查。
 
 默认使用 Cloudflare 仅 DNS 解析；选择橙云代理时，区域的 SSL/TLS 必须已是 Full (strict)。助手只核对该设置，不改动整个域名区域的 TLS 模式。
 
@@ -93,7 +93,7 @@ huarun network notify-test
 
 自动换 IP 不限制 VPS 厂商。比如你使用一家没有现成适配器的服务商，新安装在 `huarun network setup` 选择自动发现；已有用户只需运行 `huarun network provider-setup`，补充厂商名称、可选官网、实例和已有 API 凭据，保留原 Cloudflare 令牌、域名与节点，不必重装。保存后，Agent 会先查华润 MCP，再查并读取厂商官方文档。发现可用的换 IP API 后，自动生成适配、校验请求与官方依据，并只读核对实例和当前地址，验证通过后启用，不需要你自己写接口代码。
 
-可以直接告诉助手：“检查这家 VPS 的官方换 IP API，能对接就接好并验证。”也可在 SSH 终端查看过程和结果：
+可以直接告诉助手：“判断这家 VPS 能否自动换 IP；条件不足就协助我操作，完成后复查。”也可在 SSH 终端查看过程和结果：
 
 ```bash
 huarun network provider-setup
@@ -101,7 +101,17 @@ huarun network provider-discover
 huarun network provider-status
 ```
 
-`network check` 和 Linux 定时维护也会自动执行发现，复用已经验证的适配结果。确实没有 API 时通知你到厂商面板处理；文档暂时不可访问、缺少凭据、权限或预算不足，以及签名方式暂不支持，会分别说明缺少的条件，不会把它们当作“厂商没有 API”。
+`network check` 和 Linux 定时维护也会自动执行发现，复用已经验证的适配结果。配置就绪、故障成立和恢复成功分别判断；有 API 并不代表当前能够自动换 IP。文档暂时不可访问、缺少凭据、权限或预算不足，以及接口暂不支持，会分别说明。
+
+不能自动更换时，Agent 会继续查询厂商官方面板或工单步骤，说明费用和停机影响，保留原域名、节点、白名单和 Key，不要求重装。你完成厂商操作后，把要接纳的新公网入站 IPv4 告诉助手；通过双地区 TLS 与 WebSocket 核验后才同步 DNS，并复查节点通路。资料不足会继续帮你查，不会把未知说成没有 API。
+
+如需在自己的 SSH 终端确认新入站地址，运行以下命令，并把 PUBLIC_IPV4 替换成厂商实际分配给本机的新 IPv4：
+
+```bash
+huarun network confirm-ip PUBLIC_IPV4
+```
+
+未完成的恢复事务先处理完；达到每日次数上限时等待，不通过人工操作绕过。新地址与厂商 API 的权威地址不符时不能强行接纳。DNS 暂时失败会保留已验证的新静态地址并自动重试；仍需复查节点和实际客户端，不能把已提交请求当作恢复。
 
 以下是可直接复用的现成适配器，不是厂商支持名单的上限：
 
@@ -181,7 +191,7 @@ huarun chat
 - “把 example.com 加进白名单。”
 - “证书还剩多少天？”
 - “检查固定域名解析和故障通知是否正常。”
-- “查这家 VPS 的官方换 IP API，能对接就接好并验证。”
+- “判断能否自动换 IP，不能自动时带我按官方步骤处理。”
 - “切换到已经配置的 home 出口，并复查出口 IP。”
 
 每轮先查华润 MCP 的文档和排障资料；资料不足再用 DeepSeek 搜索；修复后自动复查服务状态。它会结合服务器上的检查、修复和查询结果，给出所用资料来源和实际结果。服务端检查正常后，仍需用你的手机或电脑打开目标网站，确认本地连接也已恢复。
@@ -203,7 +213,7 @@ huarun fix
 - 安装工具：get_server_setup
 - 安装提示：setup_server
 - 工程书资源：fanqiang://books/server
-- [服务器助手工程书](https://fanqiang.guide/ai/books/fanqiang-server-v1.4.ilang.md)
+- [服务器助手工程书](https://fanqiang.guide/ai/books/fanqiang-server-v1.4.1.ilang.md)
 - [安装脚本](https://fanqiang.guide/server/install.sh)
 
 搜索和对话均使用你自己的 DeepSeek API Key，按官方实际用量计费。

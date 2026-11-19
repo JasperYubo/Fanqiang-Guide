@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-11-19T05:22:57.017446+00:00",
+  "development_only": true,
+  "scope": "Installed Linux assisted IP recovery and automatic-readiness fault contracts. Official provider operations, regional observations and Cloudflare APIs are controlled HTTP fixtures; no real cloud IP rotation or actual phone/desktop client result.",
+  "source_files": {
+    "apps/server/install.sh": "47e57ccd97cfa0eab0850f89dad59635740b6b3429489722ac1f21eab551b7a2",
+    "apps/server/network.py": "e8fdc41d0f303418a7a1e17781fb63f0c048206978e517f21bc6d650fa6118b1",
+    "apps/server/generic_provider.py": "36cf348eb7807313cb3b4e693aa7c1bbfffe577a82d8840e564f8a713cce9d76",
+    "apps/server/provider_discovery.py": "9d7c335ba30bb187625222fba1d7ba24b223e3ff0612118a4377fbdea09734f2",
+    "apps/server/assistant/hook.py": "0a6d3853247ee76214c584a2a3d29cba088f22ec7d53d89f1190287304eac5f6"
+  },
+  "installed_acceptance": {
+    "evidence": "apps/server/verification/2026-11-19-assisted-recovery-linux.json",
+    "evidence_sha256": "4263a4102405cbe358786d305f72ed5fb47709c20b23bb69436e2c439666326e",
+    "assisted": {
+      "api_binding_cannot_be_bypassed": true,
+      "configuration_and_keys_preserved": true,
+      "dns_failure_keeps_new_ip": true,
+      "dns_readback_verified": true,
+      "dns_retry_recovers_new_ip": true,
+      "manual_ip_validated": true,
+      "next_timer_keeps_new_ip": true,
+      "passed": true,
+      "pending_provider_rejected": true,
+      "pending_setup_rejected": true,
+      "static_address_persisted": true,
+      "unverified_ip_rejected": true
+    },
+    "generic_provider_features": {
+      "ambiguous_replace_not_repeated": true,
+      "assisted": {
+        "api_binding_cannot_be_bypassed": true,
+        "configuration_and_keys_preserved": true,
+        "dns_failure_keeps_new_ip": true,
+        "dns_readback_verified": true,
+        "dns_retry_recovers_new_ip": true,
+        "manual_ip_validated": true,
+        "next_timer_keeps_new_ip": true,
+        "passed": true,
+        "pending_provider_rejected": true,
+        "pending_setup_rejected": true,
+        "static_address_persisted": true,
+        "unverified_ip_rejected": true
+      },
+      "dns_readback_verified": true,
+      "docs_unavailable_distinguished": true,
+      "failed_replacement_rolled_back": true,
+      "generated_adapter_validated": true,
+      "ip_replacement_verified": true,
+      "live_cloud_rotation": false,
+      "malicious_document_rejected": true,
+      "missing_credentials_distinguished": true,
+      "no_api_notified": true,
+      "no_vendor_allowlist": true,
+      "official_docs_digest_bound": true,
+      "official_docs_read": true,
+      "passed": true,
+      "provider_credentials_not_sent_to_model": true,
+      "providers": [
+        {
+          "api_shape": "json_bearer",
+          "dns_readback_verified": true,
+          "document_sha256": "934f15b864060dca05ec304d06425f7fcbbab3b49ab4de157438f70348bf5c82",
+          "mutation_requests": 2,
+          "name": "qa-vps-b12df7e97af8",
+          "passed": true,
+          "profile_sha256": "b4d684bb3df9890cad15a46bad135663e04194ea48c675f55f078220d7970ed3",
+          "read_before_mutation": true,
+          "read_requests": 6
+        },
+        {
+          "api_shape": "query_key",
+          "dns_readback_verified": true,
+          "document_sha256": "7bf1c13be6bce895d86184ab6ae67c4ac6f940d611cbefade512a915e5106550",
+          "mutation_requests": 2,
+          "name": "qa-vps-39fbb855b9be",
+          "passed": true,
+          "profile_sha256": "844bacc26c4e1674a23fc41c20acb3377086293b9b752916b2002e3931ec9d8d",
+          "read_before_mutation": true,
+          "read_requests": 6
+        }
+      ],
+      "read_only_probe_before_activation": true,
+      "scope": "installed_runtime_http_fixtures",
+      "unknown_json_provider_auto_connected": true,
+      "unknown_query_provider_auto_connected": true
+    },
+    "network_fault_tests": {
+      "passed": true,
+      "skipped": 0,
+      "suites": [
+        "test_network.py",
+        "test_ip_provider.py",
+        "test_aws_provider.py",
+        "test_egress.py",
+        "test_network_setup.py",
+        "test_generic_provider.py",
+        "test_provider_discovery.py",
+        "test_network_discovery.py",
+        "test_generic_updater.py",
+        "test_provider_readiness.py"
+      ],
+      "tests": 235
+    },
+    "limitations": [
+      "DeepSeek account authentication uses a synthetic Key and local model-list fixture; paid model inference is outside this release gate.",
+      "Public ACME issuance uses an isolated test CA; real hash-pinned acme.sh validates HTTP-01 or Cloudflare DNS-01 fixture records and submits a real CSR. Cloudflare HTTP contracts use a synthetic account and token. For loopback .release.invalid node probes only, the harness adds its test CA to the original real-Xray probe; unknown-CA and wrong-SAN negative controls must reject.",
+      "Notification failure/recovery and two-region probes use local signed HTTP contracts; no live Telegram delivery or live regional observer claim. SOCKS5/HTTP CONNECT use real authenticated local proxy servers and external HTTPS targets.",
+      "For 1.4 generic discovery, official documents/search/model responses and VPS APIs use explicit local HTTP contracts. The installed discovery/interpreter/network code executes unchanged; paid model inference, live vendor API conformance, and cloud allocation are not established by this fixture evidence.",
+      "Linux Debian 12 amd64 systemd containers; other OS/architectures and public DNS propagation are outside this acceptance run."
+    ]
+  },
+  "builder": {
+    "summary_sha256": "ccdffb6986e20c08169bfe7dfbd54a26bcff3c9251463946c15f67fcacdc14bb",
+    "passed": true,
+    "checks_run": 15,
+    "skipped": 0,
+    "server_unit_tests": 349,
+    "server_unit_skipped": 0,
+    "server_log_sha256": "9d719f6555e7a9aef7a266b6b59d3d0013739097c24cc3a25ea8af43567d23ae"
+  },
+  "real_cloud_ip_rotation": {
+    "status": "not_tested"
+  },
+  "actual_client_connection": {
+    "status": "not_tested",
+    "scope": "No physical phone or desktop client connection result for this patch; installed real-Xray fixture checks are separate."
+  },
+  "publication": {
+    "status": "pending_exact_commit_release_gate",
+    "formal_proof_asset": "linux-install-upgrade-proof.json"
+  }
+}

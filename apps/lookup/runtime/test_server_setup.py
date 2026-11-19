@@ -52,7 +52,7 @@ class ServerSetupTests(unittest.TestCase):
 
     def test_server_metadata_declares_mcp_first_search_fallback_and_recheck(self):
         meta = setup_book.book_manifest("server")
-        self.assertEqual(meta["version"], "1.4")
+        self.assertEqual(meta["version"], "1.4.1")
         policy = meta["knowledge_policy"]
         self.assertEqual(policy["primary"], "huarun_mcp")
         self.assertEqual(policy["fallback"], "deepseek_search_when_insufficient")
@@ -65,7 +65,7 @@ class ServerSetupTests(unittest.TestCase):
         rotation = meta["network_maintenance"]["automatic_ip_rotation"]
         self.assertEqual(rotation["provider_scope"], "open_ended_official_document_discovery")
         self.assertEqual(rotation["unknown_provider"], "discover_validate_then_activate")
-        self.assertEqual(rotation["no_api"], "notify_owner_only_after_official_evidence")
+        self.assertEqual(rotation["no_api"], "assist_owner_with_official_panel_or_support_steps")
         self.assertNotIn("providers", rotation, "Built-in adapters are not a closed provider allowlist")
         self.assertIn("aws_elastic_ip", rotation["built_in_adapters"])
         self.assertEqual(rotation["discovery_commands"], {"discover": "huarun network provider-discover", "status": "huarun network provider-status"})
@@ -80,6 +80,23 @@ class ServerSetupTests(unittest.TestCase):
         book = setup_book.book_payload("server")["content"]
         for phrase in ("PROVIDER_DISCOVERY_AND_ADAPTERS", "huarun network provider-discover", "声明式", "只读核对"):
             self.assertIn(phrase, book)
+
+    def test_assisted_recovery_is_exposed_without_bypassing_pending_or_daily_limits(self):
+        payload = self.rpc("tools/call", {"name": "get_server_setup"})["structuredContent"]
+        maintenance = payload["network_maintenance"]
+        recovery = maintenance["assisted_ip_recovery"]
+        rotation = maintenance["automatic_ip_rotation"]
+        self.assertTrue(rotation["configured_ready_is_not_fault_or_recovery"])
+        self.assertEqual(rotation["daily_limit_policy"], "wait_without_manual_bypass")
+        self.assertEqual(set(rotation["recovery_modes"]), {"automatic", "assisted", "waiting", "recovering"})
+        self.assertEqual(recovery["confirm_ip_command"], "huarun network confirm-ip PUBLIC_IPV4")
+        self.assertTrue(recovery["owner_explicit_candidate_required"])
+        self.assertEqual(recovery["pending_transaction_policy"], "block_until_reconciled")
+        self.assertEqual(recovery["validation_before_dns"], ["two_region_tls", "websocket_path", "authoritative_provider_address_if_configured"])
+        self.assertIn("official_vendor_panel_or_support_docs", recovery["source_order"])
+        self.assertEqual(recovery["recheck"], ["huarun network check", "huarun doctor --json", "huarun status --json", "huarun egress probe"])
+        for phrase in ("ASSISTED_IP_RECOVERY", "费用", "工单", "assisted_dns_pending"):
+            self.assertIn(phrase, payload["content"])
 
     def test_existing_server_handoff_never_routes_to_fresh_installation(self):
         initialized = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
@@ -103,7 +120,7 @@ class ServerSetupTests(unittest.TestCase):
 
     def test_automatic_update_metadata_preserves_existing_server_and_admin_boundary(self):
         meta = setup_book.book_manifest("server")
-        self.assertEqual(meta["assistant"]["version"], "1.4.0")
+        self.assertEqual(meta["assistant"]["version"], "1.4.1")
         update = meta["automatic_updates"]
         self.assertTrue(update["enabled_by_default"])
         self.assertEqual((update["interval_hours"], update["boot_delay_minutes"], update["random_delay_max_minutes"]), (6, 10, 30))
@@ -121,7 +138,7 @@ class ServerSetupTests(unittest.TestCase):
     def test_initialize_routes_server_and_client_flows_separately(self):
         result = self.rpc("initialize", {"protocolVersion": "2025-11-25", "capabilities": {},
             "clientInfo": {"name": "server-test", "version": "1"}})
-        self.assertEqual(result["serverInfo"]["version"], "2.6.0")
+        self.assertEqual(result["serverInfo"]["version"], "2.6.1")
         instructions = result["instructions"]
         server = instructions.split("::MODULE{SERVER_SETUP}")[1].split("::MODULE{DEVICE_SETUP}")[0]
         for value in ("get_server_setup", "fanqiang://books/server", "setup_server", "https://platform.deepseek.com",

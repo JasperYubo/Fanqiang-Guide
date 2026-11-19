@@ -149,20 +149,45 @@ class DiscoveryProvider:
         if status=='ready':self.store.write('binding.json',receipt)
         self.store.write('receipt.json',receipt);return self.safe_status()
     def safe_status(self):
+        """Report local readiness only; no cloud request, ledger write, or discovery."""
         r=self._receipt()
-        if not r:return {'status':'discovery_needed','code':'provider_official_documentation_required','vendor':self.config.get('vendor_name',self.config.get('kind','other')),'has_active_profile':(self.store.root/'profile.json').exists()}
+        result={'status':r.get('status','discovery_needed'),'code':r.get('code','provider_official_documentation_required'),
+                'vendor':str(self.config.get('vendor_name',self.config.get('kind','other')))[:120],
+                'has_active_profile':(self.store.root/'profile.json').exists(),
+                'automatic_rotation_ready':False,'recovery_mode':'assisted','blockers':[],
+                'required_configuration':[],'pending_recovery':(self.store.root/'transaction.json').exists(),
+                'assessment_scope':'local_configuration_and_ledger','requires_live_verification':True}
         keep=('status','code','checked_at','next_check','official_url','sources','missing_credentials','missing_parameters','required_capability','validation','binding_verified','live_rotation_verified','refresh_status','refresh_code','refresh_checked_at','no_api_source','no_api_quote')
-        result={k:r[k] for k in keep if k in r};result['vendor']=str(self.config.get('vendor_name',self.config.get('kind','other')))[:120];result['has_active_profile']=(self.store.root/'profile.json').exists()
-        required=[]
-        if r.get('status')=='ready':
-            if self.config.get('auto_rotate') is not True:required.append('auto_rotate')
-            if self.config.get('allow_downtime') is not True:required.append('allow_downtime')
-            profile=self.store.read('profile.json',{})
-            cost=profile.get('cost',{})
-            if cost.get('amount',0)>0 and self.config.get('cost_currency')!=cost.get('currency'):required.append('cost_currency')
-            estimate=cost.get('amount',0)*(744 if cost.get('billing_period')=='hour' else 1)
-            if estimate>self.config.get('max_cost_per_rotation',0):required.append('max_cost_per_rotation')
-        result['required_configuration']=required;result['automatic_rotation_ready']=r.get('status')=='ready' and not required
+        result.update({k:r[k] for k in keep if k in r})
+        if r.get('status')=='ready' or result['has_active_profile']:
+            try:
+                provider=self._provider()
+                result.update(provider.local_preflight())
+            except ProviderError as error:
+                result['blockers']=[str(error)]
+                result['recovery_mode']='recovering' if result['pending_recovery'] else 'assisted'
+                if str(error)=='provider_configuration_changed':
+                    # Only read public credential field names from an intact manifest.
+                    profile=self.store.read('profile.json',{});active=self._active()
+                    if hashlib.sha256(json.dumps(profile,sort_keys=True).encode()).hexdigest()==active.get('profile_sha256'):
+                        supplied=self.config.get('credentials',{})
+                        missing=sorted(credential_names(profile)-set(supplied if isinstance(supplied,dict) else {}))
+                        if missing:
+                            result['missing_credentials']=missing
+                            result['required_configuration'].append('credentials')
+                result['automatic_rotation_ready']=False
+        else:
+            result['blockers']=[result['code']]
+        refresh=r.get('refresh_status')
+        if refresh=='credentials_required':
+            code=r.get('refresh_code','provider_credentials_required')
+            if code not in result['blockers']:result['blockers'].append(code)
+            if 'credentials' not in result['required_configuration']:result['required_configuration'].append('credentials')
+            result['automatic_rotation_ready']=False
+            result['recovery_mode']='recovering' if result['pending_recovery'] else 'assisted'
+        if result['pending_recovery']:
+            result['automatic_rotation_ready']=False;result['recovery_mode']='recovering'
+            if 'provider_recovery_in_progress' not in result['blockers']:result['blockers'].insert(0,'provider_recovery_in_progress')
         return result
     def _provider(self):
         r=self._active();profile=self.store.read('profile.json',{})

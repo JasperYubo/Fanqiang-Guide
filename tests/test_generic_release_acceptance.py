@@ -83,4 +83,31 @@ class GenericReleaseAcceptanceTests(unittest.TestCase):
         self.assertNotIn('generic_provider_features',result)
         self.assertNotIn('generic_provider_state',result['preserved'])
 
+class AssistedReleaseAcceptanceTests(unittest.TestCase):
+    def setUp(self):
+        self.report,self.expected,self.previous=accepted_generic_fixture()
+        self.report['candidate_version']=self.expected['candidate_version']='1.4.1'
+        self.report['fresh_install']['installed_version']='1.4.1'
+        self.report['network_fault_tests']['suites']=list(a.ASSISTED_FAULT_SUITES)
+        for case in self.report['upgrades']+[self.report['unconfigured_upgrade']]:case['to_version']='1.4.1'
+        self.report['fresh_install']['generic_provider_features']['assisted']={k:True for k in a.ASSISTED_RECOVERY_CHECKS}
+    def validate(self):return a.validate_report(self.report,self.expected,self.previous)
+    def test_complete_assisted_evidence_passes(self):
+        self.assertEqual(self.validate()['assisted_recovery'],list(a.ASSISTED_RECOVERY_CHECKS))
+    def test_assisted_observations_cannot_be_omitted_or_claimed(self):
+        for key in a.ASSISTED_RECOVERY_CHECKS:
+            for value in (False,None,1,'true'):
+                with self.subTest(key=key,value=value):
+                    self.setUp();self.report['fresh_install']['generic_provider_features']['assisted'][key]=value
+                    with self.assertRaises(a.AcceptanceError):self.validate()
+    def test_assisted_evidence_is_required_from_141(self):
+        del self.report['fresh_install']['generic_provider_features']['assisted']
+        with self.assertRaisesRegex(a.AcceptanceError,'assisted_recovery_missing'):self.validate()
+    def test_readiness_fault_suite_is_required_from_141(self):
+        self.report['network_fault_tests']['suites']=list(a.GENERIC_FAULT_SUITES)
+        with self.assertRaisesRegex(a.AcceptanceError,'fault_suites'):self.validate()
+    def test_historical_140_does_not_require_assisted_evidence(self):
+        report,expected,previous=accepted_generic_fixture()
+        self.assertNotIn('assisted_recovery',a.validate_report(report,expected,previous))
+
 if __name__=='__main__':unittest.main()

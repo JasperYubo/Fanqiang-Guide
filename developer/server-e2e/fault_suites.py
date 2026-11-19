@@ -4,9 +4,12 @@ ROOT=pathlib.Path(__file__).resolve().parents[2]
 SUITES=('test_network.py','test_ip_provider.py','test_aws_provider.py','test_egress.py','test_network_setup.py')
 GENERIC_SUITES=('test_generic_provider.py','test_provider_discovery.py','test_network_discovery.py','test_generic_updater.py')
 
+ASSISTED_SUITES=('test_provider_readiness.py',)
+
 def main():
     loader=unittest.TestLoader();suite=unittest.TestSuite()
-    selected=SUITES + (GENERIC_SUITES if '--generic' in sys.argv[1:] else ())
+    assisted='--assisted' in sys.argv[1:]
+    selected=SUITES + (GENERIC_SUITES if assisted or '--generic' in sys.argv[1:] else ()) + (ASSISTED_SUITES if assisted else ())
     for pattern in selected:
         tests=loader.discover(str(ROOT/'apps/server/tests'),pattern=pattern)
         if tests.countTestCases()<1:raise SystemExit('required fault suite empty: '+pattern)

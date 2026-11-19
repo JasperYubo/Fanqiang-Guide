@@ -10,7 +10,7 @@ ROOT=pathlib.Path('/opt/e2e-state'); ROOT.mkdir(mode=0o700,exist_ok=True)
 BASE='https://acme-v02.api.letsencrypt.org'
 records={}
 events=[]
-control={'telegram_fail':False,'probe_reachable':True,'probe_candidate_reachable':None,'fail_order_domain':None}
+control={'telegram_fail':False,'probe_reachable':True,'probe_candidate_reachable':None,'fail_order_domain':None,'dns_write_failures':0}
 PROBE_KEY='synthetic-release-probe-key-32-bytes-minimum'
 CF_ACCOUNT='1'*32
 CF_ZONE='2'*32
@@ -44,6 +44,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 value=records.get(ident) if ident else [r for r in records.values() if not name or r['name']==name]
             elif self.command in ('POST','PATCH'):
                 value=json.loads(self.rfile.read(int(self.headers.get('Content-Length','0'))))
+                merged={**records.get(ident,{}),**value}
+                if merged.get('type')=='A' and control['dns_write_failures']>0:
+                    control['dns_write_failures']-=1
+                    events.append({'kind':'dns_write_failure','method':self.command,'type':merged['type'],'name':merged['name'],'content':merged['content']})
+                    return self.reply(503,{'success':False,'errors':[{'code':1000,'message':'synthetic transient DNS outage'}]})
                 ident=ident or secrets.token_hex(16)
                 value={**records.get(ident,{}),**value,'id':ident};records[ident]=value
                 events.append({'kind':'dns_write','method':self.command,'type':value['type'],'name':value['name'],'content':value['content']})
