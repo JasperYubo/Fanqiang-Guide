@@ -86,12 +86,16 @@ jobs:
         with:
           ref: ${{ inputs.source_sha }}
           persist-credentials: false
+          fetch-depth: 0
       - name: 验证验收器与失败阻断规则
         run: |
           python3 -m unittest discover -s tests -p test_release_acceptance.py -q
           python3 -m unittest discover -s tests -p test_server_release_e2e.py -q
       - name: 在隔离 Linux 完整验收新安装及旧版升级
-        # Read-only job. No publication token or production Key reaches this runner.
+        # The scoped read token is consumed only for repository release metadata;
+        # the harness removes it before starting any installer or fixture.
+        env:
+          HUARUN_BASELINE_GITHUB_TOKEN: ${{ github.token }}
         run: python3 developer/server_release_e2e.py --source-sha "$SOURCE_SHA" --output "$RUNNER_TEMP/linux-install-upgrade-proof.json"
       - name: 绑定原始验收报告摘要
         id: report

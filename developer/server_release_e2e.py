@@ -5,7 +5,7 @@ fixtures. The installer, hash-pinned dependencies, systemd, Nginx, Xray, TLS,
 PicoClaw, manager and upgrade code run as distributed. No customer secret is used.
 """
 from __future__ import annotations
-import argparse,hashlib,json,os,pathlib,re,secrets,subprocess,sys,tempfile,time,urllib.request
+import argparse,hashlib,http.client,json,os,pathlib,re,secrets,subprocess,sys,tempfile,time,urllib.error,urllib.parse,urllib.request
 from datetime import datetime,timezone
 ROOT=pathlib.Path(__file__).resolve().parents[1]
 FIXTURES=ROOT/'developer/server-e2e'
@@ -18,12 +18,82 @@ def version(raw):
     match=re.search(rb'^VERSION="([0-9]+\.[0-9]+\.[0-9]+)"$',raw,re.M)
     if not match:raise AcceptanceError('installer_version_missing')
     return match[1].decode()
+# Set only by main(), then removed from the environment before any child starts.
+# This token can read this repository in CI; it never reaches installers/fixtures.
+_API_READ_TOKEN=''
+FETCH_ATTEMPTS=3
+FETCH_MAX_BYTES=2*1024*1024
+class BaselineFetchError(AcceptanceError):
+    def __init__(self,diagnostic):
+        self.diagnostic=diagnostic
+        super().__init__('baseline_fetch_failed:'+diagnostic['source']+':'+diagnostic['category']+':'+str(diagnostic.get('status')))
+def fetch_source(url):
+    """Allow only pinned public installers and this repository's release metadata."""
+    api='https://api.github.com/repos/'+REPO+'/releases'
+    if url==api+'/latest':return 'previous_stable_metadata',True
+    if url==api+'?per_page=100':return 'previous_stable_list',True
+    legacy=re.fullmatch(re.escape('https://raw.githubusercontent.com/'+REPO+'/')+r'([a-f0-9]{40})/apps/server/install\.sh',url)
+    if legacy and any(pin['source_sha']==legacy.group(1) for pin in PINS):return 'legacy_installer:'+legacy.group(1)[:12],False
+    asset=re.fullmatch(re.escape('https://github.com/'+REPO+'/releases/download/release-')+r'([a-f0-9]{12})/huarun-install\.sh',url)
+    if asset:return 'previous_stable_installer:'+asset.group(1),False
+    raise AcceptanceError('baseline_fetch_source_not_allowed')
+class RedirectIdentityError(AcceptanceError):
+    def __init__(self,status):
+        self.status=status
+        super().__init__('baseline_redirect_not_allowed')
+class BaselineRedirectHandler(urllib.request.HTTPRedirectHandler):
+    max_redirections=3
+    max_repeats=1
+    def redirect_request(self,req,fp,code,msg,headers,newurl):
+        # API and raw origins must resolve directly. Release downloads alone use
+        # GitHub's observed CDN; never forward Authorization, even same-origin.
+        old=urllib.parse.urlsplit(req.full_url);new=urllib.parse.urlsplit(newurl)
+        if (old.hostname not in {'github.com','release-assets.githubusercontent.com'}
+                or new.scheme!='https' or new.netloc!='release-assets.githubusercontent.com' or new.fragment or '\\' in newurl):
+            if fp is not None:fp.close()
+            raise RedirectIdentityError(code)
+        redirected=super().redirect_request(req,fp,code,msg,headers,newurl)
+        if redirected is not None:
+            redirected.remove_header('Authorization')
+        return redirected
+def retry_delay(headers,attempt):
+    value=headers.get('Retry-After','') if headers else ''
+    # Bound both server-directed waits and exponential backoff. A long quota
+    # reset fails visibly after this budget; it cannot hang a release job.
+    return min(10,max(1,int(value))) if value.isdigit() else min(10,2**attempt)
 def fetch(url):
-    request=urllib.request.Request(url,headers={'User-Agent':'HuaRun-Linux-Release-Acceptance/1.0','Accept':'application/vnd.github+json'})
-    with urllib.request.urlopen(request,timeout=40) as response:
-        raw=response.read(2*1024*1024+1)
-    if len(raw)>2*1024*1024:raise AcceptanceError('baseline_response_too_large')
-    return raw
+    source,api=fetch_source(url)
+    headers={'User-Agent':'HuaRun-Linux-Release-Acceptance/1.0','Accept':'application/vnd.github+json'}
+    if api and _API_READ_TOKEN:headers['Authorization']='Bearer '+_API_READ_TOKEN
+    opener=urllib.request.build_opener(BaselineRedirectHandler())
+    for attempt in range(1,FETCH_ATTEMPTS+1):
+        request=urllib.request.Request(url,headers=headers)
+        try:
+            with opener.open(request,timeout=40) as response:
+                if response.status!=200:raise urllib.error.HTTPError(url,response.status,'unexpected_baseline_status',response.headers,None)
+                raw=response.read(FETCH_MAX_BYTES+1)
+                length=response.headers.get('Content-Length','')
+                if len(raw)<=FETCH_MAX_BYTES and length.isdigit() and len(raw)!=int(length):raise http.client.IncompleteRead(raw)
+            if len(raw)>FETCH_MAX_BYTES:raise AcceptanceError('baseline_response_too_large:'+source)
+            print(json.dumps({'baseline_fetch':{'source':source,'status':200,'attempt':attempt,'bytes':len(raw)}}),flush=True)
+            return raw
+        except urllib.error.HTTPError as error:
+            status=error.code
+            rate_limited=status==429 or (status==403 and (error.headers.get('X-RateLimit-Remaining')=='0' or error.headers.get('Retry-After')))
+            category='rate_limited' if rate_limited else 'authentication' if status in (401,403) else 'http'
+            retryable=bool(rate_limited or 500<=status<=599)
+            diagnostic={'source':source,'category':category,'status':status,'attempt':attempt,'retryable':retryable}
+            delay=retry_delay(error.headers,attempt);error.close()
+        except (urllib.error.URLError,TimeoutError,ConnectionError,http.client.IncompleteRead) as error:
+            diagnostic={'source':source,'category':'transport','status':None,'attempt':attempt,'retryable':True}
+            delay=retry_delay(None,attempt)
+        except AcceptanceError as error:
+            diagnostic={'source':source,'category':'identity' if isinstance(error,RedirectIdentityError) else 'size','status':getattr(error,'status',None),'attempt':attempt,'retryable':False}
+            raise BaselineFetchError(diagnostic) from None
+        print(json.dumps({'baseline_fetch':diagnostic}),flush=True)
+        if not diagnostic['retryable'] or attempt==FETCH_ATTEMPTS:raise BaselineFetchError(diagnostic) from None
+        time.sleep(delay)
+    raise AcceptanceError('baseline_fetch_retry_budget_exhausted')
 def select_previous(releases,source_sha):
     if not isinstance(releases,list):raise AcceptanceError('baseline_release_list_invalid')
     candidates=[r for r in releases if isinstance(r,dict) and r.get('draft') is False and r.get('prerelease') is False and r.get('target_commitish')!=source_sha]
@@ -167,6 +237,8 @@ class Runner:
     def close(self):
         for name in list(self.containers):self.remove(name)
 def main():
+    global _API_READ_TOKEN
+    _API_READ_TOKEN=os.environ.pop('HUARUN_BASELINE_GITHUB_TOKEN','')
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--source-sha',required=True);parser.add_argument('--output',required=True,type=pathlib.Path);parser.add_argument('--allow-dirty',action='store_true',help='Local development only; emitted evidence cannot authorize publication')
     args=parser.parse_args();output=args.output.resolve();output.parent.mkdir(parents=True,exist_ok=True)
     raw=(ROOT/'apps/server/install.sh').read_bytes()
@@ -181,7 +253,8 @@ def main():
         if not args.allow_dirty:
             if subprocess.check_output(['git','-C',str(ROOT),'status','--porcelain']).strip():raise AcceptanceError('source_checkout_dirty')
             if subprocess.check_output(['git','-C',str(ROOT),'show',args.source_sha+':apps/server/install.sh'])!=raw:raise AcceptanceError('source_installer_mismatch')
-        selected=baselines(args.source_sha)
+        try:selected=baselines(args.source_sha)
+        finally:_API_READ_TOKEN=''
         print('Linux release acceptance: '+str(len(selected))+' pinned upgrade baselines',flush=True)
         with tempfile.TemporaryDirectory(prefix='huarun-release-e2e-') as temp:
             work=pathlib.Path(temp);work.chmod(0o700);runner=Runner(work)
@@ -208,9 +281,11 @@ def main():
             finally:runner.close()
     except Exception as error:
         report['error']=str(error) if isinstance(error,AcceptanceError) else type(error).__name__
+        if isinstance(error,BaselineFetchError):report['baseline_failure']=error.diagnostic
         if runner is not None and runner.last_failure is not None:report['last_failure']=runner.last_failure
         report['passed']=False
     finally:
+        _API_READ_TOKEN=''
         report['completed_at']=datetime.now(timezone.utc).isoformat()
         output.write_text(json.dumps(report,ensure_ascii=False,sort_keys=True,indent=2)+'\n')
     print(json.dumps({'passed':report['passed'],'output':str(output),'error':report.get('error')},ensure_ascii=False))
