@@ -104,6 +104,20 @@ class ServerPageTests(unittest.TestCase):
                        "每轮先查华润 MCP", "资料不足再用 DeepSeek 搜索", "修复后自动复查"):
             self.assertIn(marker, raw)
 
+    def test_ssh_example_stays_readable_without_email_decoder(self):
+        # Cloudflare's documented HTML exclusion must survive reader wrapping.
+        raw = enhance_code_blocks(self.build())
+        self.assertEqual(raw.count("<!--email_off-->"), 1)
+        self.assertEqual(raw.count("<!--/email_off-->"), 1)
+        protected = raw.split("<!--email_off-->", 1)[1].split("<!--/email_off-->", 1)[0]
+        reader = CodeReader()
+        reader.feed(protected)
+        self.assertEqual(reader.code, ["ssh root@203.0.113.10"])
+        self.assertEqual(protected.count("data-copy-code"), 1)
+        self.assertIn("<noscript>", protected)
+        self.assertNotIn(INSTALL_COMMAND, protected)
+        self.assertEqual(enhance_code_blocks(raw), raw)
+
     def test_existing_install_upgrade_is_separate_from_fresh_install(self):
         raw = self.build()
         reader = CodeReader()
