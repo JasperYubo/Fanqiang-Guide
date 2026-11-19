@@ -49,6 +49,10 @@ class PresentationShellTest(unittest.TestCase):
         self.assertIn('data-fg-search-open aria-label="资料检索"', output)
         self.assertIn('action="/guides/library.html" method="get"', output)
         self.assertIn('data-fg-theme-toggle hidden', output)
+        script = '<script src="/assets/guide-shell-v4.0-2026-11-19.js"></script>'
+        stylesheet = '<link rel="stylesheet" href="/assets/guide-design-v4.0-2026-11-19.css">'
+        self.assertLess(output.index(script), output.index(stylesheet))
+        self.assertLess(output.index(script), output.index('</head>'))
         self.assertIn('fg-home', output)
         self.assertEqual(enhance_presentation(output, "index.html", self.top, []), output)
 

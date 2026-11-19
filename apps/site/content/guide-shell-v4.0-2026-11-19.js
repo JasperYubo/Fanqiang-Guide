@@ -11,10 +11,14 @@
     const stored = window.localStorage.getItem(choiceKey);
     if (choices.includes(stored)) choice = stored;
   } catch (_) { /* A blocked preference store does not prevent theme switching. */ }
+  // This script runs in the head before the v4 stylesheet. Resolve the first
+  // paint here; DOM initialization below must not animate a second theme change.
+  root.dataset.theme = choice === "system" ? (media?.matches ? "dark" : "light") : choice;
+  root.dataset.fgThemeChoice = choice;
+
+  const initializeShell = () => {
   const themeButtons = [...document.querySelectorAll("[data-fg-theme-toggle]")];
-  const renderTheme = () => {
-    root.dataset.theme = choice === "system" ? (media?.matches ? "dark" : "light") : choice;
-    root.dataset.fgThemeChoice = choice;
+  const renderThemeControls = () => {
     themeButtons.forEach(button => {
       button.hidden = false;
       const label = button.querySelector("[data-fg-theme-label]");
@@ -24,7 +28,12 @@
       button.title = `${labels[choice]}，切换为${labels[next]}`;
     });
   };
-  renderTheme();
+  const renderTheme = () => {
+    root.dataset.theme = choice === "system" ? (media?.matches ? "dark" : "light") : choice;
+    root.dataset.fgThemeChoice = choice;
+    renderThemeControls();
+  };
+  renderThemeControls();
   themeButtons.forEach(button => button.addEventListener("click", () => {
     choice = choices[(choices.indexOf(choice) + 1) % choices.length];
     try { window.localStorage.setItem(choiceKey, choice); } catch (_) { /* Session-only choice. */ }
@@ -115,5 +124,11 @@
       targets.get(visible[0].target)?.setAttribute("aria-current", "location");
     }, { rootMargin: "-12% 0px -65% 0px", threshold: 0 });
     targets.forEach((_, target) => observer.observe(target));
+  }
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeShell, { once: true });
+  } else {
+    initializeShell();
   }
 })();

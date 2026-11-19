@@ -189,7 +189,9 @@ def enhance_presentation(raw, relative_path, top_links, guide_links):
     shell = '<div class="fg-shell' + modifier + '">' + sidebar(top_links, guide_links, route_for(relative_path)) + mobile_table_of_contents(toc) + '<div class="fg-content">' + content + '</div>' + toc + '</div>'
     raw = raw[:main_start] + shell + raw[end:]
     raw = raw.replace('</body>', search_dialog(top_links) + '</body>', 1)
-    head = '<link rel="stylesheet" href="/' + DESIGN_CSS + '"><script defer src="/' + SHELL_JS + '"></script>'
+    # Resolve the saved theme before CSS and body paint; the script defers only
+    # its DOM-dependent handlers, leaving existing scripts in their own order.
+    head = '<script src="/' + SHELL_JS + '"></script><link rel="stylesheet" href="/' + DESIGN_CSS + '">'
     return raw.replace('</head>', head + '</head>', 1)
 
 
