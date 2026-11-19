@@ -142,4 +142,7 @@ def apply_reader_layout(public, header, footer):
         raw=raw.replace('</head>', additions+'</head>', 1)
         path.write_text(raw,encoding='utf-8')
         changed.append(path.relative_to(public).as_posix())
+    # The v4 shell is presentation-only and runs after the existing reader work.
+    from presentation_v4 import apply_presentation
+    changed.extend(path for path in apply_presentation(public, header) if path not in changed)
     return changed

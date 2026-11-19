@@ -1,0 +1,59 @@
+/* Original directory presentation, using the site's shared color tokens. */
+[data-catalog].fg-directory { --fg-directory-line: var(--fg-line, #d9dbe1); --fg-directory-muted: var(--fg-muted, #58616d); min-width: 0; }
+[data-catalog].fg-directory [hidden] { display: none !important; }
+.fg-directory-controls, .fg-directory-extra { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; padding: 1.25rem 0; border: 0; border-bottom: 1px solid var(--fg-directory-line); border-radius: 0; background: transparent; }
+.fg-directory-controls .catalog-query { grid-column: 1 / -1; }
+.fg-directory-controls .catalog-clear { align-self: end; min-height: 44px; }
+.fg-directory-field { min-width: 0; }
+.fg-directory-field label { display: block; margin-bottom: .5rem; font-size: .8125rem; font-weight: 650; line-height: 1.5; }
+.fg-directory-field input, .fg-directory-field select { width: 100%; min-width: 0; min-height: 44px; margin: 0; font: inherit; font-size: .875rem; border: 1px solid var(--fg-directory-line); border-radius: .5rem; padding: .65rem .75rem; color: inherit; background: var(--fg-surface, #fff); }
+.fg-directory-count { margin: 1rem 0; font-size: .875rem; font-variant-numeric: tabular-nums; }
+[data-catalog].fg-directory :is(.catalog-empty, .catalog-noscript), .fg-page .catalog-boundary { color: var(--fg-ink, #20252d); background: var(--fg-panel, #f3f4f6); border-color: var(--fg-line, #d9dbe1); }
+[data-catalog].fg-directory .catalog-badge { color: var(--fg-muted, #58616d); background: var(--fg-panel, #f3f4f6); border-color: var(--fg-line, #d9dbe1); }
+.fg-directory-categories { gap: .5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--fg-directory-line); }
+.fg-directory-categories a { padding: .4rem .65rem; font-size: .8125rem; border-radius: .35rem; }
+.fg-directory-group { margin-top: 2.75rem; }
+.fg-directory-group > h2 { margin: 0; padding-bottom: 1rem; border-bottom: 1px solid var(--fg-directory-line); font-size: 1.375rem; letter-spacing: -.025em; }
+.fg-directory-list { display: block; }
+.fg-directory-record { padding: 1.5rem 0 1.75rem; margin: 0; border: 0; border-bottom: 1px solid var(--fg-directory-line); border-radius: 0; background: transparent; box-shadow: none; scroll-margin-top: 6rem; }
+.fg-directory-record h3 { margin: .65rem 0; font-size: 1.25rem; line-height: 1.45; letter-spacing: -.015em; overflow-wrap: anywhere; }
+.fg-directory-meta { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .5rem; font-size: .75rem; }
+.fg-directory-meta .catalog-badge { max-width: 100%; padding: .2rem .45rem; border-radius: .3rem; font-size: .6875rem; line-height: 1.5; }
+.fg-directory-summary { margin: .5rem 0 1.1rem; font-size: .9375rem; line-height: 1.75; }
+.fg-directory-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1.5rem; color: var(--fg-muted, #58616d); }
+.fg-directory-facts > p { margin: 0; padding: .7rem 0; border-top: 1px solid var(--fg-directory-line); font-size: .8125rem; line-height: 1.75; overflow-wrap: anywhere; }
+.fg-directory-facts p + p { margin-top: 0; }
+.fg-directory-facts strong { font-weight: 600; }
+.fg-directory-facts .fg-directory-compatibility { grid-column: 1 / -1; }
+.fg-directory-origin { margin: .85rem 0; font-size: .8125rem; }
+.fg-directory-disclosure > summary { min-height: 44px; align-content: center; font-size: .8125rem; font-weight: 600; color: var(--fg-action, #315fbb); }
+.fg-directory-details { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem 1.5rem; padding-top: .8rem; }
+.fg-directory-details > * { min-width: 0; margin: 0; padding-top: .65rem; border-top: 1px solid var(--fg-directory-line); font-size: .8125rem; line-height: 1.75; overflow-wrap: anywhere; }
+.fg-directory-source ul { padding-left: 1rem; }
+.fg-directory-details .fg-directory-relationship { grid-column: 1 / -1; }
+.fg-directory-table-region { margin-top: 1.5rem; border: 0; border-radius: 0; background: transparent; }
+.fg-directory-models { width: 100%; min-width: 0; table-layout: fixed; font-size: .8125rem; }
+.fg-directory-models caption { padding: 0 0 1rem; text-align: left; font-size: .8125rem; color: var(--fg-muted, #58616d); background: transparent; }
+.fg-directory-models th, .fg-directory-models td { padding: 1rem .65rem; border-bottom: 1px solid var(--fg-directory-line); overflow-wrap: anywhere; vertical-align: top; }
+.fg-directory-models th:first-child { width: 22%; }
+.fg-directory-models th:last-child { width: 32%; }
+.fg-directory-models thead th { color: var(--fg-directory-muted); background: var(--fg-panel, #f3f4f6); font-size: .75rem; font-weight: 600; }
+.fg-directory-models :is(.catalog-model-sub, .catalog-model-date) { font-size: .75rem; }
+[data-catalog].fg-directory :is(a, button, input, select, summary):focus-visible { outline: 2px solid var(--fg-focus, #315fbb); outline-offset: 3px; }
+@media (max-width: 760px) {
+  .fg-directory-controls, .fg-directory-extra { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
+  .fg-directory-controls .catalog-clear { grid-column: 1 / -1; justify-self: start; }
+  .fg-directory-extra > :last-child { grid-column: 1 / -1; }
+  .fg-directory-models, .fg-directory-models tbody, .fg-directory-models tr, .fg-directory-models td, .fg-directory-models th { display: block; width: 100%; }
+  .fg-directory-models thead { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); }
+  .fg-directory-models tr { padding: 1.25rem 0; border-bottom: 1px solid var(--fg-directory-line); }
+  .fg-directory-models :is(th, td) { border: 0; padding: .4rem 0; }
+  .fg-directory-models :is(th, td):nth-child(n) { width: 100%; }
+  .fg-directory-models th:first-child { width: 100%; font-size: 1rem; }
+  .fg-directory-models td::before { content: attr(data-fg-label); display: block; margin-bottom: .1rem; font-size: .6875rem; font-weight: 650; color: var(--fg-directory-muted); }
+}
+@media (max-width: 420px) {
+  .fg-directory-controls, .fg-directory-extra, .fg-directory-facts, .fg-directory-details { grid-template-columns: minmax(0, 1fr); }
+  .fg-directory-record { padding: 1.25rem 0 1.5rem; }
+  .fg-directory-meta { align-items: flex-start; }
+}
